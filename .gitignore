@@ -1,0 +1,13 @@
+# Dados de origem (Excel)
+brinquedos.xlsx
+~$brinquedos.xlsx
+
+# Pasta local de imagens (já estão no Cloudinary)
+images/
+
+# Arquivos do Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Logs e arquivos temporários
+*.log
