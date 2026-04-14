@@ -1,186 +1,302 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RetroBrinquedos BR | Arquivo Digital 80s/90s</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
-        :root {
-            --neon-pink: #ff00ff;
-            --neon-blue: #00ffff;
-        }
+      :root {
+        --neon-pink: #ff00ff;
+        --neon-blue: #00ffff;
+      }
 
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #0f172a; /* Fundo Navy Profundo */
-            color: white;
-        }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #0f172a; /* Fundo Navy Profundo */
+        color: white;
+      }
 
-        .font-retro { font-family: 'Archivo Black', sans-serif; }
+      .font-retro {
+        font-family: "Archivo Black", sans-serif;
+      }
 
-        /* Masonry Layout */
+      /* Masonry Layout */
+      .masonry-grid {
+        columns: 2;
+        column-gap: 1.5rem;
+      }
+      @media (min-width: 768px) {
         .masonry-grid {
-            columns: 2;
-            column-gap: 1.5rem;
+          columns: 3;
         }
-        @media (min-width: 768px) { .masonry-grid { columns: 3; } }
-        @media (min-width: 1024px) { .masonry-grid { columns: 4; } }
-        @media (min-width: 1536px) { .masonry-grid { columns: 5; } }
+      }
+      @media (min-width: 1024px) {
+        .masonry-grid {
+          columns: 4;
+        }
+      }
+      @media (min-width: 1536px) {
+        .masonry-grid {
+          columns: 5;
+        }
+      }
 
-        .masonry-item {
-            break-inside: avoid;
-            margin-bottom: 1.5rem;
-            perspective: 1200px; /* Intensidade do 3D */
-        }
+      .masonry-item {
+        break-inside: avoid;
+        margin-bottom: 1.5rem;
+        perspective: 1200px; /* Intensidade do 3D */
+      }
 
-        /* 3D Flip Engine */
-        .card-inner {
-            position: relative;
-            width: 100%;
-            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-            cursor: pointer;
-        }
+      /* 3D Flip Engine */
+      /* Ajuste no container interno para suportar altura mínima no verso */
+      .card-inner {
+        position: relative;
+        width: 100%;
+        transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+        cursor: pointer;
+        min-height: 100%; /* Garante que ocupe a altura da imagem da frente */
+      }
 
-        /* Classe de ativação do Flip via JS */
-        .is-flipped .card-inner {
-            transform: rotateY(180deg) scale(1.1); /* O ZOOM AQUI */
-            z-index: 50;
-        }
+      /* Classe de ativação do Flip via JS */
+      /* Força a altura mínima quando o card está virado */
+      .is-flipped .card-inner {
+        transform: rotateY(180deg) scale(1.1);
+        z-index: 50;
+        /* Altura mínima para caber todo o conteúdo do Super Trunfo */
+        min-height: 480px;
+      }
 
-        .card-front, .card-back {
-            position: relative;
-            width: 100%;
-            backface-visibility: hidden;
-            border-radius: 1rem;
-            overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-        }
+      .card-front,
+      .card-back {
+        position: relative;
+        width: 100%;
+        backface-visibility: hidden;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+      }
 
-        .card-back {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            transform: rotateY(180deg);
-            background: #fff;
-            border: 6px solid #1e293b; /* Borda escura estilo carta */
-        }
+      /* O verso agora terá uma altura mínima fixa e scroll caso o texto seja gigante */
+      .card-back {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        min-height: 480px; /* Altura ideal para o layout Super Trunfo */
+        transform: rotateY(180deg);
+        background: #fff;
+        border: 6px solid #1e293b;
+        display: flex;
+        flex-direction: column;
+        backface-visibility: hidden;
+        z-index: 2;
+      }
 
-        /* Estilo Super Trunfo no Verso */
-        .trunfo-header { 
-            background: #000; 
-            color: #fff; 
-            padding: 8px; 
-            text-align: center; 
-            font-size: 0.7rem;
-        }
-        .trunfo-stat-row { 
-            border-bottom: 1px solid #e2e8f0; 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 5px 10px; 
-            font-size: 0.75rem; 
-            color: #1e293b;
-        }
-        .trunfo-stat-row:nth-child(even) { background: #f8fafc; }
-        
-        .raridade-bar { 
-            height: 6px; 
-            background: #e2e8f0; 
-            border-radius: 3px; 
-            overflow: hidden; 
-            margin-top: 4px;
-        }
-        .raridade-fill { 
-            height: 100%; 
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
-        }
+      /* Ajuste para evitar que o conteúdo do verso "vaze" antes da hora */
+      .card-front {
+        z-index: 1;
+        backface-visibility: hidden;
+      }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+      /* Estilo Super Trunfo no Verso */
+      .trunfo-header {
+        background: #000;
+        color: #fff;
+        padding: 8px;
+        text-align: center;
+        font-size: 0.7rem;
+      }
+      .trunfo-stat-row {
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        color: #1e293b;
+      }
+      .trunfo-stat-row:nth-child(even) {
+        background: #f8fafc;
+      }
+
+      .raridade-bar {
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 4px;
+      }
+      .raridade-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 10px;
+      }
     </style>
-</head>
-<body class="antialiased">
-
-    <nav class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-[100] px-6 py-4 flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-2">
-            <div class="w-10 h-10 bg-pink-600 rounded-lg flex items-center justify-center font-bold text-2xl shadow-lg shadow-pink-900/50">R</div>
-            <h1 class="text-xl font-retro tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-400">RETROBRINQUEDOS</h1>
+  </head>
+  <body class="antialiased">
+    <nav
+      class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-[100] px-6 py-4 flex flex-wrap items-center justify-between gap-4"
+    >
+      <div class="flex items-center gap-2">
+        <div
+          class="w-10 h-10 bg-pink-600 rounded-lg flex items-center justify-center font-bold text-2xl shadow-lg shadow-pink-900/50"
+        >
+          R
         </div>
+        <h1
+          class="text-xl font-retro tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-400"
+        >
+          RETROBRINQUEDOS
+        </h1>
+      </div>
 
-        <div class="flex-grow max-w-xl relative">
-            <input type="text" id="searchInput" placeholder="Busque por 'Thundercats', 'Estrela', 'Falcon'..." 
-                   class="w-full bg-slate-800 border border-slate-700 rounded-full py-2.5 px-10 focus:ring-2 focus:ring-pink-500 outline-none text-slate-200 transition-all">
-            <svg class="w-5 h-5 absolute left-3 top-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-        </div>
+      <div class="flex-grow max-w-xl relative">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Busque por 'Thundercats', 'Estrela', 'Falcon'..."
+          class="w-full bg-slate-800 border border-slate-700 rounded-full py-2.5 px-10 focus:ring-2 focus:ring-pink-500 outline-none text-slate-200 transition-all"
+        />
+        <svg
+          class="w-5 h-5 absolute left-3 top-3 text-slate-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          ></path>
+        </svg>
+      </div>
 
-        <div id="userArea" class="flex gap-4 items-center">
-            <button onclick="login()" class="text-xs font-bold hover:text-cyan-400 transition">ENTRAR</button>
-            <div class="h-4 w-[1px] bg-slate-700"></div>
-            <button onclick="login()" class="bg-white text-slate-900 px-4 py-2 rounded-full text-xs font-bold hover:bg-cyan-400 transition transform hover:scale-105">COLECIONAR</button>
-        </div>
+      <div id="userArea" class="flex gap-4 items-center">
+        <button
+          onclick="login()"
+          class="text-xs font-bold hover:text-cyan-400 transition"
+        >
+          ENTRAR
+        </button>
+        <div class="h-4 w-[1px] bg-slate-700"></div>
+        <button
+          onclick="login()"
+          class="bg-white text-slate-900 px-4 py-2 rounded-full text-xs font-bold hover:bg-cyan-400 transition transform hover:scale-105"
+        >
+          COLECIONAR
+        </button>
+      </div>
     </nav>
 
     <header class="mt-32 px-6 text-center max-w-4xl mx-auto">
-        <p class="text-cyan-400 font-bold tracking-widest text-xs mb-2 uppercase">Arquivo Digital Colaborativo</p>
-        <h2 class="text-4xl md:text-5xl font-retro mb-8 leading-tight">REVIVA SUA INFÂNCIA <br> EM CADA CLIQUE.</h2>
-        
-        <div class="flex gap-2 overflow-x-auto pb-4 no-scrollbar justify-start md:justify-center">
-            <button onclick="filterBy('todos')" class="filter-btn bg-pink-600 px-6 py-2 rounded-full text-xs font-bold whitespace-nowrap">TUDO</button>
-            <button onclick="filterBy('Estrela')" class="filter-btn bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-full text-xs font-bold whitespace-nowrap">ESTRELA</button>
-            <button onclick="filterBy('Glasslite')" class="filter-btn bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-full text-xs font-bold whitespace-nowrap">GLASSLITE</button>
-            <button onclick="filterBy('Masculino')" class="filter-btn bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-full text-xs font-bold whitespace-nowrap">MASCULINO</button>
-            <button onclick="filterBy('Feminino')" class="filter-btn bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-full text-xs font-bold whitespace-nowrap">FEMININO</button>
-        </div>
+      <p class="text-cyan-400 font-bold tracking-widest text-xs mb-2 uppercase">
+        Arquivo Digital Colaborativo
+      </p>
+      <h2 class="text-4xl md:text-5xl font-retro mb-8 leading-tight">
+        REVIVA SUA INFÂNCIA <br />
+        EM CADA CLIQUE.
+      </h2>
+
+      <div
+        class="flex gap-2 overflow-x-auto pb-4 no-scrollbar justify-start md:justify-center"
+      >
+        <button
+          onclick="filterBy('todos')"
+          class="filter-btn bg-pink-600 px-6 py-2 rounded-full text-xs font-bold whitespace-nowrap"
+        >
+          TUDO
+        </button>
+        <button
+          onclick="filterBy('Estrela')"
+          class="filter-btn bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-full text-xs font-bold whitespace-nowrap"
+        >
+          ESTRELA
+        </button>
+        <button
+          onclick="filterBy('Glasslite')"
+          class="filter-btn bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-full text-xs font-bold whitespace-nowrap"
+        >
+          GLASSLITE
+        </button>
+        <button
+          onclick="filterBy('Masculino')"
+          class="filter-btn bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-full text-xs font-bold whitespace-nowrap"
+        >
+          MASCULINO
+        </button>
+        <button
+          onclick="filterBy('Feminino')"
+          class="filter-btn bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-full text-xs font-bold whitespace-nowrap"
+        >
+          FEMININO
+        </button>
+      </div>
     </header>
 
     <main class="max-w-[1800px] mx-auto p-6 md:p-12">
-        <div id="toyGrid" class="masonry-grid">
-            </div>
+      <div id="toyGrid" class="masonry-grid"></div>
     </main>
 
-    <footer class="py-12 border-t border-slate-800 text-center text-slate-500 text-sm">
-        <p>© 2026 RetroBrinquedos BR - O Museu das Nossas Memórias.</p>
+    <footer
+      class="py-12 border-t border-slate-800 text-center text-slate-500 text-sm"
+    >
+      <p>© 2026 RetroBrinquedos BR - O Museu das Nossas Memórias.</p>
     </footer>
 
     <script>
-        let allToys = [];
+      let allToys = [];
 
-        // 1. CARREGAR DADOS DO JSON
-        async function init() {
-            try {
-                const response = await fetch('data.json');
-                allToys = await response.json();
-                
-                // EMBARALHAR (Algoritmo Fisher-Yates)
-                shuffleArray(allToys);
-                
-                render(allToys);
-            } catch (error) {
-                console.error("Erro ao carregar o arquivo JSON:", error);
-                document.getElementById('toyGrid').innerHTML = "<p class='text-center col-span-full'>Erro ao carregar o arquivo de dados. Verifique se o data.json está na mesma pasta.</p>";
-            }
+      // 1. CARREGAR DADOS DO JSON
+      async function init() {
+        try {
+          const response = await fetch("data.json");
+          allToys = await response.json();
+
+          // EMBARALHAR (Algoritmo Fisher-Yates)
+          shuffleArray(allToys);
+
+          render(allToys);
+        } catch (error) {
+          console.error("Erro ao carregar o arquivo JSON:", error);
+          document.getElementById("toyGrid").innerHTML =
+            "<p class='text-center col-span-full'>Erro ao carregar o arquivo de dados. Verifique se o data.json está na mesma pasta.</p>";
         }
+      }
 
-        // Função para embaralhar
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
+      // Função para embaralhar
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
         }
+      }
 
-        // 2. RENDERIZAR CARDS
-        function render(items) {
-            const grid = document.getElementById('toyGrid');
-            grid.innerHTML = items.map(toy => `
+      // 2. RENDERIZAR CARDS
+      function render(items) {
+        const grid = document.getElementById("toyGrid");
+        grid.innerHTML = items
+          .map(
+            (toy) => `
                 <div class="masonry-item" id="card-${toy.id}">
                     <div class="card-inner" onclick="handleFlip('${toy.id}')">
                         <div class="card-front">
@@ -220,61 +336,70 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `,
+          )
+          .join("");
+      }
+
+      // 3. LÓGICA DE GIRO (FLIP)
+      function handleFlip(id) {
+        const card = document.getElementById(`card-${id}`);
+        const isFlipped = card.classList.contains("is-flipped");
+
+        // Fecha todos os outros antes de abrir um novo
+        document
+          .querySelectorAll(".masonry-item")
+          .forEach((c) => c.classList.remove("is-flipped"));
+
+        if (!isFlipped) {
+          card.classList.add("is-flipped");
         }
+      }
 
-        // 3. LÓGICA DE GIRO (FLIP)
-        function handleFlip(id) {
-            const card = document.getElementById(`card-${id}`);
-            const isFlipped = card.classList.contains('is-flipped');
-            
-            // Fecha todos os outros antes de abrir um novo
-            document.querySelectorAll('.masonry-item').forEach(c => c.classList.remove('is-flipped'));
-            
-            if (!isFlipped) {
-                card.classList.add('is-flipped');
-            }
+      // 4. BUSCA EM TEMPO REAL (INCLUINDO TEMA)
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = allToys.filter(
+          (toy) =>
+            toy.nome.toLowerCase().includes(term) ||
+            toy.tema.toLowerCase().includes(term) ||
+            toy.fabricante.toLowerCase().includes(term) ||
+            toy.tags.some((tag) => tag.toLowerCase().includes(term)),
+        );
+        render(filtered);
+      });
+
+      // 5. FILTROS POR CHIPS
+      function filterBy(criteria) {
+        document
+          .querySelectorAll(".filter-btn")
+          .forEach((btn) =>
+            btn.classList.replace("bg-pink-600", "bg-slate-800"),
+          );
+        event.target.classList.replace("bg-slate-800", "bg-pink-600");
+
+        if (criteria === "todos") {
+          render(allToys);
+        } else {
+          const filtered = allToys.filter(
+            (toy) => toy.fabricante === criteria || toy.genero === criteria,
+          );
+          render(filtered);
         }
+      }
 
-        // 4. BUSCA EM TEMPO REAL (INCLUINDO TEMA)
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            const filtered = allToys.filter(toy => 
-                toy.nome.toLowerCase().includes(term) ||
-                toy.tema.toLowerCase().includes(term) ||
-                toy.fabricante.toLowerCase().includes(term) ||
-                toy.tags.some(tag => tag.toLowerCase().includes(term))
-            );
-            render(filtered);
-        });
-
-        // 5. FILTROS POR CHIPS
-        function filterBy(criteria) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.replace('bg-pink-600', 'bg-slate-800'));
-            event.target.classList.replace('bg-slate-800', 'bg-pink-600');
-
-            if (criteria === 'todos') {
-                render(allToys);
-            } else {
-                const filtered = allToys.filter(toy => 
-                    toy.fabricante === criteria || toy.genero === criteria
-                );
-                render(filtered);
-            }
-        }
-
-        // Mock Login
-        function login() {
-            document.getElementById('userArea').innerHTML = `
+      // Mock Login
+      function login() {
+        document.getElementById("userArea").innerHTML = `
                 <div class="flex items-center gap-3">
                     <span class="text-[10px] font-bold text-cyan-400">MODO COLECIONADOR</span>
                     <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-500 border border-white shadow-sm"></div>
                 </div>
             `;
-        }
+      }
 
-        // START
-        init();
+      // START
+      init();
     </script>
-</body>
+  </body>
 </html>
