@@ -19,19 +19,21 @@
 
       body {
         font-family: "Inter", sans-serif;
-        background-color: #0f172a; /* Fundo Navy Profundo */
+        background-color: #0f172a;
         color: white;
+        overflow-x: hidden;
       }
 
       .font-retro {
         font-family: "Archivo Black", sans-serif;
       }
 
-      /* Masonry Layout */
+      /* Masonry Layout - Ajustado para ocupar a tela */
       .masonry-grid {
         columns: 2;
         column-gap: 1.5rem;
-        transition: all 0.5s ease; /* Suaviza a entrada do efeito de foco */
+        width: 100%;
+        transition: all 0.4s ease;
       }
       @media (min-width: 768px) {
         .masonry-grid {
@@ -53,26 +55,29 @@
         break-inside: avoid;
         margin-bottom: 1.5rem;
         perspective: 1200px;
-        transition: all 0.5s ease; /* Transição para o efeito P&B */
+        transition:
+          filter 0.5s ease,
+          opacity 0.5s ease,
+          transform 0.3s ease;
         position: relative;
       }
 
       /* ============================================================
-         ESTADO DE FOCO (LIGHTBOX NO GRID)
+         EFEITO DE FOCO SUAVE (CORRIGIDO)
          ============================================================ */
 
-      /* Quando o grid estiver focado, todos os cards que NÃO estão virados ficam P&B e escuros */
+      /* Quando focado: cards de fundo ficam levemente desbotados e cinzas, mas NÍTIDOS */
       #toyGrid.grid-focused .masonry-item:not(.is-flipped) {
-        filter: grayscale(100%) brightness(0.3) blur(1px);
-        opacity: 0.5;
-        pointer-events: none; /* Impede cliques acidentais nos outros enquanto um está aberto */
+        filter: grayscale(80%) brightness(0.7); /* Suavizado: 70% de brilho, sem blur */
+        opacity: 0.6;
+        pointer-events: none;
       }
 
-      /* O card que está virado fica em evidência total */
+      /* Card em destaque */
       #toyGrid.grid-focused .masonry-item.is-flipped {
-        filter: grayscale(0%) brightness(1) blur(0px);
+        filter: grayscale(0%) brightness(1);
         opacity: 1;
-        z-index: 1000; /* Fica acima da máscara do grid */
+        z-index: 1000;
       }
 
       /* 3D Flip Engine */
@@ -82,18 +87,22 @@
         transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
         transform-style: preserve-3d;
         cursor: pointer;
-        min-height: 100%;
+        display: flex;
+        flex-direction: column;
       }
 
       .is-flipped .card-inner {
-        transform: rotateY(180deg) scale(1.1); /* Zoom ao virar */
+        transform: rotateY(180deg) scale(1.05); /* Zoom leve para não distorcer */
         z-index: 50;
+      }
+
+      /* Forçar altura mínima apenas no verso para manter o design Super Trunfo */
+      .is-flipped .card-back {
         min-height: 480px;
       }
 
       .card-front,
       .card-back {
-        position: relative;
         width: 100%;
         backface-visibility: hidden;
         border-radius: 1rem;
@@ -105,22 +114,20 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
         height: 100%;
-        min-height: 480px;
         transform: rotateY(180deg);
         background: #fff;
         border: 6px solid #1e293b;
         display: flex;
         flex-direction: column;
-        z-index: 2;
       }
 
       .card-front {
+        position: relative;
         z-index: 1;
       }
 
-      /* Estilo Super Trunfo no Verso */
+      /* Estilo Super Trunfo */
       .trunfo-header {
         background: #000;
         color: #fff;
@@ -152,16 +159,8 @@
         background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
       }
 
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0f172a;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #334155;
-        border-radius: 10px;
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
       }
     </style>
   </head>
@@ -186,7 +185,7 @@
         <input
           type="text"
           id="searchInput"
-          placeholder="Busque por 'Thundercats', 'Estrela', 'Falcon'..."
+          placeholder="Busque por 'Thundercats', 'Estrela'..."
           class="w-full bg-slate-800 border border-slate-700 rounded-full py-2.5 px-10 focus:ring-2 focus:ring-pink-500 outline-none text-slate-200 transition-all"
         />
         <svg
@@ -221,13 +220,12 @@
       </div>
     </nav>
 
-    <header class="mt-32 px-6 text-center max-w-4xl mx-auto">
+    <header class="mt-32 px-6 text-center max-w-5xl mx-auto">
       <p class="text-cyan-400 font-bold tracking-widest text-xs mb-2 uppercase">
         Arquivo Digital Colaborativo
       </p>
-      <h2 class="text-4xl md:text-5xl font-retro mb-8 leading-tight">
-        REVIVA SUA INFÂNCIA <br />
-        EM CADA CLIQUE.
+      <h2 class="text-4xl md:text-5xl font-retro mb-8 leading-tight uppercase">
+        O Museu das Nossas Memórias
       </h2>
 
       <div
@@ -266,20 +264,19 @@
       </div>
     </header>
 
-    <main class="max-w-[1800px] mx-auto p-6 md:p-12">
+    <main class="w-full max-w-[1800px] mx-auto p-4 md:p-8">
       <div id="toyGrid" class="masonry-grid"></div>
     </main>
 
     <footer
       class="py-12 border-t border-slate-800 text-center text-slate-500 text-sm"
     >
-      <p>© 2026 RetroBrinquedos BR - O Museu das Nossas Memórias.</p>
+      <p>© 2026 RetroBrinquedos BR - Revivendo os anos 80 e 90.</p>
     </footer>
 
     <script>
       let allToys = [];
 
-      // 1. CARREGAR DADOS DO JSON
       async function init() {
         try {
           const response = await fetch("data.json");
@@ -287,9 +284,9 @@
           shuffleArray(allToys);
           render(allToys);
         } catch (error) {
-          console.error("Erro ao carregar o arquivo JSON:", error);
+          console.error("Erro:", error);
           document.getElementById("toyGrid").innerHTML =
-            "<p class='text-center col-span-full'>Erro ao carregar o arquivo de dados. Verifique se o data.json está na mesma pasta.</p>";
+            "<p class='text-center w-full'>Erro ao carregar data.json</p>";
         }
       }
 
@@ -300,74 +297,68 @@
         }
       }
 
-      // 2. RENDERIZAR CARDS
       function render(items) {
         const grid = document.getElementById("toyGrid");
         grid.innerHTML = items
           .map(
             (toy) => `
-                <div class="masonry-item" id="card-${toy.id}">
-                    <div class="card-inner" onclick="handleFlip('${toy.id}')">
-                        <div class="card-front">
-                            <img src="${toy.url_frente}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
-                        </div>
-                        <div class="card-back flex flex-col">
-                            <div class="trunfo-header font-retro uppercase tracking-tighter">${toy.nome}</div>
-                            <div class="p-3 flex-grow flex flex-col">
-                                <img src="${toy.url_verso}" class="w-full h-24 object-cover border-2 border-slate-900 mb-2" alt="Detalhe">
-                                <div class="flex-grow space-y-0.5">
-                                    <div class="trunfo-stat-row"><span class="font-bold">FABRICANTE</span><span>${toy.fabricante}</span></div>
-                                    <div class="trunfo-stat-row"><span class="font-bold">ANO</span><span>${toy.ano}</span></div>
-                                    <div class="trunfo-stat-row"><span class="font-bold">CATEGORIA</span><span>${toy.categoria}</span></div>
-                                    <div class="trunfo-stat-row"><span class="font-bold">TEMA</span><span>${toy.tema}</span></div>
-                                    <div class="px-2 py-1">
-                                        <div class="flex justify-between text-[10px] font-bold text-slate-800 mb-1 uppercase">
-                                            <span>Raridade</span><span>${toy.raridade}%</span>
-                                        </div>
-                                        <div class="raridade-bar"><div class="raridade-fill" style="width: ${toy.raridade}%"></div></div>
-                                    </div>
-                                    <p class="text-[9px] leading-tight text-slate-500 italic px-2 pt-1 border-t border-slate-100 mt-1">"${toy.curiosidade}"</p>
-                                </div>
-                                <div class="mt-auto flex justify-between items-center border-t-2 border-slate-900 pt-1">
-                                    <span class="text-[8px] font-bold italic text-slate-400">RETROBRINQUEDOS BR</span>
-                                    <span class="font-retro text-lg text-slate-900">${toy.codigo_trunfo}</span>
-                                </div>
-                            </div>
-                        </div>
+          <div class="masonry-item" id="card-${toy.id}">
+            <div class="card-inner" onclick="handleFlip('${toy.id}')">
+              <div class="card-front">
+                <img src="${toy.url_frente}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
+              </div>
+              <div class="card-back flex flex-col">
+                <div class="trunfo-header font-retro uppercase tracking-tighter">${toy.nome}</div>
+                <div class="p-3 flex-grow flex flex-col">
+                  <img src="${toy.url_verso}" class="w-full h-24 object-cover border-2 border-slate-900 mb-2" alt="D">
+                  <div class="flex-grow space-y-0.5">
+                    <div class="trunfo-stat-row"><span class="font-bold uppercase">Fabricante</span><span>${toy.fabricante}</span></div>
+                    <div class="trunfo-stat-row"><span class="font-bold uppercase">Ano</span><span>${toy.ano}</span></div>
+                    <div class="trunfo-stat-row"><span class="font-bold uppercase">Categoria</span><span>${toy.categoria}</span></div>
+                    <div class="trunfo-stat-row"><span class="font-bold uppercase">Tema</span><span>${toy.tema}</span></div>
+                    <div class="px-2 py-1">
+                      <div class="flex justify-between text-[10px] font-bold text-slate-800 mb-1 uppercase">
+                        <span>Raridade</span><span>${toy.raridade}%</span>
+                      </div>
+                      <div class="raridade-bar"><div class="raridade-fill" style="width: ${toy.raridade}%"></div></div>
                     </div>
+                    <p class="text-[9px] leading-tight text-slate-500 italic px-2 pt-1 border-t border-slate-100 mt-1">"${toy.curiosidade}"</p>
+                  </div>
+                  <div class="mt-auto flex justify-between items-center border-t-2 border-slate-900 pt-1">
+                    <span class="text-[8px] font-bold italic text-slate-400">RETROBRINQUEDOS BR</span>
+                    <span class="font-retro text-lg text-slate-900">${toy.codigo_trunfo}</span>
+                  </div>
                 </div>
-            `,
+              </div>
+            </div>
+          </div>
+        `,
           )
           .join("");
       }
 
-      // 3. LÓGICA DE GIRO (FLIP) COM EFEITO LIGHTBOX
       function handleFlip(id) {
         const grid = document.getElementById("toyGrid");
         const card = document.getElementById(`card-${id}`);
         const isFlipped = card.classList.contains("is-flipped");
 
-        // Remove o estado de virado de TODOS os cards antes de mais nada
         document
           .querySelectorAll(".masonry-item")
           .forEach((c) => c.classList.remove("is-flipped"));
 
         if (!isFlipped) {
-          // Ativa o card clicado e foca o grid
           card.classList.add("is-flipped");
           grid.classList.add("grid-focused");
         } else {
-          // Se já estava virado, apenas remove o foco do grid
           grid.classList.remove("grid-focused");
         }
       }
 
-      // FECHAR AO CLICAR NO FUNDO (FORA DO CARD)
+      // FECHAR AO CLICAR FORA
       document.addEventListener(
         "click",
         function (e) {
           const grid = document.getElementById("toyGrid");
-          // Se o clique foi no grid focado mas NÃO em um card
           if (
             grid.classList.contains("grid-focused") &&
             !e.target.closest(".card-inner")
@@ -381,27 +372,29 @@
         true,
       );
 
-      // 4. BUSCA EM TEMPO REAL
+      // BUSCA
       document.getElementById("searchInput").addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
         const filtered = allToys.filter(
-          (toy) =>
-            toy.nome.toLowerCase().includes(term) ||
-            toy.tema.toLowerCase().includes(term) ||
-            toy.fabricante.toLowerCase().includes(term) ||
-            toy.tags.some((tag) => tag.toLowerCase().includes(term)),
+          (t) =>
+            t.nome.toLowerCase().includes(term) ||
+            t.tema.toLowerCase().includes(term) ||
+            t.fabricante.toLowerCase().includes(term) ||
+            t.tags.some((tag) => tag.toLowerCase().includes(term)),
         );
         render(filtered);
       });
 
-      // 5. FILTROS POR CHIPS
+      // FILTROS
       function filterBy(criteria) {
         document
           .querySelectorAll(".filter-btn")
           .forEach((btn) =>
             btn.classList.replace("bg-pink-600", "bg-slate-800"),
           );
-        event.target.classList.replace("bg-slate-800", "bg-pink-600");
+        if (event)
+          event.target.classList.replace("bg-slate-800", "bg-pink-600");
+
         if (criteria === "todos") {
           render(allToys);
         } else {
@@ -413,12 +406,8 @@
       }
 
       function login() {
-        document.getElementById("userArea").innerHTML = `
-          <div class="flex items-center gap-3">
-              <span class="text-[10px] font-bold text-cyan-400">MODO COLECIONADOR</span>
-              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-500 border border-white shadow-sm"></div>
-          </div>
-        `;
+        document.getElementById("userArea").innerHTML =
+          `<div class="flex items-center gap-3"><span class="text-[10px] font-bold text-cyan-400 uppercase">Colecionador Ativo</span><div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-500 border border-white"></div></div>`;
       }
 
       init();
