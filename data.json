@@ -664,5 +664,172 @@
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0033_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0033_verso.jpg"
+  },
+  {
+    "id": "0034",
+    "nome": "Bicicleta Caloicross Extra Light",
+    "fabricante": "Caloi",
+    "ano": "1983",
+    "categoria": "Bicicleta",
+    "tema": "BMX",
+    "genero": "Unisex",
+    "tags": [
+      "Bicicleta",
+      "Bike",
+      "BMX",
+      "Caloi",
+      "Light",
+      "Vermelha"
+    ],
+    "curiosidade": "Aro 20, protetores de espuma, peças de light vermelhas.",
+    "raridade": 49,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0034_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0034_verso.jpg"
+  },
+  {
+    "id": "0035",
+    "nome": "Caloicross Freestyle 2",
+    "fabricante": "Caloi",
+    "ano": "1992",
+    "categoria": "Bicicleta",
+    "tema": "BMX",
+    "genero": "Unisex",
+    "tags": [
+      "Bicicleta",
+      "Bike",
+      "BMX",
+      "Caloi",
+      "Freestyle 90",
+      "Free 2"
+    ],
+    "curiosidade": "Aro 20, pedaleiras atrás",
+    "raridade": 39,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0035_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0035_verso.jpg"
+  },
+  {
+    "id": "0036",
+    "nome": "Caloicross Freestyle Aero Free",
+    "fabricante": "Caloi",
+    "ano": "1983",
+    "categoria": "Bicicleta",
+    "tema": "BMX",
+    "genero": "Unisex",
+    "tags": [
+      "Bicicleta",
+      "Bike",
+      "BMX",
+      "Caloi",
+      "Freestyle"
+    ],
+    "curiosidade": "Aro 20, pedaleiras atrás",
+    "raridade": 40,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0036_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0036_verso.jpg"
+  },
+  {
+    "id": "0037",
+    "nome": "Sectarus: Warrios of Symbion",
+    "fabricante": "Mimo",
+    "ano": "80's",
+    "categoria": "Bonecos",
+    "tema": "Sectaurs",
+    "genero": "Unisex",
+    "tags": [
+      "Bonecos",
+      "Sectaurs",
+      "Insetos",
+      "Herois"
+    ],
+    "curiosidade": "Personagens humanos híbridos de insetos que montam insetos gigantes.",
+    "raridade": 60,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0037_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0037_verso.jpg"
+  },
+  {
+    "id": "0038",
+    "nome": "Nikko Dictator II",
+    "fabricante": "Nikko",
+    "ano": "1987",
+    "categoria": "Carrinhos",
+    "tema": "Controle Remoto",
+    "genero": "Masculino",
+    "tags": [
+      "Carrinho",
+      "Controle Remoto",
+      "Nikko Dictator II",
+      "Corrida",
+      "4X4",
+      "Off-road"
+    ],
+    "curiosidade": "Possui tração nas quatro rodas (4WD) e um sistema com dois motores elétricos.",
+    "raridade": 69,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0038_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0038_verso.jpg"
+  },
+  {
+    "id": "0039",
+    "nome": "Estrelão",
+    "fabricante": "Estrela",
+    "ano": "70's e 80's",
+    "categoria": "Futebol de Botão",
+    "tema": "Futebol",
+    "genero": "Masculino",
+    "tags": [
+      "Estrelão",
+      "Campo",
+      "Futebol",
+      "Botão"
+    ],
+    "curiosidade": "Utilizado para jogos de futebol de mesa (futebol de botão).",
+    "raridade": 29,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0039_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0039_verso.jpg"
+  },
+  {
+    "id": "0040",
+    "nome": "Lango Lango",
+    "fabricante": "Balila",
+    "ano": "1983",
+    "categoria": "Bonecos",
+    "tema": "Fantoches",
+    "genero": "Unisex",
+    "tags": [
+      "Bonecos",
+      "Lango",
+      "Monstros",
+      "Soco"
+    ],
+    "curiosidade": "Cada boneco representava um elemento da natureza (terra, floresta, água, galáxia, etc.).",
+    "raridade": 39,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0040_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0040_verso.jpg"
+  },
+  {
+    "id": "0041",
+    "nome": "Fluffy",
+    "fabricante": "Estrela",
+    "ano": "90's",
+    "categoria": "Bola",
+    "tema": "Fluffy",
+    "genero": "Unisex",
+    "tags": [
+      "Bola",
+      "Elásticos",
+      "Fluffy",
+      "Koosh Ball"
+    ],
+    "curiosidade": "Fluffy ou Koosh Ball, o colecionável com rostos e mãos era chamado \"Fluffy Gang\".",
+    "raridade": 12,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0041_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0041_verso.jpg"
   }
 ]
