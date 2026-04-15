@@ -2,8 +2,12 @@
 brinquedos.xlsx
 ~$brinquedos.xlsx
 
+# Script python para atualizar o data.json
+atualiza_json.py
+
 # Pasta local de imagens (já estão no Cloudinary)
 images/
+bkp/
 
 # Arquivos do Sistema Operacional
 .DS_Store
@@ -11,3 +15,10 @@ Thumbs.db
 
 # Logs e arquivos temporários
 *.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python

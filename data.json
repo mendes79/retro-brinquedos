@@ -7,7 +7,12 @@
     "categoria": "Carrinhos",
     "tema": "Playmobil",
     "genero": "Unisex",
-    "tags": ["Playmobil", "Carrinho", "Rally", "Hella"],
+    "tags": [
+      "Playmobil",
+      "Carrinho",
+      "Rally",
+      "Hella"
+    ],
     "curiosidade": "Produzido pela Geobra Brandstätter, foi um dos veículos mais icônicos da linha Playmobil no Brasil pela Estrela.",
     "raridade": 63,
     "codigo_trunfo": "B2",
@@ -22,7 +27,12 @@
     "categoria": "Carrinhos",
     "tema": "Série Botões Eletrônicos",
     "genero": "Masculino",
-    "tags": ["Motoniveladora", "Construção", "Eletrônico", "Estrela"],
+    "tags": [
+      "Motoniveladora",
+      "Construção",
+      "Eletrônico",
+      "Estrela"
+    ],
     "curiosidade": "Surgiram na década de 70 e atravessaram os anos 80 como desejo de toda criança que amava máquinas pesadas.",
     "raridade": 51,
     "codigo_trunfo": "C4",
@@ -37,7 +47,12 @@
     "categoria": "Naves",
     "tema": "Playmobil",
     "genero": "Unisex",
-    "tags": ["Playmobil", "Espaço", "Nave", "Geobra"],
+    "tags": [
+      "Playmobil",
+      "Espaço",
+      "Nave",
+      "Geobra"
+    ],
     "curiosidade": "Inclui a estrutura da estação com vários acessórios espaciais, sendo um dos sets mais complexos da época.",
     "raridade": 87,
     "codigo_trunfo": "B1",
@@ -52,7 +67,12 @@
     "categoria": "Carrinhos",
     "tema": "Série Botões Eletrônicos",
     "genero": "Masculino",
-    "tags": ["Escavadeira", "Engenharia", "Estrela", "Brinquedo"],
+    "tags": [
+      "Escavadeira",
+      "Engenharia",
+      "Estrela",
+      "Brinquedo"
+    ],
     "curiosidade": "Possuía controle por botões na própria escavadeira, permitindo movimentos reais de escavação.",
     "raridade": 48,
     "codigo_trunfo": "C1",
@@ -67,7 +87,14 @@
     "categoria": "TV",
     "tema": "Humor",
     "genero": "Unisex",
-    "tags": ["Humor", "TV", "Didi", "Dedé", "Mussum", "Zacarias"],
+    "tags": [
+      "Humor",
+      "TV",
+      "Didi",
+      "Dedé",
+      "Mussum",
+      "Zacarias"
+    ],
     "curiosidade": "O programa estreou em fevereiro de 1977 e gerou uma infinidade de produtos licenciados nas décadas seguintes.",
     "raridade": 12,
     "codigo_trunfo": "H3",
@@ -82,7 +109,12 @@
     "categoria": "Bonecos",
     "tema": "Masters of the Universe",
     "genero": "Masculino",
-    "tags": ["He-man", "Eternia", "MOTU", "Mattel"],
+    "tags": [
+      "He-man",
+      "Eternia",
+      "MOTU",
+      "Mattel"
+    ],
     "curiosidade": "A figura clássica incluía o machado cinza, o escudo e a lendária Espada do Poder.",
     "raridade": 53,
     "codigo_trunfo": "H1",
@@ -97,7 +129,12 @@
     "categoria": "Carrinhos",
     "tema": "Espaço",
     "genero": "Masculino",
-    "tags": ["Space", "Espaço", "Foguete", "Carrinho"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Foguete",
+      "Carrinho"
+    ],
     "curiosidade": "Carrinhos promocionais que faziam a alegria da garotada com seu visual futurista.",
     "raridade": 8,
     "codigo_trunfo": "D4",
@@ -112,7 +149,13 @@
     "categoria": "Carrinhos",
     "tema": "Caminhões",
     "genero": "Masculino",
-    "tags": ["Coleção", "Big Frota", "Caminhão", "Trator", "Gulliver"],
+    "tags": [
+      "Coleção",
+      "Big Frota",
+      "Caminhão",
+      "Trator",
+      "Gulliver"
+    ],
     "curiosidade": "Uma série completa de caminhões e tratores robustos feitos para durar gerações.",
     "raridade": 67,
     "codigo_trunfo": "C2",
@@ -127,7 +170,12 @@
     "categoria": "Carrinhos",
     "tema": "Caminhões",
     "genero": "Masculino",
-    "tags": ["Big Frota", "Caminhão", "Gulliver", "Logística"],
+    "tags": [
+      "Big Frota",
+      "Caminhão",
+      "Gulliver",
+      "Logística"
+    ],
     "curiosidade": "Eram vendidos tanto de forma avulsa quanto em caixas colecionáveis especiais.",
     "raridade": 50,
     "codigo_trunfo": "C4",
@@ -142,7 +190,12 @@
     "categoria": "Castelo",
     "tema": "Masters of the Universe",
     "genero": "Masculino",
-    "tags": ["Castelo", "Grayskull", "Eternia", "He-man"],
+    "tags": [
+      "Castelo",
+      "Grayskull",
+      "Eternia",
+      "He-man"
+    ],
     "curiosidade": "No Brasil, a Mattel fabricou e distribuiu esse playset que é o sonho de consumo de 10 entre 10 colecionadores.",
     "raridade": 72,
     "codigo_trunfo": "H2",
@@ -157,7 +210,12 @@
     "categoria": "Controle Remoto",
     "tema": "Super Máquina",
     "genero": "Masculino",
-    "tags": ["Super Máquina", "KITT", "Glasslite", "Controle Remoto"],
+    "tags": [
+      "Super Máquina",
+      "KITT",
+      "Glasslite",
+      "Controle Remoto"
+    ],
     "curiosidade": "Versão com controle remoto de 40 Mhz, trazia as luzes icônicas do KITT para a vida real.",
     "raridade": 80,
     "codigo_trunfo": "S1",
@@ -172,7 +230,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Gulliver", "Nave"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Gulliver",
+      "Nave"
+    ],
     "curiosidade": "As naves ejetam a parte frontal e possuem mecanismos de disparos para batalhas intergaláticas.",
     "raridade": 66,
     "codigo_trunfo": "N2",
@@ -187,7 +250,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Cosmic", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Cosmic",
+      "Gulliver"
+    ],
     "curiosidade": "Possui corpo em plástico e metal, sendo um dos modelos mais resistentes da coleção Gulliver.",
     "raridade": 47,
     "codigo_trunfo": "N1",
@@ -202,7 +270,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Odyssey", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Odyssey",
+      "Gulliver"
+    ],
     "curiosidade": "Uma nave espacial épica que vinha acompanhada de uma figura de astronauta articulada.",
     "raridade": 48,
     "codigo_trunfo": "N2",
@@ -217,7 +290,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Alpha", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Alpha",
+      "Gulliver"
+    ],
     "curiosidade": "Possui corpo em plástico e metal com detalhes pintados que remetiam à exploração espacial real.",
     "raridade": 43,
     "codigo_trunfo": "N3",
@@ -232,7 +310,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Spectra", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Spectra",
+      "Gulliver"
+    ],
     "curiosidade": "Uma nave espacial icônica da linha, reconhecida pelo seu design aerodinâmico futurista.",
     "raridade": 44,
     "codigo_trunfo": "N4",
@@ -247,7 +330,13 @@
     "categoria": "Carrinhos",
     "tema": "Autorama",
     "genero": "Unisex",
-    "tags": ["Autorama", "Carrinho", "F1", "Nelson Piquet", "Estrela"],
+    "tags": [
+      "Autorama",
+      "Carrinho",
+      "F1",
+      "Nelson Piquet",
+      "Estrela"
+    ],
     "curiosidade": "Inclui pista elétrica e dois carrinhos de Fórmula 1, celebrando as conquistas de Nelson Piquet.",
     "raridade": 70,
     "codigo_trunfo": "A3",
@@ -262,7 +351,12 @@
     "categoria": "Musicais",
     "tema": "Instrumento Musical",
     "genero": "Unisex",
-    "tags": ["Instrumento", "Música", "Clarineta", "Hering"],
+    "tags": [
+      "Instrumento",
+      "Música",
+      "Clarineta",
+      "Hering"
+    ],
     "curiosidade": "Vinha com um método 'Aprenda Tocando', incentivando os primeiros passos musicais das crianças.",
     "raridade": 21,
     "codigo_trunfo": "C4",
@@ -277,7 +371,12 @@
     "categoria": "Casinha",
     "tema": "Copa Cozinha",
     "genero": "Feminino",
-    "tags": ["Copa", "Cozinha", "Casinha", "Rabaker"],
+    "tags": [
+      "Copa",
+      "Cozinha",
+      "Casinha",
+      "Rabaker"
+    ],
     "curiosidade": "Simula uma copa/cozinha completa para bonecas, com detalhes fiéis aos móveis da época.",
     "raridade": 11,
     "codigo_trunfo": "B4",
@@ -292,7 +391,12 @@
     "categoria": "Armas",
     "tema": "Carro Comando",
     "genero": "Masculino",
-    "tags": ["Carro Comando", "KITT", "Glasslite", "Super Máquina"],
+    "tags": [
+      "Carro Comando",
+      "KITT",
+      "Glasslite",
+      "Super Máquina"
+    ],
     "curiosidade": "Brinquedo inspirado na série de TV 'Super Máquina', com detalhes que remetem ao famoso KITT.",
     "raridade": 39,
     "codigo_trunfo": "C2",
@@ -307,7 +411,12 @@
     "categoria": "Armas",
     "tema": "Revolver Rambo",
     "genero": "Masculino",
-    "tags": ["Rambo", "Revolver", "Arminha", "Lawman"],
+    "tags": [
+      "Rambo",
+      "Revolver",
+      "Arminha",
+      "Lawman"
+    ],
     "curiosidade": "Réplica de revólver que atirava bolinhas plásticas, inspirada na febre dos filmes de ação do Rambo.",
     "raridade": 66,
     "codigo_trunfo": "R3",
@@ -322,7 +431,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Guerra Espacial", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Guerra Espacial",
+      "Gulliver"
+    ],
     "curiosidade": "Composta por 4 modelos diferentes que deslizam e disparam projéteis plásticos.",
     "raridade": 69,
     "codigo_trunfo": "N1",
@@ -337,7 +451,12 @@
     "categoria": "Bonecos",
     "tema": "Super Powers",
     "genero": "Unisex",
-    "tags": ["Batman", "Heroi", "Super Powers", "Estrela"],
+    "tags": [
+      "Batman",
+      "Heroi",
+      "Super Powers",
+      "Estrela"
+    ],
     "curiosidade": "Figura icônica que profere um 'Bat Soco' ao juntar as pernas do boneco.",
     "raridade": 74,
     "codigo_trunfo": "B1",
@@ -352,7 +471,12 @@
     "categoria": "Carrinhos",
     "tema": "Controle Remoto",
     "genero": "Masculino",
-    "tags": ["Carrinho", "Controle Remoto", "Pegasus", "Estrela"],
+    "tags": [
+      "Carrinho",
+      "Controle Remoto",
+      "Pegasus",
+      "Estrela"
+    ],
     "curiosidade": "Baseado no carrinho Matsushiro BMW M1, foi um dos controles remotos mais rápidos da época.",
     "raridade": 81,
     "codigo_trunfo": "C1",
@@ -367,7 +491,12 @@
     "categoria": "Naves",
     "tema": "Super Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Super Naves", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Super Naves",
+      "Gulliver"
+    ],
     "curiosidade": "Inclui os modelos Cosmic, Spectra, Fantastic e Alpha em um set colecionável completo.",
     "raridade": 80,
     "codigo_trunfo": "S1",
@@ -382,7 +511,12 @@
     "categoria": "Carrinhos",
     "tema": "Controle Remoto",
     "genero": "Masculino",
-    "tags": ["Carrinho", "Controle Remoto", "Stratus", "Estrela"],
+    "tags": [
+      "Carrinho",
+      "Controle Remoto",
+      "Stratus",
+      "Estrela"
+    ],
     "curiosidade": "Inspirada no Lancia Stratos, possuía faróis articulados que acendiam de verdade.",
     "raridade": 88,
     "codigo_trunfo": "S1",
@@ -397,7 +531,12 @@
     "categoria": "Mini Games",
     "tema": "Mini Games",
     "genero": "Unisex",
-    "tags": ["Mini Game", "Tec Toy", "Paperboy", "LCD"],
+    "tags": [
+      "Mini Game",
+      "Tec Toy",
+      "Paperboy",
+      "LCD"
+    ],
     "curiosidade": "Sucesso da Tec Toy, funcionava com apenas duas pilhas e simulava o clássico jogo de entregar jornais.",
     "raridade": 63,
     "codigo_trunfo": "M3",
@@ -412,7 +551,12 @@
     "categoria": "Alimentos",
     "tema": "Alimentos",
     "genero": "Unisex",
-    "tags": ["Iogurte", "Chamburcy", "Nostalgia", "Sobremesa"],
+    "tags": [
+      "Iogurte",
+      "Chamburcy",
+      "Nostalgia",
+      "Sobremesa"
+    ],
     "curiosidade": "No YouTube há um comercial clássico dessa sobremesa que marcou os lanches da tarde nos anos 80.",
     "raridade": 50,
     "codigo_trunfo": "I2",
@@ -427,7 +571,12 @@
     "categoria": "Bonecos",
     "tema": "Masters of the Universe",
     "genero": "Masculino",
-    "tags": ["Mentor", "Man-at-Arms", "MOTU", "Mattel"],
+    "tags": [
+      "Mentor",
+      "Man-at-Arms",
+      "MOTU",
+      "Mattel"
+    ],
     "curiosidade": "O mestre de armas de Eternia, vinha com seu icônico cajado e cintura articulada com mola.",
     "raridade": 73,
     "codigo_trunfo": "H4",
@@ -442,7 +591,12 @@
     "categoria": "Bonecos",
     "tema": "Masters of the Universe",
     "genero": "Unisex",
-    "tags": ["He-man", "MOTU", "Coleção", "Mattel"],
+    "tags": [
+      "He-man",
+      "MOTU",
+      "Coleção",
+      "Mattel"
+    ],
     "curiosidade": "Várias gerações da coleção He-Man foram lançadas, tornando-se o pilar dos bonecos de ação da década.",
     "raridade": 75,
     "codigo_trunfo": "H1",
@@ -457,7 +611,12 @@
     "categoria": "Carrinhos",
     "tema": "Super Powers",
     "genero": "Masculino",
-    "tags": ["Batmovel", "Batman", "Super Powers", "Estrela"],
+    "tags": [
+      "Batmovel",
+      "Batman",
+      "Super Powers",
+      "Estrela"
+    ],
     "curiosidade": "Possuía faróis articulados e uma frente com aríete retrátil para combater os vilões de Gotham.",
     "raridade": 77,
     "codigo_trunfo": "B1",
@@ -472,11 +631,38 @@
     "categoria": "Quebra-Cabeças",
     "tema": "Quebra-Cabeças",
     "genero": "Unisex",
-    "tags": ["Quebra-Cabeça", "Puzzle", "Grow", "Arte"],
+    "tags": [
+      "Quebra-Cabeça",
+      "Puzzle",
+      "Grow",
+      "Arte"
+    ],
     "curiosidade": "Reproduzia a obra 'Dança Campestre' de Pieter Bruegel, um clássico absoluto dos desafios da Grow.",
     "raridade": 67,
     "codigo_trunfo": "Q3",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0032_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0032_verso.jpg"
+  },
+  {
+    "id": "0033",
+    "nome": "Bicicleta Caloicross Extra Light",
+    "fabricante": "Caloi",
+    "ano": "80's",
+    "categoria": "Bicicleta",
+    "tema": "BMX",
+    "genero": "Unisex",
+    "tags": [
+      "Bicicleta",
+      "Bike",
+      "BMX",
+      "Caloi",
+      "Light",
+      "Azul"
+    ],
+    "curiosidade": "Aro 20, protetores de espuma.",
+    "raridade": 44,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0033_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0033_verso.jpg"
   }
 ]
