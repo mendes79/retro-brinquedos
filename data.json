@@ -831,5 +831,332 @@
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0041_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0041_verso.jpg"
+  },
+  {
+    "id": "0042",
+    "nome": "Gorila Murfy",
+    "fabricante": "Estrela",
+    "ano": "1987",
+    "categoria": "Bonecos",
+    "tema": "Gorila",
+    "genero": "Unisex",
+    "tags": [
+      "Gorila",
+      "Murfy",
+      "Murphy",
+      "Boneco",
+      "Macaco"
+    ],
+    "curiosidade": "Ao apertar sua barriga, ele abre a boca e emite um som!",
+    "raridade": 49,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0042_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0042_verso.jpg"
+  },
+  {
+    "id": "0043",
+    "nome": "Pinos Mágicos",
+    "fabricante": "Elka",
+    "ano": "70's",
+    "categoria": "Construção",
+    "tema": "Jogo de Construção",
+    "genero": "Unisex",
+    "tags": [
+      "Pinos Mágicos",
+      "Coloridos",
+      "Montar",
+      "Peças"
+    ],
+    "curiosidade": "Conjuntos contendo de 30 a 500 peças coloridas e fáceis de encaixar.",
+    "raridade": 19,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0043_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0043_verso.jpg"
+  },
+  {
+    "id": "0044",
+    "nome": "Kichute",
+    "fabricante": "Alpargatas",
+    "ano": "1970",
+    "categoria": "Calçados",
+    "tema": "Tênis",
+    "genero": "Maculino",
+    "tags": [
+      "Kichute",
+      "Tênis",
+      "Travas",
+      "Chuteira"
+    ],
+    "curiosidade": "Cadarços extremamente longos, que as crianças amarravam dando voltas na canela.",
+    "raridade": 7,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0044_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0044_verso.jpg"
+  },
+  {
+    "id": "0045",
+    "nome": "Fofão",
+    "fabricante": "Mimo",
+    "ano": "1985",
+    "categoria": "Bonecos",
+    "tema": "Fofão",
+    "genero": "Feminino",
+    "tags": [
+      "Boneco",
+      "Fofão",
+      "Turma do Balão Mágico"
+    ],
+    "curiosidade": "Havia uma lenda urbana nos anos 80 de que o boneco conteria uma \"adaga\" em seu interior.",
+    "raridade": 65,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0045_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0045_verso.jpg"
+  },
+  {
+    "id": "0046",
+    "nome": "Yo-Yo Coca-Cola Super",
+    "fabricante": "Russell",
+    "ano": "80's",
+    "categoria": "Iô-io",
+    "tema": "Coca-Cola",
+    "genero": "Unisex",
+    "tags": [
+      "Yo-Yo",
+      "Io-Io",
+      "Coca Cola",
+      "Super"
+    ],
+    "curiosidade": "Promocional da Coca-Cola (tampinhas + valor simbólico pela troca).",
+    "raridade": 37,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0046_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0046_verso.jpg"
+  },
+  {
+    "id": "0047",
+    "nome": "Banco Imobiliário",
+    "fabricante": "Estrela",
+    "ano": "80's",
+    "categoria": "Jogo",
+    "tema": "Jogo de Tabuleiro",
+    "genero": "Unisex",
+    "tags": [
+      "Banco",
+      "Imobiliário",
+      "Jogo",
+      "Tabuleiro",
+      "Dado",
+      "Peão"
+    ],
+    "curiosidade": "Versão do Monopoly norte-americano, começou a ser vendido oficialmente pela Estrela em 1944.",
+    "raridade": 33,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0047_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0047_verso.jpg"
+  },
+  {
+    "id": "0048",
+    "nome": "Atari 2600",
+    "fabricante": "Polyvox",
+    "ano": "1983",
+    "categoria": "Vídeo Game",
+    "tema": "Vídeo Game",
+    "genero": "Unisex",
+    "tags": [
+      "Atari",
+      "2600",
+      "Video Game",
+      "Cartucho",
+      "Jogo"
+    ],
+    "curiosidade": "A versão Polyvox chegou com a carcaça inteiramente preta, o que lhe rendeu o apelido de \"Darth Vader\".",
+    "raridade": 25,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0048_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0048_verso.jpg"
+  },
+  {
+    "id": "0049",
+    "nome": "Conexão Secreta",
+    "fabricante": "Estrela",
+    "ano": "80's",
+    "categoria": "Armas",
+    "tema": "Espionagem",
+    "genero": "Unisex",
+    "tags": [
+      "Conexão Secreta",
+      "Espião",
+      "Arma",
+      "Dardo",
+      "Modular"
+    ],
+    "curiosidade": "Continha Pistola-detetive, Periscópio-espião, Óculos-disfarce, Apito-alarme além de dardos e Alvo.",
+    "raridade": 57,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0049_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0049_verso.jpg"
+  },
+  {
+    "id": "0050",
+    "nome": "Boca Rica",
+    "fabricante": "Estrela",
+    "ano": "1984",
+    "categoria": "Jogo",
+    "tema": "Boca Rica",
+    "genero": "Unisex",
+    "tags": [
+      "Boca Rica",
+      "Moedas",
+      "Cofre"
+    ],
+    "curiosidade": "Devido ao seu sucesso, a Estrela relançou o brinquedo em 2012.",
+    "raridade": 48,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0050_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0050_verso.jpg"
+  },
+  {
+    "id": "0051",
+    "nome": "Pirocóptero",
+    "fabricante": "Pops",
+    "ano": "80's e 90's",
+    "categoria": "Pirocóptero",
+    "tema": "Helicóptero",
+    "genero": "Unisex",
+    "tags": [
+      "Pirocóptero",
+      "Pirulito",
+      "Voa",
+      "Hélice"
+    ],
+    "curiosidade": "pirulito cuja embalagem trazia uma hélice de plástico colorida.",
+    "raridade": 70,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0051_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0051_verso.jpg"
+  },
+  {
+    "id": "0052",
+    "nome": "Lancheira Plástica",
+    "fabricante": "Vários",
+    "ano": "80's e 90's",
+    "categoria": "Escolar",
+    "tema": "Lancheira",
+    "genero": "Unisex",
+    "tags": [
+      "Lancheira",
+      "Merendeira",
+      "Garrafa",
+      "Copo",
+      "Escolar"
+    ],
+    "curiosidade": "",
+    "raridade": 17,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0052_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0052_verso.jpg"
+  },
+  {
+    "id": "0053",
+    "nome": "Lancheira do Rambo",
+    "fabricante": "Thermos",
+    "ano": "1985",
+    "categoria": "Escolar",
+    "tema": "Lancheira",
+    "genero": "Unisex",
+    "tags": [
+      "Lancheira",
+      "Merendeira",
+      "Garrafa",
+      "Escolar",
+      "Rambo"
+    ],
+    "curiosidade": "Maleta plástica articulada e uma garrafa térmica com vedação de borracha.",
+    "raridade": 61,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0053_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0053_verso.png"
+  },
+  {
+    "id": "0054",
+    "nome": "Estojo de Madeira",
+    "fabricante": "Vários",
+    "ano": "80's e 90's",
+    "categoria": "Escolar",
+    "tema": "Estojo",
+    "genero": "Unisex",
+    "tags": [
+      "Estojo",
+      "Lápis",
+      "Madeira",
+      "Faber Castell"
+    ],
+    "curiosidade": "Estojos de madeira comuns nas décadas de 80 e 90 no Brasil.",
+    "raridade": 36,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0054_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0054_verso.jpg"
+  },
+  {
+    "id": "0055",
+    "nome": "Estojo Deluxe 88",
+    "fabricante": "Importados",
+    "ano": "80's e 90's",
+    "categoria": "Escolar",
+    "tema": "Estojo",
+    "genero": "Unisex",
+    "tags": [
+      "Estojo",
+      "Lápis",
+      "Madeira",
+      "Automático",
+      "Compartimentos Secreto"
+    ],
+    "curiosidade": "Conhecido por \"automático\" e múltiplos compartimentos \"secretos\" acionados por botões.",
+    "raridade": 55,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0055_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0055_verso.jpg"
+  },
+  {
+    "id": "0056",
+    "nome": "Yo-Yo Coca-Cola Profissional",
+    "fabricante": "Russell",
+    "ano": "1982",
+    "categoria": "Iô-io",
+    "tema": "Coca-Cola",
+    "genero": "Unisex",
+    "tags": [
+      "Yo-Yo",
+      "Io-Io",
+      "Coca Cola",
+      "Profissional"
+    ],
+    "curiosidade": "Promocional da Coca-Cola (tampinhas + valor simbólico pela troca).",
+    "raridade": 41,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0056_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0056_verso.jpg"
+  },
+  {
+    "id": "0057",
+    "nome": "Estojo Automático",
+    "fabricante": "Great",
+    "ano": "80's e 90's",
+    "categoria": "Escolar",
+    "tema": "Estojo",
+    "genero": "Unisex",
+    "tags": [
+      "Estojo",
+      "Lápis",
+      "Madeira",
+      "Automático",
+      "Compartimentos Secreto"
+    ],
+    "curiosidade": "Múltiplos compartimentos \"secretos\" acionados por botões, sonho de consumo da criançada.",
+    "raridade": 55,
+    "codigo_trunfo": "",
+    "url_frente": "",
+    "url_verso": ""
   }
 ]
