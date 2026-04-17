@@ -7,7 +7,12 @@
     "categoria": "Carrinhos",
     "tema": "Playmobil",
     "genero": "Unisex",
-    "tags": ["Playmobil", "Carrinho", "Rally", "Hella"],
+    "tags": [
+      "Playmobil",
+      "Carrinho",
+      "Rally",
+      "Hella"
+    ],
     "curiosidade": "Produzido pela Geobra Brandstätter, foi um dos veículos mais icônicos da linha Playmobil no Brasil pela Estrela.",
     "raridade": 63,
     "codigo_trunfo": "B2",
@@ -22,7 +27,12 @@
     "categoria": "Carrinhos",
     "tema": "Série Botões Eletrônicos",
     "genero": "Masculino",
-    "tags": ["Motoniveladora", "Construção", "Eletrônico", "Estrela"],
+    "tags": [
+      "Motoniveladora",
+      "Construção",
+      "Eletrônico",
+      "Estrela"
+    ],
     "curiosidade": "Surgiram na década de 70 e atravessaram os anos 80 como desejo de toda criança que amava máquinas pesadas.",
     "raridade": 51,
     "codigo_trunfo": "C4",
@@ -37,7 +47,12 @@
     "categoria": "Naves",
     "tema": "Playmobil",
     "genero": "Unisex",
-    "tags": ["Playmobil", "Espaço", "Nave", "Geobra"],
+    "tags": [
+      "Playmobil",
+      "Espaço",
+      "Nave",
+      "Geobra"
+    ],
     "curiosidade": "Inclui a estrutura da estação com vários acessórios espaciais, sendo um dos sets mais complexos da época.",
     "raridade": 87,
     "codigo_trunfo": "B1",
@@ -52,7 +67,12 @@
     "categoria": "Carrinhos",
     "tema": "Série Botões Eletrônicos",
     "genero": "Masculino",
-    "tags": ["Escavadeira", "Engenharia", "Estrela", "Brinquedo"],
+    "tags": [
+      "Escavadeira",
+      "Engenharia",
+      "Estrela",
+      "Brinquedo"
+    ],
     "curiosidade": "Possuía controle por botões na própria escavadeira, permitindo movimentos reais de escavação.",
     "raridade": 48,
     "codigo_trunfo": "C1",
@@ -67,7 +87,14 @@
     "categoria": "TV",
     "tema": "Humor",
     "genero": "Unisex",
-    "tags": ["Humor", "TV", "Didi", "Dedé", "Mussum", "Zacarias"],
+    "tags": [
+      "Humor",
+      "TV",
+      "Didi",
+      "Dedé",
+      "Mussum",
+      "Zacarias"
+    ],
     "curiosidade": "O programa estreou em fevereiro de 1977 e gerou uma infinidade de produtos licenciados nas décadas seguintes.",
     "raridade": 12,
     "codigo_trunfo": "H3",
@@ -82,7 +109,12 @@
     "categoria": "Bonecos",
     "tema": "Masters of the Universe",
     "genero": "Masculino",
-    "tags": ["He-man", "Eternia", "MOTU", "Mattel"],
+    "tags": [
+      "He-man",
+      "Eternia",
+      "MOTU",
+      "Mattel"
+    ],
     "curiosidade": "A figura clássica incluía o machado cinza, o escudo e a lendária Espada do Poder.",
     "raridade": 53,
     "codigo_trunfo": "H1",
@@ -97,7 +129,12 @@
     "categoria": "Carrinhos",
     "tema": "Espaço",
     "genero": "Masculino",
-    "tags": ["Space", "Espaço", "Foguete", "Carrinho"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Foguete",
+      "Carrinho"
+    ],
     "curiosidade": "Carrinhos promocionais que faziam a alegria da garotada com seu visual futurista.",
     "raridade": 8,
     "codigo_trunfo": "D4",
@@ -112,7 +149,13 @@
     "categoria": "Carrinhos",
     "tema": "Caminhões",
     "genero": "Masculino",
-    "tags": ["Coleção", "Big Frota", "Caminhão", "Trator", "Gulliver"],
+    "tags": [
+      "Coleção",
+      "Big Frota",
+      "Caminhão",
+      "Trator",
+      "Gulliver"
+    ],
     "curiosidade": "Uma série completa de caminhões e tratores robustos feitos para durar gerações.",
     "raridade": 67,
     "codigo_trunfo": "C2",
@@ -127,7 +170,12 @@
     "categoria": "Carrinhos",
     "tema": "Caminhões",
     "genero": "Masculino",
-    "tags": ["Big Frota", "Caminhão", "Gulliver", "Logística"],
+    "tags": [
+      "Big Frota",
+      "Caminhão",
+      "Gulliver",
+      "Logística"
+    ],
     "curiosidade": "Eram vendidos tanto de forma avulsa quanto em caixas colecionáveis especiais.",
     "raridade": 50,
     "codigo_trunfo": "C4",
@@ -142,7 +190,12 @@
     "categoria": "Castelo",
     "tema": "Masters of the Universe",
     "genero": "Masculino",
-    "tags": ["Castelo", "Grayskull", "Eternia", "He-man"],
+    "tags": [
+      "Castelo",
+      "Grayskull",
+      "Eternia",
+      "He-man"
+    ],
     "curiosidade": "No Brasil, a Mattel fabricou e distribuiu esse playset que é o sonho de consumo de 10 entre 10 colecionadores.",
     "raridade": 72,
     "codigo_trunfo": "H2",
@@ -157,7 +210,12 @@
     "categoria": "Controle Remoto",
     "tema": "Super Máquina",
     "genero": "Masculino",
-    "tags": ["Super Máquina", "KITT", "Glasslite", "Controle Remoto"],
+    "tags": [
+      "Super Máquina",
+      "KITT",
+      "Glasslite",
+      "Controle Remoto"
+    ],
     "curiosidade": "Versão com controle remoto de 40 Mhz, trazia as luzes icônicas do KITT para a vida real.",
     "raridade": 80,
     "codigo_trunfo": "S1",
@@ -172,7 +230,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Gulliver", "Nave"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Gulliver",
+      "Nave"
+    ],
     "curiosidade": "As naves ejetam a parte frontal e possuem mecanismos de disparos para batalhas intergaláticas.",
     "raridade": 66,
     "codigo_trunfo": "N2",
@@ -187,7 +250,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Cosmic", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Cosmic",
+      "Gulliver"
+    ],
     "curiosidade": "Possui corpo em plástico e metal, sendo um dos modelos mais resistentes da coleção Gulliver.",
     "raridade": 47,
     "codigo_trunfo": "N1",
@@ -202,7 +270,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Odyssey", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Odyssey",
+      "Gulliver"
+    ],
     "curiosidade": "Uma nave espacial épica que vinha acompanhada de uma figura de astronauta articulada.",
     "raridade": 48,
     "codigo_trunfo": "N2",
@@ -217,7 +290,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Alpha", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Alpha",
+      "Gulliver"
+    ],
     "curiosidade": "Possui corpo em plástico e metal com detalhes pintados que remetiam à exploração espacial real.",
     "raridade": 43,
     "codigo_trunfo": "N3",
@@ -232,7 +310,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Spectra", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Spectra",
+      "Gulliver"
+    ],
     "curiosidade": "Uma nave espacial icônica da linha, reconhecida pelo seu design aerodinâmico futurista.",
     "raridade": 44,
     "codigo_trunfo": "N4",
@@ -247,7 +330,13 @@
     "categoria": "Carrinhos",
     "tema": "Autorama",
     "genero": "Unisex",
-    "tags": ["Autorama", "Carrinho", "F1", "Nelson Piquet", "Estrela"],
+    "tags": [
+      "Autorama",
+      "Carrinho",
+      "F1",
+      "Nelson Piquet",
+      "Estrela"
+    ],
     "curiosidade": "Inclui pista elétrica e dois carrinhos de Fórmula 1, celebrando as conquistas de Nelson Piquet.",
     "raridade": 70,
     "codigo_trunfo": "A3",
@@ -262,7 +351,12 @@
     "categoria": "Musicais",
     "tema": "Instrumento Musical",
     "genero": "Unisex",
-    "tags": ["Instrumento", "Música", "Clarineta", "Hering"],
+    "tags": [
+      "Instrumento",
+      "Música",
+      "Clarineta",
+      "Hering"
+    ],
     "curiosidade": "Vinha com um método 'Aprenda Tocando', incentivando os primeiros passos musicais das crianças.",
     "raridade": 21,
     "codigo_trunfo": "C4",
@@ -277,7 +371,12 @@
     "categoria": "Casinha",
     "tema": "Copa Cozinha",
     "genero": "Feminino",
-    "tags": ["Copa", "Cozinha", "Casinha", "Rabaker"],
+    "tags": [
+      "Copa",
+      "Cozinha",
+      "Casinha",
+      "Rabaker"
+    ],
     "curiosidade": "Simula uma copa/cozinha completa para bonecas, com detalhes fiéis aos móveis da época.",
     "raridade": 11,
     "codigo_trunfo": "B4",
@@ -292,7 +391,12 @@
     "categoria": "Armas",
     "tema": "Carro Comando",
     "genero": "Masculino",
-    "tags": ["Carro Comando", "KITT", "Glasslite", "Super Máquina"],
+    "tags": [
+      "Carro Comando",
+      "KITT",
+      "Glasslite",
+      "Super Máquina"
+    ],
     "curiosidade": "Brinquedo inspirado na série de TV 'Super Máquina', com detalhes que remetem ao famoso KITT.",
     "raridade": 39,
     "codigo_trunfo": "C2",
@@ -307,7 +411,12 @@
     "categoria": "Armas",
     "tema": "Revolver Rambo",
     "genero": "Masculino",
-    "tags": ["Rambo", "Revolver", "Arminha", "Lawman"],
+    "tags": [
+      "Rambo",
+      "Revolver",
+      "Arminha",
+      "Lawman"
+    ],
     "curiosidade": "Réplica de revólver que atirava bolinhas plásticas, inspirada na febre dos filmes de ação do Rambo.",
     "raridade": 66,
     "codigo_trunfo": "R3",
@@ -322,7 +431,12 @@
     "categoria": "Naves",
     "tema": "Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Guerra Espacial", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Guerra Espacial",
+      "Gulliver"
+    ],
     "curiosidade": "Composta por 4 modelos diferentes que deslizam e disparam projéteis plásticos.",
     "raridade": 69,
     "codigo_trunfo": "N1",
@@ -337,7 +451,12 @@
     "categoria": "Bonecos",
     "tema": "Super Powers",
     "genero": "Unisex",
-    "tags": ["Batman", "Heroi", "Super Powers", "Estrela"],
+    "tags": [
+      "Batman",
+      "Heroi",
+      "Super Powers",
+      "Estrela"
+    ],
     "curiosidade": "Figura icônica que profere um 'Bat Soco' ao juntar as pernas do boneco.",
     "raridade": 74,
     "codigo_trunfo": "B1",
@@ -352,7 +471,12 @@
     "categoria": "Carrinhos",
     "tema": "Controle Remoto",
     "genero": "Masculino",
-    "tags": ["Carrinho", "Controle Remoto", "Pegasus", "Estrela"],
+    "tags": [
+      "Carrinho",
+      "Controle Remoto",
+      "Pegasus",
+      "Estrela"
+    ],
     "curiosidade": "Baseado no carrinho Matsushiro BMW M1, foi um dos controles remotos mais rápidos da época.",
     "raridade": 81,
     "codigo_trunfo": "C1",
@@ -367,7 +491,12 @@
     "categoria": "Naves",
     "tema": "Super Naves",
     "genero": "Unisex",
-    "tags": ["Space", "Espaço", "Super Naves", "Gulliver"],
+    "tags": [
+      "Space",
+      "Espaço",
+      "Super Naves",
+      "Gulliver"
+    ],
     "curiosidade": "Inclui os modelos Cosmic, Spectra, Fantastic e Alpha em um set colecionável completo.",
     "raridade": 80,
     "codigo_trunfo": "S1",
@@ -382,7 +511,12 @@
     "categoria": "Carrinhos",
     "tema": "Controle Remoto",
     "genero": "Masculino",
-    "tags": ["Carrinho", "Controle Remoto", "Stratus", "Estrela"],
+    "tags": [
+      "Carrinho",
+      "Controle Remoto",
+      "Stratus",
+      "Estrela"
+    ],
     "curiosidade": "Inspirada no Lancia Stratos, possuía faróis articulados que acendiam de verdade.",
     "raridade": 88,
     "codigo_trunfo": "S1",
@@ -397,7 +531,12 @@
     "categoria": "Mini Games",
     "tema": "Mini Games",
     "genero": "Unisex",
-    "tags": ["Mini Game", "Tec Toy", "Paperboy", "LCD"],
+    "tags": [
+      "Mini Game",
+      "Tec Toy",
+      "Paperboy",
+      "LCD"
+    ],
     "curiosidade": "Sucesso da Tec Toy, funcionava com apenas duas pilhas e simulava o clássico jogo de entregar jornais.",
     "raridade": 63,
     "codigo_trunfo": "M3",
@@ -412,7 +551,12 @@
     "categoria": "Alimentos",
     "tema": "Alimentos",
     "genero": "Unisex",
-    "tags": ["Iogurte", "Chamburcy", "Nostalgia", "Sobremesa"],
+    "tags": [
+      "Iogurte",
+      "Chamburcy",
+      "Nostalgia",
+      "Sobremesa"
+    ],
     "curiosidade": "No YouTube há um comercial clássico dessa sobremesa que marcou os lanches da tarde nos anos 80.",
     "raridade": 50,
     "codigo_trunfo": "I2",
@@ -427,7 +571,12 @@
     "categoria": "Bonecos",
     "tema": "Masters of the Universe",
     "genero": "Masculino",
-    "tags": ["Mentor", "Man-at-Arms", "MOTU", "Mattel"],
+    "tags": [
+      "Mentor",
+      "Man-at-Arms",
+      "MOTU",
+      "Mattel"
+    ],
     "curiosidade": "O mestre de armas de Eternia, vinha com seu icônico cajado e cintura articulada com mola.",
     "raridade": 73,
     "codigo_trunfo": "H4",
@@ -442,7 +591,12 @@
     "categoria": "Bonecos",
     "tema": "Masters of the Universe",
     "genero": "Unisex",
-    "tags": ["He-man", "MOTU", "Coleção", "Mattel"],
+    "tags": [
+      "He-man",
+      "MOTU",
+      "Coleção",
+      "Mattel"
+    ],
     "curiosidade": "Várias gerações da coleção He-Man foram lançadas, tornando-se o pilar dos bonecos de ação da década.",
     "raridade": 75,
     "codigo_trunfo": "H1",
@@ -457,7 +611,12 @@
     "categoria": "Carrinhos",
     "tema": "Super Powers",
     "genero": "Masculino",
-    "tags": ["Batmovel", "Batman", "Super Powers", "Estrela"],
+    "tags": [
+      "Batmovel",
+      "Batman",
+      "Super Powers",
+      "Estrela"
+    ],
     "curiosidade": "Possuía faróis articulados e uma frente com aríete retrátil para combater os vilões de Gotham.",
     "raridade": 77,
     "codigo_trunfo": "B1",
@@ -472,7 +631,12 @@
     "categoria": "Quebra-Cabeças",
     "tema": "Quebra-Cabeças",
     "genero": "Unisex",
-    "tags": ["Quebra-Cabeça", "Puzzle", "Grow", "Arte"],
+    "tags": [
+      "Quebra-Cabeça",
+      "Puzzle",
+      "Grow",
+      "Arte"
+    ],
     "curiosidade": "Reproduzia a obra 'Dança Campestre' de Pieter Bruegel, um clássico absoluto dos desafios da Grow.",
     "raridade": 67,
     "codigo_trunfo": "Q3",
@@ -487,7 +651,14 @@
     "categoria": "Bicicleta",
     "tema": "BMX",
     "genero": "Unisex",
-    "tags": ["Bicicleta", "Bike", "BMX", "Caloi", "Light", "Azul"],
+    "tags": [
+      "Bicicleta",
+      "Bike",
+      "BMX",
+      "Caloi",
+      "Light",
+      "Azul"
+    ],
     "curiosidade": "Aro 20, protetores de espuma.",
     "raridade": 44,
     "codigo_trunfo": "",
@@ -502,7 +673,14 @@
     "categoria": "Bicicleta",
     "tema": "BMX",
     "genero": "Unisex",
-    "tags": ["Bicicleta", "Bike", "BMX", "Caloi", "Light", "Vermelha"],
+    "tags": [
+      "Bicicleta",
+      "Bike",
+      "BMX",
+      "Caloi",
+      "Light",
+      "Vermelha"
+    ],
     "curiosidade": "Aro 20, protetores de espuma, peças de light vermelhas.",
     "raridade": 49,
     "codigo_trunfo": "",
@@ -517,7 +695,14 @@
     "categoria": "Bicicleta",
     "tema": "BMX",
     "genero": "Unisex",
-    "tags": ["Bicicleta", "Bike", "BMX", "Caloi", "Freestyle 90", "Free 2"],
+    "tags": [
+      "Bicicleta",
+      "Bike",
+      "BMX",
+      "Caloi",
+      "Freestyle 90",
+      "Free 2"
+    ],
     "curiosidade": "Aro 20, pedaleiras atrás",
     "raridade": 39,
     "codigo_trunfo": "",
@@ -532,7 +717,13 @@
     "categoria": "Bicicleta",
     "tema": "BMX",
     "genero": "Unisex",
-    "tags": ["Bicicleta", "Bike", "BMX", "Caloi", "Freestyle"],
+    "tags": [
+      "Bicicleta",
+      "Bike",
+      "BMX",
+      "Caloi",
+      "Freestyle"
+    ],
     "curiosidade": "Aro 20, pedaleiras atrás",
     "raridade": 40,
     "codigo_trunfo": "",
@@ -547,7 +738,12 @@
     "categoria": "Bonecos",
     "tema": "Sectaurs",
     "genero": "Unisex",
-    "tags": ["Bonecos", "Sectaurs", "Insetos", "Herois"],
+    "tags": [
+      "Bonecos",
+      "Sectaurs",
+      "Insetos",
+      "Herois"
+    ],
     "curiosidade": "Personagens humanos híbridos de insetos que montam insetos gigantes.",
     "raridade": 60,
     "codigo_trunfo": "",
@@ -584,7 +780,12 @@
     "categoria": "Futebol de Botão",
     "tema": "Futebol",
     "genero": "Masculino",
-    "tags": ["Estrelão", "Campo", "Futebol", "Botão"],
+    "tags": [
+      "Estrelão",
+      "Campo",
+      "Futebol",
+      "Botão"
+    ],
     "curiosidade": "Utilizado para jogos de futebol de mesa (futebol de botão).",
     "raridade": 29,
     "codigo_trunfo": "",
@@ -599,7 +800,12 @@
     "categoria": "Bonecos",
     "tema": "Fantoches",
     "genero": "Unisex",
-    "tags": ["Bonecos", "Lango", "Monstros", "Soco"],
+    "tags": [
+      "Bonecos",
+      "Lango",
+      "Monstros",
+      "Soco"
+    ],
     "curiosidade": "Cada boneco representava um elemento da natureza (terra, floresta, água, galáxia, etc.).",
     "raridade": 39,
     "codigo_trunfo": "",
@@ -614,7 +820,12 @@
     "categoria": "Bola",
     "tema": "Fluffy",
     "genero": "Unisex",
-    "tags": ["Bola", "Elásticos", "Fluffy", "Koosh Ball"],
+    "tags": [
+      "Bola",
+      "Elásticos",
+      "Fluffy",
+      "Koosh Ball"
+    ],
     "curiosidade": "Fluffy ou Koosh Ball, o colecionável com rostos e mãos era chamado \"Fluffy Gang\".",
     "raridade": 12,
     "codigo_trunfo": "",
@@ -629,7 +840,13 @@
     "categoria": "Bonecos",
     "tema": "Gorila",
     "genero": "Unisex",
-    "tags": ["Gorila", "Murfy", "Murphy", "Boneco", "Macaco"],
+    "tags": [
+      "Gorila",
+      "Murfy",
+      "Murphy",
+      "Boneco",
+      "Macaco"
+    ],
     "curiosidade": "Ao apertar sua barriga, ele abre a boca e emite um som!",
     "raridade": 49,
     "codigo_trunfo": "",
@@ -644,7 +861,12 @@
     "categoria": "Construção",
     "tema": "Jogo de Construção",
     "genero": "Unisex",
-    "tags": ["Pinos Mágicos", "Coloridos", "Montar", "Peças"],
+    "tags": [
+      "Pinos Mágicos",
+      "Coloridos",
+      "Montar",
+      "Peças"
+    ],
     "curiosidade": "Conjuntos contendo de 30 a 500 peças coloridas e fáceis de encaixar.",
     "raridade": 19,
     "codigo_trunfo": "",
@@ -659,7 +881,12 @@
     "categoria": "Calçados",
     "tema": "Tênis",
     "genero": "Maculino",
-    "tags": ["Kichute", "Tênis", "Travas", "Chuteira"],
+    "tags": [
+      "Kichute",
+      "Tênis",
+      "Travas",
+      "Chuteira"
+    ],
     "curiosidade": "Cadarços extremamente longos, que as crianças amarravam dando voltas na canela.",
     "raridade": 7,
     "codigo_trunfo": "",
@@ -674,7 +901,11 @@
     "categoria": "Bonecos",
     "tema": "Fofão",
     "genero": "Feminino",
-    "tags": ["Boneco", "Fofão", "Turma do Balão Mágico"],
+    "tags": [
+      "Boneco",
+      "Fofão",
+      "Turma do Balão Mágico"
+    ],
     "curiosidade": "Havia uma lenda urbana nos anos 80 de que o boneco conteria uma \"adaga\" em seu interior.",
     "raridade": 65,
     "codigo_trunfo": "",
@@ -689,7 +920,12 @@
     "categoria": "Iô-io",
     "tema": "Coca-Cola",
     "genero": "Unisex",
-    "tags": ["Yo-Yo", "Io-Io", "Coca Cola", "Super"],
+    "tags": [
+      "Yo-Yo",
+      "Io-Io",
+      "Coca Cola",
+      "Super"
+    ],
     "curiosidade": "Promocional da Coca-Cola (tampinhas + valor simbólico pela troca).",
     "raridade": 37,
     "codigo_trunfo": "",
@@ -704,7 +940,14 @@
     "categoria": "Jogo",
     "tema": "Jogo de Tabuleiro",
     "genero": "Unisex",
-    "tags": ["Banco", "Imobiliário", "Jogo", "Tabuleiro", "Dado", "Peão"],
+    "tags": [
+      "Banco",
+      "Imobiliário",
+      "Jogo",
+      "Tabuleiro",
+      "Dado",
+      "Peão"
+    ],
     "curiosidade": "Versão do Monopoly norte-americano, começou a ser vendido oficialmente pela Estrela em 1944.",
     "raridade": 33,
     "codigo_trunfo": "",
@@ -719,7 +962,13 @@
     "categoria": "Vídeo Game",
     "tema": "Vídeo Game",
     "genero": "Unisex",
-    "tags": ["Atari", "2600", "Video Game", "Cartucho", "Jogo"],
+    "tags": [
+      "Atari",
+      "2600",
+      "Video Game",
+      "Cartucho",
+      "Jogo"
+    ],
     "curiosidade": "A versão Polyvox chegou com a carcaça inteiramente preta, o que lhe rendeu o apelido de \"Darth Vader\".",
     "raridade": 25,
     "codigo_trunfo": "",
@@ -734,7 +983,13 @@
     "categoria": "Armas",
     "tema": "Espionagem",
     "genero": "Unisex",
-    "tags": ["Conexão Secreta", "Espião", "Arma", "Dardo", "Modular"],
+    "tags": [
+      "Conexão Secreta",
+      "Espião",
+      "Arma",
+      "Dardo",
+      "Modular"
+    ],
     "curiosidade": "Continha Pistola-detetive, Periscópio-espião, Óculos-disfarce, Apito-alarme além de dardos e Alvo.",
     "raridade": 57,
     "codigo_trunfo": "",
@@ -749,7 +1004,11 @@
     "categoria": "Jogo",
     "tema": "Boca Rica",
     "genero": "Unisex",
-    "tags": ["Boca Rica", "Moedas", "Cofre"],
+    "tags": [
+      "Boca Rica",
+      "Moedas",
+      "Cofre"
+    ],
     "curiosidade": "Devido ao seu sucesso, a Estrela relançou o brinquedo em 2012.",
     "raridade": 48,
     "codigo_trunfo": "",
@@ -764,7 +1023,12 @@
     "categoria": "Pirocóptero",
     "tema": "Helicóptero",
     "genero": "Unisex",
-    "tags": ["Pirocóptero", "Pirulito", "Voa", "Hélice"],
+    "tags": [
+      "Pirocóptero",
+      "Pirulito",
+      "Voa",
+      "Hélice"
+    ],
     "curiosidade": "pirulito cuja embalagem trazia uma hélice de plástico colorida.",
     "raridade": 70,
     "codigo_trunfo": "",
@@ -779,7 +1043,13 @@
     "categoria": "Escolar",
     "tema": "Lancheira",
     "genero": "Unisex",
-    "tags": ["Lancheira", "Merendeira", "Garrafa", "Copo", "Escolar"],
+    "tags": [
+      "Lancheira",
+      "Merendeira",
+      "Garrafa",
+      "Copo",
+      "Escolar"
+    ],
     "curiosidade": "",
     "raridade": 17,
     "codigo_trunfo": "",
@@ -794,7 +1064,13 @@
     "categoria": "Escolar",
     "tema": "Lancheira",
     "genero": "Unisex",
-    "tags": ["Lancheira", "Merendeira", "Garrafa", "Escolar", "Rambo"],
+    "tags": [
+      "Lancheira",
+      "Merendeira",
+      "Garrafa",
+      "Escolar",
+      "Rambo"
+    ],
     "curiosidade": "Maleta plástica articulada e uma garrafa térmica com vedação de borracha.",
     "raridade": 61,
     "codigo_trunfo": "",
@@ -809,7 +1085,12 @@
     "categoria": "Escolar",
     "tema": "Estojo",
     "genero": "Unisex",
-    "tags": ["Estojo", "Lápis", "Madeira", "Faber Castell"],
+    "tags": [
+      "Estojo",
+      "Lápis",
+      "Madeira",
+      "Faber Castell"
+    ],
     "curiosidade": "Estojos de madeira comuns nas décadas de 80 e 90 no Brasil.",
     "raridade": 36,
     "codigo_trunfo": "",
@@ -845,7 +1126,12 @@
     "categoria": "Iô-io",
     "tema": "Coca-Cola",
     "genero": "Unisex",
-    "tags": ["Yo-Yo", "Io-Io", "Coca Cola", "Profissional"],
+    "tags": [
+      "Yo-Yo",
+      "Io-Io",
+      "Coca Cola",
+      "Profissional"
+    ],
     "curiosidade": "Promocional da Coca-Cola (tampinhas + valor simbólico pela troca).",
     "raridade": 41,
     "codigo_trunfo": "",
@@ -881,7 +1167,12 @@
     "categoria": "Jogo",
     "tema": "Jogo de Tabuleiro",
     "genero": "Unisex",
-    "tags": ["Jogo", "Detetive", "Estrela", "Tabuleiro"],
+    "tags": [
+      "Jogo",
+      "Detetive",
+      "Estrela",
+      "Tabuleiro"
+    ],
     "curiosidade": "Jogo de dedução/investigação para 3-8 jogadores.",
     "raridade": 43,
     "codigo_trunfo": "",
@@ -896,7 +1187,12 @@
     "categoria": "Jogo",
     "tema": "Jogo de Tabuleiro",
     "genero": "Unisex",
-    "tags": ["Jogo", "Detetive", "Estrela", "Tabuleiro"],
+    "tags": [
+      "Jogo",
+      "Detetive",
+      "Estrela",
+      "Tabuleiro"
+    ],
     "curiosidade": "Lançado no Brasil em 1977, enorme sucesso nos anos 80/90.",
     "raridade": 43,
     "codigo_trunfo": "",
@@ -911,7 +1207,12 @@
     "categoria": "Jogo",
     "tema": "Jogo de Tabuleiro",
     "genero": "Unisex",
-    "tags": ["Jogo", "Detetive", "Estrela", "Tabuleiro"],
+    "tags": [
+      "Jogo",
+      "Detetive",
+      "Estrela",
+      "Tabuleiro"
+    ],
     "curiosidade": "Tabuleiro com mansão, cartas de suspeitos/armas/locais e envelope secreto.",
     "raridade": 43,
     "codigo_trunfo": "",
@@ -926,7 +1227,11 @@
     "categoria": "Jogo",
     "tema": "Jogo de Tabuleiro",
     "genero": "Unisex",
-    "tags": ["Jogo da Vida", "Estrela", "Tabuleiro"],
+    "tags": [
+      "Jogo da Vida",
+      "Estrela",
+      "Tabuleiro"
+    ],
     "curiosidade": "Versão do The Game of Life; ensinava sobre finanças e decisões da vida adulta.",
     "raridade": 46,
     "codigo_trunfo": "",
@@ -941,7 +1246,12 @@
     "categoria": "Jogo",
     "tema": "Jogo de Ação",
     "genero": "Unisex",
-    "tags": ["Jogo", "Pula Pirata", "Barril", "Espadas"],
+    "tags": [
+      "Jogo",
+      "Pula Pirata",
+      "Barril",
+      "Espadas"
+    ],
     "curiosidade": "Origem japonesa (Tomy, 1975); um dos poucos da época ainda em produção contínua.",
     "raridade": 6,
     "codigo_trunfo": "",
@@ -956,7 +1266,12 @@
     "categoria": "Jogo",
     "tema": "Jogo de Ação",
     "genero": "Unisex",
-    "tags": ["Jogo", "Pula Pirata", "Barril", "Espadas"],
+    "tags": [
+      "Jogo",
+      "Pula Pirata",
+      "Barril",
+      "Espadas"
+    ],
     "curiosidade": "Espada no barril com pirata que “pula” aleatoriamente.",
     "raridade": 6,
     "codigo_trunfo": "",
@@ -971,7 +1286,13 @@
     "categoria": "Jogo",
     "tema": "Eletrônico",
     "genero": "Unisex",
-    "tags": ["Jogo", "Genius", "Memória", "Luzes", "Estrela"],
+    "tags": [
+      "Jogo",
+      "Genius",
+      "Memória",
+      "Luzes",
+      "Estrela"
+    ],
     "curiosidade": "",
     "raridade": 10,
     "codigo_trunfo": "",
@@ -986,7 +1307,12 @@
     "categoria": "Jogo",
     "tema": "Jogo Estratégia",
     "genero": "Unisex",
-    "tags": ["Jogo", "Estratégia", "Lig 4", "Fichas"],
+    "tags": [
+      "Jogo",
+      "Estratégia",
+      "Lig 4",
+      "Fichas"
+    ],
     "curiosidade": "Versão do Connect Four; relançado várias vezes pela Estrela.",
     "raridade": 9,
     "codigo_trunfo": "",
@@ -1001,7 +1327,12 @@
     "categoria": "Jogo",
     "tema": "Jogo Dedução",
     "genero": "Unisex",
-    "tags": ["Jogo", "Dedução", "Perguntas", "Cara"],
+    "tags": [
+      "Jogo",
+      "Dedução",
+      "Perguntas",
+      "Cara"
+    ],
     "curiosidade": "Versão do Guess Who?; gerou disputa legal com a Hasbro.",
     "raridade": 7,
     "codigo_trunfo": "",
@@ -1016,7 +1347,13 @@
     "categoria": "Jogo",
     "tema": "Jogo Estratégia",
     "genero": "Unisex",
-    "tags": ["Jogo", "Estratégia", "Combate", "Guerra", "Exército"],
+    "tags": [
+      "Jogo",
+      "Estratégia",
+      "Combate",
+      "Guerra",
+      "Exército"
+    ],
     "curiosidade": "Combate é a versão brasileira do jogo mundialmente conhecido como Stratego.",
     "raridade": 38,
     "codigo_trunfo": "",
@@ -1031,7 +1368,12 @@
     "categoria": "Jogo",
     "tema": "Jogo de Ação",
     "genero": "Unisex",
-    "tags": ["Jogo", "Vire a Mesa", "Ação", "Equilíbrio"],
+    "tags": [
+      "Jogo",
+      "Vire a Mesa",
+      "Ação",
+      "Equilíbrio"
+    ],
     "curiosidade": "Relançado em 2017 pela Estrela",
     "raridade": 39,
     "codigo_trunfo": "",
@@ -1046,7 +1388,13 @@
     "categoria": "Jogo Eletrônico",
     "tema": "Memória e Agilidade",
     "genero": "Unisex",
-    "tags": ["Jogo", "Eletrônico", "Giratron", "Memória", "Agilidade"],
+    "tags": [
+      "Jogo",
+      "Eletrônico",
+      "Giratron",
+      "Memória",
+      "Agilidade"
+    ],
     "curiosidade": "Inclui seis modos de jogo diferentes, focados em cores, números, memória e códigos secretos.",
     "raridade": 11,
     "codigo_trunfo": "",
@@ -1061,7 +1409,12 @@
     "categoria": "Jogo",
     "tema": "Jogo de Ação",
     "genero": "Unisex",
-    "tags": ["Jogo", "Ação", "Pião", "Arena"],
+    "tags": [
+      "Jogo",
+      "Ação",
+      "Pião",
+      "Arena"
+    ],
     "curiosidade": "O último pião a permanecer girando na arena vence a rodada.",
     "raridade": 21,
     "codigo_trunfo": "",
@@ -1076,7 +1429,11 @@
     "categoria": "Jogo",
     "tema": "Jogo de Ação",
     "genero": "Unisex",
-    "tags": ["Jogo", "Batata", "Quente"],
+    "tags": [
+      "Jogo",
+      "Batata",
+      "Quente"
+    ],
     "curiosidade": "Versão de “Hot Potato”; estimulava raciocínio rápido sob pressão.",
     "raridade": 13,
     "codigo_trunfo": "",
@@ -1091,7 +1448,13 @@
     "categoria": "Jogo",
     "tema": "Jogo de Azar",
     "genero": "Unisex",
-    "tags": ["Jogo", "Azar", "Bingo", "Cartela", "Sorteio"],
+    "tags": [
+      "Jogo",
+      "Azar",
+      "Bingo",
+      "Cartela",
+      "Sorteio"
+    ],
     "curiosidade": "Versão familiar com temas variados; comum em festas de família.",
     "raridade": 3,
     "codigo_trunfo": "",
@@ -1106,7 +1469,13 @@
     "categoria": "Jogo",
     "tema": "Jogo Habilidade",
     "genero": "Unisex",
-    "tags": ["Jogo", "Habilidade", "Estratégia", "Varetas", "Bolinhas"],
+    "tags": [
+      "Jogo",
+      "Habilidade",
+      "Estratégia",
+      "Varetas",
+      "Bolinhas"
+    ],
     "curiosidade": "Os jogadores vão retirando as varetas, tentando evitar que as bolinhas caiam.",
     "raridade": 18,
     "codigo_trunfo": "",
@@ -1121,7 +1490,13 @@
     "categoria": "Jogo de Ação",
     "tema": "Jogo de Ação",
     "genero": "Unisex",
-    "tags": ["Jogo", "Ação", "Estratégia", "Explosão", "Ponte"],
+    "tags": [
+      "Jogo",
+      "Ação",
+      "Estratégia",
+      "Explosão",
+      "Ponte"
+    ],
     "curiosidade": "A explosão pode ocorrer a qualquer momento, destruindo o progresso dos jogadores.",
     "raridade": 26,
     "codigo_trunfo": "",
@@ -1136,7 +1511,10 @@
     "categoria": "Jogo",
     "tema": "Jogo de Habilidade",
     "genero": "Unisex",
-    "tags": ["Jogo", "Pega Varetas"],
+    "tags": [
+      "Jogo",
+      "Pega Varetas"
+    ],
     "curiosidade": "Lançado pela Estrela na década de 1940 no Brasil.",
     "raridade": 4,
     "codigo_trunfo": "",
@@ -1151,7 +1529,12 @@
     "categoria": "Jogo",
     "tema": "Jogo de Água",
     "genero": "Unisex",
-    "tags": ["Jogo", "Água", "Aquaplay", "Equilíbrio"],
+    "tags": [
+      "Jogo",
+      "Água",
+      "Aquaplay",
+      "Equilíbrio"
+    ],
     "curiosidade": "Auxilia no desenvolvimento da coordenação motora e raciocínio lógico em crianças.",
     "raridade": 27,
     "codigo_trunfo": "",
@@ -1213,7 +1596,12 @@
     "categoria": "Jogo",
     "tema": "Quebra-Cabeças",
     "genero": "Unisex",
-    "tags": ["Cilada", "Quebra-Cabeça", "Puzzle", "Desafio"],
+    "tags": [
+      "Cilada",
+      "Quebra-Cabeça",
+      "Puzzle",
+      "Desafio"
+    ],
     "curiosidade": "Desenvolve o raciocínio lógico, a percepção visuoespacial e a concentração.",
     "raridade": 39,
     "codigo_trunfo": "",
@@ -1228,7 +1616,13 @@
     "categoria": "Jogo",
     "tema": "Jogos de Tabuleiro",
     "genero": "Unisex",
-    "tags": ["Jogo", "Tabuleiro", "Dama", "Moinho", "Trilha"],
+    "tags": [
+      "Jogo",
+      "Tabuleiro",
+      "Dama",
+      "Moinho",
+      "Trilha"
+    ],
     "curiosidade": "Inclui um tabuleiro dupla-face (um lado para damas, outro para moinho).",
     "raridade": 49,
     "codigo_trunfo": "",
@@ -1243,7 +1637,13 @@
     "categoria": "Jogo",
     "tema": "Jogos de Tabuleiro",
     "genero": "Unisex",
-    "tags": ["Jogo", "Tabuleiro", "Ludo", "Peão", "Dado"],
+    "tags": [
+      "Jogo",
+      "Tabuleiro",
+      "Ludo",
+      "Peão",
+      "Dado"
+    ],
     "curiosidade": "\"Ludo\" vem do latim ludus (ou ludere), que significa literalmente \"eu jogo\".",
     "raridade": 35,
     "codigo_trunfo": "",
@@ -1258,7 +1658,12 @@
     "categoria": "Jogo",
     "tema": "Jogo Estratégia",
     "genero": "Unisex",
-    "tags": ["Jogo", "Estratégia", "Ação", "Aranhas"],
+    "tags": [
+      "Jogo",
+      "Estratégia",
+      "Ação",
+      "Aranhas"
+    ],
     "curiosidade": "O objetivo é dominar a teia derrubando as aranhas adversárias.",
     "raridade": 44,
     "codigo_trunfo": "",
@@ -1273,7 +1678,12 @@
     "categoria": "Jogo Educativo",
     "tema": "Memória Visual",
     "genero": "Unisex",
-    "tags": ["Jogo", "Educativo", "Memória", "Elefantes"],
+    "tags": [
+      "Jogo",
+      "Educativo",
+      "Memória",
+      "Elefantes"
+    ],
     "curiosidade": "Os jogadores participam de uma busca no \"mato\" para encontrar 11 animais que fugiram de suas jaulas.",
     "raridade": 62,
     "codigo_trunfo": "",
@@ -1288,7 +1698,13 @@
     "categoria": "Jogo",
     "tema": "Jogo de Habilidade",
     "genero": "Unisex",
-    "tags": ["Jogo", "Habilidade", "Cai", "Balão", "Roleta"],
+    "tags": [
+      "Jogo",
+      "Habilidade",
+      "Cai",
+      "Balão",
+      "Roleta"
+    ],
     "curiosidade": "Inspirado na clássica cantiga infantil brasileira de mesmo nome.",
     "raridade": 63,
     "codigo_trunfo": "",
@@ -1303,7 +1719,13 @@
     "categoria": "Jogo de Ação",
     "tema": "Jogo de Habilidade",
     "genero": "Unisex",
-    "tags": ["Jogo", "Habilidade", "Garçom", "Equilibrista", "Bandeija"],
+    "tags": [
+      "Jogo",
+      "Habilidade",
+      "Garçom",
+      "Equilibrista",
+      "Bandeija"
+    ],
     "curiosidade": "Exige coordenação motora fina e paciência.",
     "raridade": 88,
     "codigo_trunfo": "",
@@ -1318,7 +1740,12 @@
     "categoria": "Jogo Eletrônico",
     "tema": "Jogo de Habilidade",
     "genero": "Unisex",
-    "tags": ["Jogo", "Habilidade", "Galinha Maluca", "Ovinhos"],
+    "tags": [
+      "Jogo",
+      "Habilidade",
+      "Galinha Maluca",
+      "Ovinhos"
+    ],
     "curiosidade": "Os jogadores devem retirar ovos do ninho da galinha sem que ela perceba.",
     "raridade": 90,
     "codigo_trunfo": "",
@@ -1333,7 +1760,13 @@
     "categoria": "Jogo de Ação",
     "tema": "Jogo de Ação",
     "genero": "Unisex",
-    "tags": ["Jogo", "Acorde", "Dragão", "Ovinhos", "Pinguins"],
+    "tags": [
+      "Jogo",
+      "Acorde",
+      "Dragão",
+      "Ovinhos",
+      "Pinguins"
+    ],
     "curiosidade": "O objetivo é atravessar a montanha e coletar ovos sem acordar o dragão.",
     "raridade": 91,
     "codigo_trunfo": "",
@@ -1348,7 +1781,11 @@
     "categoria": "Jogo Eletrônico",
     "tema": "Jogo de Ação",
     "genero": "Unisex",
-    "tags": ["Jogo", "Bate Kong", "Macaco"],
+    "tags": [
+      "Jogo",
+      "Bate Kong",
+      "Macaco"
+    ],
     "curiosidade": "O objetivo era coletar os \"cocos\" (pequenas esferas) que o gorila protegia.",
     "raridade": 36,
     "codigo_trunfo": "",
@@ -1363,7 +1800,12 @@
     "categoria": "Jogo",
     "tema": "Jogo de Corrida",
     "genero": "Unisex",
-    "tags": ["Jogo", "Corrida de Percurso", "Automóveis", "Tabuleiro"],
+    "tags": [
+      "Jogo",
+      "Corrida de Percurso",
+      "Automóveis",
+      "Tabuleiro"
+    ],
     "curiosidade": "A sorte nos dados define quem cruza a linha de chegada primeiro.",
     "raridade": 89,
     "codigo_trunfo": "",
@@ -1378,7 +1820,14 @@
     "categoria": "Jogo",
     "tema": "Jogo de Tabuleiro",
     "genero": "Unisex",
-    "tags": ["Jogo", "Estratégia", "War", "Guerra", "Grow", "Mapa"],
+    "tags": [
+      "Jogo",
+      "Estratégia",
+      "War",
+      "Guerra",
+      "Grow",
+      "Mapa"
+    ],
     "curiosidade": "Jogadores conquistam territórios mundiais com exércitos e cartas objetivo.",
     "raridade": 45,
     "codigo_trunfo": "",
@@ -1393,7 +1842,14 @@
     "categoria": "Jogo",
     "tema": "Jogo de Tabuleiro",
     "genero": "Unisex",
-    "tags": ["Jogo", "Estratégia", "War", "Guerra", "Grow", "Mapa"],
+    "tags": [
+      "Jogo",
+      "Estratégia",
+      "War",
+      "Guerra",
+      "Grow",
+      "Mapa"
+    ],
     "curiosidade": "Uma das versões mais famosas é dos anos 80's, com a icônica \"caixa azul\".",
     "raridade": 45,
     "codigo_trunfo": "",
@@ -1408,7 +1864,12 @@
     "categoria": "Jogo",
     "tema": "Jogo Estratégia",
     "genero": "Unisex",
-    "tags": ["Jogo", "Estratégia", "Dragões Coloridos", "Aneis"],
+    "tags": [
+      "Jogo",
+      "Estratégia",
+      "Dragões Coloridos",
+      "Aneis"
+    ],
     "curiosidade": "",
     "raridade": 36,
     "codigo_trunfo": "",
@@ -1423,7 +1884,12 @@
     "categoria": "Jogo",
     "tema": "Jogo Estratégia",
     "genero": "Unisex",
-    "tags": ["Jogo", "Estratégia", "Equilíbrio", "Morcegos"],
+    "tags": [
+      "Jogo",
+      "Estratégia",
+      "Equilíbrio",
+      "Morcegos"
+    ],
     "curiosidade": "Ficou famoso pela propaganda com \"Bento Carneiro, o Vampiro\" (Chico Anysio).",
     "raridade": 52,
     "codigo_trunfo": "",
@@ -1438,7 +1904,12 @@
     "categoria": "Jogo",
     "tema": "Jogo Estratégia",
     "genero": "Unisex",
-    "tags": ["Jogo", "Estratégia", "Equilíbrio", "Burrinho"],
+    "tags": [
+      "Jogo",
+      "Estratégia",
+      "Equilíbrio",
+      "Burrinho"
+    ],
     "curiosidade": "O burrinho que dá coice e joga as peças para cima.",
     "raridade": 55,
     "codigo_trunfo": "",
@@ -1499,7 +1970,13 @@
     "categoria": "Jogo de Ação",
     "tema": "Jogo Perseguição",
     "genero": "Unisex",
-    "tags": ["Jogo", "Ação", "Corrida", "Perseguição", "Tubarão"],
+    "tags": [
+      "Jogo",
+      "Ação",
+      "Corrida",
+      "Perseguição",
+      "Tubarão"
+    ],
     "curiosidade": "O diferencial era o tubarão mecânico movido a pilhas que girava pelo tabuleiro.",
     "raridade": 44,
     "codigo_trunfo": "",
@@ -1514,7 +1991,13 @@
     "categoria": "Jogo",
     "tema": "Jogo de Água",
     "genero": "Unisex",
-    "tags": ["Jogo", "Água", "Aquaplay", "Equilíbrio", "Futebol"],
+    "tags": [
+      "Jogo",
+      "Água",
+      "Aquaplay",
+      "Equilíbrio",
+      "Futebol"
+    ],
     "curiosidade": "O objetivo é controlar os botões para movimentar a água e marcar gols com a bolinha.",
     "raridade": 37,
     "codigo_trunfo": "",
@@ -1529,7 +2012,13 @@
     "categoria": "Jogo",
     "tema": "Jogo de Água",
     "genero": "Unisex",
-    "tags": ["Jogo", "Água", "Aquaplay", "Equilíbrio", "Argolinhas"],
+    "tags": [
+      "Jogo",
+      "Água",
+      "Aquaplay",
+      "Equilíbrio",
+      "Argolinhas"
+    ],
     "curiosidade": "Não utiliza pilhas ou baterias, operando apenas com a pressão da água.",
     "raridade": 25,
     "codigo_trunfo": "",
@@ -1544,11 +2033,222 @@
     "categoria": "Carrinhos Fricção",
     "tema": "Super Máquina",
     "genero": "Masculino",
-    "tags": ["Carrinho", "Fricção", "Super Máquina", "Moto", "Knight Rider"],
+    "tags": [
+      "Carrinho",
+      "Fricção",
+      "Super Máquina",
+      "Moto",
+      "Knight Rider"
+    ],
     "curiosidade": "\"A Arrancada Total\" trazia os modelos à fricção.",
     "raridade": 84,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0100_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0100_verso.jpg"
+  },
+  {
+    "id": "0101",
+    "nome": "Converse com o Seu Anjo",
+    "fabricante": "Estrela",
+    "ano": "1997",
+    "categoria": "Jogo Exotérico",
+    "tema": "Exotérico",
+    "genero": "Unisex",
+    "tags": [
+      "Jogo",
+      "Converse",
+      "Anjo",
+      "Exotérico",
+      "Sobrenatural",
+      "Polêmica"
+    ],
+    "curiosidade": "Considerado um dos jogos mais polêmicos no Brasil devido semelhança com a Tábua Ouija!",
+    "raridade": 88,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0101_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0101_verso.jpg"
+  },
+  {
+    "id": "0102",
+    "nome": "Divertirama",
+    "fabricante": "Estrela",
+    "ano": "70's e 80's",
+    "categoria": "Jogo",
+    "tema": "Jogos de Tabuleiro",
+    "genero": "Unisex",
+    "tags": [
+      "Divertirama",
+      "Ludo Real",
+      "Jogo de Moinho",
+      "Xadrez Chinês eDamas."
+    ],
+    "curiosidade": "Multijogos: O conceito principal é oferecer 4 jogos em 1.",
+    "raridade": 40,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0102_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0102_verso.jpg"
+  },
+  {
+    "id": "0103",
+    "nome": "Basquete Ball Game",
+    "fabricante": "Somo",
+    "ano": "70's e 80's",
+    "categoria": "Jogo de Ação",
+    "tema": "Basquete",
+    "genero": "Unisex",
+    "tags": [
+      "Jogo",
+      "Basquete",
+      "Ball",
+      "Game"
+    ],
+    "curiosidade": "Ao pressionar um botão, lança a bolinha em direção à cesta.",
+    "raridade": 77,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0103_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0103_verso.jpg"
+  },
+  {
+    "id": "0104",
+    "nome": "Futebol Club",
+    "fabricante": "Gulliver",
+    "ano": "1988",
+    "categoria": "Jogo de Ação",
+    "tema": "Futebol",
+    "genero": "Unisex",
+    "tags": [
+      "Jogo",
+      "Futebol Club",
+      "bola",
+      "Gulliver"
+    ],
+    "curiosidade": "Foi lançado originalmente sob o nome de Futebol Pelé (1979).",
+    "raridade": 73,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0104_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0104_verso.jpg"
+  },
+  {
+    "id": "0105",
+    "nome": "Dama e Moinho",
+    "fabricante": "Estrela",
+    "ano": "1971",
+    "categoria": "Jogo",
+    "tema": "Jogos de Tabuleiro",
+    "genero": "Unisex",
+    "tags": [
+      "Jogo",
+      "Tabuleiro",
+      "Dama",
+      "Moinho",
+      "Trilha"
+    ],
+    "curiosidade": "Moinho (ou Trilha) é um jogo de estratégia milenar onde o objetivo é formar linhas de três peças.",
+    "raridade": 49,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0105_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0105_verso.jpg"
+  },
+  {
+    "id": "0106",
+    "nome": "Vira Monstro Vira Herói",
+    "fabricante": "Estrela",
+    "ano": "1987",
+    "categoria": "Desenho",
+    "tema": "Heróis",
+    "genero": "Unisex",
+    "tags": [
+      "Desenho",
+      "Monstro",
+      "Herói",
+      "Kit",
+      "Giz de Cera"
+    ],
+    "curiosidade": "Composto por diversas placas coloridas, giz de cera e moldura.",
+    "raridade": 78,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0106_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0106_verso.jpg"
+  },
+  {
+    "id": "0107",
+    "nome": "Piloto Automático",
+    "fabricante": "Estrela",
+    "ano": "80's e 90's",
+    "categoria": "Carrinhos",
+    "tema": "Buggy",
+    "genero": "Masculino",
+    "tags": [
+      "Carrinho",
+      "Buggy",
+      "Piloto Automático"
+    ],
+    "curiosidade": "Os pilotos coloridos mudam o circuito do veículo ao serem trocados.",
+    "raridade": 76,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0107_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0107_verso.jpg"
+  },
+  {
+    "id": "0108",
+    "nome": "Game Boy",
+    "fabricante": "Nintendo",
+    "ano": "1994",
+    "categoria": "Vídeo Game",
+    "tema": "Portátil",
+    "genero": "Unisex",
+    "tags": [
+      "Game Boy",
+      "Vídeo Game",
+      "Portátil",
+      "Nintendo"
+    ],
+    "curiosidade": "Lançado no mercado internacional (Japão e EUA) em 1989, no Brasil somente em 1994.",
+    "raridade": 88,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0108_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0108_verso.jpg"
+  },
+  {
+    "id": "0109",
+    "nome": "BMX Super",
+    "fabricante": "Monark",
+    "ano": "1982",
+    "categoria": "Bicicleta",
+    "tema": "BMX",
+    "genero": "Unisex",
+    "tags": [
+      "Bicicleta",
+      "BMX Super",
+      "Monark",
+      "82",
+      "Preta",
+      "Amarela"
+    ],
+    "curiosidade": "Lançada para imitar motocicletas de motocross, possuía um \"tanque\" de plástico no quadro e placas de número.",
+    "raridade": 81,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0109_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0109_verso.jpg"
+  },
+  {
+    "id": "0110",
+    "nome": "Bamba \"Cabeção\"",
+    "fabricante": "Alpargatas",
+    "ano": "70's a 90's",
+    "categoria": "Calçados",
+    "tema": "Tênis",
+    "genero": "Unisex",
+    "tags": [
+      "Tênis",
+      "Bamba",
+      "Cabeção",
+      "Monobloco"
+    ],
+    "curiosidade": "Nasceu em 1961, mas o auge da linha Monobloco ocorreu entre os anos 1970 e 1980.",
+    "raridade": 38,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0110_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0110_verso.jpg"
   }
 ]
