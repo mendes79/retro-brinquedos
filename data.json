@@ -2250,5 +2250,23 @@
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0110_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0110_verso.jpg"
+  },
+  {
+    "id": "0111",
+    "nome": "Mochila da Company",
+    "fabricante": "Company",
+    "ano": "80's e 90's",
+    "categoria": "Escolar",
+    "tema": "Mochila",
+    "genero": "Unisex",
+    "tags": [
+      "Mochila",
+      "Company"
+    ],
+    "curiosidade": "A marca Company foi fundada em 1973 no Rio de Janeiro.",
+    "raridade": 45,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0111_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0111_verso.jpg"
   }
 ]
