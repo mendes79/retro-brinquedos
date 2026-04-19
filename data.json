@@ -2268,5 +2268,25 @@
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0111_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0111_verso.jpg"
+  },
+  {
+    "id": "0112",
+    "nome": "Caneta Maluca",
+    "fabricante": "Gulliver",
+    "ano": "1984",
+    "categoria": "Escolar",
+    "tema": "Caneta",
+    "genero": "Unisex",
+    "tags": [
+      "Caneta",
+      "Maluca",
+      "Jogo",
+      "Água"
+    ],
+    "curiosidade": "Era ao mesmo tempo uma caneta e também um jogo aquático.",
+    "raridade": 89,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0112_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0112_verso.jpg"
   }
 ]
