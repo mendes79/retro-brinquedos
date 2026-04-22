@@ -2288,5 +2288,172 @@
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0112_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0112_verso.jpg"
+  },
+  {
+    "id": "0113",
+    "nome": "Top Game VG-9000",
+    "fabricante": "CCE",
+    "ano": "1990",
+    "categoria": "Vídeo Game",
+    "tema": "Console 8 bits",
+    "genero": "Unisex",
+    "tags": [
+      "Top Game",
+      "CCE",
+      "Nintendo",
+      "NES",
+      "Joystick"
+    ],
+    "curiosidade": "Clone do NES, aceita cartuchos de 72 pinos (americano) e 60 pinos (padrão japonês/Famicom).",
+    "raridade": 39,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0113_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0113_verso.jpg"
+  },
+  {
+    "id": "0114",
+    "nome": "Turbo Game VG-9000T",
+    "fabricante": "CCE",
+    "ano": "1991",
+    "categoria": "Vídeo Game",
+    "tema": "Console 8 bits",
+    "genero": "Unisex",
+    "tags": [
+      "Turbo Game",
+      "CCE",
+      "NES",
+      "Nintendo",
+      "Joystick"
+    ],
+    "curiosidade": "Clone do NES, evolução do \"Top Game VG-9000\" (1990), que foi uma evolução do Top Game VG-8000 (1989).",
+    "raridade": 31,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0114_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0114_verso.jpg"
+  },
+  {
+    "id": "0115",
+    "nome": "Top Game VG 8000",
+    "fabricante": "CCE",
+    "ano": "1989",
+    "categoria": "Vídeo Game",
+    "tema": "Console 8 bits",
+    "genero": "Unisex",
+    "tags": [
+      "Top Game",
+      "CCE",
+      "8000",
+      "Nintendo",
+      "NES"
+    ],
+    "curiosidade": "Clone do NES, joysticks em forma de \"alavanca\" considerados desconfortáveis pelos usuários, apenas cartuchos 60 pinos (padrão Japonês).",
+    "raridade": 41,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0115_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0115_verso.jpg"
+  },
+  {
+    "id": "0116",
+    "nome": "Phantom System",
+    "fabricante": "Gradiente",
+    "ano": "1989",
+    "categoria": "Vídeo Game",
+    "tema": "Console 8 bits",
+    "genero": "Unisex",
+    "tags": [
+      "Phantom System",
+      "NES",
+      "Nintendo",
+      "Gradiente"
+    ],
+    "curiosidade": "Clone mais famosos do NES, usa cartuchos de 72 pinos (padrão americano).",
+    "raridade": 27,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0116_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0116_verso.jpg"
+  },
+  {
+    "id": "0117",
+    "nome": "Sega Master System",
+    "fabricante": "Tec Toy",
+    "ano": "1989",
+    "categoria": "Vídeo Game",
+    "tema": "Console 8 bits",
+    "genero": "Unisex",
+    "tags": [
+      "Master System",
+      "Sega",
+      "Tec Toy",
+      "Vídeo Game"
+    ],
+    "curiosidade": "Lançado no Japão em 1985, veio para concorrer com o Nintendinho (NES).",
+    "raridade": 18,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0117_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0117_verso.jpg"
+  },
+  {
+    "id": "0118",
+    "nome": "Supra Sumo",
+    "fabricante": "Uvahypermarcas",
+    "ano": "1986",
+    "categoria": "Alimentos",
+    "tema": "Bala",
+    "genero": "Unisex",
+    "tags": [
+      "Supra Sumo",
+      "Bala",
+      "Pastilha",
+      "Laranja",
+      "Limão"
+    ],
+    "curiosidade": "O termo \"suprassumo\" significa o grau mais elevado ou o máximo de algo.",
+    "raridade": 22,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0118_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0118_verso.jpg"
+  },
+  {
+    "id": "0119",
+    "nome": "Bolinha de Gude",
+    "fabricante": "Antônio Carlos Rielo",
+    "ano": "3.000 AC",
+    "categoria": "Jogo",
+    "tema": "Clássico",
+    "genero": "Unisex",
+    "tags": [
+      "Bolinha",
+      "Gude",
+      "Vidro",
+      "Pipoco"
+    ],
+    "curiosidade": "As mais comuns hoje são de vidro, como \"olho de gato\", \"americana\", \"leiteira\" e a \"cibica\" (ou carambola).",
+    "raridade": 3,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0119_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0119_verso.jpg"
+  },
+  {
+    "id": "0120",
+    "nome": "Cordão Yo-Yo Coca-Cola",
+    "fabricante": "Russell",
+    "ano": "80's e 90's",
+    "categoria": "Iô-io",
+    "tema": "Cordão",
+    "genero": "Unisex",
+    "tags": [
+      "Cordão",
+      "Russel",
+      "Cordinha",
+      "Substituição",
+      "Iô-Iô",
+      "Yo-Yo",
+      "Coca-Cola"
+    ],
+    "curiosidade": "Item colecionável vintage, pacote promocional da marca Coca-Cola com cordões de substituição para ioiôs Russel.",
+    "raridade": 67,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0120_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0120_verso.jpg"
   }
 ]
