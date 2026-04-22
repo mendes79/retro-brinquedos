@@ -4,6 +4,7 @@ brinquedos.xlsx
 
 # Script python para atualizar o data.json
 atualiza_json.py
+index_old.html
 
 # Pasta local de imagens (já estão no Cloudinary)
 images/
