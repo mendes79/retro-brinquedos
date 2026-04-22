@@ -2455,5 +2455,27 @@
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0120_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0120_verso.jpg"
+  },
+  {
+    "id": "0121",
+    "nome": "Lapiseira Poly",
+    "fabricante": "Faber-Castell",
+    "ano": "1985",
+    "categoria": "Escolar",
+    "tema": "Lapiseira",
+    "genero": "Unisex",
+    "tags": [
+      "Lapiseira",
+      "0.5",
+      "0.7",
+      "Poly",
+      "Faber Castell",
+      "Grafite"
+    ],
+    "curiosidade": "Apresentavam o diferencial da borrachinha no topo e as cores vibrantes, que se tornariam sua marca registrada.",
+    "raridade": 36,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0121_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0121_verso.jpg"
   }
 ]
