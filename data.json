@@ -2477,5 +2477,102 @@
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0121_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0121_verso.jpg"
+  },
+  {
+    "id": "0122",
+    "nome": "Rainha F-7",
+    "fabricante": "Alpargatas",
+    "ano": "1981",
+    "categoria": "Calçados",
+    "tema": "Tênis",
+    "genero": "Masculino",
+    "tags": [
+      "Tênis",
+      "Rainha",
+      "F-7",
+      "Futsal",
+      "Salão"
+    ],
+    "curiosidade": "O F-7 foi o primeiro par de tênis vendido na história da Centauro, projetado para Futsal (salão).",
+    "raridade": 81,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0122_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0122_verso.jpg"
+  },
+  {
+    "id": "0123",
+    "nome": "Rainha System Visible",
+    "fabricante": "Alpargatas",
+    "ano": "80's e 90's",
+    "categoria": "Calçados",
+    "tema": "Tênis",
+    "genero": "Unisex",
+    "tags": [
+      "Tênis",
+      "Rainha System",
+      "Visible",
+      "Amortecedor"
+    ],
+    "curiosidade": "O grande diferencial eram as \"rodinhas\" de poliuretano (visíveis na parte inferior direita da imagem) que podiam ser trocadas pelo usuário.",
+    "raridade": 79,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0123_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0123_verso.jpg"
+  },
+  {
+    "id": "0124",
+    "nome": "Nike Air Max III",
+    "fabricante": "Nike",
+    "ano": "1990",
+    "categoria": "Calçados",
+    "tema": "Tênis",
+    "genero": "Unisex",
+    "tags": [
+      "Tênis",
+      "Nike Air Max",
+      "90",
+      "Infrared",
+      "GTX"
+    ],
+    "curiosidade": "Na década de 90, o acesso ao modelo original era bastante limitado no país.",
+    "raridade": 74,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0124_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0124_verso.jpg"
+  },
+  {
+    "id": "0125",
+    "nome": "Nike Velocity",
+    "fabricante": "Nike",
+    "ano": "1989",
+    "categoria": "Calçados",
+    "tema": "Tênis",
+    "genero": "Unisex",
+    "tags": [
+      "Tênis Nike Velocity"
+    ],
+    "curiosidade": "Foi o precursor do Nike Air.",
+    "raridade": 92,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0125_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0125_verso.jpg"
+  },
+  {
+    "id": "0126",
+    "nome": "Nike Street",
+    "fabricante": "Nike",
+    "ano": "90's",
+    "categoria": "Calçados",
+    "tema": "Tênis",
+    "genero": "Unisex",
+    "tags": [
+      "Tênis",
+      "Nike Street"
+    ],
+    "curiosidade": "O modelo clássico da época, frequentemente lembrado por suas combinações de cores vibrantes e solado característico.",
+    "raridade": 86,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0126_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0126_verso.jpg"
   }
 ]
