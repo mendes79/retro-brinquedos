@@ -9,13 +9,12 @@
     "genero": "Unisex",
     "tags": [
       "Playmobil",
-      "Carrinho",
-      "Rally",
-      "Hella"
+      "Carro",
+      "Boneco"
     ],
-    "curiosidade": "Produzido pela Geobra Brandstätter, foi um dos veículos mais icônicos da linha Playmobil no Brasil pela Estrela.",
-    "raridade": 63,
-    "codigo_trunfo": "B2",
+    "curiosidade": "Produzido pela Geobra Brandstätter (Alemanha, 1976)",
+    "raridade": 6,
+    "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0001_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0001_verso.jpg"
   },
@@ -29,13 +28,13 @@
     "genero": "Masculino",
     "tags": [
       "Motoniveladora",
-      "Construção",
-      "Eletrônico",
-      "Estrela"
+      "Botões Eletrônicos",
+      "Carrinho",
+      "Trator"
     ],
-    "curiosidade": "Surgiram na década de 70 e atravessaram os anos 80 como desejo de toda criança que amava máquinas pesadas.",
-    "raridade": 51,
-    "codigo_trunfo": "C4",
+    "curiosidade": "Surgiram na década de 70 e pararam de ser fabricados no início dos anos 90.",
+    "raridade": 5,
+    "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0002_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0002_verso.jpg"
   },
@@ -49,13 +48,13 @@
     "genero": "Unisex",
     "tags": [
       "Playmobil",
-      "Espaço",
       "Nave",
-      "Geobra"
+      "Boneco",
+      "Espaço"
     ],
-    "curiosidade": "Inclui a estrutura da estação com vários acessórios espaciais, sendo um dos sets mais complexos da época.",
-    "raridade": 87,
-    "codigo_trunfo": "B1",
+    "curiosidade": "Inclui a estrutura da estação com cúpula de vidro, duas eclusas de ar (marcadas como SA1 e SA2), figuras de astronautas com diferentes trajes e acessórios.",
+    "raridade": 8,
+    "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0003_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0003_verso.jpg"
   },
@@ -69,13 +68,13 @@
     "genero": "Masculino",
     "tags": [
       "Escavadeira",
-      "Engenharia",
-      "Estrela",
-      "Brinquedo"
+      "Botões Eletrônicos",
+      "Carrinho",
+      "Trator"
     ],
-    "curiosidade": "Possuía controle por botões na própria escavadeira, permitindo movimentos reais de escavação.",
-    "raridade": 48,
-    "codigo_trunfo": "C1",
+    "curiosidade": "Controle por botões na própria estrutura para funções como levantar a pá e mover o veículo.",
+    "raridade": 4,
+    "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0004_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0004_verso.jpg"
   },
@@ -90,14 +89,12 @@
     "tags": [
       "Humor",
       "TV",
-      "Didi",
-      "Dedé",
-      "Mussum",
-      "Zacarias"
+      "Série",
+      "Programa"
     ],
-    "curiosidade": "O programa estreou em fevereiro de 1977 e gerou uma infinidade de produtos licenciados nas décadas seguintes.",
-    "raridade": 12,
-    "codigo_trunfo": "H3",
+    "curiosidade": "O programa estreou em fevereiro de 1973, aos sábados, na Rede Tupi.",
+    "raridade": 1,
+    "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0005_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0005_verso.jpg"
   },
@@ -110,14 +107,14 @@
     "tema": "Masters of the Universe",
     "genero": "Masculino",
     "tags": [
-      "He-man",
-      "Eternia",
-      "MOTU",
-      "Mattel"
+      "Masters of the Universe",
+      "He-Man",
+      "Boneco",
+      "Ação"
     ],
-    "curiosidade": "A figura clássica incluía o machado cinza, o escudo e a lendária Espada do Poder.",
-    "raridade": 53,
-    "codigo_trunfo": "H1",
+    "curiosidade": "Inclui o machado cinza, escudo e a Espada do Poder",
+    "raridade": 5,
+    "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0006_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0006_verso.webp"
   },
@@ -132,12 +129,12 @@
     "tags": [
       "Space",
       "Espaço",
-      "Foguete",
-      "Carrinho"
+      "Carrinho",
+      "Guincho"
     ],
-    "curiosidade": "Carrinhos promocionais que faziam a alegria da garotada com seu visual futurista.",
-    "raridade": 8,
-    "codigo_trunfo": "D4",
+    "curiosidade": "Carrinhos promocionais da Chamburcy",
+    "raridade": 1,
+    "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0007_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0007_verso.jpg"
   },
@@ -153,12 +150,11 @@
       "Coleção",
       "Big Frota",
       "Caminhão",
-      "Trator",
-      "Gulliver"
+      "Trator"
     ],
-    "curiosidade": "Uma série completa de caminhões e tratores robustos feitos para durar gerações.",
-    "raridade": 67,
-    "codigo_trunfo": "C2",
+    "curiosidade": "",
+    "raridade": 6,
+    "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0008_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0008_verso.jpg"
   },
@@ -173,12 +169,11 @@
     "tags": [
       "Big Frota",
       "Caminhão",
-      "Gulliver",
-      "Logística"
+      "Trator"
     ],
-    "curiosidade": "Eram vendidos tanto de forma avulsa quanto em caixas colecionáveis especiais.",
-    "raridade": 50,
-    "codigo_trunfo": "C4",
+    "curiosidade": "Vendidos avuloss ou caixa coleção",
+    "raridade": 5,
+    "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0009_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0009_verso.jpg"
   },
@@ -191,14 +186,15 @@
     "tema": "Masters of the Universe",
     "genero": "Masculino",
     "tags": [
+      "Masters of the Universe",
+      "He-Man",
+      "Ação",
       "Castelo",
-      "Grayskull",
-      "Eternia",
-      "He-man"
+      "Feiticeira"
     ],
-    "curiosidade": "No Brasil, a Mattel fabricou e distribuiu esse playset que é o sonho de consumo de 10 entre 10 colecionadores.",
-    "raridade": 72,
-    "codigo_trunfo": "H2",
+    "curiosidade": "No Brasil, a Mattel fabricou e distribuiu o brinquedo.",
+    "raridade": 7,
+    "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0010_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0010_verso.jpg"
   },
@@ -207,18 +203,18 @@
     "nome": "Super Máquina",
     "fabricante": "Glasslite",
     "ano": "80's",
-    "categoria": "Controle Remoto",
+    "categoria": "Carrinhos",
     "tema": "Super Máquina",
     "genero": "Masculino",
     "tags": [
       "Super Máquina",
-      "KITT",
-      "Glasslite",
-      "Controle Remoto"
+      "Carrinho",
+      "Controle Remoto",
+      "Knight Rider"
     ],
-    "curiosidade": "Versão com controle remoto de 40 Mhz, trazia as luzes icônicas do KITT para a vida real.",
-    "raridade": 80,
-    "codigo_trunfo": "S1",
+    "curiosidade": "Versão controle remoto  40 Mhz (a mais desejada), havia uma versão menor à fricção.",
+    "raridade": 8,
+    "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0011_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0011_verso.jpg"
   },
@@ -233,14 +229,15 @@
     "tags": [
       "Space",
       "Espaço",
-      "Gulliver",
-      "Nave"
+      "Nave",
+      "Espacial",
+      "Coleção"
     ],
-    "curiosidade": "As naves ejetam a parte frontal e possuem mecanismos de disparos para batalhas intergaláticas.",
-    "raridade": 66,
-    "codigo_trunfo": "N2",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0012_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0012_verso.jpg"
+    "curiosidade": "As naves ejetam a parte frontal apertando o botão",
+    "raridade": 6,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0012_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0012_verso.jpg"
   },
   {
     "id": "0013",
@@ -253,14 +250,15 @@
     "tags": [
       "Space",
       "Espaço",
-      "Cosmic",
-      "Gulliver"
+      "Nave",
+      "Guerra Espacial",
+      "Coleção"
     ],
-    "curiosidade": "Possui corpo em plástico e metal, sendo um dos modelos mais resistentes da coleção Gulliver.",
-    "raridade": 47,
-    "codigo_trunfo": "N1",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0013_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0013_verso.jpg"
+    "curiosidade": "Possui corpo em plástico e metal e um cockpit ejetável.",
+    "raridade": 4,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0013_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0013_verso.jpg"
   },
   {
     "id": "0014",
@@ -273,14 +271,15 @@
     "tags": [
       "Space",
       "Espaço",
-      "Odyssey",
-      "Gulliver"
+      "Nave",
+      "Guerra Espacial",
+      "Coleção"
     ],
-    "curiosidade": "Uma nave espacial épica que vinha acompanhada de uma figura de astronauta articulada.",
-    "raridade": 48,
-    "codigo_trunfo": "N2",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0014_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0014_verso.jpg"
+    "curiosidade": "Uma nave espacial e uma figura de ação.",
+    "raridade": 4,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0014_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0014_verso.jpg"
   },
   {
     "id": "0015",
@@ -293,14 +292,15 @@
     "tags": [
       "Space",
       "Espaço",
-      "Alpha",
-      "Gulliver"
+      "Nave",
+      "Guerra Espacial",
+      "Coleção"
     ],
-    "curiosidade": "Possui corpo em plástico e metal com detalhes pintados que remetiam à exploração espacial real.",
-    "raridade": 43,
-    "codigo_trunfo": "N3",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0015_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0015_verso.jpg"
+    "curiosidade": "Possui corpo em plástico e metal e um cockpit ejetável.",
+    "raridade": 4,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0015_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0015_verso.jpg"
   },
   {
     "id": "0016",
@@ -313,14 +313,15 @@
     "tags": [
       "Space",
       "Espaço",
-      "Spectra",
-      "Gulliver"
+      "Nave",
+      "Guerra Espacial",
+      "Coleção"
     ],
-    "curiosidade": "Uma nave espacial icônica da linha, reconhecida pelo seu design aerodinâmico futurista.",
-    "raridade": 44,
-    "codigo_trunfo": "N4",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0016_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0016_verso.jpg"
+    "curiosidade": "Uma nave espacial e uma figura de ação.",
+    "raridade": 4,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0016_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0016_verso.jpg"
   },
   {
     "id": "0017",
@@ -332,16 +333,15 @@
     "genero": "Unisex",
     "tags": [
       "Autorama",
-      "Carrinho",
-      "F1",
-      "Nelson Piquet",
-      "Estrela"
+      "Carrinhos",
+      "Corrida",
+      "Pista"
     ],
-    "curiosidade": "Inclui pista elétrica e dois carrinhos de Fórmula 1, celebrando as conquistas de Nelson Piquet.",
-    "raridade": 70,
-    "codigo_trunfo": "A3",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0017_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0017_verso.jpg"
+    "curiosidade": "Inclui pista elétrica, dois carrinhos (incluindo a Lotus amarela).",
+    "raridade": 7,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0017_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0017_verso.jpg"
   },
   {
     "id": "0018",
@@ -352,16 +352,15 @@
     "tema": "Instrumento Musical",
     "genero": "Unisex",
     "tags": [
-      "Instrumento",
-      "Música",
-      "Clarineta",
-      "Hering"
+      "Instrumento musical",
+      "clarineta",
+      "som"
     ],
-    "curiosidade": "Vinha com um método 'Aprenda Tocando', incentivando os primeiros passos musicais das crianças.",
-    "raridade": 21,
-    "codigo_trunfo": "C4",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0018_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0018_verso.jpg"
+    "curiosidade": "Vinha com um método \"Aprenda por Cores\".",
+    "raridade": 2,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0018_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0018_verso.jpg"
   },
   {
     "id": "0019",
@@ -374,14 +373,17 @@
     "tags": [
       "Copa",
       "Cozinha",
-      "Casinha",
-      "Rabaker"
+      "Geladeira",
+      "Fogão",
+      "Mesa",
+      "Cadeiras",
+      "Boneca"
     ],
-    "curiosidade": "Simula uma copa/cozinha completa para bonecas, com detalhes fiéis aos móveis da época.",
-    "raridade": 11,
-    "codigo_trunfo": "B4",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0019_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0019_verso.jpg"
+    "curiosidade": "Simula uma copa/cozinha para casa de bonecas",
+    "raridade": 1,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0019_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0019_verso.jpg"
   },
   {
     "id": "0020",
@@ -393,15 +395,15 @@
     "genero": "Masculino",
     "tags": [
       "Carro Comando",
-      "KITT",
-      "Glasslite",
-      "Super Máquina"
+      "Revolver",
+      "Coldre",
+      "Arma"
     ],
-    "curiosidade": "Brinquedo inspirado na série de TV 'Super Máquina', com detalhes que remetem ao famoso KITT.",
-    "raridade": 39,
-    "codigo_trunfo": "C2",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0020_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0020_verso.jpg"
+    "curiosidade": "Brinquedo da Série de TV Carro Comando",
+    "raridade": 4,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0020_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0020_verso.jpg"
   },
   {
     "id": "0021",
@@ -414,14 +416,14 @@
     "tags": [
       "Rambo",
       "Revolver",
-      "Arminha",
-      "Lawman"
+      "Arma",
+      "Espoleta"
     ],
-    "curiosidade": "Réplica de revólver que atirava bolinhas plásticas, inspirada na febre dos filmes de ação do Rambo.",
-    "raridade": 66,
-    "codigo_trunfo": "R3",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0021_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0021_verso.jpg"
+    "curiosidade": "Réplica de revolver atira bolinhas e som com espoleta",
+    "raridade": 6,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0021_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0021_verso.jpg"
   },
   {
     "id": "0022",
@@ -434,14 +436,15 @@
     "tags": [
       "Space",
       "Espaço",
-      "Guerra Espacial",
-      "Gulliver"
+      "Nave",
+      "Espacial",
+      "Coleção"
     ],
-    "curiosidade": "Composta por 4 modelos diferentes que deslizam e disparam projéteis plásticos.",
-    "raridade": 69,
-    "codigo_trunfo": "N1",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0022_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0022_verso.jpg"
+    "curiosidade": "4 modelos. Deslizam e Disparam.",
+    "raridade": 7,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0022_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0022_verso.jpg"
   },
   {
     "id": "0023",
@@ -455,13 +458,14 @@
       "Batman",
       "Heroi",
       "Super Powers",
-      "Estrela"
+      "Liga da Justiça",
+      "Super Amigos"
     ],
-    "curiosidade": "Figura icônica que profere um 'Bat Soco' ao juntar as pernas do boneco.",
-    "raridade": 74,
-    "codigo_trunfo": "B1",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0023_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0023_verso.jpg"
+    "curiosidade": "Profere um \"Bat Soco\" ao juntar as pernas do boneco.",
+    "raridade": 7,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0023_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0023_verso.jpg"
   },
   {
     "id": "0024",
@@ -475,13 +479,13 @@
       "Carrinho",
       "Controle Remoto",
       "Pegasus",
-      "Estrela"
+      "Corrida"
     ],
-    "curiosidade": "Baseado no carrinho Matsushiro BMW M1, foi um dos controles remotos mais rápidos da época.",
-    "raridade": 81,
-    "codigo_trunfo": "C1",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0024_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0024_verso.jpg"
+    "curiosidade": "Baseado no carrinho Matsushiro BMW M1 G4 (japonês).",
+    "raridade": 6,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0024_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0024_verso.jpg"
   },
   {
     "id": "0025",
@@ -494,14 +498,15 @@
     "tags": [
       "Space",
       "Espaço",
-      "Super Naves",
-      "Gulliver"
+      "Nave",
+      "Espacial",
+      "Coleção"
     ],
-    "curiosidade": "Inclui os modelos Cosmic, Spectra, Fantastic e Alpha em um set colecionável completo.",
-    "raridade": 80,
-    "codigo_trunfo": "S1",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0025_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0025_verso.jpg"
+    "curiosidade": "Cosmic, Spectra, Fantastic e Alfa.",
+    "raridade": 8,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0025_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0025_verso.jpg"
   },
   {
     "id": "0026",
@@ -515,13 +520,13 @@
       "Carrinho",
       "Controle Remoto",
       "Stratus",
-      "Estrela"
+      "Corrida"
     ],
-    "curiosidade": "Inspirada no Lancia Stratos, possuía faróis articulados que acendiam de verdade.",
-    "raridade": 88,
-    "codigo_trunfo": "S1",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0026_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0026_verso.jpg"
+    "curiosidade": "Inspirada no Lancia Stratos, faróis escamoteáveis e ronco de motor real.",
+    "raridade": 9,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0026_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0026_verso.jpg"
   },
   {
     "id": "0027",
@@ -535,13 +540,13 @@
       "Mini Game",
       "Tec Toy",
       "Paperboy",
-      "LCD"
+      "Jogo"
     ],
-    "curiosidade": "Sucesso da Tec Toy, funcionava com apenas duas pilhas e simulava o clássico jogo de entregar jornais.",
-    "raridade": 63,
-    "codigo_trunfo": "M3",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0027_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0027_verso.jpg"
+    "curiosidade": "Funciona com apenas duas pilhas AA.",
+    "raridade": 6,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0027_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0027_verso.jpg"
   },
   {
     "id": "0028",
@@ -554,14 +559,14 @@
     "tags": [
       "Iogurte",
       "Chamburcy",
-      "Nostalgia",
-      "Sobremesa"
+      "Alimentos",
+      "Comida"
     ],
-    "curiosidade": "No YouTube há um comercial clássico dessa sobremesa que marcou os lanches da tarde nos anos 80.",
-    "raridade": 50,
-    "codigo_trunfo": "I2",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0028_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0028_verso.jpg"
+    "curiosidade": "No youtube há um comercial de 1984 do Bambi Chamburcy",
+    "raridade": 5,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0028_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0028_verso.jpg"
   },
   {
     "id": "0029",
@@ -572,16 +577,17 @@
     "tema": "Masters of the Universe",
     "genero": "Masculino",
     "tags": [
-      "Mentor",
-      "Man-at-Arms",
-      "MOTU",
-      "Mattel"
+      "Masters of the Universe",
+      "He-Man",
+      "Boneco",
+      "Ação",
+      "Mentor"
     ],
-    "curiosidade": "O mestre de armas de Eternia, vinha com seu icônico cajado e cintura articulada com mola.",
-    "raridade": 73,
-    "codigo_trunfo": "H4",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0029_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0029_verso.jpg"
+    "curiosidade": "Vem com cajado e cintura articulada com sistema de elásticos.",
+    "raridade": 7,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0029_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0029_verso.jpg"
   },
   {
     "id": "0030",
@@ -592,16 +598,17 @@
     "tema": "Masters of the Universe",
     "genero": "Unisex",
     "tags": [
-      "He-man",
-      "MOTU",
-      "Coleção",
-      "Mattel"
+      "He-Man",
+      "Bonecos",
+      "Grayskull",
+      "Ação",
+      "Coleção"
     ],
-    "curiosidade": "Várias gerações da coleção He-Man foram lançadas, tornando-se o pilar dos bonecos de ação da década.",
-    "raridade": 75,
-    "codigo_trunfo": "H1",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0030_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0030_verso.jpg"
+    "curiosidade": "Várias gerações coleção He-Man",
+    "raridade": 10,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0030_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0030_verso.jpg"
   },
   {
     "id": "0031",
@@ -612,16 +619,16 @@
     "tema": "Super Powers",
     "genero": "Masculino",
     "tags": [
-      "Batmovel",
       "Batman",
       "Super Powers",
-      "Estrela"
+      "Batmóvel",
+      "Heroi"
     ],
-    "curiosidade": "Possuía faróis articulados e uma frente com aríete retrátil para combater os vilões de Gotham.",
-    "raridade": 77,
-    "codigo_trunfo": "B1",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0031_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0031_verso.jpg"
+    "curiosidade": "Farois articulados, frente aríete e pinça traseira.",
+    "raridade": 7,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0031_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0031_verso.jpg"
   },
   {
     "id": "0032",
@@ -632,16 +639,16 @@
     "tema": "Quebra-Cabeças",
     "genero": "Unisex",
     "tags": [
-      "Quebra-Cabeça",
+      "Quebra-Cabeças",
       "Puzzle",
       "Grow",
-      "Arte"
+      "Peças"
     ],
-    "curiosidade": "Reproduzia a obra 'Dança Campestre' de Pieter Bruegel, um clássico absoluto dos desafios da Grow.",
-    "raridade": 67,
-    "codigo_trunfo": "Q3",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0032_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776115485/0032_verso.jpg"
+    "curiosidade": "Obra Dança Campestre de Peter Bruegel, 68 x 48 cm2",
+    "raridade": 6,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0032_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0032_verso.jpg"
   },
   {
     "id": "0033",
@@ -660,7 +667,7 @@
       "Azul"
     ],
     "curiosidade": "Aro 20, protetores de espuma.",
-    "raridade": 44,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0033_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0033_verso.jpg"
@@ -682,7 +689,7 @@
       "Vermelha"
     ],
     "curiosidade": "Aro 20, protetores de espuma, peças de light vermelhas.",
-    "raridade": 49,
+    "raridade": 5,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0034_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0034_verso.jpg"
@@ -704,7 +711,7 @@
       "Free 2"
     ],
     "curiosidade": "Aro 20, pedaleiras atrás",
-    "raridade": 39,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0035_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0035_verso.jpg"
@@ -725,7 +732,7 @@
       "Freestyle"
     ],
     "curiosidade": "Aro 20, pedaleiras atrás",
-    "raridade": 40,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0036_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0036_verso.jpg"
@@ -745,7 +752,7 @@
       "Herois"
     ],
     "curiosidade": "Personagens humanos híbridos de insetos que montam insetos gigantes.",
-    "raridade": 60,
+    "raridade": 6,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0037_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0037_verso.jpg"
@@ -767,7 +774,7 @@
       "Off-road"
     ],
     "curiosidade": "Possui tração nas quatro rodas (4WD) e um sistema com dois motores elétricos.",
-    "raridade": 69,
+    "raridade": 7,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0038_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0038_verso.jpg"
@@ -787,7 +794,7 @@
       "Botão"
     ],
     "curiosidade": "Utilizado para jogos de futebol de mesa (futebol de botão).",
-    "raridade": 29,
+    "raridade": 3,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0039_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0039_verso.jpg"
@@ -807,7 +814,7 @@
       "Soco"
     ],
     "curiosidade": "Cada boneco representava um elemento da natureza (terra, floresta, água, galáxia, etc.).",
-    "raridade": 39,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0040_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0040_verso.jpg"
@@ -827,7 +834,7 @@
       "Koosh Ball"
     ],
     "curiosidade": "Fluffy ou Koosh Ball, o colecionável com rostos e mãos era chamado \"Fluffy Gang\".",
-    "raridade": 12,
+    "raridade": 1,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0041_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0041_verso.jpg"
@@ -848,7 +855,7 @@
       "Macaco"
     ],
     "curiosidade": "Ao apertar sua barriga, ele abre a boca e emite um som!",
-    "raridade": 49,
+    "raridade": 5,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0042_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0042_verso.jpg"
@@ -868,7 +875,7 @@
       "Peças"
     ],
     "curiosidade": "Conjuntos contendo de 30 a 500 peças coloridas e fáceis de encaixar.",
-    "raridade": 19,
+    "raridade": 2,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0043_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0043_verso.jpg"
@@ -888,7 +895,7 @@
       "Chuteira"
     ],
     "curiosidade": "Cadarços extremamente longos, que as crianças amarravam dando voltas na canela.",
-    "raridade": 7,
+    "raridade": 1,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0044_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0044_verso.jpg"
@@ -907,7 +914,7 @@
       "Turma do Balão Mágico"
     ],
     "curiosidade": "Havia uma lenda urbana nos anos 80 de que o boneco conteria uma \"adaga\" em seu interior.",
-    "raridade": 65,
+    "raridade": 7,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0045_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0045_verso.jpg"
@@ -927,7 +934,7 @@
       "Super"
     ],
     "curiosidade": "Promocional da Coca-Cola (tampinhas + valor simbólico pela troca).",
-    "raridade": 37,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0046_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0046_verso.jpg"
@@ -949,7 +956,7 @@
       "Peão"
     ],
     "curiosidade": "Versão do Monopoly norte-americano, começou a ser vendido oficialmente pela Estrela em 1944.",
-    "raridade": 33,
+    "raridade": 3,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0047_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0047_verso.jpg"
@@ -960,7 +967,7 @@
     "fabricante": "Polyvox",
     "ano": "1983",
     "categoria": "Vídeo Game",
-    "tema": "Vídeo Game",
+    "tema": "Console 8 bits",
     "genero": "Unisex",
     "tags": [
       "Atari",
@@ -970,7 +977,7 @@
       "Jogo"
     ],
     "curiosidade": "A versão Polyvox chegou com a carcaça inteiramente preta, o que lhe rendeu o apelido de \"Darth Vader\".",
-    "raridade": 25,
+    "raridade": 3,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0048_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0048_verso.jpg"
@@ -991,7 +998,7 @@
       "Modular"
     ],
     "curiosidade": "Continha Pistola-detetive, Periscópio-espião, Óculos-disfarce, Apito-alarme além de dardos e Alvo.",
-    "raridade": 57,
+    "raridade": 6,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0049_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0049_verso.jpg"
@@ -1010,7 +1017,7 @@
       "Cofre"
     ],
     "curiosidade": "Devido ao seu sucesso, a Estrela relançou o brinquedo em 2012.",
-    "raridade": 48,
+    "raridade": 5,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0050_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0050_verso.jpg"
@@ -1030,7 +1037,7 @@
       "Hélice"
     ],
     "curiosidade": "pirulito cuja embalagem trazia uma hélice de plástico colorida.",
-    "raridade": 70,
+    "raridade": 7,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0051_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0051_verso.jpg"
@@ -1051,7 +1058,7 @@
       "Escolar"
     ],
     "curiosidade": "",
-    "raridade": 17,
+    "raridade": 2,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0052_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0052_verso.jpg"
@@ -1072,7 +1079,7 @@
       "Rambo"
     ],
     "curiosidade": "Maleta plástica articulada e uma garrafa térmica com vedação de borracha.",
-    "raridade": 61,
+    "raridade": 6,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0053_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0053_verso.png"
@@ -1092,7 +1099,7 @@
       "Faber Castell"
     ],
     "curiosidade": "Estojos de madeira comuns nas décadas de 80 e 90 no Brasil.",
-    "raridade": 36,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0054_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0054_verso.jpg"
@@ -1113,7 +1120,7 @@
       "Compartimentos Secreto"
     ],
     "curiosidade": "Conhecido por \"automático\" e múltiplos compartimentos \"secretos\" acionados por botões.",
-    "raridade": 55,
+    "raridade": 6,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0055_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0055_verso.jpg"
@@ -1133,7 +1140,7 @@
       "Profissional"
     ],
     "curiosidade": "Promocional da Coca-Cola (tampinhas + valor simbólico pela troca).",
-    "raridade": 41,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0056_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0056_verso.jpg"
@@ -1154,10 +1161,10 @@
       "Compartimentos Secreto"
     ],
     "curiosidade": "Múltiplos compartimentos \"secretos\" acionados por botões, sonho de consumo da criançada.",
-    "raridade": 55,
+    "raridade": 6,
     "codigo_trunfo": "",
-    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0057_frente.jpg",
-    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0057_verso.jpg"
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776291384/0057_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776291384/0057_verso.jpg"
   },
   {
     "id": "0058",
@@ -1174,7 +1181,7 @@
       "Tabuleiro"
     ],
     "curiosidade": "Jogo de dedução/investigação para 3-8 jogadores.",
-    "raridade": 43,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0058_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0058_verso.jpg"
@@ -1194,7 +1201,7 @@
       "Tabuleiro"
     ],
     "curiosidade": "Lançado no Brasil em 1977, enorme sucesso nos anos 80/90.",
-    "raridade": 43,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0059_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0059_verso.jpg"
@@ -1214,7 +1221,7 @@
       "Tabuleiro"
     ],
     "curiosidade": "Tabuleiro com mansão, cartas de suspeitos/armas/locais e envelope secreto.",
-    "raridade": 43,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0060_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0060_verso.jpg"
@@ -1233,7 +1240,7 @@
       "Tabuleiro"
     ],
     "curiosidade": "Versão do The Game of Life; ensinava sobre finanças e decisões da vida adulta.",
-    "raridade": 46,
+    "raridade": 5,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0061_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0061_verso.jpg"
@@ -1253,7 +1260,7 @@
       "Espadas"
     ],
     "curiosidade": "Origem japonesa (Tomy, 1975); um dos poucos da época ainda em produção contínua.",
-    "raridade": 6,
+    "raridade": 1,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0062_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0062_verso.jpg"
@@ -1273,7 +1280,7 @@
       "Espadas"
     ],
     "curiosidade": "Espada no barril com pirata que “pula” aleatoriamente.",
-    "raridade": 6,
+    "raridade": 1,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0063_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0063_verso.jpg"
@@ -1294,7 +1301,7 @@
       "Estrela"
     ],
     "curiosidade": "",
-    "raridade": 10,
+    "raridade": 1,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0064_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0064_verso.jpg"
@@ -1314,7 +1321,7 @@
       "Fichas"
     ],
     "curiosidade": "Versão do Connect Four; relançado várias vezes pela Estrela.",
-    "raridade": 9,
+    "raridade": 1,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0065_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0065_verso.jpg"
@@ -1334,7 +1341,7 @@
       "Cara"
     ],
     "curiosidade": "Versão do Guess Who?; gerou disputa legal com a Hasbro.",
-    "raridade": 7,
+    "raridade": 1,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0066_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0066_verso.jpg"
@@ -1355,7 +1362,7 @@
       "Exército"
     ],
     "curiosidade": "Combate é a versão brasileira do jogo mundialmente conhecido como Stratego.",
-    "raridade": 38,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0067_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0067_verso.jpg"
@@ -1375,7 +1382,7 @@
       "Equilíbrio"
     ],
     "curiosidade": "Relançado em 2017 pela Estrela",
-    "raridade": 39,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0068_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0068_verso.jpg"
@@ -1396,7 +1403,7 @@
       "Agilidade"
     ],
     "curiosidade": "Inclui seis modos de jogo diferentes, focados em cores, números, memória e códigos secretos.",
-    "raridade": 11,
+    "raridade": 1,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0069_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0069_verso.jpg"
@@ -1416,7 +1423,7 @@
       "Arena"
     ],
     "curiosidade": "O último pião a permanecer girando na arena vence a rodada.",
-    "raridade": 21,
+    "raridade": 2,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0070_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0070_verso.jpg"
@@ -1435,7 +1442,7 @@
       "Quente"
     ],
     "curiosidade": "Versão de “Hot Potato”; estimulava raciocínio rápido sob pressão.",
-    "raridade": 13,
+    "raridade": 1,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0071_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0071_verso.jpg"
@@ -1456,7 +1463,7 @@
       "Sorteio"
     ],
     "curiosidade": "Versão familiar com temas variados; comum em festas de família.",
-    "raridade": 3,
+    "raridade": 0,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0072_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0072_verso.jpg"
@@ -1477,7 +1484,7 @@
       "Bolinhas"
     ],
     "curiosidade": "Os jogadores vão retirando as varetas, tentando evitar que as bolinhas caiam.",
-    "raridade": 18,
+    "raridade": 2,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0073_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0073_verso.jpg"
@@ -1498,7 +1505,7 @@
       "Ponte"
     ],
     "curiosidade": "A explosão pode ocorrer a qualquer momento, destruindo o progresso dos jogadores.",
-    "raridade": 26,
+    "raridade": 3,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0074_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0074_verso.jpg"
@@ -1516,7 +1523,7 @@
       "Pega Varetas"
     ],
     "curiosidade": "Lançado pela Estrela na década de 1940 no Brasil.",
-    "raridade": 4,
+    "raridade": 0,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0075_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0075_verso.jpg"
@@ -1536,7 +1543,7 @@
       "Equilíbrio"
     ],
     "curiosidade": "Auxilia no desenvolvimento da coordenação motora e raciocínio lógico em crianças.",
-    "raridade": 27,
+    "raridade": 3,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0076_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0076_verso.jpg"
@@ -1563,7 +1570,7 @@
       "Ludo"
     ],
     "curiosidade": "São 10 opções de entretenimento em um único suporte plástico inteligente.",
-    "raridade": 48,
+    "raridade": 5,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0077_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0077_verso.jpg"
@@ -1583,7 +1590,7 @@
       "Xadrez Chinês eDamas."
     ],
     "curiosidade": "Inclui tabuleiros, peões coloridos, damas e dados",
-    "raridade": 40,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0078_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0078_verso.jpg"
@@ -1603,7 +1610,7 @@
       "Desafio"
     ],
     "curiosidade": "Desenvolve o raciocínio lógico, a percepção visuoespacial e a concentração.",
-    "raridade": 39,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0079_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0079_verso.jpg"
@@ -1624,7 +1631,7 @@
       "Trilha"
     ],
     "curiosidade": "Inclui um tabuleiro dupla-face (um lado para damas, outro para moinho).",
-    "raridade": 49,
+    "raridade": 5,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0080_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0080_verso.jpg"
@@ -1645,7 +1652,7 @@
       "Dado"
     ],
     "curiosidade": "\"Ludo\" vem do latim ludus (ou ludere), que significa literalmente \"eu jogo\".",
-    "raridade": 35,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0081_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0081_verso.jpg"
@@ -1665,7 +1672,7 @@
       "Aranhas"
     ],
     "curiosidade": "O objetivo é dominar a teia derrubando as aranhas adversárias.",
-    "raridade": 44,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0082_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0082_verso.jpg"
@@ -1685,7 +1692,7 @@
       "Elefantes"
     ],
     "curiosidade": "Os jogadores participam de uma busca no \"mato\" para encontrar 11 animais que fugiram de suas jaulas.",
-    "raridade": 62,
+    "raridade": 6,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0083_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0083_verso.jpg"
@@ -1706,7 +1713,7 @@
       "Roleta"
     ],
     "curiosidade": "Inspirado na clássica cantiga infantil brasileira de mesmo nome.",
-    "raridade": 63,
+    "raridade": 6,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0084_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0084_verso.jpg"
@@ -1727,7 +1734,7 @@
       "Bandeija"
     ],
     "curiosidade": "Exige coordenação motora fina e paciência.",
-    "raridade": 88,
+    "raridade": 9,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0085_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0085_verso.jpg"
@@ -1747,7 +1754,7 @@
       "Ovinhos"
     ],
     "curiosidade": "Os jogadores devem retirar ovos do ninho da galinha sem que ela perceba.",
-    "raridade": 90,
+    "raridade": 9,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0086_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0086_verso.jpg"
@@ -1768,7 +1775,7 @@
       "Pinguins"
     ],
     "curiosidade": "O objetivo é atravessar a montanha e coletar ovos sem acordar o dragão.",
-    "raridade": 91,
+    "raridade": 9,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0087_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0087_verso.jpg"
@@ -1787,7 +1794,7 @@
       "Macaco"
     ],
     "curiosidade": "O objetivo era coletar os \"cocos\" (pequenas esferas) que o gorila protegia.",
-    "raridade": 36,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0088_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0088_verso.jpg"
@@ -1807,7 +1814,7 @@
       "Tabuleiro"
     ],
     "curiosidade": "A sorte nos dados define quem cruza a linha de chegada primeiro.",
-    "raridade": 89,
+    "raridade": 9,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0089_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0089_verso.jpg"
@@ -1829,7 +1836,7 @@
       "Mapa"
     ],
     "curiosidade": "Jogadores conquistam territórios mundiais com exércitos e cartas objetivo.",
-    "raridade": 45,
+    "raridade": 5,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0090_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0090_verso.jpg"
@@ -1851,7 +1858,7 @@
       "Mapa"
     ],
     "curiosidade": "Uma das versões mais famosas é dos anos 80's, com a icônica \"caixa azul\".",
-    "raridade": 45,
+    "raridade": 5,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0091_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0091_verso.jpg"
@@ -1871,7 +1878,7 @@
       "Aneis"
     ],
     "curiosidade": "",
-    "raridade": 36,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0092_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0092_verso.jpg"
@@ -1891,7 +1898,7 @@
       "Morcegos"
     ],
     "curiosidade": "Ficou famoso pela propaganda com \"Bento Carneiro, o Vampiro\" (Chico Anysio).",
-    "raridade": 52,
+    "raridade": 5,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0093_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0093_verso.jpg"
@@ -1911,7 +1918,7 @@
       "Burrinho"
     ],
     "curiosidade": "O burrinho que dá coice e joga as peças para cima.",
-    "raridade": 55,
+    "raridade": 6,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0094_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0094_verso.jpg"
@@ -1934,7 +1941,7 @@
       "Frankenstein"
     ],
     "curiosidade": "Para \"dar um tapa\" e arrancar a \"cabeleira\" do monstro adversário.",
-    "raridade": 42,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0095_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0095_verso.jpg"
@@ -1957,7 +1964,7 @@
       "Frankenstein"
     ],
     "curiosidade": "Ataque e Defesa, perde quem perde a peruca.",
-    "raridade": 42,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0096_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0096_verso.jpg"
@@ -1978,7 +1985,7 @@
       "Tubarão"
     ],
     "curiosidade": "O diferencial era o tubarão mecânico movido a pilhas que girava pelo tabuleiro.",
-    "raridade": 44,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0097_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0097_verso.jpg"
@@ -1999,7 +2006,7 @@
       "Futebol"
     ],
     "curiosidade": "O objetivo é controlar os botões para movimentar a água e marcar gols com a bolinha.",
-    "raridade": 37,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0098_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0098_verso.jpg"
@@ -2020,7 +2027,7 @@
       "Argolinhas"
     ],
     "curiosidade": "Não utiliza pilhas ou baterias, operando apenas com a pressão da água.",
-    "raridade": 25,
+    "raridade": 3,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0098_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0098_verso.jpg"
@@ -2041,7 +2048,7 @@
       "Knight Rider"
     ],
     "curiosidade": "\"A Arrancada Total\" trazia os modelos à fricção.",
-    "raridade": 84,
+    "raridade": 8,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0100_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0100_verso.jpg"
@@ -2063,7 +2070,7 @@
       "Polêmica"
     ],
     "curiosidade": "Considerado um dos jogos mais polêmicos no Brasil devido semelhança com a Tábua Ouija!",
-    "raridade": 88,
+    "raridade": 9,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0101_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0101_verso.jpg"
@@ -2083,7 +2090,7 @@
       "Xadrez Chinês eDamas."
     ],
     "curiosidade": "Multijogos: O conceito principal é oferecer 4 jogos em 1.",
-    "raridade": 40,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0102_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0102_verso.jpg"
@@ -2103,7 +2110,7 @@
       "Game"
     ],
     "curiosidade": "Ao pressionar um botão, lança a bolinha em direção à cesta.",
-    "raridade": 77,
+    "raridade": 8,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0103_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0103_verso.jpg"
@@ -2123,7 +2130,7 @@
       "Gulliver"
     ],
     "curiosidade": "Foi lançado originalmente sob o nome de Futebol Pelé (1979).",
-    "raridade": 73,
+    "raridade": 7,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0104_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0104_verso.jpg"
@@ -2144,7 +2151,7 @@
       "Trilha"
     ],
     "curiosidade": "Moinho (ou Trilha) é um jogo de estratégia milenar onde o objetivo é formar linhas de três peças.",
-    "raridade": 49,
+    "raridade": 5,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0105_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0105_verso.jpg"
@@ -2165,7 +2172,7 @@
       "Giz de Cera"
     ],
     "curiosidade": "Composto por diversas placas coloridas, giz de cera e moldura.",
-    "raridade": 78,
+    "raridade": 8,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0106_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0106_verso.jpg"
@@ -2184,7 +2191,7 @@
       "Piloto Automático"
     ],
     "curiosidade": "Os pilotos coloridos mudam o circuito do veículo ao serem trocados.",
-    "raridade": 76,
+    "raridade": 8,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0107_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0107_verso.jpg"
@@ -2204,7 +2211,7 @@
       "Nintendo"
     ],
     "curiosidade": "Lançado no mercado internacional (Japão e EUA) em 1989, no Brasil somente em 1994.",
-    "raridade": 88,
+    "raridade": 9,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0108_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0108_verso.jpg"
@@ -2226,7 +2233,7 @@
       "Amarela"
     ],
     "curiosidade": "Lançada para imitar motocicletas de motocross, possuía um \"tanque\" de plástico no quadro e placas de número.",
-    "raridade": 81,
+    "raridade": 8,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0109_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0109_verso.jpg"
@@ -2246,7 +2253,7 @@
       "Monobloco"
     ],
     "curiosidade": "Nasceu em 1961, mas o auge da linha Monobloco ocorreu entre os anos 1970 e 1980.",
-    "raridade": 38,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0110_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0110_verso.jpg"
@@ -2264,7 +2271,7 @@
       "Company"
     ],
     "curiosidade": "A marca Company foi fundada em 1973 no Rio de Janeiro.",
-    "raridade": 45,
+    "raridade": 5,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0111_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0111_verso.jpg"
@@ -2284,7 +2291,7 @@
       "Água"
     ],
     "curiosidade": "Era ao mesmo tempo uma caneta e também um jogo aquático.",
-    "raridade": 89,
+    "raridade": 9,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0112_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0112_verso.jpg"
@@ -2305,7 +2312,7 @@
       "Joystick"
     ],
     "curiosidade": "Clone do NES, aceita cartuchos de 72 pinos (americano) e 60 pinos (padrão japonês/Famicom).",
-    "raridade": 39,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0113_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0113_verso.jpg"
@@ -2326,7 +2333,7 @@
       "Joystick"
     ],
     "curiosidade": "Clone do NES, evolução do \"Top Game VG-9000\" (1990), que foi uma evolução do Top Game VG-8000 (1989).",
-    "raridade": 31,
+    "raridade": 3,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0114_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0114_verso.jpg"
@@ -2347,7 +2354,7 @@
       "NES"
     ],
     "curiosidade": "Clone do NES, joysticks em forma de \"alavanca\" considerados desconfortáveis pelos usuários, apenas cartuchos 60 pinos (padrão Japonês).",
-    "raridade": 41,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0115_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0115_verso.jpg"
@@ -2367,7 +2374,7 @@
       "Gradiente"
     ],
     "curiosidade": "Clone mais famosos do NES, usa cartuchos de 72 pinos (padrão americano).",
-    "raridade": 27,
+    "raridade": 3,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0116_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0116_verso.jpg"
@@ -2387,7 +2394,7 @@
       "Vídeo Game"
     ],
     "curiosidade": "Lançado no Japão em 1985, veio para concorrer com o Nintendinho (NES).",
-    "raridade": 18,
+    "raridade": 2,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0117_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0117_verso.jpg"
@@ -2408,7 +2415,7 @@
       "Limão"
     ],
     "curiosidade": "O termo \"suprassumo\" significa o grau mais elevado ou o máximo de algo.",
-    "raridade": 22,
+    "raridade": 2,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0118_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0118_verso.jpg"
@@ -2428,7 +2435,7 @@
       "Pipoco"
     ],
     "curiosidade": "As mais comuns hoje são de vidro, como \"olho de gato\", \"americana\", \"leiteira\" e a \"cibica\" (ou carambola).",
-    "raridade": 3,
+    "raridade": 0,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0119_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0119_verso.jpg"
@@ -2451,7 +2458,7 @@
       "Coca-Cola"
     ],
     "curiosidade": "Item colecionável vintage, pacote promocional da marca Coca-Cola com cordões de substituição para ioiôs Russel.",
-    "raridade": 67,
+    "raridade": 7,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0120_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0120_verso.jpg"
@@ -2473,7 +2480,7 @@
       "Grafite"
     ],
     "curiosidade": "Apresentavam o diferencial da borrachinha no topo e as cores vibrantes, que se tornariam sua marca registrada.",
-    "raridade": 36,
+    "raridade": 4,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0121_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0121_verso.jpg"
@@ -2494,7 +2501,7 @@
       "Salão"
     ],
     "curiosidade": "O F-7 foi o primeiro par de tênis vendido na história da Centauro, projetado para Futsal (salão).",
-    "raridade": 81,
+    "raridade": 8,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0122_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0122_verso.jpg"
@@ -2514,7 +2521,7 @@
       "Amortecedor"
     ],
     "curiosidade": "O grande diferencial eram as \"rodinhas\" de poliuretano (visíveis na parte inferior direita da imagem) que podiam ser trocadas pelo usuário.",
-    "raridade": 79,
+    "raridade": 8,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0123_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0123_verso.jpg"
@@ -2535,7 +2542,7 @@
       "GTX"
     ],
     "curiosidade": "Na década de 90, o acesso ao modelo original era bastante limitado no país.",
-    "raridade": 74,
+    "raridade": 7,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0124_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0124_verso.jpg"
@@ -2552,7 +2559,7 @@
       "Tênis Nike Velocity"
     ],
     "curiosidade": "Foi o precursor do Nike Air.",
-    "raridade": 92,
+    "raridade": 9,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0125_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0125_verso.jpg"
@@ -2570,7 +2577,7 @@
       "Nike Street"
     ],
     "curiosidade": "O modelo clássico da época, frequentemente lembrado por suas combinações de cores vibrantes e solado característico.",
-    "raridade": 86,
+    "raridade": 9,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0126_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0126_verso.jpg"
@@ -2590,7 +2597,7 @@
       "Apontador"
     ],
     "curiosidade": "Grafite 2.0mm. O botão superior funciona como um apontador embutido para afiar o grafite.",
-    "raridade": 82,
+    "raridade": 8,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0127_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0127_verso.jpg"
@@ -2610,7 +2617,7 @@
       "Pirâmides"
     ],
     "curiosidade": "Sistema de amortecimento visível no solado, sendo pequenas pirâmides de borracha que prometiam devolver a energia do impacto como propulsão.",
-    "raridade": 83,
+    "raridade": 8,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0128_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0128_verso.jpg"
@@ -2632,7 +2639,7 @@
       "Corrida"
     ],
     "curiosidade": "Ele marcou época por ser projetado para atender a todos os tipos de corredores, foi o tênis de corrida mais vendido da história da Nike.",
-    "raridade": 83,
+    "raridade": 8,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0129_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0129_verso.jpg"
@@ -2654,7 +2661,7 @@
       "Corrida"
     ],
     "curiosidade": "A linha recebeu o nome do cavalo alado da mitologia grega para representar agilidade e velocidade, transmitindo a ideia de \"voar\" durante a corrida.",
-    "raridade": 82,
+    "raridade": 8,
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0130_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0130_verso.jpg"
