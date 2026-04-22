@@ -2574,5 +2574,89 @@
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0126_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0126_verso.jpg"
+  },
+  {
+    "id": "0127",
+    "nome": "Lapiseira Compactor Técnico",
+    "fabricante": "Compactor",
+    "ano": "1984",
+    "categoria": "Escolar",
+    "tema": "Lapiseira",
+    "genero": "Unisex",
+    "tags": [
+      "Lapiseira",
+      "2.0 mm",
+      "Compactor",
+      "Apontador"
+    ],
+    "curiosidade": "Grafite 2.0mm. O botão superior funciona como um apontador embutido para afiar o grafite.",
+    "raridade": 82,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0127_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0127_verso.jpg"
+  },
+  {
+    "id": "0128",
+    "nome": "M2000 Propulsion",
+    "fabricante": "M2000",
+    "ano": "1990",
+    "categoria": "Calçados",
+    "tema": "Tênis",
+    "genero": "Unisex",
+    "tags": [
+      "Tênis",
+      "M2000",
+      "Propulsion",
+      "Pirâmides"
+    ],
+    "curiosidade": "Sistema de amortecimento visível no solado, sendo pequenas pirâmides de borracha que prometiam devolver a energia do impacto como propulsão.",
+    "raridade": 83,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0128_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0128_verso.jpg"
+  },
+  {
+    "id": "0129",
+    "nome": "Nike Air Pegasus",
+    "fabricante": "Nike",
+    "ano": "1983",
+    "categoria": "Calçados",
+    "tema": "Tênis",
+    "genero": "Unisex",
+    "tags": [
+      "Tênis",
+      "Nike",
+      "Air",
+      "Pegasus",
+      "83",
+      "Corrida"
+    ],
+    "curiosidade": "Ele marcou época por ser projetado para atender a todos os tipos de corredores, foi o tênis de corrida mais vendido da história da Nike.",
+    "raridade": 83,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0129_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0129_verso.jpg"
+  },
+  {
+    "id": "0130",
+    "nome": "Nike Air Pegasus",
+    "fabricante": "Nike",
+    "ano": "1992",
+    "categoria": "Calçados",
+    "tema": "Tênis",
+    "genero": "Unisex",
+    "tags": [
+      "Tênis",
+      "Nike",
+      "Air",
+      "Pegasus",
+      "92",
+      "Corrida"
+    ],
+    "curiosidade": "A linha recebeu o nome do cavalo alado da mitologia grega para representar agilidade e velocidade, transmitindo a ideia de \"voar\" durante a corrida.",
+    "raridade": 82,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0130_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0130_verso.jpg"
   }
 ]

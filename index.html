@@ -19,6 +19,8 @@
         --trunfo-red: #c0392b;
         --trunfo-gold: #f0c040;
         --trunfo-dark: #1a1a2e;
+        /* [FIX 1] Altura da nav usada como referência de padding no hero */
+        --nav-height: 72px;
       }
 
       body {
@@ -33,53 +35,42 @@
       }
 
       /* ============================================================
-         [NOVO] HERO SECTION - Imagem de capa com sobreposições
+         HERO SECTION
          ============================================================ */
       .hero-section {
         position: relative;
         width: 100%;
-        height: 100vh;
-        min-height: 540px;
-        max-height: 820px;
+        /* [FIX 1] Hero ocupa viewport inteira. O padding-top empurra o conteúdo
+           para baixo da nav fixa, evitando que o título seja coberto pela barra. */
+        min-height: 100vh;
+        padding-top: var(--nav-height);
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
+        box-sizing: border-box;
       }
 
-      /* Imagem de fundo do Hero gerada via Picsum com seed temático */
       .hero-bg {
         position: absolute;
         inset: 0;
-        /* Usamos um gradiente sintético retro + uma imagem de placeholder.
-           Substitua o src da <img> abaixo pela sua imagem no Cloudinary. */
-        background: linear-gradient(
-          135deg,
-          #0d0221 0%,
-          #1a0533 30%,
-          #0a1628 70%,
-          #001a33 100%
-        );
+        background: linear-gradient(135deg, #0d0221 0%, #1a0533 30%, #0a1628 70%, #001a33 100%);
         overflow: hidden;
       }
 
-      /* [NOVO] Grade de pontos estilo anos 80 no fundo do hero */
+      /* Grade de pontos estilo anos 80 */
       .hero-bg::before {
         content: "";
         position: absolute;
         inset: 0;
         background-image:
           radial-gradient(circle, rgba(0, 255, 255, 0.18) 1px, transparent 1px),
-          radial-gradient(circle, rgba(255, 0, 255, 0.1) 1px, transparent 1px);
-        background-size:
-          40px 40px,
-          80px 80px;
-        background-position:
-          0 0,
-          20px 20px;
+          radial-gradient(circle, rgba(255, 0, 255, 0.10) 1px, transparent 1px);
+        background-size: 40px 40px, 80px 80px;
+        background-position: 0 0, 20px 20px;
       }
 
-      /* [NOVO] Grade de perspectiva no rodapé do hero, estilo synthwave */
+      /* Grade de perspectiva synthwave no rodapé do hero */
       .hero-bg::after {
         content: "";
         position: absolute;
@@ -90,17 +81,15 @@
         background:
           repeating-linear-gradient(
             to bottom,
-            transparent,
-            transparent 18px,
+            transparent, transparent 18px,
             rgba(255, 0, 255, 0.12) 18px,
             rgba(255, 0, 255, 0.12) 19px
           ),
           repeating-linear-gradient(
             to right,
-            transparent,
-            transparent 9%,
-            rgba(0, 255, 255, 0.1) 9%,
-            rgba(0, 255, 255, 0.1) calc(9% + 1px)
+            transparent, transparent 9%,
+            rgba(0, 255, 255, 0.10) 9%,
+            rgba(0, 255, 255, 0.10) calc(9% + 1px)
           );
         -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
         mask-image: linear-gradient(to top, black 0%, transparent 100%);
@@ -108,7 +97,7 @@
         transform-origin: bottom center;
       }
 
-      /* [NOVO] Foto real do Hero - troque o src pela sua imagem no Cloudinary */
+      /* Foto de fundo — troque o src pela sua imagem no Cloudinary */
       .hero-photo {
         position: absolute;
         inset: 0;
@@ -116,41 +105,45 @@
         height: 100%;
         object-fit: cover;
         object-position: center top;
-        /* Blend mode faz a foto se mesclar com o fundo retro */
         mix-blend-mode: luminosity;
         opacity: 0.22;
       }
 
-      /* [NOVO] Gradiente de vinheta para fundir o hero com o grid abaixo */
+      /* Vinheta radial */
       .hero-vignette {
         position: absolute;
         inset: 0;
-        background: radial-gradient(
-          ellipse at center,
-          transparent 30%,
-          rgba(15, 23, 42, 0.85) 100%
-        );
+        background: radial-gradient(ellipse at center, transparent 30%, rgba(15, 23, 42, 0.85) 100%);
       }
 
-      /* [NOVO] Gradiente de fade na base do hero para transição suave com o grid */
+      /* [FIX 2] Fade mais alto (320px, era 220px) e com 3 stops para suavizar
+         a transição entre as estatísticas do hero e a seção "A Coleção". */
       .hero-fade {
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
-        height: 220px;
-        background: linear-gradient(to bottom, transparent, #0f172a);
+        height: 320px;
+        background: linear-gradient(
+          to bottom,
+          transparent 0%,
+          rgba(15, 23, 42, 0.55) 50%,
+          #0f172a 100%
+        );
       }
 
       .hero-content {
         position: relative;
         z-index: 2;
         text-align: center;
-        padding: 0 1.5rem;
-        max-width: 860px;
+        /* [FIX 1] padding generoso nas laterais e base para garantir
+           que as stats não sejam cortadas pelo fade em notebooks */
+        padding: 2rem 2.5rem 6rem;
+        max-width: min(860px, 90vw);
+        width: 100%;
       }
 
-      /* [NOVO] Linha decorativa de texto arcade acima do título */
+      /* Tag decorativa estilo arcade */
       .hero-tag {
         display: inline-block;
         border: 1px solid rgba(0, 255, 255, 0.5);
@@ -165,35 +158,34 @@
         text-transform: uppercase;
       }
 
+      /* [FIX 1] Título: clamp com teto 4rem (era 5.5rem) para caber em notebook
+         sem quebrar em 4 linhas nem cortar laterais. Sem <br> manuais — o texto
+         flui naturalmente conforme o font-size fluido e max-width do contêiner. */
       .hero-title {
         font-family: "Archivo Black", sans-serif;
-        font-size: clamp(2.4rem, 8vw, 5.5rem);
-        line-height: 1;
+        font-size: clamp(2rem, 5.5vw, 4rem);
+        line-height: 1.05;
         text-transform: uppercase;
-        /* [NOVO] Gradiente vibrante no título principal */
-        background: linear-gradient(
-          135deg,
-          #fff 0%,
-          var(--neon-blue) 40%,
-          var(--neon-pink) 100%
-        );
+        background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 40%, var(--neon-pink) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         margin-bottom: 1.2rem;
-        /* [NOVO] Sombra suave para dar profundidade */
         filter: drop-shadow(0 0 40px rgba(255, 0, 255, 0.35));
+        /* Evita overflow lateral em qualquer largura de tela */
+        word-break: break-word;
+        overflow-wrap: break-word;
       }
 
       .hero-subtitle {
         color: rgba(255, 255, 255, 0.6);
-        font-size: clamp(0.85rem, 2vw, 1.1rem);
+        font-size: clamp(0.85rem, 1.8vw, 1.05rem);
         max-width: 520px;
         margin: 0 auto 2rem;
         line-height: 1.7;
       }
 
-      /* [NOVO] Botão CTA do hero com brilho animado */
+      /* Botão CTA com brilho animado */
       .hero-cta {
         display: inline-flex;
         align-items: center;
@@ -210,20 +202,16 @@
         border: none;
         position: relative;
         overflow: hidden;
-        transition:
-          transform 0.2s ease,
-          filter 0.2s ease;
+        transition: transform 0.2s ease, filter 0.2s ease;
       }
       .hero-cta:hover {
         transform: scale(1.06);
         filter: brightness(1.15);
       }
-      /* [NOVO] Animação de brilho deslizante no botão */
       .hero-cta::after {
         content: "";
         position: absolute;
-        top: 0;
-        left: -80%;
+        top: 0; left: -80%;
         width: 60%;
         height: 100%;
         background: rgba(255, 255, 255, 0.35);
@@ -231,27 +219,21 @@
         animation: shine 3s infinite;
       }
       @keyframes shine {
-        0% {
-          left: -80%;
-        }
-        50% {
-          left: 120%;
-        }
-        100% {
-          left: 120%;
-        }
+        0%   { left: -80%; }
+        50%  { left: 120%; }
+        100% { left: 120%; }
       }
 
-      /* [NOVO] Estatísticas flutuantes abaixo do CTA */
+      /* [FIX 2] Stats com flex-wrap e padding-bottom para evitar corte pelo fade */
       .hero-stats {
         display: flex;
         gap: 2.5rem;
         justify-content: center;
         margin-top: 2.5rem;
+        padding-bottom: 0.5rem;
+        flex-wrap: wrap;
       }
-      .hero-stat-item {
-        text-align: center;
-      }
+      .hero-stat-item { text-align: center; }
       .hero-stat-number {
         font-family: "Orbitron", monospace;
         font-size: 1.5rem;
@@ -261,14 +243,14 @@
       .hero-stat-label {
         font-size: 0.62rem;
         letter-spacing: 0.15em;
-        color: rgba(255, 255, 255, 0.4);
+        color: rgba(255,255,255,0.4);
         text-transform: uppercase;
       }
 
-      /* [NOVO] Seta animada de scroll no rodapé do hero */
+      /* Seta de scroll animada */
       .hero-scroll-arrow {
         position: absolute;
-        bottom: 2.5rem;
+        bottom: 2rem;
         left: 50%;
         transform: translateX(-50%);
         z-index: 3;
@@ -288,13 +270,8 @@
         transform: rotate(45deg);
       }
       @keyframes bounce {
-        0%,
-        100% {
-          transform: translateX(-50%) translateY(0);
-        }
-        50% {
-          transform: translateX(-50%) translateY(8px);
-        }
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50%       { transform: translateX(-50%) translateY(8px); }
       }
 
       /* ============================================================
@@ -306,34 +283,16 @@
         width: 100%;
         transition: all 0.4s ease;
       }
-      @media (min-width: 640px) {
-        .masonry-grid {
-          columns: 3;
-        }
-      }
-      @media (min-width: 1024px) {
-        .masonry-grid {
-          columns: 4;
-        }
-      }
-      @media (min-width: 1280px) {
-        .masonry-grid {
-          columns: 5;
-        }
-      }
-      @media (min-width: 1536px) {
-        .masonry-grid {
-          columns: 6;
-        }
-      }
+      @media (min-width: 640px)  { .masonry-grid { columns: 3; } }
+      @media (min-width: 1024px) { .masonry-grid { columns: 4; } }
+      @media (min-width: 1280px) { .masonry-grid { columns: 5; } }
+      @media (min-width: 1536px) { .masonry-grid { columns: 6; } }
 
       .masonry-item {
         break-inside: avoid-column;
         margin-bottom: 1.5rem;
         perspective: 1200px;
-        transition:
-          filter 0.5s ease,
-          opacity 0.5s ease;
+        transition: filter 0.5s ease, opacity 0.5s ease;
         position: relative;
         display: inline-block;
         width: 100%;
@@ -348,7 +307,9 @@
       #toyGrid.grid-focused .masonry-item.is-flipped {
         filter: grayscale(0%) brightness(1);
         opacity: 1;
-        z-index: 1000;
+        /* [FIX 3] z-index 90 < z-index da nav (100): card virado passa
+           POR BAIXO da barra de menu ao scrollar a página. */
+        z-index: 90;
       }
 
       /* ============================================================
@@ -363,7 +324,8 @@
       }
       .is-flipped .card-inner {
         transform: rotateY(180deg) scale(1.05);
-        z-index: 50;
+        /* [FIX 3] Mantém z-index abaixo da nav para não sobrepô-la */
+        z-index: 90;
       }
 
       .card-front,
@@ -384,10 +346,8 @@
         transform: rotateY(180deg);
         display: flex;
         flex-direction: column;
-        /* [ALTERADO] Fundo escuro para o verso, antes era branco */
         background: var(--trunfo-dark);
         border-radius: 1rem;
-        /* [NOVO] Borda ornamentada dupla estilo carta de baralho vintage */
         outline: 4px solid var(--trunfo-gold);
         outline-offset: -6px;
         border: 6px solid #0d0b1e;
@@ -399,10 +359,8 @@
       }
 
       /* ============================================================
-         [ALTERADO] TEMPLATE SUPER TRUNFO - Completamente redesenhado
+         TEMPLATE SUPER TRUNFO
          ============================================================ */
-
-      /* Cabeçalho da carta: fundo vermelho escuro com gradiente */
       .trunfo-header {
         background: linear-gradient(180deg, #8b0000 0%, var(--trunfo-red) 100%);
         padding: 0;
@@ -411,7 +369,6 @@
         flex-shrink: 0;
       }
 
-      /* [NOVO] Faixa superior fina com o código trunfo à esquerda */
       .trunfo-top-bar {
         background: #6b0000;
         display: flex;
@@ -419,13 +376,12 @@
         align-items: center;
         padding: 3px 8px;
         font-size: 0.5rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(255,255,255,0.5);
         letter-spacing: 0.15em;
         text-transform: uppercase;
         font-family: "Orbitron", monospace;
       }
 
-      /* [NOVO] Código trunfo em destaque na faixa superior */
       .trunfo-code-badge {
         font-family: "Orbitron", monospace;
         font-size: 0.65rem;
@@ -434,7 +390,6 @@
         letter-spacing: 0.08em;
       }
 
-      /* Título do brinquedo no header */
       .trunfo-title-area {
         padding: 6px 10px 8px;
         display: flex;
@@ -442,24 +397,12 @@
         gap: 8px;
       }
 
-      /* [NOVO] Ícone de estrela decorativo antes do título */
       .trunfo-star {
         flex-shrink: 0;
         width: 18px;
         height: 18px;
         background: var(--trunfo-gold);
-        clip-path: polygon(
-          50% 0%,
-          61% 35%,
-          98% 35%,
-          68% 57%,
-          79% 91%,
-          50% 70%,
-          21% 91%,
-          32% 57%,
-          2% 35%,
-          39% 35%
-        );
+        clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
       }
 
       .trunfo-title-text {
@@ -469,17 +412,15 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         line-height: 1.2;
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
       }
 
-      /* [NOVO] Imagem do verso com frame de polaroid retrô */
       .trunfo-photo-wrapper {
         margin: 8px 10px 4px;
         position: relative;
         flex-shrink: 0;
       }
       .trunfo-photo-frame {
-        /* Moldura interna dourada */
         border: 3px solid var(--trunfo-gold);
         padding: 2px;
         background: #000;
@@ -492,13 +433,11 @@
         display: block;
         filter: sepia(20%) contrast(1.08);
       }
-
-      /* [NOVO] Ano sobreposto na foto, canto inferior direito */
       .trunfo-photo-year {
         position: absolute;
         bottom: 4px;
         right: 4px;
-        background: rgba(0, 0, 0, 0.75);
+        background: rgba(0,0,0,0.75);
         color: var(--trunfo-gold);
         font-family: "Orbitron", monospace;
         font-size: 0.5rem;
@@ -506,9 +445,6 @@
         letter-spacing: 0.1em;
       }
 
-      /* ============================================================
-         [NOVO] Área de atributos: fundo mais escuro, tipografia temática
-         ============================================================ */
       .trunfo-stats-area {
         flex-grow: 1;
         display: flex;
@@ -517,21 +453,19 @@
         border-top: 2px solid var(--trunfo-gold);
       }
 
-      /* Linha de atributo individual */
       .trunfo-stat-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 4px 10px;
         font-size: 0.65rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
         gap: 8px;
       }
       .trunfo-stat-row:nth-child(even) {
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255,255,255,0.03);
       }
 
-      /* [NOVO] Label dos atributos em dourado */
       .trunfo-label {
         font-family: "Orbitron", monospace;
         font-size: 0.45rem;
@@ -542,7 +476,6 @@
         flex-shrink: 0;
       }
 
-      /* [NOVO] Valor dos atributos em branco claro */
       .trunfo-value {
         color: rgba(255, 255, 255, 0.85);
         font-size: 0.6rem;
@@ -551,18 +484,21 @@
       }
 
       /* ============================================================
-         [NOVO] Barra de raridade redesenhada com ícone e cores
+         [FIX 4] BARRA DE RARIDADE: LEDs duplas paralelas, escala 0–10
+         10 LEDs por fileira × 2 fileiras sobrepostas.
+         Verde: posições 1–6 | Amarelo: 7–8 | Vermelho: 9–10
+         LEDs acesos têm glow; apagados ficam quase invisíveis.
          ============================================================ */
       .trunfo-raridade-area {
-        padding: 6px 10px 4px;
+        padding: 6px 10px 6px;
         background: #0f0e1e;
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        border-top: 1px solid rgba(255,255,255,0.06);
       }
       .trunfo-raridade-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 4px;
+        margin-bottom: 5px;
       }
       .trunfo-raridade-label {
         font-family: "Orbitron", monospace;
@@ -571,31 +507,55 @@
         color: var(--trunfo-gold);
         text-transform: uppercase;
       }
+      /* Valor numérico ex: "7/10" */
       .trunfo-raridade-value {
         font-family: "Orbitron", monospace;
         font-size: 0.65rem;
         font-weight: 700;
-        /* [NOVO] Cor dinâmica via CSS variable definida inline no JS */
-        color: var(--raridade-cor, var(--neon-blue));
+        color: rgba(255,255,255,0.45);
       }
-      .raridade-bar {
-        height: 7px;
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 4px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+
+      /* Contêiner das duas fileiras de LEDs */
+      .led-display {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
       }
-      .raridade-fill {
-        height: 100%;
-        border-radius: 4px;
-        /* [NOVO] Gradiente que vai de azul (comum) a rosa (raríssimo) */
-        background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
-        box-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
-        transition: width 0.8s ease;
+      /* Uma fileira com 10 LEDs em linha */
+      .led-row {
+        display: flex;
+        gap: 3px;
+      }
+      /* LED base: apagado */
+      .led {
+        flex: 1;
+        height: 6px;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        transition: background 0.25s ease, box-shadow 0.25s ease;
+      }
+      /* LED aceso verde (posições 1–6) */
+      .led.on-green {
+        background: #00e040;
+        border-color: #00ff55;
+        box-shadow: 0 0 5px #00e040, 0 0 10px rgba(0, 224, 64, 0.5);
+      }
+      /* LED aceso amarelo (posições 7–8) */
+      .led.on-yellow {
+        background: #ffe600;
+        border-color: #fff000;
+        box-shadow: 0 0 5px #ffe600, 0 0 10px rgba(255, 230, 0, 0.5);
+      }
+      /* LED aceso vermelho (posições 9–10) */
+      .led.on-red {
+        background: #ff2020;
+        border-color: #ff4444;
+        box-shadow: 0 0 5px #ff2020, 0 0 10px rgba(255, 32, 32, 0.5);
       }
 
       /* ============================================================
-         [NOVO] Curiosidade com visual de card interno
+         Curiosidade e rodapé da carta
          ============================================================ */
       .trunfo-curiosidade {
         margin: 4px 8px 6px;
@@ -604,13 +564,10 @@
         border-left: 2px solid var(--neon-pink);
         font-size: 0.58rem;
         line-height: 1.5;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(255,255,255,0.5);
         font-style: italic;
       }
 
-      /* ============================================================
-         [NOVO] Rodapé da carta com emblema e logo
-         ============================================================ */
       .trunfo-footer {
         background: linear-gradient(0deg, #6b0000, var(--trunfo-red));
         padding: 5px 10px;
@@ -623,11 +580,10 @@
       .trunfo-footer-logo {
         font-family: "Orbitron", monospace;
         font-size: 0.45rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(255,255,255,0.5);
         letter-spacing: 0.15em;
         text-transform: uppercase;
       }
-      /* [NOVO] Emblema de gênero no rodapé */
       .trunfo-genero-badge {
         font-size: 0.5rem;
         font-weight: 700;
@@ -640,81 +596,49 @@
         font-family: "Orbitron", monospace;
       }
 
-      /* ============================================================
-         Scrollbar e utilitários
-         ============================================================ */
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
-      }
+      /* Scrollbar oculta */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
   </head>
   <body class="antialiased">
-    <!-- NAV (inalterada) -->
-    <nav
-      class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-[100] px-6 py-4 flex flex-wrap items-center justify-between gap-4"
-    >
+
+    <!-- ============================================================
+         NAV — z-index: 100
+         [FIX 3] Cards virados têm z-index: 90, portanto passam POR BAIXO
+         desta barra ao scrollar, sem sobrepô-la.
+         ============================================================ -->
+    <nav class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-[100] px-6 py-4 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-2">
-        <div
-          class="w-10 h-10 bg-pink-600 rounded-lg flex items-center justify-center font-bold text-2xl shadow-lg shadow-pink-900/50"
-        >
-          R
-        </div>
-        <h1
-          class="text-xl font-retro tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-400 uppercase"
-        >
-          RetroBrinquedos
-        </h1>
+        <div class="w-10 h-10 bg-pink-600 rounded-lg flex items-center justify-center font-bold text-2xl shadow-lg shadow-pink-900/50">R</div>
+        <h1 class="text-xl font-retro tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-400 uppercase">RetroBrinquedos</h1>
       </div>
       <div class="flex-grow max-w-xl relative">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Busque por 'Thundercats', 'Estrela'..."
-          class="w-full bg-slate-800 border border-slate-700 rounded-full py-2.5 px-10 focus:ring-2 focus:ring-pink-500 outline-none text-slate-200 transition-all"
-        />
-        <svg
-          class="w-5 h-5 absolute left-3 top-3 text-slate-500"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          ></path>
+        <input type="text" id="searchInput" placeholder="Busque por 'Thundercats', 'Estrela'..."
+          class="w-full bg-slate-800 border border-slate-700 rounded-full py-2.5 px-10 focus:ring-2 focus:ring-pink-500 outline-none text-slate-200 transition-all" />
+        <svg class="w-5 h-5 absolute left-3 top-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
       </div>
       <div id="userArea" class="flex gap-4 items-center">
-        <button
-          onclick="login()"
-          class="text-xs font-bold hover:text-cyan-400 transition"
-        >
-          ENTRAR
-        </button>
+        <button onclick="login()" class="text-xs font-bold hover:text-cyan-400 transition">ENTRAR</button>
         <div class="h-4 w-[1px] bg-slate-700"></div>
-        <button
-          onclick="login()"
-          class="bg-white text-slate-900 px-4 py-2 rounded-full text-xs font-bold hover:bg-cyan-400 transition transform hover:scale-105 uppercase"
-        >
-          Colecionar
-        </button>
+        <button onclick="login()" class="bg-white text-slate-900 px-4 py-2 rounded-full text-xs font-bold hover:bg-cyan-400 transition transform hover:scale-105 uppercase">Colecionar</button>
       </div>
     </nav>
 
     <!-- ============================================================
-         [NOVO] SEÇÃO HERO - Imagem de capa temática
-         Troque a URL da <img class="hero-photo"> pela sua imagem
-         do Cloudinary para personalizar a foto de fundo.
+         HERO SECTION
+         [FIX 1] padding-top = var(--nav-height): empurra o conteúdo
+                 para baixo da nav fixa. Título sem <br> manuais — flui
+                 naturalmente com o font-size fluido e max-width do wrapper.
+         [FIX 2] hero-fade com 320px e 3 stops para transição mais suave.
          ============================================================ -->
     <section class="hero-section">
-      <!-- Fundo sintético retro (grade de pontos + perspectiva synthwave) -->
       <div class="hero-bg">
         <!--
-          [NOVO] Imagem hero: troque o src abaixo pela URL da sua imagem no Cloudinary.
-          Exemplo: src="https://res.cloudinary.com/SEU_CLOUD/image/upload/hero_brinquedos.jpg"
-          A imagem se mescla com o fundo via mix-blend-mode: luminosity.
+          [CUSTOMIZAÇÃO] Troque o src abaixo pela URL da sua imagem no Cloudinary:
+          src="https://res.cloudinary.com/SEU_CLOUD/image/upload/hero_brinquedos.jpg"
+          A imagem se mescla ao fundo via mix-blend-mode: luminosity.
         -->
         <img
           class="hero-photo"
@@ -722,42 +646,29 @@
           alt="Brinquedos dos anos 80 e 90"
         />
       </div>
-
-      <!-- Vinheta e fade de transição para o grid -->
       <div class="hero-vignette"></div>
       <div class="hero-fade"></div>
 
-      <!-- Conteúdo central do Hero -->
       <div class="hero-content">
-        <!-- Etiqueta estilo arcade acima do título -->
         <div class="hero-tag">🕹 Arquivo Digital — Brasil — 80s / 90s</div>
 
-        <!-- Título principal com gradiente neon -->
-        <h1 class="hero-title">
-          O Museu dos<br />
-          Brinquedos<br />
-          Inesquecíveis
-        </h1>
+        <!--
+          [FIX 1] Sem quebras de linha manuais: o clamp(2rem, 5.5vw, 4rem)
+          garante que o título caiba em qualquer largura sem cortes laterais
+          e sem dividir em 4 linhas em notebooks.
+        -->
+        <h1 class="hero-title">O Museu dos Brinquedos Inesquecíveis</h1>
 
-        <!-- Subtítulo descritivo -->
         <p class="hero-subtitle">
-          Reviva a magia da infância com mais de 100 brinquedos catalogados.
-          Clique em qualquer carta para revelar a ficha Super Trunfo original.
+          Reviva a magia da infância com mais de 100 brinquedos catalogados. Clique em qualquer carta para revelar a ficha Super Trunfo original.
         </p>
 
-        <!-- Botão CTA com brilho animado -->
-        <button
-          class="hero-cta"
-          onclick="
-            document
-              .getElementById('colecao')
-              .scrollIntoView({ behavior: 'smooth' })
-          "
-        >
+        <button class="hero-cta" onclick="document.getElementById('colecao').scrollIntoView({behavior:'smooth'})">
           <span>▶</span> Explorar a Coleção
         </button>
 
-        <!-- Estatísticas rápidas abaixo do botão -->
+        <!-- [FIX 2] padding-bottom no wrapper das stats garante que não
+             sejam cortadas pelo fade antes de chegar na próxima seção -->
         <div class="hero-stats">
           <div class="hero-stat-item">
             <span class="hero-stat-number" id="heroCount">—</span>
@@ -774,67 +685,35 @@
         </div>
       </div>
 
-      <!-- Seta de scroll animada -->
       <div class="hero-scroll-arrow" aria-hidden="true">
         <span></span>
         <span></span>
       </div>
     </section>
-    <!-- Fim da seção Hero -->
 
-    <!-- Filtros e título da seção do grid -->
-    <header id="colecao" class="pt-16 pb-2 px-6 text-center w-full mx-auto">
-      <p class="text-cyan-400 font-bold tracking-widest text-xs mb-2 uppercase">
-        Arquivo Digital de Nostalgia
-      </p>
-      <h2 class="text-4xl md:text-6xl font-retro mb-8 leading-tight uppercase">
-        A Coleção
-      </h2>
+    <!-- ============================================================
+         HEADER DA SEÇÃO DO GRID
+         [FIX 2] Sem padding-top excessivo — a transição do hero-fade
+         já cria o espaço visual e a suavidade necessários.
+         ============================================================ -->
+    <header id="colecao" class="pt-6 pb-2 px-6 text-center w-full mx-auto">
+      <p class="text-cyan-400 font-bold tracking-widest text-xs mb-2 uppercase">Arquivo Digital de Nostalgia</p>
+      <h2 class="text-4xl md:text-6xl font-retro mb-8 leading-tight uppercase">A Coleção</h2>
 
-      <div
-        class="flex gap-2 overflow-x-auto pb-6 no-scrollbar justify-start md:justify-center"
-      >
-        <button
-          onclick="filterBy('todos')"
-          class="filter-btn bg-pink-600 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase"
-        >
-          Tudo
-        </button>
-        <button
-          onclick="filterBy('Estrela')"
-          class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase"
-        >
-          Estrela
-        </button>
-        <button
-          onclick="filterBy('Glasslite')"
-          class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase"
-        >
-          Glasslite
-        </button>
-        <button
-          onclick="filterBy('Masculino')"
-          class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase"
-        >
-          Masculino
-        </button>
-        <button
-          onclick="filterBy('Feminino')"
-          class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase"
-        >
-          Feminino
-        </button>
+      <div class="flex gap-2 overflow-x-auto pb-6 no-scrollbar justify-start md:justify-center">
+        <button onclick="filterBy('todos')" class="filter-btn bg-pink-600 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase">Tudo</button>
+        <button onclick="filterBy('Estrela')" class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase">Estrela</button>
+        <button onclick="filterBy('Glasslite')" class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase">Glasslite</button>
+        <button onclick="filterBy('Masculino')" class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase">Masculino</button>
+        <button onclick="filterBy('Feminino')" class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase">Feminino</button>
       </div>
     </header>
 
-    <!-- Grid principal de brinquedos -->
     <main class="w-full px-4 md:px-12 pb-20">
       <div id="toyGrid" class="masonry-grid"></div>
     </main>
 
-    <footer
-      class="py-12 border-t border-slate-800 text-center text-slate-500 text-sm"
-    >
+    <footer class="py-12 border-t border-slate-800 text-center text-slate-500 text-sm">
       <p>© 2026 RetroBrinquedos BR - Revivendo memórias em alta resolução.</p>
     </footer>
 
@@ -846,7 +725,6 @@
           const response = await fetch("data.json");
           allToys = await response.json();
           shuffleArray(allToys);
-          // [NOVO] Atualiza o contador de itens no Hero após carregar os dados
           document.getElementById("heroCount").textContent = allToys.length;
           render(allToys);
         } catch (error) {
@@ -863,48 +741,66 @@
         }
       }
 
-      // [NOVO] Função auxiliar: determina cor da raridade baseado no valor
-      // Retorna cor no gradiente: azul (baixa) → amarelo (média) → rosa (altíssima)
-      function raridadeColor(value) {
-        if (value < 35) return "#00cfff"; // Azul: comum
-        if (value < 65) return "#ffe600"; // Amarelo: raro
-        return "#ff00cc"; // Rosa: raridade máxima
+      /* ============================================================
+         [FIX 4] buildLedDisplay(value)
+         Recebe raridade de 0–10 (inteiro).
+         Retorna HTML de 2 fileiras paralelas com 10 LEDs cada.
+         Regras de cor:
+           index 1–6  → verde  (on-green)
+           index 7–8  → amarelo (on-yellow)
+           index 9–10 → vermelho (on-red)
+         LEDs além do value ficam apagados (classe "led" sem modificador).
+         ============================================================ */
+      function buildLedDisplay(value) {
+        const v = Math.round(Math.min(10, Math.max(0, value)));
+
+        function ledClass(index) {
+          if (index > v) return "led";           // apagado
+          if (index <= 6) return "led on-green";
+          if (index <= 8) return "led on-yellow";
+          return "led on-red";
+        }
+
+        const leds = Array.from({ length: 10 }, (_, i) =>
+          `<div class="${ledClass(i + 1)}"></div>`
+        ).join("");
+
+        return `
+          <div class="led-display">
+            <div class="led-row">${leds}</div>
+            <div class="led-row">${leds}</div>
+          </div>`;
       }
 
       function render(items) {
         const grid = document.getElementById("toyGrid");
-        grid.innerHTML = items
-          .map((toy) => {
-            const cor = raridadeColor(toy.raridade);
-            return `
+        grid.innerHTML = items.map((toy) => {
+          const ledHTML = buildLedDisplay(toy.raridade);
+          return `
           <div class="masonry-item" id="card-${toy.id}">
             <div class="card-inner" onclick="handleFlip('${toy.id}')">
 
-              <!-- FRENTE: foto do brinquedo -->
+              <!-- FRENTE: foto da embalagem do brinquedo -->
               <div class="card-front">
                 <img src="${toy.url_frente}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
               </div>
 
-              <!-- ================================================
-                   VERSO: Carta Super Trunfo redesenhada
-                   ================================================ -->
+              <!-- VERSO: ficha Super Trunfo -->
               <div class="card-back flex flex-col">
 
-                <!-- Cabeçalho vermelho: código trunfo + nome -->
+                <!-- Cabeçalho vermelho com código e nome -->
                 <div class="trunfo-header">
-                  <!-- Faixa superior com código trunfo -->
                   <div class="trunfo-top-bar">
                     <span>Super Trunfo • RetroBrinquedos</span>
                     <span class="trunfo-code-badge">${toy.codigo_trunfo}</span>
                   </div>
-                  <!-- Título do brinquedo -->
                   <div class="trunfo-title-area">
                     <div class="trunfo-star"></div>
                     <span class="trunfo-title-text">${toy.nome}</span>
                   </div>
                 </div>
 
-                <!-- Foto do verso com moldura dourada e ano sobreposto -->
+                <!-- Foto do verso com moldura dourada e ano -->
                 <div class="trunfo-photo-wrapper">
                   <div class="trunfo-photo-frame">
                     <img src="${toy.url_verso}" alt="${toy.nome} verso" class="trunfo-photo">
@@ -912,7 +808,7 @@
                   </div>
                 </div>
 
-                <!-- Tabela de atributos -->
+                <!-- Atributos -->
                 <div class="trunfo-stats-area">
                   <div class="trunfo-stat-row">
                     <span class="trunfo-label">Fabricante</span>
@@ -927,44 +823,37 @@
                     <span class="trunfo-value">${toy.tema}</span>
                   </div>
 
-                  <!-- [NOVO] Barra de raridade com cor dinâmica -->
+                  <!-- [FIX 4] Raridade: LEDs duplas 0–10 -->
                   <div class="trunfo-raridade-area">
                     <div class="trunfo-raridade-header">
                       <span class="trunfo-raridade-label">⬡ Raridade</span>
-                      <span class="trunfo-raridade-value" style="color:${cor}">${toy.raridade}%</span>
+                      <span class="trunfo-raridade-value">${toy.raridade}/10</span>
                     </div>
-                    <div class="raridade-bar">
-                      <div class="raridade-fill" style="width: ${toy.raridade}%"></div>
-                    </div>
+                    ${ledHTML}
                   </div>
 
-                  <!-- [NOVO] Curiosidade com destaque visual -->
                   <div class="trunfo-curiosidade">"${toy.curiosidade}"</div>
                 </div>
 
-                <!-- Rodapé com logo e badge de gênero -->
+                <!-- Rodapé -->
                 <div class="trunfo-footer">
                   <span class="trunfo-footer-logo">RetroBrinquedos BR</span>
                   <span class="trunfo-genero-badge">${toy.genero}</span>
                 </div>
 
               </div>
-              <!-- Fim do verso -->
-
             </div>
-          </div>
-        `;
-          })
-          .join("");
+          </div>`;
+        }).join("");
       }
 
+      /* [FIX 3] handleFlip: lógica inalterada.
+         O z-index dos cards (90) vs nav (100) é resolvido puramente no CSS. */
       function handleFlip(id) {
         const grid = document.getElementById("toyGrid");
         const card = document.getElementById(`card-${id}`);
         const isFlipped = card.classList.contains("is-flipped");
-        document
-          .querySelectorAll(".masonry-item")
-          .forEach((c) => c.classList.remove("is-flipped"));
+        document.querySelectorAll(".masonry-item").forEach((c) => c.classList.remove("is-flipped"));
         if (!isFlipped) {
           card.classList.add("is-flipped");
           grid.classList.add("grid-focused");
@@ -973,57 +862,44 @@
         }
       }
 
-      // Fecha carta ao clicar fora
-      document.addEventListener(
-        "click",
-        function (e) {
-          const grid = document.getElementById("toyGrid");
-          if (
-            grid.classList.contains("grid-focused") &&
-            !e.target.closest(".card-inner")
-          ) {
-            document
-              .querySelectorAll(".masonry-item")
-              .forEach((c) => c.classList.remove("is-flipped"));
-            grid.classList.remove("grid-focused");
-          }
-        },
-        true,
-      );
+      /* Fecha carta ao clicar fora */
+      document.addEventListener("click", function (e) {
+        const grid = document.getElementById("toyGrid");
+        if (grid.classList.contains("grid-focused") && !e.target.closest(".card-inner")) {
+          document.querySelectorAll(".masonry-item").forEach((c) => c.classList.remove("is-flipped"));
+          grid.classList.remove("grid-focused");
+        }
+      }, true);
 
-      // Busca por texto
+      /* Busca em tempo real */
       document.getElementById("searchInput").addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
-        const filtered = allToys.filter(
-          (t) =>
-            t.nome.toLowerCase().includes(term) ||
-            t.tema.toLowerCase().includes(term) ||
-            t.fabricante.toLowerCase().includes(term) ||
-            t.tags.some((tag) => tag.toLowerCase().includes(term)),
+        const filtered = allToys.filter((t) =>
+          t.nome.toLowerCase().includes(term) ||
+          t.tema.toLowerCase().includes(term) ||
+          t.fabricante.toLowerCase().includes(term) ||
+          t.tags.some((tag) => tag.toLowerCase().includes(term))
         );
         render(filtered);
       });
 
-      // Filtro por fabricante ou gênero
+      /* Filtro por fabricante ou gênero */
       function filterBy(criteria) {
-        document
-          .querySelectorAll(".filter-btn")
-          .forEach((btn) =>
-            btn.classList.replace("bg-pink-600", "bg-slate-800"),
-          );
-        if (event)
-          event.target.classList.replace("bg-slate-800", "bg-pink-600");
+        document.querySelectorAll(".filter-btn").forEach((btn) =>
+          btn.classList.replace("bg-pink-600", "bg-slate-800")
+        );
+        if (event) event.target.classList.replace("bg-slate-800", "bg-pink-600");
         if (criteria === "todos") {
           render(allToys);
         } else {
           const filtered = allToys.filter(
-            (toy) => toy.fabricante === criteria || toy.genero === criteria,
+            (toy) => toy.fabricante === criteria || toy.genero === criteria
           );
           render(filtered);
         }
       }
 
-      // Mock de login
+      /* Login simulado */
       function login() {
         document.getElementById("userArea").innerHTML =
           `<div class="flex items-center gap-3"><span class="text-[10px] font-bold text-cyan-400 uppercase">Museu Ativo</span><div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-500 border border-white"></div></div>`;
