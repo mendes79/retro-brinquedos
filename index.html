@@ -884,37 +884,26 @@
       // ============================================================
       let allToys = [];
       let cursor = 0;
-      const LIMITE = 15;
+      const LIMITE = 24; // Aumentado para garantir que a tela encha logo de cara
       let isLoading = false;
       let hasMais = true;
-      const sessionSeed = Math.random(); // Seed da sessão
+      const sessionSeed = Math.random();
 
       // Controle do Passo 2
       let isUserLogged = false;
-      const likedItems = new Set(); // Memória local de curtidas
+      const likedItems = new Set();
 
-      // Sentinela do Infinite Scroll
+      // Sentinela INVISÍVEL (estilo Pinterest)
       const sentinel = document.createElement("div");
       sentinel.id = "scrollSentinel";
-      sentinel.className =
-        "w-full h-24 flex items-center justify-center pb-10 col-span-full mt-4";
-      sentinel.innerHTML = `<span class="text-pink-600 font-retro text-xs animate-pulse hidden tracking-widest" id="loadingText">CARREGANDO DADOS...</span>`;
+      sentinel.className = "w-full h-4 col-span-full mt-4"; // Apenas um bloco vazio
 
       // ============================================================
       // CONSUMO DA API E INFINITE SCROLL
       // ============================================================
-
-      let loadingTimeout; // Variável para controlar o pisca-pisca do carregamento
-
       async function fetchBrinquedos(reset = false) {
         if (isLoading || (!hasMais && !reset)) return;
         isLoading = true;
-
-        // Anti-pisca: Só mostra a mensagem se demorar mais de 300ms
-        loadingTimeout = setTimeout(() => {
-          const loadingEl = document.getElementById("loadingText");
-          if (loadingEl) loadingEl.classList.remove("hidden");
-        }, 300);
 
         if (reset) {
           cursor = 0;
@@ -931,7 +920,7 @@
 
           const data = await res.json();
 
-          // Atualiza o contador de itens totais do Hero apenas no primeiro carregamento
+          // Atualiza o contador de itens totais do Hero no primeiro carregamento
           if (reset && data.total) {
             document.getElementById("heroCount").textContent = data.total;
           }
@@ -948,9 +937,19 @@
           console.error("Erro na carga:", error);
         } finally {
           isLoading = false;
-          clearTimeout(loadingTimeout); // Cancela o timer do texto
-          const loadingEl = document.getElementById("loadingText");
-          if (loadingEl) loadingEl.classList.add("hidden"); // Esconde o texto
+
+          // Trava de segurança para monitores muito grandes (4k/Ultrawide):
+          // Se a tela for tão grande que mesmo 24 itens não empurraram a sentinela para fora da tela,
+          // ele força a busca da próxima página imediatamente.
+          if (hasMais) {
+            const tempObserver = new IntersectionObserver((entries) => {
+              if (entries[0].isIntersecting && !isLoading) {
+                fetchBrinquedos();
+              }
+              tempObserver.disconnect();
+            });
+            tempObserver.observe(sentinel);
+          }
         }
       }
 
@@ -961,16 +960,11 @@
               fetchBrinquedos();
             }
           },
-          { rootMargin: "1500px" },
-        ); // Gatilho enorme para carregar muito antes de chegar no fim
+          { rootMargin: "600px" },
+        ); // Margem perfeita para carregar de forma fluida e invisível
 
         document.querySelector("main").appendChild(sentinel);
         observer.observe(sentinel);
-      }
-
-      async function init() {
-        setupObserver();
-        await fetchBrinquedos(true);
       }
 
       // ============================================================
