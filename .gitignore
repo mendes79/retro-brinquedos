@@ -2,14 +2,18 @@
 brinquedos.xlsx
 ~$brinquedos.xlsx
 
+
+
 # Script python para atualizar o data.json
 atualiza_json.py
 index_old.html
 data_old.json
+migrar.js
 
 # Pasta local de imagens (já estão no Cloudinary)
 images/
 bkp/
+node_modules/
 
 # Arquivos do Sistema Operacional
 .DS_Store
@@ -17,6 +21,8 @@ Thumbs.db
 
 # Logs e arquivos temporários
 *.log
+.env
+.env.local
 
 # Python cache
 __pycache__/
