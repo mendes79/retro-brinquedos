@@ -6,9 +6,7 @@ const getSupabase = () => {
   if (supabase) return supabase;
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_KEY;
-  if (!url || !key) {
-    throw new Error("Variáveis SUPABASE_URL ou SUPABASE_SERVICE_KEY ausentes.");
-  }
+  if (!url || !key) throw new Error("Variáveis ausentes na Vercel.");
   supabase = createClient(url, key);
   return supabase;
 };
@@ -33,14 +31,12 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "GET") {
+  if (req.method !== "GET")
     return res.status(405).json({ erro: "Método não permitido" });
-  }
 
   const ip = req.headers["x-forwarded-for"]?.split(",")[0] ?? "anonimo";
-  if (!checaRateLimit(ip)) {
+  if (!checaRateLimit(ip))
     return res.status(429).json({ erro: "Muitas requisições. Aguarde." });
-  }
 
   try {
     const db = getSupabase();
@@ -59,7 +55,7 @@ export default async function handler(req, res) {
     const cursorNum = Math.max(0, parseInt(cursor) || 0);
     const limiteNum = Math.min(50, Math.max(1, parseInt(limite) || 30));
 
-    // 1. Busca os itens da página atual via RPC
+    // Busca os itens via RPC
     const { data, error } = await db.rpc("buscar_brinquedos", {
       seed_val: seedNum,
       cursor_val: cursorNum,
@@ -72,11 +68,16 @@ export default async function handler(req, res) {
 
     if (error) throw error;
 
-    // 2. Busca o Total Real de itens no banco (super leve, apenas contagem)
-    // Se houver filtros no futuro (Passo 3), aplicaremos a mesma lógica aqui.
-    const { count } = await db
-      .from("brinquedos")
-      .select("*", { count: "exact", head: true });
+    // Busca o Total de forma blindada (não derruba a API se falhar)
+    let totalItens = 0;
+    try {
+      const { count } = await db
+        .from("brinquedos")
+        .select("id", { count: "exact", head: true });
+      totalItens = count || 0;
+    } catch (errCount) {
+      console.warn("Aviso (Contagem):", errCount.message);
+    }
 
     res.setHeader(
       "Cache-Control",
@@ -87,13 +88,12 @@ export default async function handler(req, res) {
       itens: data ?? [],
       cursor: cursorNum + limiteNum,
       temMais: (data?.length ?? 0) === limiteNum,
-      total: count || 0, // Retorna o total para o Frontend
+      total: totalItens,
     });
   } catch (err) {
     console.error("Erro Fatal na API:", err.message);
-    return res.status(500).json({
-      erro: "Erro interno. Verifique os logs.",
-      detalhes: err.message,
-    });
+    return res
+      .status(500)
+      .json({ erro: "Erro interno.", detalhes: err.message });
   }
 }

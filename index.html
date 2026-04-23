@@ -884,19 +884,19 @@
       // ============================================================
       let allToys = [];
       let cursor = 0;
-      const LIMITE = 24; // Aumentado para garantir que a tela encha logo de cara
+      const LIMITE = 24;
       let isLoading = false;
       let hasMais = true;
       const sessionSeed = Math.random();
 
-      // Controle do Passo 2
       let isUserLogged = false;
       const likedItems = new Set();
 
-      // Sentinela INVISÍVEL (estilo Pinterest)
+      // Sentinela Invisível (Pinterest style)
       const sentinel = document.createElement("div");
       sentinel.id = "scrollSentinel";
-      sentinel.className = "w-full h-4 col-span-full mt-4"; // Apenas um bloco vazio
+      sentinel.className =
+        "w-full h-10 col-span-full mt-4 opacity-0 pointer-events-none";
 
       // ============================================================
       // CONSUMO DA API E INFINITE SCROLL
@@ -916,11 +916,11 @@
           const res = await fetch(
             `/api/brinquedos?cursor=${cursor}&limite=${LIMITE}&seed=${sessionSeed}`,
           );
-          if (!res.ok) throw new Error("Erro ao buscar dados da API");
+
+          if (!res.ok) throw new Error("Falha na API");
 
           const data = await res.json();
 
-          // Atualiza o contador de itens totais do Hero no primeiro carregamento
           if (reset && data.total) {
             document.getElementById("heroCount").textContent = data.total;
           }
@@ -938,17 +938,18 @@
         } finally {
           isLoading = false;
 
-          // Trava de segurança para monitores muito grandes (4k/Ultrawide):
-          // Se a tela for tão grande que mesmo 24 itens não empurraram a sentinela para fora da tela,
-          // ele força a busca da próxima página imediatamente.
-          if (hasMais) {
-            const tempObserver = new IntersectionObserver((entries) => {
-              if (entries[0].isIntersecting && !isLoading) {
+          // Trava de segurança para monitores muito grandes:
+          // Se a tela for tão alta que os 24 cards não empurraram a sentinela para baixo, ele puxa mais automaticamente.
+          if (
+            hasMais &&
+            document.getElementById("toyGrid").children.length > 0
+          ) {
+            setTimeout(() => {
+              const rect = sentinel.getBoundingClientRect();
+              if (rect.top > 0 && rect.top < window.innerHeight + 600) {
                 fetchBrinquedos();
               }
-              tempObserver.disconnect();
-            });
-            tempObserver.observe(sentinel);
+            }, 150);
           }
         }
       }
@@ -960,16 +961,30 @@
               fetchBrinquedos();
             }
           },
-          { rootMargin: "600px" },
-        ); // Margem perfeita para carregar de forma fluida e invisível
+          { rootMargin: "800px" },
+        );
 
         document.querySelector("main").appendChild(sentinel);
         observer.observe(sentinel);
       }
 
+      async function init() {
+        setupObserver();
+        await fetchBrinquedos(true);
+      }
+
       // ============================================================
       // COMPONENTES DE RENDERIZAÇÃO
       // ============================================================
+      function getTrunfoCode(idStr) {
+        const num = parseInt(idStr, 10);
+        if (isNaN(num)) return "A1";
+        const letters = ["A", "B", "C", "D"];
+        const letter = letters[(num - 1) % 4];
+        const number = Math.floor(((num - 1) % 32) / 4) + 1;
+        return `${letter}${number}`;
+      }
+
       function buildLedDisplay(value) {
         const v = Math.round(Math.min(10, Math.max(0, value)));
         function ledClass(index) {
@@ -985,16 +1000,6 @@
         return `<div class="led-display"><div class="led-row">${leds}</div><div class="led-row">${leds}</div></div>`;
       }
 
-      // Ajuste 4: Gerador de Códigos Clássicos do Super Trunfo (A1 até D8)
-      function getTrunfoCode(idStr) {
-        const num = parseInt(idStr, 10);
-        if (isNaN(num)) return "A1";
-        const letters = ["A", "B", "C", "D"];
-        const letter = letters[(num - 1) % 4];
-        const number = Math.floor(((num - 1) % 32) / 4) + 1;
-        return `${letter}${number}`;
-      }
-
       function render(items, append = false) {
         const grid = document.getElementById("toyGrid");
         const html = items
@@ -1002,8 +1007,6 @@
             const ledHTML = buildLedDisplay(toy.raridade);
             const isLiked = likedItems.has(toy.id);
             const likeCount = toy.curtidas_count || 0;
-
-            // Ajuste 4: Se o banco não tiver o código, gera um dinâmico!
             const trunfoCode = toy.codigo_trunfo || getTrunfoCode(toy.id);
 
             return `
@@ -1113,11 +1116,10 @@
         true,
       );
 
-      // Lógica do Passo 2: Curtir Item
       function toggleLike(event, id) {
-        event.stopPropagation(); // Impede que o card vire ao curtir
+        event.stopPropagation();
 
-        if (!isUserLogged) return; // Requer login (simulado)
+        if (!isUserLogged) return;
 
         const btn = event.currentTarget;
         const countSpan = document.getElementById(`count-${id}`);
@@ -1133,8 +1135,6 @@
           btn.classList.add("liked");
           btn.classList.add("animating");
           countSpan.textContent = count + 1;
-
-          // Remove a classe de animação após o término (0.6s)
           setTimeout(() => btn.classList.remove("animating"), 600);
         }
       }
@@ -1173,7 +1173,7 @@
       // Login Simulado
       function login() {
         isUserLogged = true;
-        document.body.classList.remove("app-unlogged"); // Remove tooltips
+        document.body.classList.remove("app-unlogged");
 
         document.getElementById("userArea").innerHTML =
           `<div class="flex items-center gap-3"><span class="text-[10px] font-bold text-cyan-400 uppercase">Museu Ativo</span><div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-500 border border-white"></div></div>`;
