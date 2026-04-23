@@ -3,11 +3,13 @@ brinquedos.xlsx
 ~$brinquedos.xlsx
 api/brinquedos_old.js
 api/brinquedos_gemini.js
+api/brinquedos_claude.js
 
 # Script python para atualizar o data.json
 atualiza_json.py
 index_old.html
 index_gemini.html
+index_claude.html
 data_old.json
 migrar.js
 
