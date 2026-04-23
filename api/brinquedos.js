@@ -1,11 +1,23 @@
 // api/brinquedos.js — Vercel Serverless Function
 import { createClient } from "@supabase/supabase-js";
 
-// Usa a service_role key no backend (nunca exposta ao navegador)
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY,
-);
+// Inicialização "lazy" (tardia) para evitar crash fatal no cold start da Vercel
+let supabase = null;
+const getSupabase = () => {
+  if (supabase) return supabase;
+
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_KEY;
+
+  if (!url || !key) {
+    throw new Error(
+      "Variáveis de ambiente SUPABASE_URL ou SUPABASE_SERVICE_KEY ausentes na Vercel.",
+    );
+  }
+
+  supabase = createClient(url, key);
+  return supabase;
+};
 
 // Rate limiting simples em memória (por IP, reseta a cada deploy)
 const requisicoes = new Map();
@@ -15,7 +27,6 @@ function checaRateLimit(ip) {
   const agora = Date.now();
   const entrada = requisicoes.get(ip) ?? { count: 0, desde: agora };
 
-  // Reseta janela após 1 minuto
   if (agora - entrada.desde > 60_000) {
     entrada.count = 0;
     entrada.desde = agora;
@@ -27,12 +38,19 @@ function checaRateLimit(ip) {
 }
 
 export default async function handler(req, res) {
-  // Só aceita GET
+  // Habilita CORS (importante se o frontend e a API estiverem rodando de formas diferentes no dev)
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+
+  // Responde imediatamente a requisições de preflight (OPTIONS)
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   if (req.method !== "GET") {
     return res.status(405).json({ erro: "Método não permitido" });
   }
 
-  // Rate limiting por IP
   const ip = req.headers["x-forwarded-for"]?.split(",")[0] ?? "anonimo";
   if (!checaRateLimit(ip)) {
     return res
@@ -40,45 +58,52 @@ export default async function handler(req, res) {
       .json({ erro: "Muitas requisições. Aguarde um momento." });
   }
 
-  // Extrai e valida parâmetros
-  const {
-    seed = "0.5",
-    cursor = "0",
-    limite = "30",
-    fabricante,
-    categoria,
-    decada,
-    busca,
-  } = req.query;
-
-  // Normaliza seed para float entre 0 e 1 (requisito do PostgreSQL setseed)
-  const seedNum = Math.min(1, Math.max(0, parseFloat(seed) || 0.5));
-
-  // Cursor e limite como inteiros seguros
-  const cursorNum = Math.max(0, parseInt(cursor) || 0);
-  const limiteNum = Math.min(50, Math.max(1, parseInt(limite) || 30));
-
   try {
-    // Define o seed aleatório da sessão no PostgreSQL
-    await supabase.rpc("set_seed_session", { seed_val: seedNum });
+    const db = getSupabase(); // Instancia com segurança
 
-    // Monta a query base com campos públicos
-    let query = supabase
+    const {
+      seed = "0.5",
+      cursor = "0",
+      limite = "30",
+      fabricante,
+      categoria,
+      decada,
+      busca,
+    } = req.query;
+
+    const seedNum = Math.min(1, Math.max(0, parseFloat(seed) || 0.5));
+    const cursorNum = Math.max(0, parseInt(cursor) || 0);
+    const limiteNum = Math.min(50, Math.max(1, parseInt(limite) || 30));
+
+    // 1. Define o seed aleatório da sessão
+    // Checamos o erro para garantir que a RPC não derrube a execução se estiver ausente
+    const { error: rpcError } = await db.rpc("set_seed_session", {
+      seed_val: seedNum,
+    });
+    if (rpcError) {
+      console.warn("Aviso (set_seed_session falhou):", rpcError.message);
+    }
+
+    // 2. Monta a query base
+    let query = db
       .from("brinquedos")
       .select(
-        "id, nome, fabricante, ano, categoria, tema, tags, curiosidade, " +
-          "raridade, codigo_trunfo, url_frente, url_verso, curtidas_count",
+        "id, nome, fabricante, ano, categoria, tema, tags, curiosidade, raridade, codigo_trunfo, url_frente, url_verso, curtidas_count",
       )
-      .order("random()") // usa o seed definido acima
       .range(cursorNum, cursorNum + limiteNum - 1);
 
-    // Filtros opcionais (todos sanitizados pelo Supabase client)
+    // NOTA: Removido o `.order("random()")` temporariamente.
+    // O Supabase JS não suporta injeção de funções no .order().
+    // Para ordenação aleatória real, precisaremos criar uma RPC no Supabase
+    // ou ordenar pelo id de forma crescente por enquanto, só para validar a API.
+    query = query.order("id", { ascending: true });
+
+    // Filtros
     if (fabricante) query = query.eq("fabricante", fabricante);
     if (categoria) query = query.eq("categoria", categoria);
     if (decada)
       query = query.ilike("ano", `%${decada.replace(/[^0-9s]/g, "")}%`);
     if (busca) {
-      // Busca em nome, tema e tags (limitada a 100 chars para evitar abuso)
       const termo = busca.slice(0, 100);
       query = query.or(
         `nome.ilike.%${termo}%,tema.ilike.%${termo}%,tags.cs.{${termo}}`,
@@ -89,12 +114,11 @@ export default async function handler(req, res) {
 
     if (error) throw error;
 
-    // Headers de cache: 10s no CDN, revalidação em background
+    // Cache no CDN da Vercel
     res.setHeader(
       "Cache-Control",
       "public, s-maxage=10, stale-while-revalidate=60",
     );
-    res.setHeader("Access-Control-Allow-Origin", "*");
 
     return res.status(200).json({
       itens: data ?? [],
@@ -102,7 +126,11 @@ export default async function handler(req, res) {
       temMais: (data?.length ?? 0) === limiteNum,
     });
   } catch (err) {
-    console.error("Erro na API:", err.message);
-    return res.status(500).json({ erro: "Erro interno. Tente novamente." });
+    console.error("Erro Fatal na API:", err.message);
+    // Retornamos os detalhes do erro para facilitar nossa vida no front
+    return res.status(500).json({
+      erro: "Erro interno. Verifique os logs.",
+      detalhes: err.message,
+    });
   }
 }
