@@ -617,8 +617,9 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        position: relative;
+        /* position: relative; -> REMOVIDO para libertar o tooltip */
       }
+
       .heart-btn {
         background: transparent;
         border: none;
@@ -628,8 +629,9 @@
         align-items: center;
         justify-content: center;
         outline: none;
-        position: relative;
+        /* position: relative; -> REMOVIDO para libertar o tooltip */
       }
+
       .heart-svg {
         width: 18px;
         height: 18px;
@@ -648,20 +650,22 @@
 
       /* Tooltip para usuários não logados */
       .heart-tooltip {
+        /* Como o botão não tem mais 'relative', ele se centraliza pelo card inteiro! */
         position: absolute;
-        bottom: 180%; /* Elevado para não sobrepor o ícone */
+        bottom: 40px; /* Fica exatamente acima do rodapé vermelho */
         left: 50%;
         transform: translateX(-50%);
-        /* Ajuste: Largura que emula o bloco de curiosidades */
-        width: 220px;
+        width: calc(
+          100% - 24px
+        ); /* Ocupa a largura total do card, deixando 12px de borda de cada lado */
         background: rgba(0, 0, 0, 0.95);
         border: 1px solid var(--neon-pink);
         color: #fff;
         font-family: "Orbitron", monospace;
-        font-size: 0.75rem; /* Fonte ampliada para melhor leitura */
+        font-size: 0.75rem; /* Fonte grande e legível */
         padding: 10px;
-        white-space: normal; /* Permite quebra de linha se o card for muito estreito */
-        text-align: center; /* Texto centralizado */
+        white-space: normal; /* Permite quebrar em duas linhas se a tela for muito estreitinha */
+        text-align: center; /* Texto perfeitamente centralizado */
         opacity: 0;
         pointer-events: none;
         transition:
@@ -674,10 +678,9 @@
       /* Ajuste fino para mobile: garante que o pop-up não escape do card em telas pequenas */
       @media (max-width: 640px) {
         .heart-tooltip {
-          width: 140px;
-          font-size: 0.6rem;
-          bottom: 160%;
+          font-size: 0.65rem;
           padding: 8px;
+          bottom: 35px;
         }
       }
 
