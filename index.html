@@ -649,20 +649,36 @@
       /* Tooltip para usuários não logados */
       .heart-tooltip {
         position: absolute;
-        bottom: 150%;
-        right: 0; /* Ajuste 3: Ancorado à direita para não cortar a frase */
-        background: #000;
+        bottom: 180%; /* Elevado para não sobrepor o ícone */
+        left: 50%;
+        transform: translateX(-50%);
+        /* Ajuste: Largura que emula o bloco de curiosidades */
+        width: 220px;
+        background: rgba(0, 0, 0, 0.95);
         border: 1px solid var(--neon-pink);
         color: #fff;
         font-family: "Orbitron", monospace;
-        font-size: 0.45rem;
-        padding: 4px 8px;
-        white-space: nowrap;
+        font-size: 0.75rem; /* Fonte ampliada para melhor leitura */
+        padding: 10px;
+        white-space: normal; /* Permite quebra de linha se o card for muito estreito */
+        text-align: center; /* Texto centralizado */
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.2s;
-        z-index: 10;
-        box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        transition:
+          opacity 0.2s,
+          transform 0.2s;
+        z-index: 100;
+        box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+      }
+
+      /* Ajuste fino para mobile: garante que o pop-up não escape do card em telas pequenas */
+      @media (max-width: 640px) {
+        .heart-tooltip {
+          width: 140px;
+          font-size: 0.6rem;
+          bottom: 160%;
+          padding: 8px;
+        }
       }
 
       .app-unlogged .heart-btn:hover .heart-tooltip {
