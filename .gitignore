@@ -2,7 +2,7 @@
 brinquedos.xlsx
 ~$brinquedos.xlsx
 api/brinquedos_old.js
-
+api/brinquedos_gemini.js
 
 # Script python para atualizar o data.json
 atualiza_json.py
