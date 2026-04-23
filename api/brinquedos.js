@@ -59,7 +59,7 @@ export default async function handler(req, res) {
     const cursorNum = Math.max(0, parseInt(cursor) || 0);
     const limiteNum = Math.min(50, Math.max(1, parseInt(limite) || 30));
 
-    // RPC faz o setseed + ORDER BY random() direto no PostgreSQL
+    // 1. Busca os itens da página atual via RPC
     const { data, error } = await db.rpc("buscar_brinquedos", {
       seed_val: seedNum,
       cursor_val: cursorNum,
@@ -72,6 +72,12 @@ export default async function handler(req, res) {
 
     if (error) throw error;
 
+    // 2. Busca o Total Real de itens no banco (super leve, apenas contagem)
+    // Se houver filtros no futuro (Passo 3), aplicaremos a mesma lógica aqui.
+    const { count } = await db
+      .from("brinquedos")
+      .select("*", { count: "exact", head: true });
+
     res.setHeader(
       "Cache-Control",
       "public, s-maxage=10, stale-while-revalidate=60",
@@ -81,6 +87,7 @@ export default async function handler(req, res) {
       itens: data ?? [],
       cursor: cursorNum + limiteNum,
       temMais: (data?.length ?? 0) === limiteNum,
+      total: count || 0, // Retorna o total para o Frontend
     });
   } catch (err) {
     console.error("Erro Fatal na API:", err.message);

@@ -903,12 +903,18 @@
       // ============================================================
       // CONSUMO DA API E INFINITE SCROLL
       // ============================================================
+
+      let loadingTimeout; // Variável para controlar o pisca-pisca do carregamento
+
       async function fetchBrinquedos(reset = false) {
         if (isLoading || (!hasMais && !reset)) return;
         isLoading = true;
 
-        const loadingEl = document.getElementById("loadingText");
-        if (loadingEl) loadingEl.classList.remove("hidden");
+        // Anti-pisca: Só mostra a mensagem se demorar mais de 300ms
+        loadingTimeout = setTimeout(() => {
+          const loadingEl = document.getElementById("loadingText");
+          if (loadingEl) loadingEl.classList.remove("hidden");
+        }, 300);
 
         if (reset) {
           cursor = 0;
@@ -918,7 +924,6 @@
         }
 
         try {
-          // Utilizando a sua API com a RPC do Supabase
           const res = await fetch(
             `/api/brinquedos?cursor=${cursor}&limite=${LIMITE}&seed=${sessionSeed}`,
           );
@@ -926,13 +931,15 @@
 
           const data = await res.json();
 
+          // Atualiza o contador de itens totais do Hero apenas no primeiro carregamento
+          if (reset && data.total) {
+            document.getElementById("heroCount").textContent = data.total;
+          }
+
           if (data.itens && data.itens.length > 0) {
             allToys = [...allToys, ...data.itens];
             cursor = data.cursor;
             hasMais = data.temMais;
-
-            document.getElementById("heroCount").textContent =
-              allToys.length + (hasMais ? "+" : "");
             render(data.itens, !reset);
           } else {
             hasMais = false;
@@ -941,7 +948,9 @@
           console.error("Erro na carga:", error);
         } finally {
           isLoading = false;
-          if (loadingEl) loadingEl.classList.add("hidden");
+          clearTimeout(loadingTimeout); // Cancela o timer do texto
+          const loadingEl = document.getElementById("loadingText");
+          if (loadingEl) loadingEl.classList.add("hidden"); // Esconde o texto
         }
       }
 
@@ -952,8 +961,8 @@
               fetchBrinquedos();
             }
           },
-          { rootMargin: "400px" },
-        );
+          { rootMargin: "1500px" },
+        ); // Gatilho enorme para carregar muito antes de chegar no fim
 
         document.querySelector("main").appendChild(sentinel);
         observer.observe(sentinel);
