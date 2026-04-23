@@ -741,6 +741,158 @@
       .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
+
+      /* ============================================================
+         [PASSO 4.1] ARCADE MODAL & MOEDAS
+         ============================================================ */
+      .font-orbitron {
+        font-family: "Orbitron", monospace;
+      }
+
+      .arcade-box {
+        background: #050505;
+        border: 3px solid #39ff14;
+        border-radius: 12px;
+        box-shadow:
+          0 0 20px rgba(57, 255, 20, 0.4),
+          inset 0 0 30px rgba(57, 255, 20, 0.1);
+        /* Textura de tela CRT (Scanlines) */
+        background-image: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(57, 255, 20, 0.05) 2px,
+          rgba(57, 255, 20, 0.05) 4px
+        );
+      }
+
+      .insert-coin-text {
+        animation: blinkNeon 1.5s infinite;
+        filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.6));
+      }
+
+      /* Containers das moedas e da "fenda" */
+      .coin-slot-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        position: relative;
+      }
+      .coin-slot {
+        width: 40px;
+        height: 6px;
+        background: #000;
+        border: 1px solid #333;
+        border-radius: 4px;
+        box-shadow:
+          inset 0 3px 5px rgba(0, 0, 0, 0.9),
+          0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+
+      /* A Ficha (Coin) */
+      .coin-btn {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          filter 0.2s;
+        /* Estilo metálico genérico */
+        background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
+        border: 3px dashed #da8528; /* Serrilhado da moeda */
+        box-shadow:
+          0 8px 15px rgba(0, 0, 0, 0.6),
+          inset 0 0 10px rgba(255, 255, 255, 0.4);
+      }
+
+      /* Personalização das Fichas */
+      .google-coin {
+        filter: hue-rotate(-30deg); /* Puxa pro tom vermelho/laranja */
+      }
+      .facebook-coin {
+        filter: hue-rotate(180deg); /* Puxa pro azul */
+      }
+
+      .coin-btn:hover {
+        transform: translateY(-5px) scale(1.05) rotate(15deg);
+        filter: brightness(1.2);
+      }
+
+      .coin-letter {
+        font-family: "Archivo Black", sans-serif;
+        font-size: 2rem;
+        color: rgba(0, 0, 0, 0.6);
+        text-shadow:
+          1px 1px 0 rgba(255, 255, 255, 0.3),
+          -1px -1px 0 rgba(0, 0, 0, 0.3);
+      }
+
+      /* Animação: Inserindo a Ficha */
+      .coin-dropping {
+        animation: dropIntoSlot 0.6s cubic-bezier(0.5, 0, 1, 0.5) forwards;
+        pointer-events: none;
+      }
+
+      /* Tela Game Over */
+      .game-over-text {
+        text-shadow:
+          4px 4px 0 #4a0000,
+          0 0 20px #ff0000;
+        animation: glitchGameOver 0.2s infinite;
+      }
+
+      @keyframes blinkNeon {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      @keyframes dropIntoSlot {
+        0% {
+          transform: translateY(0) scale(1) rotate(0deg);
+          opacity: 1;
+        }
+        50% {
+          transform: translateY(40px) scale(0.8) rotate(90deg);
+          opacity: 0.8;
+          z-index: -1;
+        }
+        100% {
+          transform: translateY(60px) scale(0.2);
+          opacity: 0;
+        }
+      }
+
+      @keyframes glitchGameOver {
+        0% {
+          transform: translate(0);
+        }
+        20% {
+          transform: translate(-3px, 2px);
+        }
+        40% {
+          transform: translate(-1px, -2px);
+        }
+        60% {
+          transform: translate(3px, 1px);
+        }
+        80% {
+          transform: translate(1px, -1px);
+        }
+        100% {
+          transform: translate(0);
+        }
+      }
     </style>
   </head>
 
@@ -899,6 +1051,78 @@
     >
       <p>© 2026 RetroBrinquedos BR - Revivendo memórias em alta resolução.</p>
     </footer>
+
+    <div
+      id="arcadeModal"
+      class="fixed inset-0 z-[200] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300"
+    >
+      <div
+        class="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        onclick="closeModal()"
+      ></div>
+
+      <div
+        id="arcadeBox"
+        class="arcade-box relative w-[90%] max-w-md p-8 text-center overflow-hidden"
+      >
+        <button
+          class="arcade-close absolute top-3 right-4 text-green-400 hover:text-white font-retro text-sm transition-colors z-50"
+          onclick="closeModal()"
+        >
+          [ X ]
+        </button>
+
+        <div
+          id="arcadeScreen"
+          class="arcade-screen flex flex-col items-center gap-8"
+        >
+          <h2
+            class="insert-coin-text text-2xl md:text-3xl font-retro text-transparent bg-clip-text bg-gradient-to-b from-[#39ff14] to-[#128a02]"
+          >
+            INSERT COIN <br /><span class="text-lg">TO CONTINUE</span>
+          </h2>
+
+          <div class="flex gap-8 justify-center">
+            <div class="coin-slot-container">
+              <button
+                class="coin-btn google-coin"
+                onclick="handleCoinDrop(this, 'google')"
+              >
+                <span class="coin-letter">G</span>
+              </button>
+              <div class="coin-slot"></div>
+            </div>
+
+            <div class="coin-slot-container">
+              <button
+                class="coin-btn facebook-coin"
+                onclick="handleCoinDrop(this, 'facebook')"
+              >
+                <span class="coin-letter">F</span>
+              </button>
+              <div class="coin-slot"></div>
+            </div>
+          </div>
+
+          <p
+            class="font-orbitron text-[0.65rem] tracking-widest text-green-500/70 uppercase"
+          >
+            Insira a ficha para salvar o progresso
+          </p>
+        </div>
+
+        <div
+          id="gameOverScreen"
+          class="absolute inset-0 bg-black flex items-center justify-center hidden z-40"
+        >
+          <h2
+            class="game-over-text font-retro text-5xl text-red-600 tracking-widest"
+          >
+            GAME<br />OVER
+          </h2>
+        </div>
+      </div>
+    </div>
 
     <script>
       // ============================================================
@@ -1268,11 +1492,49 @@
         }
       }
 
-      // Login Simulado
+      // ============================================================
+      // [PASSO 4.1] SISTEMA DE LOGIN ARCADE
+      // ============================================================
+      const arcadeModal = document.getElementById("arcadeModal");
+      const arcadeScreen = document.getElementById("arcadeScreen");
+      const gameOverScreen = document.getElementById("gameOverScreen");
+
+      // 1. Abre o Modal (Substitui o antigo login direto)
       function login() {
+        arcadeScreen.classList.remove("hidden");
+        gameOverScreen.classList.add("hidden");
+        arcadeModal.classList.remove("opacity-0", "pointer-events-none");
+      }
+
+      // 2. Fecha o Modal com GAME OVER
+      function closeModal() {
+        // Esconde a tela de fichas e mostra o Game Over piscando
+        arcadeScreen.classList.add("hidden");
+        gameOverScreen.classList.remove("hidden");
+
+        // Espera 1.8 segundos do terror vermelho e fecha o modal
+        setTimeout(() => {
+          arcadeModal.classList.add("opacity-0", "pointer-events-none");
+        }, 1800);
+      }
+
+      // 3. Animação da Ficha Caindo
+      function handleCoinDrop(btn, provider) {
+        // Adiciona a classe que faz a moeda cair na fenda
+        btn.classList.add("coin-dropping");
+
+        // Espera a moeda cair (600ms) antes de fechar e "logar"
+        setTimeout(() => {
+          arcadeModal.classList.add("opacity-0", "pointer-events-none");
+          btn.classList.remove("coin-dropping");
+          executeLoginSimulado(); // Mantém a simulação até o Passo 4.3
+        }, 600);
+      }
+
+      // O login que antes era imediato, agora só ocorre após a moeda cair
+      function executeLoginSimulado() {
         isUserLogged = true;
         document.body.classList.remove("app-unlogged");
-
         document.getElementById("userArea").innerHTML =
           `<div class="flex items-center gap-3"><span class="text-[10px] font-bold text-cyan-400 uppercase">Museu Ativo</span><div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-500 border border-white"></div></div>`;
       }
