@@ -598,10 +598,11 @@
         flex-shrink: 0;
         border-top: 2px solid var(--trunfo-gold);
       }
+
       .trunfo-footer-logo {
         font-family: "Orbitron", monospace;
         font-size: 0.45rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: #ffffff; /* Ajuste 2: Mudado para branco puro */
         letter-spacing: 0.15em;
         text-transform: uppercase;
       }
@@ -630,9 +631,8 @@
         width: 18px;
         height: 18px;
         fill: #3a0000; /* Estado Vazio: vermelho muito escuro para combinar com o fundo */
-        filter: drop-shadow(
-          0px 0px 1px rgba(0, 0, 0, 0.8)
-        ); /* Borda simulada */
+        filter: drop-shadow(1px 0 0 white) drop-shadow(-1px 0 0 white)
+          drop-shadow(0 1px 0 white) drop-shadow(0 -1px 0 white);
         transition:
           fill 0.3s,
           transform 0.2s;
@@ -647,8 +647,7 @@
       .heart-tooltip {
         position: absolute;
         bottom: 150%;
-        left: 50%;
-        transform: translateX(-50%);
+        right: 0; /* Ajuste 3: Ancorado à direita para não cortar a frase */
         background: #000;
         border: 1px solid var(--neon-pink);
         color: #fff;
@@ -662,6 +661,7 @@
         z-index: 10;
         box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
       }
+
       .app-unlogged .heart-btn:hover .heart-tooltip {
         opacity: 1;
       }
@@ -982,6 +982,16 @@
         return `<div class="led-display"><div class="led-row">${leds}</div><div class="led-row">${leds}</div></div>`;
       }
 
+      // Ajuste 4: Gerador de Códigos Clássicos do Super Trunfo (A1 até D8)
+      function getTrunfoCode(idStr) {
+        const num = parseInt(idStr, 10);
+        if (isNaN(num)) return "A1";
+        const letters = ["A", "B", "C", "D"];
+        const letter = letters[(num - 1) % 4];
+        const number = Math.floor(((num - 1) % 32) / 4) + 1;
+        return `${letter}${number}`;
+      }
+
       function render(items, append = false) {
         const grid = document.getElementById("toyGrid");
         const html = items
@@ -989,6 +999,9 @@
             const ledHTML = buildLedDisplay(toy.raridade);
             const isLiked = likedItems.has(toy.id);
             const likeCount = toy.curtidas_count || 0;
+
+            // Ajuste 4: Se o banco não tiver o código, gera um dinâmico!
+            const trunfoCode = toy.codigo_trunfo || getTrunfoCode(toy.id);
 
             return `
           <div class="masonry-item" id="card-${toy.id}">
@@ -1003,7 +1016,7 @@
                 <div class="trunfo-header">
                   <div class="trunfo-top-bar">
                     <span>Super Trunfo • RetroBrinquedos</span>
-                    <span class="trunfo-code-badge">${toy.codigo_trunfo || "N/A"}</span>
+                    <span class="trunfo-code-badge">${trunfoCode}</span>
                   </div>
                   <div class="trunfo-title-area">
                     <div class="trunfo-star"></div>
@@ -1038,8 +1051,8 @@
                   
                   <div class="like-container">
                     <button class="heart-btn ${isLiked ? "liked" : ""}" onclick="toggleLike(event, '${toy.id}')" aria-label="Curtir">
-                      <svg class="heart-svg" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 2h2v2h4V2h2v2h2v2h2v4h-2v2h-2v2h-2v2H8v-2H6v-2H4v-2H2V8H0V4h2V2h2z"/>
+                      <svg class="heart-svg" viewBox="0 0 14 15" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 5V3H6V5H8V3H10V5H12V9H10V11H8V13H6V11H4V9H2V5Z" />
                       </svg>
                       <div class="heart-tooltip">Faça login para curtir</div>
                     </button>
