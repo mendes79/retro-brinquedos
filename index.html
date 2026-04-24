@@ -1544,17 +1544,42 @@
         }, 1800);
       }
 
+      // --- 2. GERAÇÃO DA TELA DE PERSONAGENS (DINÂMICA 1-150) ---
+
       function renderAvatarGrid() {
         avatarGrid.innerHTML = "";
-        for (let i = 1; i <= 15; i++) {
-          const num = i.toString().padStart(2, "0");
-          const path = `/img/avatares/a${num}.png`;
+
+        // 1. Criamos um array com os números de 1 a 150
+        const totalAvatares = 150;
+        const listaCompleta = Array.from(
+          { length: totalAvatares },
+          (_, i) => i + 1,
+        );
+
+        // 2. Embaralhamos a lista (Algoritmo Fisher-Yates)
+        for (let i = listaCompleta.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [listaCompleta[i], listaCompleta[j]] = [
+            listaCompleta[j],
+            listaCompleta[i],
+          ];
+        }
+
+        // 3. Selecionamos apenas os 15 primeiros do sorteio
+        const sorteados = listaCompleta.slice(0, 15);
+
+        // 4. Renderizamos os 15 eleitos na grid
+        sorteados.forEach((num) => {
+          // Formata o número com zero à esquerda (ex: 1 vira 01, 100 continua 100)
+          const formatado = num.toString().padStart(2, "0");
+          const path = `/img/avatares/a${formatado}.png`;
+
           const item = document.createElement("div");
           item.className = "avatar-item rounded-md";
-          item.innerHTML = `<img src="${path}" class="avatar-img" alt="Hero ${num}">`;
+          item.innerHTML = `<img src="${path}" class="avatar-img" alt="Hero ${formatado}">`;
           item.onclick = () => confirmAvatar(path, item);
           avatarGrid.appendChild(item);
-        }
+        });
       }
 
       function handleCoinSelect(btn, provider) {
@@ -1632,7 +1657,7 @@
         document.getElementById("userArea").innerHTML = `
           <div class="flex items-center gap-3">
             <div class="flex flex-col items-end">
-              <span class="text-[8px] text-cyan-400/70 font-orbitron uppercase tracking-widest">Authenticated</span>
+              <span class="text-[8px] text-cyan-400/70 font-orbitron uppercase tracking-widest">Player 1</span>
               <span class="text-[10px] font-bold text-white uppercase tracking-tighter drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]">${name}</span>
             </div>
             <div class="w-10 h-10 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_#22d3ee]">
