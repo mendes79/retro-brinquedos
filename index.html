@@ -1598,12 +1598,11 @@
         btn.classList.add("coin-inserted");
 
         setTimeout(async () => {
-          // Passamos o provedor direto (x, google ou facebook) graças à sua descoberta!
           const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider: provider,
             options: {
-              // Esta linha força o Supabase a devolver o usuário para a página atual, ignorando o localhost!
-              redirectTo: window.location.href,
+              // Usa o origin (a raiz limpa do site) para evitar o acúmulo de tokens na URL!
+              redirectTo: window.location.origin,
             },
           });
 
