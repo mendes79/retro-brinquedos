@@ -1568,11 +1568,13 @@
         btn.classList.add("coin-inserted");
 
         setTimeout(async () => {
-          const authProvider = provider === "x" ? "twitter" : provider;
-
-          // Alterado para utilizar o supabaseClient!
+          // Passamos o provedor direto (x, google ou facebook) graças à sua descoberta!
           const { data, error } = await supabaseClient.auth.signInWithOAuth({
-            provider: authProvider,
+            provider: provider,
+            options: {
+              // Esta linha força o Supabase a devolver o usuário para a página atual, ignorando o localhost!
+              redirectTo: window.location.href,
+            },
           });
 
           if (error) {
