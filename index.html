@@ -606,7 +606,7 @@
       .trunfo-footer-logo {
         font-family: "Orbitron", monospace;
         font-size: 0.45rem;
-        color: #ffffff; /* Ajuste 2: Mudado para branco puro */
+        color: #ffffff;
         letter-spacing: 0.15em;
         text-transform: uppercase;
       }
@@ -618,7 +618,6 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        /* position: relative; -> REMOVIDO para libertar o tooltip */
       }
 
       .heart-btn {
@@ -630,13 +629,12 @@
         align-items: center;
         justify-content: center;
         outline: none;
-        /* position: relative; -> REMOVIDO para libertar o tooltip */
       }
 
       .heart-svg {
         width: 18px;
         height: 18px;
-        fill: #3a0000; /* Estado Vazio: vermelho muito escuro para combinar com o fundo */
+        fill: #3a0000;
         filter: drop-shadow(1px 0 0 white) drop-shadow(-1px 0 0 white)
           drop-shadow(0 1px 0 white) drop-shadow(0 -1px 0 white);
         transition:
@@ -644,29 +642,26 @@
           transform 0.2s;
       }
 
-      /* Animação Hover (Somente se NÃO estiver curtido e NÃO estiver logado) */
+      /* Animação Hover */
       .app-unlogged .heart-btn:not(.liked):hover .heart-svg {
         animation: pulseSoft 1.5s infinite;
       }
 
-      /* Tooltip para usuários não logados */
+      /* Tooltip para utilizadores não logados */
       .heart-tooltip {
-        /* Como o botão não tem mais 'relative', ele se centraliza pelo card inteiro! */
         position: absolute;
-        bottom: 40px; /* Fica exatamente acima do rodapé vermelho */
+        bottom: 40px;
         left: 50%;
         transform: translateX(-50%);
-        width: calc(
-          100% - 24px
-        ); /* Ocupa a largura total do card, deixando 12px de borda de cada lado */
+        width: calc(100% - 24px);
         background: rgba(0, 0, 0, 0.95);
         border: 1px solid var(--neon-pink);
         color: #fff;
         font-family: "Orbitron", monospace;
-        font-size: 0.75rem; /* Fonte grande e legível */
+        font-size: 0.75rem;
         padding: 10px;
-        white-space: normal; /* Permite quebrar em duas linhas se a tela for muito estreitinha */
-        text-align: center; /* Texto perfeitamente centralizado */
+        white-space: normal;
+        text-align: center;
         opacity: 0;
         pointer-events: none;
         transition:
@@ -676,7 +671,6 @@
         box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
       }
 
-      /* Ajuste fino para mobile: garante que o pop-up não escape do card em telas pequenas */
       @media (max-width: 640px) {
         .heart-tooltip {
           font-size: 0.65rem;
@@ -771,12 +765,10 @@
         filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.6));
       }
 
-      /* Wrapper essencial para o efeito de grupo (hover em irmãos) */
       .coins-wrapper {
         position: relative;
       }
 
-      /* Estilo Base da Ficha (PNG) */
       .coin-btn {
         width: 70px;
         height: 70px;
@@ -794,28 +786,23 @@
         object-fit: contain;
       }
 
-      /* A MAGIA: Se o mouse estiver no container, desfoca TODAS as moedas que NÃO estão com o mouse em cima */
       .coins-wrapper:hover .coin-btn:not(:hover) {
         filter: grayscale(100%) blur(2px);
         opacity: 0.4;
         transform: scale(0.9);
       }
 
-      /* O efeito da moeda QUE ESTÁ com o mouse em cima */
       .coins-wrapper .coin-btn:hover {
         transform: scale(1.15) translateY(-5px);
-        /* Brilho neon verde vindo exclusivamente de baixo */
         filter: drop-shadow(0 15px 12px rgba(57, 255, 20, 0.9));
         z-index: 10;
       }
 
-      /* Animação do Clique (Crédito Inserido) */
       .coin-inserted {
         animation: insertFlash 0.3s forwards;
         pointer-events: none;
       }
 
-      /* Tela Game Over corrigida */
       .game-over-text {
         text-shadow:
           4px 4px 0 #4a0000,
@@ -890,7 +877,6 @@
         box-shadow: 0 0 15px #22d3ee;
         z-index: 10;
       }
-      /* Grid de Seleção do Avatar */
       .avatar-img {
         width: 100%;
         height: 100%;
@@ -902,7 +888,6 @@
         filter: grayscale(0%);
       }
 
-      /* Efeito de confirmação (Flash) */
       .avatar-selected {
         animation: selectFlash 0.5s step-end infinite;
         border-color: #fff !important;
@@ -1182,6 +1167,17 @@
 
     <script>
       // ============================================================
+      // CONFIGURAÇÃO DO SUPABASE (BLINDADA)
+      // ============================================================
+      // URL e Chave Limpas, sem formatação Markdown.
+      const urlDB = "https://gsiyknrzjwhdaqhfzimc.supabase.co";
+      const chaveDB =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzaXlrbnJ6andoZGFxaGZ6aW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4OTYxNTUsImV4cCI6MjA5MjQ3MjE1NX0.hRr5Ku3JILqFTvaz94Xryr8U5ZZ0brqJ1MCoXXaFxDM";
+
+      // Criamos um nome único (supabaseClient) para não criar conflito no browser
+      const supabaseClient = window.supabase.createClient(urlDB, chaveDB);
+
+      // ============================================================
       // ESTADO GLOBAL DA APLICAÇÃO
       // ============================================================
       let allToys = [];
@@ -1199,15 +1195,6 @@
       sentinel.id = "scrollSentinel";
       sentinel.className =
         "w-full h-10 col-span-full mt-4 opacity-0 pointer-events-none";
-
-      // ============================================================
-      // CONFIGURAÇÃO DO SUPABASE
-      // ============================================================
-      const supabaseUrl =
-        "[https://gsiyknrzjwhdaqhfzimc.supabase.co](https://gsiyknrzjwhdaqhfzimc.supabase.co/rest/v1/)";
-      const supabaseAnonKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzaXlrbnJ6andoZGFxaGZ6aW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4OTYxNTUsImV4cCI6MjA5MjQ3MjE1NX0.hRr5Ku3JILqFTvaz94Xryr8U5ZZ0brqJ1MCoXXaFxDM";
-      const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
       // ============================================================
       // CONSUMO DA API E INFINITE SCROLL
@@ -1285,58 +1272,27 @@
       }
 
       // ============================================================
-      // COMPONENTES DE RENDERIZAÇÃO
-      // ============================================================
-      function getTrunfoCode(idStr) {
-        const num = parseInt(idStr, 10);
-        if (isNaN(num)) return "A1";
-        const letters = ["A", "B", "C", "D"];
-        const letter = letters[(num - 1) % 4];
-        const number = Math.floor(((num - 1) % 32) / 4) + 1;
-        return `${letter}${number}`;
-      }
-
-      function buildLedDisplay(value) {
-        const v = Math.round(Math.min(10, Math.max(0, value)));
-        function ledClass(index) {
-          if (index > v) return "led";
-          if (index <= 6) return "led on-green";
-          if (index <= 8) return "led on-yellow";
-          return "led on-red";
-        }
-        const leds = Array.from(
-          { length: 10 },
-          (_, i) => `<div class="${ledClass(i + 1)}"></div>`,
-        ).join("");
-        return `<div class="led-display"><div class="led-row">${leds}</div><div class="led-row">${leds}</div></div>`;
-      }
-
-      // ============================================================
       // COMPONENTES DE RENDERIZAÇÃO (MASONRY PINTEREST-STYLE)
       // ============================================================
 
-      // Controle do Masonry via JS
       let currentCols = 0;
       let columnElements = [];
       let nextColIndex = 0;
 
-      // Descobre quantas colunas cabem na tela
       function getColumnCount() {
         const width = window.innerWidth;
-        if (width >= 1536) return 6; // 2xl
-        if (width >= 1280) return 5; // xl
-        if (width >= 1024) return 4; // lg
-        if (width >= 640) return 3; // sm
-        return 2; // mobile
+        if (width >= 1536) return 6;
+        if (width >= 1280) return 5;
+        if (width >= 1024) return 4;
+        if (width >= 640) return 3;
+        return 2;
       }
 
-      // Reorganiza caso o usuário redimensione a janela (Desktop)
       let resizeTimer;
       window.addEventListener("resize", () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
           if (allToys.length > 0 && getColumnCount() !== currentCols) {
-            // Repinta a tela com o acervo que já está na memória
             render(allToys, false);
           }
         }, 200);
@@ -1370,14 +1326,12 @@
         const grid = document.getElementById("toyGrid");
         const targetCols = getColumnCount();
 
-        // Se for o primeiro carregamento, um filtro, ou a tela mudou de tamanho: zera tudo e cria as colunas limpas
         if (!append || currentCols !== targetCols) {
           grid.innerHTML = "";
           columnElements = [];
           currentCols = targetCols;
           nextColIndex = 0;
 
-          // Cria as DIVs que serão as colunas independentes
           for (let i = 0; i < currentCols; i++) {
             const colDiv = document.createElement("div");
             colDiv.className = "masonry-column";
@@ -1386,14 +1340,12 @@
           }
         }
 
-        // Distribui as cartas novas nas colunas como um crupiê
         items.forEach((toy) => {
           const ledHTML = buildLedDisplay(toy.raridade);
           const isLiked = likedItems.has(toy.id);
           const likeCount = toy.curtidas_count || 0;
           const trunfoCode = toy.codigo_trunfo || getTrunfoCode(toy.id);
 
-          // Adicionamos a classe 'card-enter' no masonry-item para dar o efeito de fade/slide
           const cardHTML = `
           <div class="masonry-item card-enter" id="card-${toy.id}">
             <div class="card-inner" onclick="handleFlip('${toy.id}')">
@@ -1456,13 +1408,11 @@
             </div>
           </div>`;
 
-          // Insere o card na coluna da vez, sem mexer nas outras
           columnElements[nextColIndex].insertAdjacentHTML(
             "beforeend",
             cardHTML,
           );
 
-          // Move para a próxima coluna (Round-Robin)
           nextColIndex = (nextColIndex + 1) % currentCols;
         });
       }
@@ -1561,29 +1511,23 @@
       // [PASSO 4.1, 4.2 e 4.3] SISTEMA DE LOGIN COMPLETO (OAUTH)
       // ============================================================
 
-      // Elementos do DOM
       const arcadeModal = document.getElementById("arcadeModal");
       const arcadeScreen = document.getElementById("arcadeScreen");
       const selectionScreen = document.getElementById("selectionScreen");
       const gameOverScreen = document.getElementById("gameOverScreen");
       const avatarGrid = document.getElementById("avatarGrid");
 
-      // Carrega o som na memória para evitar delays
       const sf2CoinSound = new Audio("/sounds/street_fighter.mp3");
       sf2CoinSound.load();
-
-      // --- 1. ABRIR E FECHAR A MÁQUINA ---
 
       function login() {
         arcadeScreen.classList.remove("hidden");
 
-        // Proteção: garante que a seleção de avatar e game over estejam ocultas ao abrir
         if (selectionScreen) selectionScreen.classList.add("hidden");
         gameOverScreen.classList.add("hidden");
 
         arcadeModal.classList.remove("opacity-0", "pointer-events-none");
 
-        // Reseta as fichas
         document.querySelectorAll(".coin-btn").forEach((b) => {
           b.classList.remove("coin-inserted");
           b.style.pointerEvents = "auto";
@@ -1600,8 +1544,6 @@
         }, 1800);
       }
 
-      // --- 2. GERAÇÃO DA TELA DE PERSONAGENS ---
-
       function renderAvatarGrid() {
         avatarGrid.innerHTML = "";
         for (let i = 1; i <= 15; i++) {
@@ -1615,26 +1557,21 @@
         }
       }
 
-      // --- 3. FLUXO DE AUTENTICAÇÃO REAL (OAUTH) ---
-
       function handleCoinSelect(btn, provider) {
-        // Trava as outras fichas
         document
           .querySelectorAll(".coin-btn")
           .forEach((b) => (b.style.pointerEvents = "none"));
 
-        // Toca o som
         sf2CoinSound.currentTime = 0;
         sf2CoinSound.play().catch((e) => console.log("Bloqueio de áudio:", e));
 
-        // Animação da ficha
         btn.classList.add("coin-inserted");
 
-        // Redireciona para o provedor real após a ficha cair
         setTimeout(async () => {
           const authProvider = provider === "x" ? "twitter" : provider;
 
-          const { data, error } = await supabase.auth.signInWithOAuth({
+          // Alterado para utilizar o supabaseClient!
+          const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider: authProvider,
           });
 
@@ -1646,26 +1583,21 @@
         }, 1500);
       }
 
-      // --- 4. VERIFICAÇÃO DE RETORNO DO JOGADOR ---
-
       document.addEventListener("DOMContentLoaded", async () => {
-        // Verifica se há sessão ativa no banco
+        // Alterado para utilizar o supabaseClient!
         const {
           data: { session },
-        } = await supabase.auth.getSession();
+        } = await supabaseClient.auth.getSession();
 
         if (session) {
           isUserLogged = true;
           document.body.classList.remove("app-unlogged");
 
-          // Checa se já tem avatar salvo
           const savedAvatar = localStorage.getItem("retro_avatar");
 
           if (savedAvatar) {
-            // Jogador recorrente: loga direto
             updateNavWithAvatar(savedAvatar);
           } else {
-            // Novo jogador (acabou de voltar da rede social): escolhe o avatar
             arcadeModal.classList.remove("opacity-0", "pointer-events-none");
             arcadeScreen.classList.add("hidden");
             selectionScreen.classList.remove("hidden");
@@ -1674,8 +1606,6 @@
           }
         }
       });
-
-      // --- 5. SALVAMENTO E INTERFACE ---
 
       function confirmAvatar(path, element) {
         element.classList.add("avatar-selected");
@@ -1699,7 +1629,8 @@
       }
 
       async function logOut() {
-        await supabase.auth.signOut();
+        // Alterado para utilizar o supabaseClient!
+        await supabaseClient.auth.signOut();
         window.location.reload();
       }
 
