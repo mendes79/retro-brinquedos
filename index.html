@@ -1585,8 +1585,9 @@
         }, 1500);
       }
 
+      // --- 4. VERIFICAÇÃO DE RETORNO DO JOGADOR (ATUALIZADA) ---
+
       document.addEventListener("DOMContentLoaded", async () => {
-        // Alterado para utilizar o supabaseClient!
         const {
           data: { session },
         } = await supabaseClient.auth.getSession();
@@ -1595,11 +1596,19 @@
           isUserLogged = true;
           document.body.classList.remove("app-unlogged");
 
+          // CAPTURA O NOME REAL: Tenta pegar o nome completo, se não existir, usa "Player 1"
+          const userName =
+            session.user.user_metadata.full_name ||
+            session.user.user_metadata.name ||
+            "Player 1";
+
           const savedAvatar = localStorage.getItem("retro_avatar");
 
           if (savedAvatar) {
-            updateNavWithAvatar(savedAvatar);
+            // Já escolheu nesta sessão? Mostra na Nav com o nome real
+            updateNavWithAvatar(savedAvatar, userName);
           } else {
+            // Primeiro login ou escolha limpa: Abre a tela de seleção
             arcadeModal.classList.remove("opacity-0", "pointer-events-none");
             arcadeScreen.classList.add("hidden");
             selectionScreen.classList.remove("hidden");
@@ -1619,10 +1628,13 @@
         }, 800);
       }
 
-      function updateNavWithAvatar(avatarPath) {
+      function updateNavWithAvatar(avatarPath, name) {
         document.getElementById("userArea").innerHTML = `
           <div class="flex items-center gap-3">
-            <span class="text-[9px] font-bold text-cyan-400 uppercase tracking-tighter drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]">Player 1 Ready</span>
+            <div class="flex flex-col items-end">
+              <span class="text-[8px] text-cyan-400/70 font-orbitron uppercase tracking-widest">Authenticated</span>
+              <span class="text-[10px] font-bold text-white uppercase tracking-tighter drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]">${name}</span>
+            </div>
             <div class="w-10 h-10 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_#22d3ee]">
               <img src="${avatarPath}" class="w-full h-full object-contain">
             </div>
@@ -1630,10 +1642,35 @@
           </div>`;
       }
 
+      // --- 5. SALVAMENTO E INTERFACE (ATUALIZADA) ---
+
+      async function confirmAvatar(path, element) {
+        element.classList.add("avatar-selected");
+        localStorage.setItem("retro_avatar", path);
+
+        // Recupera o nome novamente para a interface
+        const {
+          data: { session },
+        } = await supabaseClient.auth.getSession();
+        const userName =
+          session.user.user_metadata.full_name ||
+          session.user.user_metadata.name ||
+          "Player 1";
+
+        setTimeout(() => {
+          arcadeModal.classList.add("opacity-0", "pointer-events-none");
+          setTimeout(() => updateNavWithAvatar(path, userName), 300);
+        }, 800);
+      }
+
       async function logOut() {
-        // Alterado para utilizar o supabaseClient!
         await supabaseClient.auth.signOut();
-        window.location.reload();
+
+        // A MÁGICA AQUI: Limpa o avatar escolhido para permitir nova escolha no próximo login
+        localStorage.removeItem("retro_avatar");
+
+        // Redireciona para a URL limpa (sem hashtags)
+        window.location.href = window.location.origin;
       }
 
       init();
