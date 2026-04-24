@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RetroBrinquedos BR | Arquivo Digital 80s/90s</title>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700&family=Orbitron:wght@700&display=swap"
@@ -1200,6 +1201,15 @@
         "w-full h-10 col-span-full mt-4 opacity-0 pointer-events-none";
 
       // ============================================================
+      // CONFIGURAÇÃO DO SUPABASE
+      // ============================================================
+      const supabaseUrl =
+        "[https://gsiyknrzjwhdaqhfzimc.supabase.co](https://gsiyknrzjwhdaqhfzimc.supabase.co/rest/v1/)";
+      const supabaseAnonKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzaXlrbnJ6andoZGFxaGZ6aW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4OTYxNTUsImV4cCI6MjA5MjQ3MjE1NX0.hRr5Ku3JILqFTvaz94Xryr8U5ZZ0brqJ1MCoXXaFxDM";
+      const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+      // ============================================================
       // CONSUMO DA API E INFINITE SCROLL
       // ============================================================
       async function fetchBrinquedos(reset = false) {
@@ -1548,74 +1558,57 @@
       }
 
       // ============================================================
-      // [PASSO 4.1] SISTEMA DE LOGIN ARCADE E ÁUDIO SF2
+      // CONFIGURAÇÃO DO SUPABASE (Insira suas chaves aqui)
       // ============================================================
+      const supabaseUrl = "COLE_AQUI_A_SUA_PROJECT_URL";
+      const supabaseAnonKey = "COLE_AQUI_A_SUA_ANON_KEY";
+      const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+      // ============================================================
+      // [PASSO 4.1, 4.2 e 4.3] SISTEMA DE LOGIN COMPLETO (OAUTH)
+      // ============================================================
+
+      // Elementos do DOM
       const arcadeModal = document.getElementById("arcadeModal");
       const arcadeScreen = document.getElementById("arcadeScreen");
+      const selectionScreen = document.getElementById("selectionScreen");
       const gameOverScreen = document.getElementById("gameOverScreen");
+      const avatarGrid = document.getElementById("avatarGrid");
 
       // Carrega o som na memória para evitar delays
       const sf2CoinSound = new Audio("/sounds/street_fighter.mp3");
       sf2CoinSound.load();
 
-      // 1. Abre o Modal
+      // --- 1. ABRIR E FECHAR A MÁQUINA ---
+
       function login() {
         arcadeScreen.classList.remove("hidden");
+
+        // Proteção: garante que a seleção de avatar e game over estejam ocultas ao abrir
+        if (selectionScreen) selectionScreen.classList.add("hidden");
         gameOverScreen.classList.add("hidden");
+
         arcadeModal.classList.remove("opacity-0", "pointer-events-none");
-        // Reseta o estado dos botões caso tenha fechado antes
+
+        // Reseta as fichas
         document.querySelectorAll(".coin-btn").forEach((b) => {
           b.classList.remove("coin-inserted");
           b.style.pointerEvents = "auto";
         });
       }
 
-      // 2. Fecha com Game Over
       function closeModal() {
         arcadeScreen.classList.add("hidden");
+        if (selectionScreen) selectionScreen.classList.add("hidden");
         gameOverScreen.classList.remove("hidden");
+
         setTimeout(() => {
           arcadeModal.classList.add("opacity-0", "pointer-events-none");
         }, 1800);
       }
 
-      // 3. O Clique na Ficha (Efeito Sonoro)
-      function handleCoinSelect(btn, provider) {
-        // Bloqueia cliques duplos nas outras fichas
-        document
-          .querySelectorAll(".coin-btn")
-          .forEach((b) => (b.style.pointerEvents = "none"));
+      // --- 2. GERAÇÃO DA TELA DE PERSONAGENS ---
 
-        // Toca o som épico
-        sf2CoinSound.currentTime = 0;
-        sf2CoinSound
-          .play()
-          .catch((e) => console.log("Bloqueio do navegador para áudio:", e));
-
-        // Roda a animação CSS da ficha selecionada
-        btn.classList.add("coin-inserted");
-
-        // Espera os 2 segundos do áudio para fechar e logar
-        setTimeout(() => {
-          arcadeModal.classList.add("opacity-0", "pointer-events-none");
-          setTimeout(() => executeLoginSimulado(), 300); // pequeno delay visual após fechar a janela
-        }, 2000);
-      }
-
-      function executeLoginSimulado() {
-        isUserLogged = true;
-        document.body.classList.remove("app-unlogged");
-        document.getElementById("userArea").innerHTML =
-          `<div class="flex items-center gap-3"><span class="text-[10px] font-bold text-cyan-400 uppercase">Museu Ativo</span><div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-500 border border-white"></div></div>`;
-      }
-
-      // ============================================================
-      // [4.2] LÓGICA DE SELEÇÃO DE AVATAR
-      // ============================================================
-      const selectionScreen = document.getElementById("selectionScreen");
-      const avatarGrid = document.getElementById("avatarGrid");
-
-      // Gera a Grid 3x5 dinamicamente
       function renderAvatarGrid() {
         avatarGrid.innerHTML = "";
         for (let i = 1; i <= 15; i++) {
@@ -1629,42 +1622,92 @@
         }
       }
 
+      // --- 3. FLUXO DE AUTENTICAÇÃO REAL (OAUTH) ---
+
       function handleCoinSelect(btn, provider) {
+        // Trava as outras fichas
         document
           .querySelectorAll(".coin-btn")
           .forEach((b) => (b.style.pointerEvents = "none"));
+
+        // Toca o som
         sf2CoinSound.currentTime = 0;
-        sf2CoinSound.play().catch((e) => {});
+        sf2CoinSound.play().catch((e) => console.log("Bloqueio de áudio:", e));
+
+        // Animação da ficha
         btn.classList.add("coin-inserted");
 
-        // Transição: Ficha cai -> Tela de Seleção
-        setTimeout(() => {
-          arcadeScreen.classList.add("hidden");
-          selectionScreen.classList.remove("hidden");
-          renderAvatarGrid();
+        // Redireciona para o provedor real após a ficha cair
+        setTimeout(async () => {
+          const authProvider = provider === "x" ? "twitter" : provider;
+
+          const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: authProvider,
+          });
+
+          if (error) {
+            console.error("Erro no login:", error);
+            arcadeScreen.classList.add("hidden");
+            gameOverScreen.classList.remove("hidden");
+          }
         }, 1500);
       }
 
+      // --- 4. VERIFICAÇÃO DE RETORNO DO JOGADOR ---
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Verifica se há sessão ativa no banco
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (session) {
+          isUserLogged = true;
+          document.body.classList.remove("app-unlogged");
+
+          // Checa se já tem avatar salvo
+          const savedAvatar = localStorage.getItem("retro_avatar");
+
+          if (savedAvatar) {
+            // Jogador recorrente: loga direto
+            updateNavWithAvatar(savedAvatar);
+          } else {
+            // Novo jogador (acabou de voltar da rede social): escolhe o avatar
+            arcadeModal.classList.remove("opacity-0", "pointer-events-none");
+            arcadeScreen.classList.add("hidden");
+            selectionScreen.classList.remove("hidden");
+            gameOverScreen.classList.add("hidden");
+            renderAvatarGrid();
+          }
+        }
+      });
+
+      // --- 5. SALVAMENTO E INTERFACE ---
+
       function confirmAvatar(path, element) {
         element.classList.add("avatar-selected");
-        // Pequena pausa para o flash de confirmação
+        localStorage.setItem("retro_avatar", path);
+
         setTimeout(() => {
           arcadeModal.classList.add("opacity-0", "pointer-events-none");
-          setTimeout(() => executeLoginReal(path), 300);
+          setTimeout(() => updateNavWithAvatar(path), 300);
         }, 800);
       }
 
-      function executeLoginReal(avatarPath) {
-        isUserLogged = true;
-        document.body.classList.remove("app-unlogged");
-        // Atualiza a Nav com o personagem escolhido
+      function updateNavWithAvatar(avatarPath) {
         document.getElementById("userArea").innerHTML = `
           <div class="flex items-center gap-3">
-            <span class="text-[9px] font-bold text-cyan-400 uppercase tracking-tighter">Player 1 Ready</span>
+            <span class="text-[9px] font-bold text-cyan-400 uppercase tracking-tighter drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]">Player 1 Ready</span>
             <div class="w-10 h-10 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_#22d3ee]">
               <img src="${avatarPath}" class="w-full h-full object-contain">
             </div>
+            <button onclick="logOut()" class="ml-2 text-[10px] text-gray-500 hover:text-red-500 uppercase font-orbitron transition-colors cursor-pointer">[ SAIR ]</button>
           </div>`;
+      }
+
+      async function logOut() {
+        await supabase.auth.signOut();
+        window.location.reload();
       }
 
       init();
