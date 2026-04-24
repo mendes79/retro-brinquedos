@@ -17,8 +17,6 @@ migrar.js
 images/
 bkp/
 node_modules/
-img/avatares/futuros
-img/avatares/usadas
 
 # Arquivos do Sistema Operacional
 .DS_Store

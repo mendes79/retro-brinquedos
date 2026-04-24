@@ -1544,39 +1544,44 @@
         }, 1800);
       }
 
-      // --- 2. GERAÇÃO DA TELA DE PERSONAGENS (DINÂMICA 1-150) ---
+      // --- 2. GERAÇÃO DA TELA DE PERSONAGENS (SORTEIO ESTRATIFICADO 8-5-2) ---
+
+      function getRandomFromRange(min, max, count) {
+        const range = Array.from({ length: max - min + 1 }, (_, i) => i + min);
+        for (let i = range.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [range[i], range[j]] = [range[j], range[i]];
+        }
+        return range.slice(0, count);
+      }
 
       function renderAvatarGrid() {
+        const avatarGrid = document.getElementById("avatarGrid");
         avatarGrid.innerHTML = "";
 
-        // 1. Criamos um array com os números de 1 a 150
-        const totalAvatares = 150;
-        const listaCompleta = Array.from(
-          { length: totalAvatares },
-          (_, i) => i + 1,
-        );
+        // 1. Sorteio Controlado das Cotas (Proporção 8-5-2)
+        const masculinos = getRandomFromRange(1, 80, 8); // 8 de 80 opções
+        const femininos = getRandomFromRange(81, 130, 5); // 5 de 50 opções
+        const neutros = getRandomFromRange(131, 150, 2); // 2 de 20 opções
 
-        // 2. Embaralhamos a lista (Algoritmo Fisher-Yates)
-        for (let i = listaCompleta.length - 1; i > 0; i--) {
+        // 2. União e Embaralhamento Final
+        const selecionados = [...masculinos, ...femininos, ...neutros];
+        for (let i = selecionados.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
-          [listaCompleta[i], listaCompleta[j]] = [
-            listaCompleta[j],
-            listaCompleta[i],
+          [selecionados[i], selecionados[j]] = [
+            selecionados[j],
+            selecionados[i],
           ];
         }
 
-        // 3. Selecionamos apenas os 15 primeiros do sorteio
-        const sorteados = listaCompleta.slice(0, 15);
-
-        // 4. Renderizamos os 15 eleitos na grid
-        sorteados.forEach((num) => {
-          // Formata o número com zero à esquerda (ex: 1 vira 01, 100 continua 100)
+        // 3. Renderização
+        selecionados.forEach((num) => {
           const formatado = num.toString().padStart(2, "0");
           const path = `/img/avatares/a${formatado}.png`;
 
           const item = document.createElement("div");
           item.className = "avatar-item rounded-md";
-          item.innerHTML = `<img src="${path}" class="avatar-img" alt="Hero ${formatado}">`;
+          item.innerHTML = `<img src="${path}" class="avatar-img" alt="Avatar ${formatado}">`;
           item.onclick = () => confirmAvatar(path, item);
           avatarGrid.appendChild(item);
         });
