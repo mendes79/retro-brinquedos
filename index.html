@@ -1169,33 +1169,32 @@
       // ============================================================
       // CONFIGURAÇÃO DO SUPABASE (BLINDADA)
       // ============================================================
-      // URL e Chave Limpas, sem formatação Markdown.
       const urlDB = "https://gsiyknrzjwhdaqhfzimc.supabase.co";
       const chaveDB =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzaXlrbnJ6andoZGFxaGZ6aW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4OTYxNTUsImV4cCI6MjA5MjQ3MjE1NX0.hRr5Ku3JILqFTvaz94Xryr8U5ZZ0brqJ1MCoXXaFxDM"; // Criamos um nome único (supabaseClient) para não criar conflito no browser
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzaXlrbnJ6andoZGFxaGZ6aW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4OTYxNTUsImV4cCI6MjA5MjQ3MjE1NX0.hRr5Ku3JILqFTvaz94Xryr8U5ZZ0brqJ1MCoXXaFxDM";
 
-      const supabaseClient = window.supabase.createClient(urlDB, chaveDB); // ============================================================
+      const supabaseClient = window.supabase.createClient(urlDB, chaveDB);
+
+      // ============================================================
       // ESTADO GLOBAL DA APLICAÇÃO
       // ============================================================
-
       let allToys = [];
       let cursor = 0;
       const LIMITE = 24;
       let isLoading = false;
-      let curtidasDoUsuario = new Set();
       let hasMais = true;
       const sessionSeed = Math.random();
-
       let isUserLogged = false;
-      const likedItems = new Set(); // Sentinela Invisível (Pinterest style)
+      let curtidasDoUsuario = new Set();
 
       const sentinel = document.createElement("div");
       sentinel.id = "scrollSentinel";
       sentinel.className =
-        "w-full h-10 col-span-full mt-4 opacity-0 pointer-events-none"; // ============================================================
+        "w-full h-10 col-span-full mt-4 opacity-0 pointer-events-none";
+
+      // ============================================================
       // CONSUMO DA API E INFINITE SCROLL
       // ============================================================
-
       async function fetchBrinquedos(reset = false) {
         if (isLoading || (!hasMais && !reset)) return;
         isLoading = true;
@@ -1213,7 +1212,6 @@
           );
 
           if (!res.ok) throw new Error("Falha na API");
-
           const data = await res.json();
 
           if (reset && data.total) {
@@ -1231,20 +1229,19 @@
         } catch (error) {
           console.error("Erro na carga:", error);
         } finally {
-          isLoading = false; // Trava de segurança para monitores muito grandes:
-          // Se a tela for tão alta que os 24 cards não empurraram a sentinela para baixo, ele puxa mais automaticamente.
+          isLoading = false;
+          verificarSentinela();
+        }
+      }
 
-          if (
-            hasMais &&
-            document.getElementById("toyGrid").children.length > 0
-          ) {
-            setTimeout(() => {
-              const rect = sentinel.getBoundingClientRect();
-              if (rect.top > 0 && rect.top < window.innerHeight + 600) {
-                fetchBrinquedos();
-              }
-            }, 150);
-          }
+      function verificarSentinela() {
+        if (hasMais && document.getElementById("toyGrid").children.length > 0) {
+          setTimeout(() => {
+            const rect = sentinel.getBoundingClientRect();
+            if (rect.top > 0 && rect.top < window.innerHeight + 600) {
+              fetchBrinquedos();
+            }
+          }, 150);
         }
       }
 
@@ -1257,18 +1254,13 @@
           },
           { rootMargin: "800px" },
         );
-
         document.querySelector("main").appendChild(sentinel);
         observer.observe(sentinel);
       }
 
-      async function init() {
-        setupObserver();
-        await fetchBrinquedos(true);
-      } // ============================================================
-      // COMPONENTES DE RENDERIZAÇÃO (MASONRY PINTEREST-STYLE)
       // ============================================================
-
+      // COMPONENTES DE RENDERIZAÇÃO
+      // ============================================================
       let currentCols = 0;
       let columnElements = [];
       let nextColIndex = 0;
@@ -1282,31 +1274,12 @@
         return 2;
       }
 
-      let resizeTimer;
-      window.addEventListener("resize", () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-          if (allToys.length > 0 && getColumnCount() !== currentCols) {
-            render(allToys, false);
-          }
-        }, 200);
-      });
-
-      function getTrunfoCode(idStr) {
-        const num = parseInt(idStr, 10);
-        if (isNaN(num)) return "A1";
-        const letters = ["A", "B", "C", "D"];
-        const letter = letters[(num - 1) % 4];
-        const number = Math.floor(((num - 1) % 32) / 4) + 1;
-        return `${letter}${number}`;
-      }
-
       function buildLedDisplay(value) {
         const v = Math.round(Math.min(10, Math.max(0, value)));
-        function ledClass(index) {
-          if (index > v) return "led";
-          if (index <= 6) return "led on-green";
-          if (index <= 8) return "led on-yellow";
+        function ledClass(idx) {
+          if (idx > v) return "led";
+          if (idx <= 6) return "led on-green";
+          if (idx <= 8) return "led on-yellow";
           return "led on-red";
         }
         const leds = Array.from(
@@ -1325,7 +1298,6 @@
           columnElements = [];
           currentCols = targetCols;
           nextColIndex = 0;
-
           for (let i = 0; i < currentCols; i++) {
             const colDiv = document.createElement("div");
             colDiv.className = "masonry-column";
@@ -1336,83 +1308,71 @@
 
         items.forEach((toy) => {
           const ledHTML = buildLedDisplay(toy.raridade);
-          const isLiked = likedItems.has(toy.id);
-          const likeCount = toy.curtidas_count || 0;
-          const trunfoCode = toy.codigo_trunfo || getTrunfoCode(toy.id);
+          const isLiked = curtidasDoUsuario.has(toy.id);
+          const trunfoCode = toy.condigo_trunfo || "A1";
 
           const cardHTML = `
-          <div class="masonry-item card-enter" id="card-${toy.id}">
-            <div class="card-inner" onclick="handleFlip('${toy.id}')">
-
-              <div class="card-front">
-                <img src="${toy.url_frente}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
-              </div>
-
-              <div class="card-back flex flex-col">
-
-                <div class="trunfo-header">
-                  <div class="trunfo-top-bar">
-                    <span>Super Trunfo • RetroBrinquedos</span>
-                    <span class="trunfo-code-badge">${trunfoCode}</span>
-                  </div>
-                  <div class="trunfo-title-area">
-                    <div class="trunfo-star"></div>
-                    <span class="trunfo-title-text">${toy.nome}</span>
-                  </div>
-                </div>
-
-                <div class="trunfo-photo-wrapper">
-                  <div class="trunfo-photo-frame">
-                    <img src="${toy.url_verso}" alt="${toy.nome} verso" class="trunfo-photo" loading="lazy">
-                    <span class="trunfo-photo-year">${toy.ano}</span>
-                  </div>
-                </div>
-
-                <div class="trunfo-stats-area">
-                  <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${toy.fabricante}</span></div>
-                  <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${toy.categoria}</span></div>
-                  <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${toy.tema}</span></div>
-
-                  <div class="trunfo-raridade-area">
-                    <div class="trunfo-raridade-header">
-                      <span class="trunfo-raridade-label">⬡ Raridade</span>
-                      <span class="trunfo-raridade-value">${toy.raridade}/10</span>
-                    </div>
-                    ${ledHTML}
-                  </div>
-                  <div class="trunfo-curiosidade">"${toy.curiosidade}"</div>
-                </div>
-
-                <div class="trunfo-footer">
-                  <span class="trunfo-footer-logo">RetroBrinquedos BR</span>
-                  
-                  <div class="like-container">
-                    <button class="heart-btn ${isLiked ? "liked" : ""}" onclick="toggleLike(event, '${toy.id}')" aria-label="Curtir">
-                      <svg class="heart-svg" viewBox="0 0 14 15" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 5V3H6V5H8V3H10V5H12V9H10V11H8V13H6V11H4V9H2V5Z" />
-                      </svg>
-                      <div class="heart-tooltip">Faça login para curtir</div>
-                    </button>
-                    <span class="like-count" id="count-${toy.id}">${likeCount}</span>
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-          </div>`;
-
+          <div class="masonry-item card-enter" id="card-${toy.id}">
+            <div class="card-inner" onclick="handleFlip('${toy.id}')">
+              <div class="card-front">
+                <img src="${toy.url_frente}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
+              </div>
+              <div class="card-back flex flex-col">
+                <div class="trunfo-header">
+                  <div class="trunfo-top-bar">
+                    <span>Super Trunfo • RetroBrinquedos</span>
+                    <span class="trunfo-code-badge">${trunfoCode}</span>
+                  </div>
+                  <div class="trunfo-title-area">
+                    <div class="trunfo-star"></div>
+                    <span class="trunfo-title-text">${toy.nome}</span>
+                  </div>
+                </div>
+                <div class="trunfo-photo-wrapper">
+                  <div class="trunfo-photo-frame">
+                    <img src="${toy.url_verso}" alt="${toy.nome} verso" class="trunfo-photo" loading="lazy">
+                    <span class="trunfo-photo-year">${toy.ano}</span>
+                  </div>
+                </div>
+                <div class="trunfo-stats-area">
+                  <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${toy.fabricante}</span></div>
+                  <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${toy.categoria}</span></div>
+                  <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${toy.tema}</span></div>
+                  <div class="trunfo-raridade-area">
+                    <div class="trunfo-raridade-header">
+                      <span class="trunfo-raridade-label">⬡ Raridade</span>
+                      <span class="trunfo-raridade-value">${toy.raridade}/10</span>
+                    </div>
+                    ${ledHTML}
+                  </div>
+                  <div class="trunfo-curiosidade">"${toy.curiosidade}"</div>
+                </div>
+                <div class="trunfo-footer">
+                  <span class="trunfo-footer-logo">RetroBrinquedos BR</span>
+                  <div class="like-container">
+                    <button id="heart-btn-${toy.id}" class="heart-btn ${isLiked ? "liked" : ""}" onclick="toggleCurtida(event, '${toy.id}')" aria-label="Curtir">
+                      <svg class="heart-svg" viewBox="0 0 14 15" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 5V3H6V5H8V3H10V5H12V9H10V11H8V13H6V11H4V9H2V5Z" />
+                      </svg>
+                      <div class="heart-tooltip">Faça login para curtir</div>
+                    </button>
+                    <span class="like-count" id="count-${toy.id}">${toy.curtidas_count || 0}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`;
           columnElements[nextColIndex].insertAdjacentHTML(
             "beforeend",
             cardHTML,
           );
-
           nextColIndex = (nextColIndex + 1) % currentCols;
         });
-      } // ============================================================
-      // INTERAÇÕES
-      // ============================================================
+      }
 
+      // ============================================================
+      // INTERAÇÕES E FILTROS
+      // ============================================================
       function handleFlip(id) {
         const grid = document.getElementById("toyGrid");
         const card = document.getElementById(`card-${id}`);
@@ -1420,7 +1380,6 @@
         document
           .querySelectorAll(".masonry-item")
           .forEach((c) => c.classList.remove("is-flipped"));
-
         if (!isFlipped) {
           card.classList.add("is-flipped");
           grid.classList.add("grid-focused");
@@ -1428,46 +1387,6 @@
           grid.classList.remove("grid-focused");
         }
       }
-
-      document.addEventListener(
-        "click",
-        function (e) {
-          const grid = document.getElementById("toyGrid");
-          if (
-            grid.classList.contains("grid-focused") &&
-            !e.target.closest(".card-inner")
-          ) {
-            document
-              .querySelectorAll(".masonry-item")
-              .forEach((c) => c.classList.remove("is-flipped"));
-            grid.classList.remove("grid-focused");
-          }
-        },
-        true,
-      );
-
-      function toggleLike(event, id) {
-        event.stopPropagation();
-
-        if (!isUserLogged) return;
-
-        const btn = event.currentTarget;
-        const countSpan = document.getElementById(`count-${id}`);
-        let count = parseInt(countSpan.textContent, 10);
-        const isLiked = likedItems.has(id);
-
-        if (isLiked) {
-          likedItems.delete(id);
-          btn.classList.remove("liked");
-          countSpan.textContent = count - 1;
-        } else {
-          likedItems.add(id);
-          btn.classList.add("liked");
-          btn.classList.add("animating");
-          countSpan.textContent = count + 1;
-          setTimeout(() => btn.classList.remove("animating"), 600);
-        }
-      } /* Filtros Temporários (Local) */
 
       document.getElementById("searchInput").addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase();
@@ -1488,266 +1407,226 @@
           );
         if (event)
           event.target.classList.replace("bg-slate-800", "bg-pink-600");
+        const filtered =
+          criteria === "todos"
+            ? allToys
+            : allToys.filter(
+                (toy) => toy.fabricante === criteria || toy.genero === criteria,
+              );
+        render(filtered, false);
+      }
 
-        if (criteria === "todos") {
-          render(allToys, false);
-        } else {
-          const filtered = allToys.filter(
-            (toy) => toy.fabricante === criteria || toy.genero === criteria,
-          );
-          render(filtered, false);
-        }
-      } // ============================================================
-      // [PASSO 4.1, 4.2 e 4.3] SISTEMA DE LOGIN COMPLETO (OAUTH)
       // ============================================================
-
+      // SISTEMA DE LOGIN E CURTIDAS (SUPABASE)
+      // ============================================================
       const arcadeModal = document.getElementById("arcadeModal");
       const arcadeScreen = document.getElementById("arcadeScreen");
       const selectionScreen = document.getElementById("selectionScreen");
       const gameOverScreen = document.getElementById("gameOverScreen");
-      const avatarGrid = document.getElementById("avatarGrid");
-
       const sf2CoinSound = new Audio("/sounds/street_fighter.mp3");
-      sf2CoinSound.load();
 
       function login() {
         arcadeScreen.classList.remove("hidden");
-
         if (selectionScreen) selectionScreen.classList.add("hidden");
         gameOverScreen.classList.add("hidden");
-
         arcadeModal.classList.remove("opacity-0", "pointer-events-none");
-
-        document.querySelectorAll(".coin-btn").forEach((b) => {
-          b.classList.remove("coin-inserted");
-          b.style.pointerEvents = "auto";
-        });
       }
 
       function closeModal() {
         arcadeScreen.classList.add("hidden");
         if (selectionScreen) selectionScreen.classList.add("hidden");
         gameOverScreen.classList.remove("hidden");
-
-        setTimeout(() => {
-          arcadeModal.classList.add("opacity-0", "pointer-events-none");
-        }, 1800);
-      } // --- 2. GERAÇÃO DA TELA DE PERSONAGENS (SORTEIO ESTRATIFICADO 8-5-2) ---
-
-      function getRandomFromRange(min, max, count) {
-        const range = Array.from({ length: max - min + 1 }, (_, i) => i + min);
-        for (let i = range.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [range[i], range[j]] = [range[j], range[i]];
-        }
-        return range.slice(0, count);
-      }
-
-      function renderAvatarGrid() {
-        const avatarGrid = document.getElementById("avatarGrid");
-        avatarGrid.innerHTML = ""; // 1. Sorteio Controlado das Cotas (Proporção 8-5-2)
-
-        const masculinos = getRandomFromRange(1, 80, 8); // 8 de 80 opções
-        const femininos = getRandomFromRange(81, 130, 5); // 5 de 50 opções
-        const neutros = getRandomFromRange(131, 150, 2); // 2 de 20 opções
-        // 2. União e Embaralhamento Final
-
-        const selecionados = [...masculinos, ...femininos, ...neutros];
-        for (let i = selecionados.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [selecionados[i], selecionados[j]] = [
-            selecionados[j],
-            selecionados[i],
-          ];
-        } // 3. Renderização
-
-        selecionados.forEach((num) => {
-          const formatado = num.toString().padStart(2, "0");
-          const path = `/img/avatares/a${formatado}.png`;
-
-          const item = document.createElement("div");
-          item.className = "avatar-item rounded-md";
-          item.innerHTML = `<img src="${path}" class="avatar-img" alt="Avatar ${formatado}">`;
-          item.onclick = () => confirmAvatar(path, item);
-          avatarGrid.appendChild(item);
-        });
+        setTimeout(
+          () => arcadeModal.classList.add("opacity-0", "pointer-events-none"),
+          1800,
+        );
       }
 
       function handleCoinSelect(btn, provider) {
-        document
-          .querySelectorAll(".coin-btn")
-          .forEach((b) => (b.style.pointerEvents = "none"));
-
         sf2CoinSound.currentTime = 0;
-        sf2CoinSound.play().catch((e) => console.log("Bloqueio de áudio:", e));
-
+        sf2CoinSound.play().catch(() => {});
         btn.classList.add("coin-inserted");
-
         setTimeout(async () => {
-          const { data, error } = await supabaseClient.auth.signInWithOAuth({
-            provider: provider,
-            options: {
-              // Usa o origin (a raiz limpa do site) para evitar o acúmulo de tokens na URL!
-              redirectTo: window.location.origin,
-            },
+          await supabaseClient.auth.signInWithOAuth({
+            provider,
+            options: { redirectTo: window.location.origin },
           });
-
-          if (error) {
-            console.error("Erro no login:", error);
-            arcadeScreen.classList.add("hidden");
-            gameOverScreen.classList.remove("hidden");
-          }
         }, 1500);
-      } // --- 4. VERIFICAÇÃO DE RETORNO DO JOGADOR (ATUALIZADA) ---
-
-      document.addEventListener("DOMContentLoaded", async () => {
-        const {
-          data: { session },
-        } = await supabaseClient.auth.getSession();
-
-        if (session) {
-          isUserLogged = true;
-          document.body.classList.remove("app-unlogged"); // CAPTURA O NOME REAL: Tenta pegar o nome completo, se não existir, usa "Player 1"
-
-          const userName =
-            session.user.user_metadata.full_name ||
-            session.user.user_metadata.name ||
-            "Player 1"; // Isso carrega suas curtidas do banco para a memória global do site
-
-          carregarCurtidasDoBanco(session.user.id);
-
-          const savedAvatar = localStorage.getItem("retro_avatar");
-
-          if (savedAvatar) {
-            // Já escolheu nesta sessão? Mostra na Nav com o nome real
-            updateNavWithAvatar(savedAvatar, userName); // Dispara o carregamento das curtidas do banco para a memória
-            carregarCurtidasDoBanco(session.user.id);
-          } else {
-            // Primeiro login ou escolha limpa: Abre a tela de seleção
-            arcadeModal.classList.remove("opacity-0", "pointer-events-none");
-            arcadeScreen.classList.add("hidden");
-            selectionScreen.classList.remove("hidden");
-            gameOverScreen.classList.add("hidden");
-            renderAvatarGrid();
-          }
-        }
-      });
-
-      function confirmAvatar(path, element) {
-        element.classList.add("avatar-selected");
-        localStorage.setItem("retro_avatar", path);
-
-        setTimeout(() => {
-          arcadeModal.classList.add("opacity-0", "pointer-events-none");
-          setTimeout(() => updateNavWithAvatar(path), 300);
-        }, 800);
       }
 
-      function updateNavWithAvatar(avatarPath, name) {
-        document.getElementById("userArea").innerHTML = `
-          <div class="flex items-center gap-3">
-            <div class="flex flex-col items-end">
-              <span class="text-[8px] text-cyan-400/70 font-orbitron uppercase tracking-widest">Player 1</span>
-              <span class="text-[10px] font-bold text-white uppercase tracking-tighter drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]">${name}</span>
-            </div>
-            <div class="w-10 h-10 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_#22d3ee]">
-              <img src="${avatarPath}" class="w-full h-full object-contain">
-            </div>
-            <button onclick="logOut()" class="ml-2 text-[10px] text-gray-500 hover:text-red-500 uppercase font-orbitron transition-colors cursor-pointer">[ SAIR ]</button>
-          </div>`;
-      } // --- 5. SALVAMENTO E INTERFACE (ATUALIZADA) ---
-
-      async function confirmAvatar(path, element) {
-        element.classList.add("avatar-selected");
-        localStorage.setItem("retro_avatar", path); // Recupera o nome novamente para a interface
-
-        const {
-          data: { session },
-        } = await supabaseClient.auth.getSession();
-        const userName =
-          session.user.user_metadata.full_name ||
-          session.user.user_metadata.name ||
-          "Player 1";
-
-        setTimeout(() => {
-          arcadeModal.classList.add("opacity-0", "pointer-events-none");
-          setTimeout(() => updateNavWithAvatar(path, userName), 300);
-        }, 800);
-      }
-
-      async function logOut() {
-        await supabaseClient.auth.signOut(); // A MÁGICA AQUI: Limpa o avatar escolhido para permitir nova escolha no próximo login
-
-        localStorage.removeItem("retro_avatar"); // Redireciona para a URL limpa (sem hashtags)
-
-        window.location.href = window.location.origin;
-      } // --- 6. RENDERIZAÇÃO E FILTROS --- //
-      // --- SISTEMA DE CURTIDAS (LÓGICA) ---
+      // ============================================================
+      // SISTEMA DE CURTIDAS (COM CHECKPOINTS E DEBUG)
+      // ============================================================
 
       async function carregarCurtidasDoBanco(userId) {
+        console.log(
+          `\n🔍 [CHECKPOINT 1] Buscando curtidas no DB para o usuário: ${userId}`,
+        );
+
         const { data, error } = await supabaseClient
           .from("curtidas")
           .select("brinquedo_id")
           .eq("user_id", userId);
 
         if (error) {
-          console.error("Erro ao puxar curtidas:", error);
+          console.error("❌ [ERRO SUPABASE - LEITURA]:", error);
           return;
         }
 
-        curtidasDoUsuario = new Set(data.map((item) => item.brinquedo_id));
+        console.log(
+          "📦 [CHECKPOINT 2] O banco retornou os seguintes dados:",
+          data,
+        );
 
-        data.forEach((item) => {
-          const btn = document.getElementById(
-            `heart-icon-${item.brinquedo_id}`,
+        // MÁGICA DA CORREÇÃO: Garante que tudo vire String com 4 dígitos (ex: 134 vira "0134")
+        if (data) {
+          const idsNormalizados = data.map((item) =>
+            String(item.brinquedo_id).padStart(4, "0"),
           );
-          if (btn) {
-            btn.classList.remove("text-gray-500");
-            btn.classList.add("text-red-500");
-          }
-        });
+          curtidasDoUsuario = new Set(idsNormalizados);
+          console.log(
+            "🧠 [CHECKPOINT 3] Memória do navegador atualizada com:",
+            Array.from(curtidasDoUsuario),
+          );
+        }
       }
 
-      async function toggleCurtida(brinquedoId) {
-        const { data: sessionData } = await supabaseClient.auth.getSession();
-        const session = sessionData.session;
+      async function toggleCurtida(event, brinquedoId) {
+        event.stopPropagation();
 
-        if (!session) {
-          alert(
-            "🕹️ INSERT COIN: Faça login para favoritar seus itens nostálgicos!",
-          );
-          return;
-        }
+        console.log(
+          `\n🖱️ [CHECKPOINT 4] Clique detectado! ID clicado: "${brinquedoId}" (Tipo: ${typeof brinquedoId})`,
+        );
+
+        const {
+          data: { session },
+        } = await supabaseClient.auth.getSession();
+        if (!session) return;
 
         const userId = session.user.id;
-        const isLiked = curtidasDoUsuario.has(brinquedoId);
 
-        const heartIcon = document.getElementById(`heart-icon-${brinquedoId}`);
-        const countSpan = document.getElementById(`heart-count-${brinquedoId}`);
-        let currentCount = parseInt(countSpan.innerText) || 0;
+        // Garante que o ID que estamos checando está formatado
+        const idNormalizado = String(brinquedoId).padStart(4, "0");
+        const isLiked = curtidasDoUsuario.has(idNormalizado);
+
+        console.log(
+          `❓ [CHECKPOINT 5] Este item já estava curtido? ${isLiked ? "SIM" : "NÃO"}`,
+        );
+
+        const btn = document.getElementById(`heart-btn-${brinquedoId}`);
+        const countSpan = document.getElementById(`count-${brinquedoId}`);
+        let count = parseInt(countSpan.innerText) || 0;
 
         if (isLiked) {
-          curtidasDoUsuario.delete(brinquedoId);
-          heartIcon.classList.remove("text-red-500");
-          heartIcon.classList.add("text-gray-500");
-          countSpan.innerText = currentCount - 1;
+          // Ação: Remover
+          curtidasDoUsuario.delete(idNormalizado);
+          btn.classList.remove("liked");
+          countSpan.innerText = count - 1;
 
-          await supabaseClient
+          console.log(`🗑️ [CHECKPOINT 6] Disparando DELETE para o Supabase...`);
+          const { error } = await supabaseClient
             .from("curtidas")
             .delete()
             .eq("user_id", userId)
-            .eq("brinquedo_id", brinquedoId);
-        } else {
-          curtidasDoUsuario.add(brinquedoId);
-          heartIcon.classList.remove("text-gray-500");
-          heartIcon.classList.add("text-red-500", "scale-125");
-          setTimeout(() => heartIcon.classList.remove("scale-125"), 200);
-          countSpan.innerText = currentCount + 1;
+            .eq("brinquedo_id", idNormalizado); // <--- Ou usar parseInt se o DB for numérico
 
-          await supabaseClient
+          if (error) console.error("❌ [ERRO SUPABASE - DELETE]:", error);
+          else
+            console.log("✅ [SUCESSO] Curtida removida com sucesso no banco!");
+        } else {
+          // Ação: Adicionar
+          curtidasDoUsuario.add(idNormalizado);
+          btn.classList.add("liked", "animating");
+          setTimeout(() => btn.classList.remove("animating"), 600);
+          countSpan.innerText = count + 1;
+
+          console.log(`💾 [CHECKPOINT 6] Disparando INSERT para o Supabase...`);
+          const { error } = await supabaseClient
             .from("curtidas")
-            .insert([{ user_id: userId, brinquedo_id: brinquedoId }]);
+            .insert([{ user_id: userId, brinquedo_id: idNormalizado }]);
+
+          if (error) console.error("❌ [ERRO SUPABASE - INSERT]:", error);
+          else
+            console.log("✅ [SUCESSO] Curtida gravada com sucesso no banco!");
         }
+      }
+
+      function updateNavWithAvatar(avatarPath, name) {
+        document.getElementById("userArea").innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="flex flex-col items-end">
+              <span class="text-[8px] text-cyan-400/70 font-orbitron uppercase tracking-widest">Player 1</span>
+              <span class="text-[10px] font-bold text-white uppercase tracking-tighter">${name}</span>
+            </div>
+            <div class="w-10 h-10 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900"><img src="${avatarPath}" class="w-full h-full object-contain"></div>
+            <button onclick="logOut()" class="ml-2 text-[10px] text-gray-500 hover:text-red-500 uppercase font-orbitron">[ SAIR ]</button>
+          </div>`;
+      }
+
+      async function logOut() {
+        await supabaseClient.auth.signOut();
+        localStorage.removeItem("retro_avatar");
+        window.location.href = window.location.origin;
+      }
+
+      // ============================================================
+      // INICIALIZAÇÃO CONTROLADA (ORDEM IMPORTA)
+      // ============================================================
+      async function init() {
+        // 1. Verifica sessão primeiro
+        const {
+          data: { session },
+        } = await supabaseClient.auth.getSession();
+
+        if (session) {
+          isUserLogged = true;
+          document.body.classList.remove("app-unlogged");
+          const userName = session.user.user_metadata.full_name || "Player 1";
+
+          // 2. Aguarda as curtidas serem carregadas ANTES de renderizar
+          await carregarCurtidasDoBanco(session.user.id);
+
+          const savedAvatar = localStorage.getItem("retro_avatar");
+          if (savedAvatar) {
+            updateNavWithAvatar(savedAvatar, userName);
+          } else {
+            login(); // Abre seleção de avatar
+            arcadeScreen.classList.add("hidden");
+            selectionScreen.classList.remove("hidden");
+            renderAvatarGrid();
+          }
+        }
+
+        // 3. Só agora carrega os brinquedos (já sabendo o que está curtido)
+        setupObserver();
+        await fetchBrinquedos(true);
+      }
+
+      // Funções auxiliares mantidas
+      function renderAvatarGrid() {
+        const grid = document.getElementById("avatarGrid");
+        grid.innerHTML = "";
+        const selecionados = [
+          ...getRandomFromRange(1, 80, 8),
+          ...getRandomFromRange(81, 130, 5),
+          ...getRandomFromRange(131, 150, 2),
+        ];
+        selecionados.forEach((num) => {
+          const path = `/img/avatares/a${num.toString().padStart(2, "0")}.png`;
+          const item = document.createElement("div");
+          item.className = "avatar-item rounded-md";
+          item.innerHTML = `<img src="${path}" class="avatar-img">`;
+          item.onclick = () => {
+            localStorage.setItem("retro_avatar", path);
+            location.reload();
+          };
+          grid.appendChild(item);
+        });
+      }
+
+      function getRandomFromRange(min, max, count) {
+        const r = Array.from({ length: max - min + 1 }, (_, i) => i + min);
+        return r.sort(() => Math.random() - 0.5).slice(0, count);
       }
 
       init();
