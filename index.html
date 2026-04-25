@@ -1289,6 +1289,9 @@
         return `<div class="led-display"><div class="led-row">${leds}</div><div class="led-row">${leds}</div></div>`;
       }
 
+      // ============================================================
+      // 1. RENDERIZAÇÃO (Agora com IDs normalizados "0000")
+      // ============================================================
       function render(items, append = false) {
         const grid = document.getElementById("toyGrid");
         const targetCols = getColumnCount();
@@ -1307,13 +1310,18 @@
         }
 
         items.forEach((toy) => {
+          // A MÁGICA ESTÁ AQUI: Garante que "137" vire "0137" na tela inteira
+          const idNormalizado = String(toy.id).padStart(4, "0");
+
           const ledHTML = buildLedDisplay(toy.raridade);
-          const isLiked = curtidasDoUsuario.has(toy.id);
+
+          // Agora ele pergunta pela versão "0137", que é o que o banco conhece!
+          const isLiked = curtidasDoUsuario.has(idNormalizado);
           const trunfoCode = toy.condigo_trunfo || "A1";
 
           const cardHTML = `
-          <div class="masonry-item card-enter" id="card-${toy.id}">
-            <div class="card-inner" onclick="handleFlip('${toy.id}')">
+          <div class="masonry-item card-enter" id="card-${idNormalizado}">
+            <div class="card-inner" onclick="handleFlip('${idNormalizado}')">
               <div class="card-front">
                 <img src="${toy.url_frente}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
               </div>
@@ -1350,13 +1358,13 @@
                 <div class="trunfo-footer">
                   <span class="trunfo-footer-logo">RetroBrinquedos BR</span>
                   <div class="like-container">
-                    <button id="heart-btn-${toy.id}" class="heart-btn ${isLiked ? "liked" : ""}" onclick="toggleCurtida(event, '${toy.id}')" aria-label="Curtir">
+                    <button id="heart-btn-${idNormalizado}" class="heart-btn ${isLiked ? "liked" : ""}" onclick="toggleCurtida(event, '${idNormalizado}')" aria-label="Curtir">
                       <svg class="heart-svg" viewBox="0 0 14 15" xmlns="http://www.w3.org/2000/svg">
                         <path d="M4 5V3H6V5H8V3H10V5H12V9H10V11H8V13H6V11H4V9H2V5Z" />
                       </svg>
                       <div class="heart-tooltip">Faça login para curtir</div>
                     </button>
-                    <span class="like-count" id="count-${toy.id}">${toy.curtidas_count || 0}</span>
+                    <span class="like-count" id="count-${idNormalizado}">${toy.curtidas_count || 0}</span>
                   </div>
                 </div>
               </div>
@@ -1369,7 +1377,6 @@
           nextColIndex = (nextColIndex + 1) % currentCols;
         });
       }
-
       // ============================================================
       // INTERAÇÕES E FILTROS
       // ============================================================
@@ -1462,68 +1469,51 @@
         const { data, error } = await supabaseClient
           .from("curtidas")
           .select("brinquedo_id")
-          .eq("usuario_id", userId); // ⬅️ CORREÇÃO AQUI: usuario_id
+          .eq("usuario_id", userId);
 
-        if (error) {
-          console.error("Erro ao puxar curtidas:", error);
-          return;
-        }
-
-        if (data) {
-          // Garante que o ID tem 4 dígitos (ex: "0134")
-          const idsNormalizados = data.map((item) =>
-            String(item.brinquedo_id).padStart(4, "0"),
+        if (!error && data) {
+          // Salva na memória exatamente como vem do banco ("0137")
+          curtidasDoUsuario = new Set(
+            data.map((item) => String(item.brinquedo_id)),
           );
-          curtidasDoUsuario = new Set(idsNormalizados);
-
-          data.forEach((item) => {
-            const btn = document.getElementById(
-              `heart-btn-${item.brinquedo_id}`,
-            );
-            if (btn) btn.classList.add("liked");
-          });
         }
       }
 
       async function toggleCurtida(event, brinquedoId) {
         event.stopPropagation();
-
         const {
           data: { session },
         } = await supabaseClient.auth.getSession();
         if (!session) return;
 
         const userId = session.user.id;
-        const idNormalizado = String(brinquedoId).padStart(4, "0");
-        const isLiked = curtidasDoUsuario.has(idNormalizado);
+        // O ID que vem do clique já está com zeros à esquerda por causa da renderização
+        const idParaBanco = String(brinquedoId);
 
-        const btn = document.getElementById(`heart-btn-${brinquedoId}`);
-        const countSpan = document.getElementById(`count-${brinquedoId}`);
+        const isLiked = curtidasDoUsuario.has(idParaBanco);
+        const btn = document.getElementById(`heart-btn-${idParaBanco}`);
+        const countSpan = document.getElementById(`count-${idParaBanco}`);
         let count = parseInt(countSpan.innerText) || 0;
 
         if (isLiked) {
-          // Remover Curtida
-          curtidasDoUsuario.delete(idNormalizado);
+          curtidasDoUsuario.delete(idParaBanco);
           if (btn) btn.classList.remove("liked");
           if (countSpan) countSpan.innerText = count - 1;
-
           await supabaseClient
             .from("curtidas")
             .delete()
-            .eq("usuario_id", userId) // ⬅️ CORREÇÃO AQUI: usuario_id
-            .eq("brinquedo_id", idNormalizado);
+            .eq("usuario_id", userId)
+            .eq("brinquedo_id", idParaBanco);
         } else {
-          // Adicionar Curtida
-          curtidasDoUsuario.add(idNormalizado);
+          curtidasDoUsuario.add(idParaBanco);
           if (btn) {
             btn.classList.add("liked", "animating");
             setTimeout(() => btn.classList.remove("animating"), 600);
           }
           if (countSpan) countSpan.innerText = count + 1;
-
           await supabaseClient
             .from("curtidas")
-            .insert([{ usuario_id: userId, brinquedo_id: idNormalizado }]); // ⬅️ CORREÇÃO AQUI: usuario_id
+            .insert([{ usuario_id: userId, brinquedo_id: idParaBanco }]);
         }
       }
 
