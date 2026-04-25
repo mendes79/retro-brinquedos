@@ -2665,5 +2665,124 @@
     "codigo_trunfo": "",
     "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0130_frente.jpg",
     "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0130_verso.jpg"
+  },
+  {
+    "id": "0131",
+    "nome": "Tamanquinho da Xuxa",
+    "fabricante": "Grendene",
+    "ano": "1993",
+    "categoria": "Calçados",
+    "tema": "Sandália",
+    "genero": "Feminino",
+    "tags": [
+      "Sandália",
+      "Tamanquinho",
+      "Xuxa",
+      "Grendene"
+    ],
+    "curiosidade": "",
+    "raridade": 3,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0131_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0131_verso.jpg"
+  },
+  {
+    "id": "0132",
+    "nome": "Skate",
+    "fabricante": "Cockpit",
+    "ano": "80's e 90's",
+    "categoria": "Skate",
+    "tema": "Old School Cruiser",
+    "genero": "Unisex",
+    "tags": [
+      "Skate",
+      "Old School",
+      "Cruiser",
+      "Shape"
+    ],
+    "curiosidade": "Formato direcional largo, típico da época, com rabeta (tail) pronunciada e nariz (nose) plano.",
+    "raridade": 9,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0132_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0132_verso.jpg"
+  },
+  {
+    "id": "0133",
+    "nome": "Skate",
+    "fabricante": "Cockpit",
+    "ano": "80's e 90's",
+    "categoria": "Skate",
+    "tema": "Old School Cruiser",
+    "genero": "Unisex",
+    "tags": [
+      "Skate",
+      "Old School",
+      "Cruiser",
+      "Shape"
+    ],
+    "curiosidade": "Inclui rails laterais (trilhos) e nose guard (proteção de nariz).",
+    "raridade": 9,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0133_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0133_verso.jpg"
+  },
+  {
+    "id": "0134",
+    "nome": "Pogobol",
+    "fabricante": "Estrela",
+    "ano": "1987",
+    "categoria": "Pogobol",
+    "tema": "Pogobol",
+    "genero": "Unisex",
+    "tags": [
+      "Pogobol",
+      "Estrela",
+      "Pula"
+    ],
+    "curiosidade": "É recomendado para crianças a partir de 5 anos e suporta até 70 kg.",
+    "raridade": 1,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0134_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0134_verso.jpg"
+  },
+  {
+    "id": "0135",
+    "nome": "Skate",
+    "fabricante": "Cockpit",
+    "ano": "80's e 90's",
+    "categoria": "Skate",
+    "tema": "Old School Cruiser",
+    "genero": "Unisex",
+    "tags": [
+      "Skate",
+      "Old School",
+      "Cruiser",
+      "Shape"
+    ],
+    "curiosidade": "Rodas e eixos (trucks) de tamanho padrão, ideal para passeio ou manobras de transição (bowl).",
+    "raridade": 9,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0135_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0135_verso.jpg"
+  },
+  {
+    "id": "0136",
+    "nome": "Tamagotchi",
+    "fabricante": "Bandai",
+    "ano": "1997",
+    "categoria": "Jogo Eletrônico",
+    "tema": "Bichiho Virtual",
+    "tags": [
+      "Tamagotchi",
+      "Bichinho Virtual",
+      "Bandai",
+      "Japão"
+    ],
+    "curiosidade": "\"Tamagotchi\" é uma combinação da palavra japonesa tamago (ovo) com a palavra inglesa watch (relógio).",
+    "raridade": 4,
+    "codigo_trunfo": "",
+    "url_frente": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0136_frente.jpg",
+    "url_verso": "https://res.cloudinary.com/dbzlmb3ba/image/upload/v1776175566/0136_verso.jpg",
+    "curtidas_count": 0
   }
 ]

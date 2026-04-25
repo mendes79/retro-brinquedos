@@ -17,6 +17,7 @@ migrar.js
 images/
 bkp/
 node_modules/
+_admin/
 
 # Arquivos do Sistema Operacional
 .DS_Store
