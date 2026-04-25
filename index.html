@@ -1459,44 +1459,34 @@
       // ============================================================
 
       async function carregarCurtidasDoBanco(userId) {
-        console.log(
-          `\n🔍 [CHECKPOINT 1] Buscando curtidas no DB para o usuário: ${userId}`,
-        );
-
         const { data, error } = await supabaseClient
           .from("curtidas")
           .select("brinquedo_id")
-          .eq("user_id", userId);
+          .eq("usuario_id", userId); // ⬅️ CORREÇÃO AQUI: usuario_id
 
         if (error) {
-          console.error("❌ [ERRO SUPABASE - LEITURA]:", error);
+          console.error("Erro ao puxar curtidas:", error);
           return;
         }
 
-        console.log(
-          "📦 [CHECKPOINT 2] O banco retornou os seguintes dados:",
-          data,
-        );
-
-        // MÁGICA DA CORREÇÃO: Garante que tudo vire String com 4 dígitos (ex: 134 vira "0134")
         if (data) {
+          // Garante que o ID tem 4 dígitos (ex: "0134")
           const idsNormalizados = data.map((item) =>
             String(item.brinquedo_id).padStart(4, "0"),
           );
           curtidasDoUsuario = new Set(idsNormalizados);
-          console.log(
-            "🧠 [CHECKPOINT 3] Memória do navegador atualizada com:",
-            Array.from(curtidasDoUsuario),
-          );
+
+          data.forEach((item) => {
+            const btn = document.getElementById(
+              `heart-btn-${item.brinquedo_id}`,
+            );
+            if (btn) btn.classList.add("liked");
+          });
         }
       }
 
       async function toggleCurtida(event, brinquedoId) {
         event.stopPropagation();
-
-        console.log(
-          `\n🖱️ [CHECKPOINT 4] Clique detectado! ID clicado: "${brinquedoId}" (Tipo: ${typeof brinquedoId})`,
-        );
 
         const {
           data: { session },
@@ -1504,50 +1494,36 @@
         if (!session) return;
 
         const userId = session.user.id;
-
-        // Garante que o ID que estamos checando está formatado
         const idNormalizado = String(brinquedoId).padStart(4, "0");
         const isLiked = curtidasDoUsuario.has(idNormalizado);
-
-        console.log(
-          `❓ [CHECKPOINT 5] Este item já estava curtido? ${isLiked ? "SIM" : "NÃO"}`,
-        );
 
         const btn = document.getElementById(`heart-btn-${brinquedoId}`);
         const countSpan = document.getElementById(`count-${brinquedoId}`);
         let count = parseInt(countSpan.innerText) || 0;
 
         if (isLiked) {
-          // Ação: Remover
+          // Remover Curtida
           curtidasDoUsuario.delete(idNormalizado);
-          btn.classList.remove("liked");
-          countSpan.innerText = count - 1;
+          if (btn) btn.classList.remove("liked");
+          if (countSpan) countSpan.innerText = count - 1;
 
-          console.log(`🗑️ [CHECKPOINT 6] Disparando DELETE para o Supabase...`);
-          const { error } = await supabaseClient
+          await supabaseClient
             .from("curtidas")
             .delete()
-            .eq("user_id", userId)
-            .eq("brinquedo_id", idNormalizado); // <--- Ou usar parseInt se o DB for numérico
-
-          if (error) console.error("❌ [ERRO SUPABASE - DELETE]:", error);
-          else
-            console.log("✅ [SUCESSO] Curtida removida com sucesso no banco!");
+            .eq("usuario_id", userId) // ⬅️ CORREÇÃO AQUI: usuario_id
+            .eq("brinquedo_id", idNormalizado);
         } else {
-          // Ação: Adicionar
+          // Adicionar Curtida
           curtidasDoUsuario.add(idNormalizado);
-          btn.classList.add("liked", "animating");
-          setTimeout(() => btn.classList.remove("animating"), 600);
-          countSpan.innerText = count + 1;
+          if (btn) {
+            btn.classList.add("liked", "animating");
+            setTimeout(() => btn.classList.remove("animating"), 600);
+          }
+          if (countSpan) countSpan.innerText = count + 1;
 
-          console.log(`💾 [CHECKPOINT 6] Disparando INSERT para o Supabase...`);
-          const { error } = await supabaseClient
+          await supabaseClient
             .from("curtidas")
-            .insert([{ user_id: userId, brinquedo_id: idNormalizado }]);
-
-          if (error) console.error("❌ [ERRO SUPABASE - INSERT]:", error);
-          else
-            console.log("✅ [SUCESSO] Curtida gravada com sucesso no banco!");
+            .insert([{ usuario_id: userId, brinquedo_id: idNormalizado }]); // ⬅️ CORREÇÃO AQUI: usuario_id
         }
       }
 
