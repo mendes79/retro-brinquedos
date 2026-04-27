@@ -1109,7 +1109,6 @@
       <h2 class="text-4xl md:text-6xl font-retro mb-8 leading-tight uppercase">
         A Coleção
       </h2>
-
     </header>
 
     <main class="w-full px-4 md:px-12 pb-20 relative">
@@ -1270,56 +1269,29 @@
         }
 
         try {
-          // ── MODO BUSCA: consulta direta no Supabase ─────────────────
+          // ── MODO BUSCA: consulta via RPC no Supabase ─────────────────
           if (buscaAtiva.length >= 2) {
-            const termo = buscaAtiva.toLowerCase();
+            const { data: itens, error: rpcError } = await supabaseClient.rpc(
+              "buscar_brinquedos_search",
+              {
+                termo_busca: buscaAtiva,
+                cursor_val: cursor,
+                limite_val: LIMITE,
+              },
+            );
 
-            // Busca paralela nas 3 colunas (nome, fabricante, tags[])
-            const [resNome, resFab, resTags] = await Promise.all([
-              supabaseClient
-                .from("brinquedos")
-                .select("*")
-                .ilike("nome", `%${termo}%`)
-                .range(cursor, cursor + LIMITE - 1),
-              supabaseClient
-                .from("brinquedos")
-                .select("*")
-                .ilike("fabricante", `%${termo}%`)
-                .range(cursor, cursor + LIMITE - 1),
-              supabaseClient
-                .from("brinquedos")
-                .select("*")
-                .contains("tags", [termo])
-                .range(cursor, cursor + LIMITE - 1),
-            ]);
+            if (rpcError) throw rpcError;
 
-            // Merge e deduplicação por id
-            const merged = [
-              ...(resNome.data || []),
-              ...(resFab.data || []),
-              ...(resTags.data || []),
-            ];
-            const seen = new Set();
-            const itens = merged.filter((item) => {
-              if (seen.has(item.id)) return false;
-              seen.add(item.id);
-              return true;
-            });
-
-            if (itens.length > 0) {
+            if (itens && itens.length > 0) {
               allToys = [...allToys, ...itens];
               cursor = cursor + itens.length;
-              // Considera esgotado se retornou menos que o limite em todas as fontes
-              hasMais =
-                (resNome.data?.length || 0) >= LIMITE ||
-                (resFab.data?.length || 0) >= LIMITE ||
-                (resTags.data?.length || 0) >= LIMITE;
+              hasMais = itens.length === LIMITE;
               render(itens, !reset);
             } else {
               hasMais = false;
             }
 
-          // ── MODO NORMAL: API serverless com seed e cursor ───────────
+            // ── MODO NORMAL: API serverless com seed e cursor ───────────
           } else {
             const res = await fetch(
               `/api/brinquedos?cursor=${cursor}&limite=${LIMITE}&seed=${sessionSeed}`,
@@ -1434,7 +1406,7 @@
           const isLiked = curtidasDoUsuario.has(idNormalizado);
           const isTive = tiveDoUsuario.has(idNormalizado);
           const isQueria = queriaDoUsuario.has(idNormalizado);
-          const trunfoCode = toy.condigo_trunfo || "A1";
+          const trunfoCode = toy.codigo_trunfo || "A1";
 
           const cardHTML = `
           <div class="masonry-item card-enter" id="card-${idNormalizado}">
