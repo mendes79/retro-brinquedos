@@ -1398,12 +1398,11 @@
         if (!isFlipped) {
           card.classList.add("is-flipped");
           grid.classList.add("grid-focused");
-          // NOVA AÇÃO: Trava a rolagem do site inteiro
-          document.body.classList.add("overflow-hidden");
+
+          // A MÁGICA: A câmera desliza e centraliza o card perfeitamente na tela
+          card.scrollIntoView({ behavior: "smooth", block: "center" });
         } else {
           grid.classList.remove("grid-focused");
-          // NOVA AÇÃO: Destrava a rolagem
-          document.body.classList.remove("overflow-hidden");
         }
       }
 
@@ -1655,8 +1654,7 @@
           card.classList.remove("is-flipped");
         });
 
-        // NOVA AÇÃO: Destrava a rolagem do site inteiro
-        document.body.classList.remove("overflow-hidden");
+        // (Removemos o document.body.classList.remove("overflow-hidden") daqui)
       }
 
       // ============================================================
