@@ -365,9 +365,19 @@
       .card-back {
         width: 100%;
         backface-visibility: hidden;
+        -webkit-backface-visibility: hidden; /* Adicionado: Blindagem para Safari */
+        -moz-backface-visibility: hidden; /* Adicionado: O segredo para o Firefox */
         border-radius: 1rem;
         overflow: hidden;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+      }
+
+      .card-front {
+        position: relative;
+        z-index: 2; /* Aumentado de 1 para 2: Garante a frente no topo do contexto 3D */
+        transform: rotateY(
+          0deg
+        ); /* Adicionado: Força o Firefox a entender que esta é a face A */
       }
 
       .card-back {
@@ -384,10 +394,6 @@
         outline: 4px solid var(--trunfo-gold);
         outline-offset: -6px;
         border: 6px solid #0d0b1e;
-      }
-      .card-front {
-        position: relative;
-        z-index: 1;
       }
 
       /* ============================================================
