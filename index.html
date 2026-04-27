@@ -1005,7 +1005,7 @@
       }
 
       /* ============================================================
-         BOTÃO SAIR (ESTILO GLASSLITE) - PROPORÇÃO CORRIGIDA
+         BOTÃO SAIR (ESTILO GLASSLITE) - VOLUME MÁXIMO
          ============================================================ */
       .glasslite-btn {
         display: inline-block;
@@ -1013,11 +1013,11 @@
         color: #1a3a8c;
         font-family: "Arial Black", "Impact", sans-serif;
 
-        /* A MATEMÁTICA EXATA DOS 32px DE ALTURA */
-        font-size: 12px; /* Exatamente igual ao text-xs */
-        padding: 7px 24px; /* 7px de padding + 2px de borda = quase o mesmo py-2 e px-6 do Tailwind */
-        border: 2px solid #cc1010;
-        letter-spacing: 1px;
+        /* O AJUSTE FINAL DE VOLUME E BORDA */
+        font-size: 13px; /* 1px a mais para compensar o desenho da Arial Black */
+        padding: 5px 26px; /* Espaçamento recalibrado para a nova borda */
+        border: 4px solid #cc1010; /* Borda super grossa, característica da Glasslite */
+        letter-spacing: 1.5px; /* Mais respiro entre as letras para dar presença */
 
         font-weight: 900;
         text-transform: uppercase;
@@ -1029,7 +1029,7 @@
           color 0.12s,
           transform 0.1s,
           filter 0.2s;
-        line-height: 1.2; /* Ajustado para dar o volume correto à palavra */
+        line-height: 1.2;
         user-select: none;
         -webkit-font-smoothing: antialiased;
       }
