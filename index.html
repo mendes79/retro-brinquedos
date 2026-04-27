@@ -1597,41 +1597,55 @@
       // SISTEMA DE CURTIDAS (COM CHECKPOINTS E DEBUG)
       // ============================================================
 
-      // ============================================================
-      // SISTEMA DE INTERAÇÕES (CURTIDAS, TIVE, QUERIA)
+      /// ============================================================
+      // SISTEMA DE INTERAÇÕES (BLINDADO COM TRATAMENTO DE ERROS)
       // ============================================================
       async function carregarInteracoesDoBanco(userId) {
-        // 1. Carrega Curtidas
-        const { data: dataCurtidas } = await supabaseClient
-          .from("curtidas")
-          .select("brinquedo_id")
-          .eq("usuario_id", userId);
-        if (dataCurtidas)
-          curtidasDoUsuario = new Set(
-            dataCurtidas.map((i) => String(i.brinquedo_id).padStart(4, "0")),
-          );
+        try {
+          // Faz as 3 buscas ao mesmo tempo para deixar o login mais rápido (Promise.all)
+          const [resCurtidas, resTive, resQueria] = await Promise.all([
+            supabaseClient
+              .from("curtidas")
+              .select("brinquedo_id")
+              .eq("usuario_id", userId),
+            supabaseClient
+              .from("interacoes_tive")
+              .select("brinquedo_id")
+              .eq("usuario_id", userId),
+            supabaseClient
+              .from("interacoes_queria")
+              .select("brinquedo_id")
+              .eq("usuario_id", userId),
+          ]);
 
-        // 2. Carrega "Eu Tive"
-        const { data: dataTive } = await supabaseClient
-          .from("interacoes_tive")
-          .select("brinquedo_id")
-          .eq("usuario_id", userId);
-        if (dataTive)
-          tiveDoUsuario = new Set(
-            dataTive.map((i) => String(i.brinquedo_id).padStart(4, "0")),
-          );
+          if (resCurtidas.error)
+            console.error("Erro banco Curtidas:", resCurtidas.error.message);
+          else if (resCurtidas.data)
+            curtidasDoUsuario = new Set(
+              resCurtidas.data.map((i) =>
+                String(i.brinquedo_id).padStart(4, "0"),
+              ),
+            );
 
-        // 3. Carrega "Queria Ter"
-        const { data: dataQueria } = await supabaseClient
-          .from("interacoes_queria")
-          .select("brinquedo_id")
-          .eq("usuario_id", userId);
-        if (dataQueria)
-          queriaDoUsuario = new Set(
-            dataQueria.map((i) => String(i.brinquedo_id).padStart(4, "0")),
-          );
+          if (resTive.error)
+            console.error("Erro banco Tive:", resTive.error.message);
+          else if (resTive.data)
+            tiveDoUsuario = new Set(
+              resTive.data.map((i) => String(i.brinquedo_id).padStart(4, "0")),
+            );
+
+          if (resQueria.error)
+            console.error("Erro banco Queria:", resQueria.error.message);
+          else if (resQueria.data)
+            queriaDoUsuario = new Set(
+              resQueria.data.map((i) =>
+                String(i.brinquedo_id).padStart(4, "0"),
+              ),
+            );
+        } catch (e) {
+          console.error("Erro fatal na comunicação com o banco:", e);
+        }
       }
-
       async function toggleCurtida(event, brinquedoId) {
         event.stopPropagation();
 
@@ -1682,7 +1696,6 @@
 
       async function toggleInteracao(event, brinquedoId, tipo) {
         event.stopPropagation();
-
         const {
           data: { session },
         } = await supabaseClient.auth.getSession();
@@ -1710,23 +1723,43 @@
         let count = parseInt(countSpan ? countSpan.innerText : "0") || 0;
 
         if (isAtivo) {
-          // Remover
+          // 1. UI Otimista: Tira a cor e diminui na tela instantaneamente
           memorySet.delete(idParaBanco);
           if (btn) btn.classList.remove(activeClass);
           if (countSpan) countSpan.innerText = Math.max(0, count - 1);
-          await supabaseClient
+
+          // 2. Vai no banco deletar
+          const { error } = await supabaseClient
             .from(tableName)
             .delete()
             .eq("usuario_id", userId)
             .eq("brinquedo_id", idParaBanco);
+
+          // 3. Se o banco recusar, reverte a tela (Rollback)
+          if (error) {
+            console.error(`Erro ao remover ${tipo}:`, error.message);
+            memorySet.add(idParaBanco);
+            if (btn) btn.classList.add(activeClass);
+            if (countSpan) countSpan.innerText = count;
+          }
         } else {
-          // Inserir
+          // 1. UI Otimista: Pinta e soma na tela instantaneamente
           memorySet.add(idParaBanco);
           if (btn) btn.classList.add(activeClass);
           if (countSpan) countSpan.innerText = count + 1;
-          await supabaseClient
+
+          // 2. Vai no banco inserir
+          const { error } = await supabaseClient
             .from(tableName)
             .insert([{ usuario_id: userId, brinquedo_id: idParaBanco }]);
+
+          // 3. Se o banco recusar, reverte a tela (Rollback)
+          if (error) {
+            console.error(`Erro ao registrar ${tipo}:`, error.message);
+            memorySet.delete(idParaBanco);
+            if (btn) btn.classList.remove(activeClass);
+            if (countSpan) countSpan.innerText = count;
+          }
         }
       }
 
