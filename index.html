@@ -1003,47 +1003,6 @@
         text-shadow: 0 0 10px #22d3ee;
         animation: blinkNeon 1s infinite;
       }
-
-      /* ============================================================
-         BOTÃO SAIR (ESTILO GLASSLITE) - VOLUME MÁXIMO
-         ============================================================ */
-      .glasslite-btn {
-        display: inline-block;
-        background-color: #ffffff;
-        color: #1a3a8c;
-        font-family: "Arial Black", "Impact", sans-serif;
-
-        /* O AJUSTE FINAL DE VOLUME E BORDA */
-        font-size: 13px; /* 1px a mais para compensar o desenho da Arial Black */
-        padding: 5px 26px; /* Espaçamento recalibrado para a nova borda */
-        border: 4px solid #cc1010; /* Borda super grossa, característica da Glasslite */
-        letter-spacing: 1.5px; /* Mais respiro entre as letras para dar presença */
-
-        font-weight: 900;
-        text-transform: uppercase;
-        border-radius: 50px;
-        cursor: pointer;
-        outline: none;
-        transition:
-          background-color 0.12s,
-          color 0.12s,
-          transform 0.1s,
-          filter 0.2s;
-        line-height: 1.2;
-        user-select: none;
-        -webkit-font-smoothing: antialiased;
-      }
-      .glasslite-btn:hover {
-        filter: brightness(1.1);
-        transform: translateY(-1px);
-      }
-      .glasslite-btn:active {
-        background-color: #cc1010;
-        color: #ffffff;
-        border-color: #cc1010;
-        transform: translateY(1px);
-        box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
-      }
     </style>
   </head>
 
@@ -1812,7 +1771,10 @@
             <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(34,211,238,0.4)]">
               <img src="${avatarPath}" class="w-full h-full object-contain">
             </div>
-            <button onclick="logOut()" class="glasslite-btn ml-2">
+            <button 
+              onclick="logOut()" 
+              class="bg-pink-600 text-white px-6 py-2 rounded-full text-xs font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50 ml-2"
+            >
               Sair
             </button>
           </div>`;
