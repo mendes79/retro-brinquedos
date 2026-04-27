@@ -1008,30 +1008,33 @@
          BOTÃO SAIR (ESTILO GLASSLITE)
          ============================================================ */
       .glasslite-btn {
-        background-color: #e3000f; /* Vermelho clássico da marca */
         display: inline-block;
-        padding: 10px 32px;
         background-color: #ffffff;
         color: #1a3a8c;
         font-family: "Arial Black", "Impact", sans-serif;
-        font-size: 25px;
+
+        /* AJUSTES DE TAMANHO PARA BATER COM O BOTÃO 'ENTRAR' */
+        font-size: 11px; /* Reduzido para imitar o text-xs do Tailwind */
+        padding: 6px 20px; /* Ajustado para compensar a espessura da borda */
+        border: 2px solid #cc1010; /* Borda reduzida para não inflar a altura total */
+        letter-spacing: 1px; /* Ajustado para não esticar a palavra 'SAIR' */
+
         font-weight: 900;
-        letter-spacing: 2px;
         text-transform: uppercase;
-        border: 8px solid #cc1010;
-        border-radius: 50px; /* formato cápsula */
+        border-radius: 50px;
         cursor: pointer;
         outline: none;
         transition:
           background-color 0.12s,
-          color 0.12s;
+          color 0.12s,
+          transform 0.1s,
+          filter 0.2s;
         line-height: 1;
         user-select: none;
         -webkit-font-smoothing: antialiased;
       }
       .glasslite-btn:hover {
-        /* background-color: #f0f4ff; */
-        filter: brightness(1.2);
+        filter: brightness(1.1);
         transform: translateY(-1px);
       }
       .glasslite-btn:active {
