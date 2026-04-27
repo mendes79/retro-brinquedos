@@ -1005,7 +1005,7 @@
       }
 
       /* ============================================================
-         BOTÃO SAIR (ESTILO GLASSLITE)
+         BOTÃO SAIR (ESTILO GLASSLITE) - PROPORÇÃO CORRIGIDA
          ============================================================ */
       .glasslite-btn {
         display: inline-block;
@@ -1013,11 +1013,11 @@
         color: #1a3a8c;
         font-family: "Arial Black", "Impact", sans-serif;
 
-        /* AJUSTES DE TAMANHO PARA BATER COM O BOTÃO 'ENTRAR' */
-        font-size: 11px; /* Reduzido para imitar o text-xs do Tailwind */
-        padding: 6px 20px; /* Ajustado para compensar a espessura da borda */
-        border: 2px solid #cc1010; /* Borda reduzida para não inflar a altura total */
-        letter-spacing: 1px; /* Ajustado para não esticar a palavra 'SAIR' */
+        /* A MATEMÁTICA EXATA DOS 32px DE ALTURA */
+        font-size: 12px; /* Exatamente igual ao text-xs */
+        padding: 7px 24px; /* 7px de padding + 2px de borda = quase o mesmo py-2 e px-6 do Tailwind */
+        border: 2px solid #cc1010;
+        letter-spacing: 1px;
 
         font-weight: 900;
         text-transform: uppercase;
@@ -1029,7 +1029,7 @@
           color 0.12s,
           transform 0.1s,
           filter 0.2s;
-        line-height: 1;
+        line-height: 1.2; /* Ajustado para dar o volume correto à palavra */
         user-select: none;
         -webkit-font-smoothing: antialiased;
       }
