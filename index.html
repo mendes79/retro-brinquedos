@@ -336,28 +336,8 @@
       }
 
       /* ============================================================
-         MECÂNICA 3D FLIP E FOCO (RESTAURADA)
+         EFEITO DE FOCO 3D (BLINDADO CONTRA BUG DE ACHATAMENTO)
          ============================================================ */
-      /*#toyGrid.grid-focused .masonry-item:not(.is-flipped) {
-        filter: grayscale(100%) brightness(0.8);
-        opacity: 0.5;
-        pointer-events: none;
-      }
-      #toyGrid.grid-focused .masonry-item.is-flipped {
-        filter: grayscale(0%) brightness(1);
-        opacity: 1;
-        z-index: 90;
-      }
-
-      .card-inner {
-        position: relative;
-        width: 100%;
-        transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-        transform-style: preserve-3d;
-        cursor: pointer;
-      }*/
-
-      /* EFEITO DE FOCO 3D (O que você sugeriu para mobile/desktop) */
       #toyGrid.grid-focused .masonry-item:not(.is-flipped) {
         filter: grayscale(100%) blur(2px);
         opacity: 0.2;
@@ -365,19 +345,27 @@
       }
 
       #toyGrid.grid-focused .masonry-item.is-flipped {
-        z-index: 150; /* O card fica acima de tudo */
-        filter: grayscale(0%) blur(0);
+        z-index: 150;
+        /* CRÍTICO: Remover o filter evita que o navegador "achate" o 3D da carta */
+        filter: none !important; 
         opacity: 1;
       }
 
-      .is-flipped .card-inner {
-        transform: rotateY(180deg) scale(1.08); /* Efeito de aproximação */
-        box-shadow: 0 40px 70px rgba(0, 0, 0, 0.9); /* Sombra 3D projetada */
+      .card-inner {
+        position: relative;
+        width: 100%;
+        transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d; /* CRÍTICO: Mantém o volume 3D ativo */
+        cursor: pointer;
       }
 
       .is-flipped .card-inner {
-        transform: rotateY(180deg) scale(1.05);
-        z-index: 90;
+        transform: rotateY(180deg) scale(1.08); /* Giro e aproximação */
+      }
+      
+      /* A sombra profunda entra no verso para não conflitar com a rotação */
+      .is-flipped .card-back {
+        box-shadow: 0 40px 70px rgba(0, 0, 0, 0.9); 
       }
 
       .card-front,
@@ -1027,24 +1015,28 @@
          COMPORTAMENTO DO PAINEL DE CHAT (MOBILE VS DESKTOP)
          ============================================================ */
       #chatPanel {
-        /* No Mobile: Reduzimos de 35vh para 18vh (cerca de 50% de redução) */
-        height: 15vh; /* Mobile: Reduzido para ocupar apenas uma faixa inferior */
-        z-index: 120; /* Acima de quase tudo, mas abaixo do card em foco */
-        transition: transform 0.3s ease-in-out;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Z-INDEX 90: Garante que o painel deslize por BAIXO da barra de menu (que é 100) */
+        z-index: 90 !important; 
       }
-      /* Fechado no mobile (desce para baixo) */
+
+      /* Mobile: Desliza de baixo para cima */
+      #chatPanel {
+        transform: translateY(0); /* Estado aberto */
+      }
       #chatPanel.is-closed {
-        transform: translateY(100%);
+        transform: translateY(100%); /* Estado fechado escondido embaixo */
       }
-      /* Fechado no desktop (esconde para a direita) */
+
+      /* Desktop: Desliza da direita para a esquerda e encosta na navbar */
       @media (min-width: 768px) {
         #chatPanel {
-          /* No Desktop: Garantimos que ele comece exatamente onde a nav termina e não ocupe a tela toda */
-          /*top: var(--nav-height); 
-          height: calc(100vh - var(--nav-height));*/
-          top: 72px !important; /* Alinhado exatamente abaixo da nav */
-          height: calc(100vh - 72px);
-          width: 200px; /* Leve redução adicional para ganhar área de grid */
+          top: 72px !important; /* Começa exatamente abaixo da navbar */
+          height: calc(100vh - 72px) !important;
+          transform: translateX(0); /* Estado aberto */
+        }
+        #chatPanel.is-closed {
+          transform: translateX(100%); /* Estado fechado escondido na direita */
         }
       }
     </style>
