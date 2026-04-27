@@ -459,32 +459,34 @@
       }
 
       .trunfo-photo-wrapper {
-        margin: 8px 10px 4px;
+        margin: 0; /* Remove as margens laterais para colar nas bordas do card */
+        border-top: 2px solid var(--trunfo-gold);
+        border-bottom: 2px solid var(--trunfo-gold);
         position: relative;
         flex-shrink: 0;
       }
       .trunfo-photo-frame {
-        border: 3px solid var(--trunfo-gold);
-        padding: 0; /* Removemos o padding (que era 2px) para a imagem colar na borda */
-        background: #000;
+        border: none; /* Remove a borda dupla que confinava a imagem */
+        padding: 0;
+        background: transparent;
         position: relative;
       }
       .trunfo-photo {
         width: 100%;
-        height: 110px; /* Aumentamos um pouco a altura (era 90px) para dar mais presença */
+        height: 180px; /* Altura imponente para uma verdadeira Hero Image */
         object-fit: cover;
         display: block;
         filter: sepia(20%) contrast(1.08);
       }
       .trunfo-photo-year {
         position: absolute;
-        bottom: 4px;
-        right: 4px;
+        bottom: 8px;
+        right: 8px;
         background: rgba(0, 0, 0, 0.75);
         color: var(--trunfo-gold);
         font-family: "Orbitron", monospace;
         font-size: 0.5rem;
-        padding: 1px 5px;
+        padding: 2px 6px;
         letter-spacing: 0.1em;
       }
 
@@ -593,8 +595,8 @@
          CAIXA DE CURIOSIDADE (Com scroll estilizado)
          ============================================================ */
       .trunfo-curiosidade {
-        margin: 4px 8px 6px;
-        padding: 5px 8px;
+        margin: 6px 10px 8px;
+        padding: 6px 8px;
         background: rgba(255, 255, 255, 0.04);
         border-left: 2px solid var(--neon-pink);
         font-size: 0.58rem;
@@ -602,10 +604,9 @@
         color: rgba(255, 255, 255, 0.5);
         font-style: italic;
 
-        /* Novas regras: Controle de expansão e rolagem */
-        flex-grow: 1; /* Ocupa apenas o espaço que sobrar na ficha */
-        max-height: 65px; /* Trava de segurança para não empurrar o rodapé */
-        overflow-y: auto; /* Ativa a rolagem vertical automaticamente se o texto vazar */
+        /* REMOVIDO o flex-grow: 1 que causava a duplicação visual */
+        max-height: 75px;
+        overflow-y: auto;
       }
 
       /* Estilização Neon da barra de rolagem (WebKit) */
@@ -634,9 +635,9 @@
 
       .trunfo-footer-logo {
         font-family: "Orbitron", monospace;
-        font-size: 0.45rem;
+        font-size: 0.4rem;
         color: #ffffff;
-        letter-spacing: 0.15em;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
       }
 
@@ -647,6 +648,9 @@
         display: flex;
         background: #0f0e1e;
         border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+        /* NOVA REGRA: Empurra os botões perfeitamente para o fundo da carta */
+        margin-top: auto;
       }
       .action-btn {
         flex: 1;
