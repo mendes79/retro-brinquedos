@@ -589,6 +589,9 @@
           0 0 10px rgba(255, 32, 32, 0.5);
       }
 
+      /* ============================================================
+         CAIXA DE CURIOSIDADE (Com scroll estilizado)
+         ============================================================ */
       .trunfo-curiosidade {
         margin: 4px 8px 6px;
         padding: 5px 8px;
@@ -598,6 +601,26 @@
         line-height: 1.5;
         color: rgba(255, 255, 255, 0.5);
         font-style: italic;
+
+        /* Novas regras: Controle de expansão e rolagem */
+        flex-grow: 1; /* Ocupa apenas o espaço que sobrar na ficha */
+        max-height: 65px; /* Trava de segurança para não empurrar o rodapé */
+        overflow-y: auto; /* Ativa a rolagem vertical automaticamente se o texto vazar */
+      }
+
+      /* Estilização Neon da barra de rolagem (WebKit) */
+      .trunfo-curiosidade::-webkit-scrollbar {
+        width: 4px;
+      }
+      .trunfo-curiosidade::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .trunfo-curiosidade::-webkit-scrollbar-thumb {
+        background: var(--neon-pink);
+        border-radius: 4px;
+      }
+      .trunfo-curiosidade::-webkit-scrollbar-thumb:hover {
+        background: var(--neon-blue);
       }
       .trunfo-footer {
         background: linear-gradient(0deg, #6b0000, var(--trunfo-red));
