@@ -385,7 +385,7 @@
         top: 0;
         left: 0;
         height: 100%;
-        min-height: 480px;
+        min-height: 540px; /* Era 480. Aumentamos a altura mínima para acomodar o novo campo de chat sem esmagar o rodapé */
         transform: rotateY(180deg);
         display: flex;
         flex-direction: column;
@@ -1007,6 +1007,8 @@
          COMPORTAMENTO DO PAINEL DE CHAT (MOBILE VS DESKTOP)
          ============================================================ */
       #chatPanel {
+        /* No Mobile: Reduzimos de 35vh para 18vh (cerca de 50% de redução) */
+        height: 18vh;
         transition: transform 0.3s ease-in-out;
       }
       /* Fechado no mobile (desce para baixo) */
@@ -1015,8 +1017,11 @@
       }
       /* Fechado no desktop (esconde para a direita) */
       @media (min-width: 768px) {
-        #chatPanel.is-closed {
-          transform: translateX(100%);
+        #chatPanel {
+          /* No Desktop: Garantimos que ele comece exatamente onde a nav termina e não ocupe a tela toda */
+          top: var(--nav-height); 
+          height: calc(100vh - var(--nav-height));
+          width: 200px; /* Leve redução adicional para ganhar área de grid */
         }
       }
     </style>
@@ -1535,16 +1540,16 @@
                   </div>
                 </div>
                 
-                <div class="p-2 bg-[#050505] border-top border-white/5 flex gap-2 items-center">
-                    <span class="text-[#39ff14] font-orbitron text-[0.6rem]">></span>
+                <div class="px-2 py-1.5 bg-[#050505] border-t border-white/5 flex gap-1 items-center shrink-0">
+                    <span class="text-[#39ff14] font-orbitron text-[0.55rem]">></span>
                     <input type="text" id="comentario-input-${idNormalizado}" 
-                           class="flex-1 bg-transparent border-b border-[#39ff14]/30 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-600 focus:border-[#39ff14] transition-colors" 
-                           placeholder="Transmitir mensagem..." 
+                           class="flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.55rem] px-1 py-0.5 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" 
+                           placeholder="Mensagem..." 
                            onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')"
-                           ${!isLiked && !isTive && !isQueria ? 'disabled placeholder="Interaja para comentar..."' : ""}>
+                           ${!isLiked && !isTive && !isQueria ? 'disabled placeholder="Interaja..."' : ''}>
                     <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}')" 
-                            class="text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-wider uppercase px-2 transition-colors">
-                      [ SEND ]
+                            class="text-cyan-400 hover:text-pink-500 font-orbitron text-[0.5rem] tracking-tighter uppercase px-1 transition-colors shrink-0">
+                      SEND
                     </button>
                   </div>
 
