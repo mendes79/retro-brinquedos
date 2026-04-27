@@ -1043,13 +1043,33 @@
           ></path>
         </svg>
       </div>
-      <div id="userArea" class="flex gap-4 items-center">
+      <div class="flex items-center gap-3 md:gap-4">
         <button
-          onclick="login()"
-          class="bg-pink-600 text-white px-6 py-2 rounded-full text-xs font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50"
+          id="chatToggleBtn"
+          onclick="toggleChatPanel()"
+          class="relative flex items-center gap-2 border border-[#39ff14]/40 bg-black/60 text-[#39ff14] px-3 py-1.5 md:px-4 md:py-2 rounded-md font-orbitron text-[0.6rem] md:text-[0.65rem] tracking-widest uppercase hover:bg-[#39ff14]/10 transition-all shadow-[0_0_10px_rgba(57,255,20,0.1)]"
         >
-          ENTRAR
+          <span
+            id="chatStatusDot"
+            class="w-2 h-2 rounded-full bg-[#39ff14] animate-pulse"
+          ></span>
+          <span class="hidden md:inline">Terminal</span>
+          <span class="md:hidden">Feed</span>
+          <span
+            id="chatBadge"
+            class="absolute -top-2 -right-2 bg-pink-600 text-white text-[0.55rem] font-bold px-1.5 py-0.5 rounded-full hidden border border-black shadow-[0_0_8px_rgba(255,0,255,0.8)]"
+            >0</span
+          >
         </button>
+
+        <div id="userArea" class="flex gap-4 items-center">
+          <button
+            onclick="login()"
+            class="bg-pink-600 text-white px-6 py-2 rounded-full text-xs font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50"
+          >
+            ENTRAR
+          </button>
+        </div>
       </div>
     </nav>
 
@@ -1114,6 +1134,39 @@
     <main class="w-full px-4 md:px-12 pb-20 relative">
       <div id="toyGrid" class="masonry-grid"></div>
     </main>
+    <div
+      id="chatPanel"
+      class="fixed right-0 top-[72px] bottom-0 w-full md:w-[360px] bg-[#050505] border-l-2 border-[#39ff14]/50 transform translate-x-full transition-transform duration-300 z-[90] flex flex-col font-orbitron shadow-[-5px_0_30px_rgba(57,255,20,0.15)]"
+    >
+      <div
+        class="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-10 opacity-60"
+      ></div>
+
+      <div
+        class="p-3 border-b border-[#39ff14]/30 flex justify-between items-center bg-[#0a0a0a] z-20"
+      >
+        <span
+          class="text-[#39ff14] text-[0.65rem] tracking-widest uppercase animate-pulse"
+          >>> BBS_MUD_LINK_ACTIVE</span
+        >
+        <button
+          onclick="toggleChatPanel()"
+          class="text-[#39ff14] hover:text-white text-[0.65rem] tracking-widest"
+        >
+          [ ESC ]
+        </button>
+      </div>
+
+      <div
+        id="chatFeed"
+        class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 text-[0.6rem] md:text-[0.65rem] text-[#39ff14] z-20 font-mono tracking-tight"
+      >
+        <div class="opacity-50 italic mb-2">
+          > Conexão estabelecida via protocolo Supabase.
+        </div>
+        <div class="opacity-50 italic mb-2">> Aguardando transmissões...</div>
+      </div>
+    </div>
 
     <footer
       class="py-12 border-t border-slate-800 text-center text-slate-500 text-sm"
@@ -1456,6 +1509,19 @@
                   </div>
                 </div>
                 
+                <div class="p-2 bg-[#050505] border-top border-white/5 flex gap-2 items-center">
+                    <span class="text-[#39ff14] font-orbitron text-[0.6rem]">></span>
+                    <input type="text" id="comentario-input-${idNormalizado}" 
+                           class="flex-1 bg-transparent border-b border-[#39ff14]/30 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-600 focus:border-[#39ff14] transition-colors" 
+                           placeholder="Transmitir mensagem..." 
+                           onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')"
+                           ${!isLiked && !isTive && !isQueria ? 'disabled placeholder="Interaja para comentar..."' : ""}>
+                    <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}')" 
+                            class="text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-wider uppercase px-2 transition-colors">
+                      [ SEND ]
+                    </button>
+                  </div>
+
                 <div class="trunfo-footer">
                   <span class="trunfo-footer-logo">RETROBRINQUEDOS</span>
                   <div class="like-container">
@@ -1865,6 +1931,31 @@
           }
         }, 250);
       });
+
+      // ============================================================
+      // CONTROLE DE UI DO TERMINAL (CHAT)
+      // ============================================================
+      let chatNotificacoesNaoLidas = 0;
+
+      function toggleChatPanel() {
+        const panel = document.getElementById("chatPanel");
+        const badge = document.getElementById("chatBadge");
+        const btn = document.getElementById("chatToggleBtn");
+
+        // Desliza o painel
+        panel.classList.toggle("translate-x-full");
+
+        // Se abriu o painel, zera as notificações
+        if (!panel.classList.contains("translate-x-full")) {
+          chatNotificacoesNaoLidas = 0;
+          badge.classList.add("hidden");
+          badge.innerText = "0";
+          btn.classList.remove(
+            "border-pink-500",
+            "shadow-[0_0_15px_rgba(255,0,255,0.4)]",
+          );
+        }
+      }
 
       init();
     </script>
