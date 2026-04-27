@@ -641,6 +641,72 @@
       }
 
       /* ============================================================
+         BOTÕES: EU TIVE / EU QUERIA TER
+         ============================================================ */
+      .trunfo-actions-area {
+        display: flex;
+        background: #0f0e1e;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .action-btn {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 10px; /* Mesma altura e padding do trunfo-stat-row */
+        background: rgba(255, 255, 255, 0.02);
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        outline: none;
+      }
+      .action-btn:first-child {
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .action-btn:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .action-label {
+        font-family: "Orbitron", monospace;
+        font-size: 0.45rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.4);
+        transition: color 0.2s;
+      }
+      .action-count {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.6rem;
+        font-weight: 700;
+        transition: color 0.2s;
+      }
+
+      /* Estados Ativos: Verde para Tive, Azul Neon para Queria */
+      .action-btn.active-tive .action-label {
+        color: #00e040;
+      }
+      .action-btn.active-tive .action-count {
+        color: #00e040;
+        text-shadow: 0 0 5px rgba(0, 224, 64, 0.5);
+      }
+
+      .action-btn.active-queria .action-label {
+        color: var(--neon-blue);
+      }
+      .action-btn.active-queria .action-count {
+        color: var(--neon-blue);
+        text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+      }
+
+      /* Estado para usuários não logados */
+      .app-unlogged .action-btn {
+        cursor: not-allowed;
+      }
+      .app-unlogged .action-btn:hover .action-label {
+        color: var(--trunfo-red);
+      }
+
+      /* ============================================================
          [PASSO 2] CORAÇÃO 8-BIT DE CURTIDAS
          ============================================================ */
       .like-container {
@@ -1215,6 +1281,8 @@
       const sessionSeed = Math.random();
       let isUserLogged = false;
       let curtidasDoUsuario = new Set();
+      let tiveDoUsuario = new Set();
+      let queriaDoUsuario = new Set();
 
       const sentinel = document.createElement("div");
       sentinel.id = "scrollSentinel";
@@ -1346,6 +1414,8 @@
 
           // Agora ele pergunta pela versão "0137", que é o que o banco conhece!
           const isLiked = curtidasDoUsuario.has(idNormalizado);
+          const isTive = tiveDoUsuario.has(idNormalizado);
+          const isQueria = queriaDoUsuario.has(idNormalizado);
           const trunfoCode = toy.condigo_trunfo || "A1";
 
           const cardHTML = `
@@ -1384,6 +1454,19 @@
                   </div>
                   <div class="trunfo-curiosidade">"${toy.curiosidade}"</div>
                 </div>
+                <div class="trunfo-curiosidade">"${toy.curiosidade}"</div>
+
+                  <div class="trunfo-actions-area">
+                    <button id="btn-tive-${idNormalizado}" class="action-btn ${isTive ? 'active-tive' : ''}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
+                      <span class="action-label">Eu Tive</span>
+                      <span class="action-count" id="count-tive-${idNormalizado}">${toy.tive_count || 0}</span>
+                    </button>
+                    <button id="btn-queria-${idNormalizado}" class="action-btn ${isQueria ? 'active-queria' : ''}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
+                      <span class="action-label">Queria Ter</span>
+                      <span class="action-count" id="count-queria-${idNormalizado}">${toy.queria_count || 0}</span>
+                    </button>
+                  </div>
+                  <div class="trunfo-footer">
                 <div class="trunfo-footer">
                   <span class="trunfo-footer-logo">RetroBrinquedos BR</span>
                   <div class="like-container">
@@ -1515,18 +1598,21 @@
       // ============================================================
 
       // ============================================================
-      // SISTEMA DE CURTIDAS (CORRIGIDO)
+      // SISTEMA DE INTERAÇÕES (CURTIDAS, TIVE, QUERIA)
       // ============================================================
-      async function carregarCurtidasDoBanco(userId) {
-        const { data, error } = await supabaseClient
-          .from("curtidas")
-          .select("brinquedo_id")
-          .eq("usuario_id", userId);
+      async function carregarInteracoesDoBanco(userId) {
+        // 1. Carrega Curtidas
+        const { data: dataCurtidas } = await supabaseClient.from("curtidas").select("brinquedo_id").eq("usuario_id", userId);
+        if (dataCurtidas) curtidasDoUsuario = new Set(dataCurtidas.map(i => String(i.brinquedo_id).padStart(4, "0")));
 
-        if (error) {
-          console.error("❌ [ERRO DB LEITURA]:", error);
-          return;
-        }
+        // 2. Carrega "Eu Tive"
+        const { data: dataTive } = await supabaseClient.from("interacoes_tive").select("brinquedo_id").eq("usuario_id", userId);
+        if (dataTive) tiveDoUsuario = new Set(dataTive.map(i => String(i.brinquedo_id).padStart(4, "0")));
+
+        // 3. Carrega "Queria Ter"
+        const { data: dataQueria } = await supabaseClient.from("interacoes_queria").select("brinquedo_id").eq("usuario_id", userId);
+        if (dataQueria) queriaDoUsuario = new Set(dataQueria.map(i => String(i.brinquedo_id).padStart(4, "0")));
+      }
 
         if (data) {
           // Normaliza os IDs (ex: "0137") e joga na memória. O render() cuidará do visual.
@@ -1585,6 +1671,46 @@
         }
       }
 
+      async function toggleInteracao(event, brinquedoId, tipo) {
+        event.stopPropagation();
+
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) return;
+
+        const userId = session.user.id;
+        const idParaBanco = String(brinquedoId).padStart(4, "0");
+
+        let memorySet, tableName, activeClass;
+        if (tipo === 'tive') {
+            memorySet = tiveDoUsuario;
+            tableName = 'interacoes_tive';
+            activeClass = 'active-tive';
+        } else {
+            memorySet = queriaDoUsuario;
+            tableName = 'interacoes_queria';
+            activeClass = 'active-queria';
+        }
+
+        const isAtivo = memorySet.has(idParaBanco);
+        const btn = document.getElementById(`btn-${tipo}-${idParaBanco}`);
+        const countSpan = document.getElementById(`count-${tipo}-${idParaBanco}`);
+        let count = parseInt(countSpan ? countSpan.innerText : "0") || 0;
+
+        if (isAtivo) {
+          // Remover
+          memorySet.delete(idParaBanco);
+          if (btn) btn.classList.remove(activeClass);
+          if (countSpan) countSpan.innerText = Math.max(0, count - 1);
+          await supabaseClient.from(tableName).delete().eq("usuario_id", userId).eq("brinquedo_id", idParaBanco);
+        } else {
+          // Inserir
+          memorySet.add(idParaBanco);
+          if (btn) btn.classList.add(activeClass);
+          if (countSpan) countSpan.innerText = count + 1;
+          await supabaseClient.from(tableName).insert([{ usuario_id: userId, brinquedo_id: idParaBanco }]);
+        }
+      }
+
       function updateNavWithAvatar(avatarPath, name) {
         document.getElementById("userArea").innerHTML = `
           <div class="flex items-center gap-3">
@@ -1617,8 +1743,9 @@
           document.body.classList.remove("app-unlogged");
           const userName = session.user.user_metadata.full_name || "Player 1";
 
-          // 2. Aguarda as curtidas serem carregadas ANTES de renderizar
-          await carregarCurtidasDoBanco(session.user.id);
+          // 2. Aguarda as curtidas, "Tive" e "Queria Ter" serem carregadas ANTES de renderizar
+          //await carregarCurtidasDoBanco(session.user.id);
+          await carregarInteracoesDoBanco(session.user.id);
 
           const savedAvatar = localStorage.getItem("retro_avatar");
           if (savedAvatar) {
