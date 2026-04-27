@@ -296,7 +296,6 @@
       /* ============================================================
          MASONRY GRID & 3D FLIP (Modo Pinterest + Super Trunfo)
          ============================================================ */
-      /* O container principal agora é Flexbox */
       .masonry-grid {
         display: flex;
         align-items: flex-start;
@@ -304,7 +303,6 @@
         width: 100%;
       }
 
-      /* As colunas independentes */
       .masonry-column {
         display: flex;
         flex-direction: column;
@@ -322,7 +320,6 @@
         width: 100%;
       }
 
-      /* Animação orgânica de entrada para cards novos */
       .card-enter {
         animation: cardFadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         opacity: 0;
@@ -336,21 +333,8 @@
       }
 
       /* ============================================================
-         EFEITO DE FOCO 3D (BLINDADO CONTRA BUG DE ACHATAMENTO)
+         DINÂMICA DOS CARDS (MOBILE VS DESKTOP)
          ============================================================ */
-      #toyGrid.grid-focused .masonry-item:not(.is-flipped) {
-        filter: grayscale(100%) blur(2px);
-        opacity: 0.2;
-        pointer-events: none;
-      }
-
-      #toyGrid.grid-focused .masonry-item.is-flipped {
-        z-index: 150;
-        /* CRÍTICO: Remover o filter evita que o navegador "achate" o 3D da carta */
-        filter: none !important; 
-        opacity: 1;
-      }
-
       .card-inner {
         position: relative;
         width: 100%;
@@ -359,21 +343,47 @@
         cursor: pointer;
       }
 
-      .is-flipped .card-inner {
-        transform: rotateY(180deg) scale(1.08); /* Giro e aproximação */
+      /* EFEITOS EXCLUSIVOS MOBILE (Foco e Sombra) */
+      @media (max-width: 767px) {
+        #toyGrid.grid-focused .masonry-item:not(.is-flipped) {
+          filter: grayscale(100%) blur(2px);
+          opacity: 0.2;
+        }
+        .is-flipped .card-inner {
+          transform: rotateY(180deg) scale(1.08);
+        }
+        .is-flipped .card-back {
+          box-shadow: 0 40px 70px rgba(0, 0, 0, 0.9);
+        }
       }
-      
-      /* A sombra profunda entra no verso para não conflitar com a rotação */
-      .is-flipped .card-back {
-        box-shadow: 0 40px 70px rgba(0, 0, 0, 0.9); 
+
+      /* EFEITOS DESKTOP (Performance e Fluidez) */
+      @media (min-width: 768px) {
+        .card-inner {
+          will-change: transform; /* Avisa ao navegador para otimizar a GPU */
+        }
+        .is-flipped .card-inner {
+          transform: rotateY(
+            180deg
+          ); /* Removemos o scale para evitar lag e bugs de z-index */
+        }
+        /* Sombra leve para não pesar no giro */
+        .is-flipped .card-back {
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+      }
+
+      /* Garante que o card em movimento fique SEMPRE acima de qualquer outro */
+      .masonry-item.is-flipped {
+        z-index: 150 !important;
       }
 
       .card-front,
       .card-back {
         width: 100%;
         backface-visibility: hidden;
-        -webkit-backface-visibility: hidden; /* Adicionado: Blindagem para Safari */
-        -moz-backface-visibility: hidden; /* Adicionado: O segredo para o Firefox */
+        -webkit-backface-visibility: hidden;
+        -moz-backface-visibility: hidden;
         border-radius: 1rem;
         overflow: hidden;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
@@ -381,10 +391,8 @@
 
       .card-front {
         position: relative;
-        z-index: 2; /* Aumentado de 1 para 2: Garante a frente no topo do contexto 3D */
-        transform: rotateY(
-          0deg
-        ); /* Adicionado: Força o Firefox a entender que esta é a face A */
+        z-index: 2;
+        transform: rotateY(0deg);
       }
 
       .card-back {
@@ -392,8 +400,8 @@
         top: 0;
         left: 0;
         height: 100%;
-        min-height: 540px; /* Era 480. Aumentamos a altura mínima para acomodar o novo campo de chat sem esmagar o rodapé */
-        max-height: 90vh; /* Garante que o card não ultrapasse a tela */
+        min-height: 540px;
+        max-height: 90vh;
         transform: rotateY(180deg);
         display: flex;
         flex-direction: column;
@@ -475,14 +483,13 @@
         background: #000;
       }
       .trunfo-photo-frame {
-        border: none; /* Remove a borda dupla que confinava a imagem */
+        border: none;
         padding: 0;
         background: transparent;
         position: relative;
       }
       .trunfo-photo {
         width: 100%;
-        /* Ajustado de 180px para 115px para retomar o aspecto 16:9 e salvar espaço */
         height: 115px;
         object-fit: cover;
         display: block;
@@ -535,7 +542,6 @@
         text-align: right;
       }
 
-      /* LEDs */
       .trunfo-raridade-area {
         padding: 6px 10px 6px;
         background: #0f0e1e;
@@ -601,9 +607,6 @@
           0 0 10px rgba(255, 32, 32, 0.5);
       }
 
-      /* ============================================================
-         CAIXA DE CURIOSIDADE (Com scroll estilizado)
-         ============================================================ */
       .trunfo-curiosidade {
         margin: 6px 10px 8px;
         padding: 6px 8px;
@@ -613,13 +616,10 @@
         line-height: 1.5;
         color: rgba(255, 255, 255, 0.5);
         font-style: italic;
-
-        /* REMOVIDO o flex-grow: 1 que causava a duplicação visual */
         max-height: 75px;
         overflow-y: auto;
       }
 
-      /* Estilização Neon da barra de rolagem (WebKit) */
       .trunfo-curiosidade::-webkit-scrollbar {
         width: 4px;
       }
@@ -651,15 +651,10 @@
         text-transform: uppercase;
       }
 
-      /* ============================================================
-         BOTÕES: EU TIVE / EU QUERIA TER
-         ============================================================ */
       .trunfo-actions-area {
         display: flex;
         background: #0f0e1e;
         border-top: 1px solid rgba(255, 255, 255, 0.06);
-
-        /* NOVA REGRA: Empurra os botões perfeitamente para o fundo da carta */
         margin-top: auto;
       }
       .action-btn {
@@ -667,7 +662,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 4px 10px; /* Mesma altura e padding do trunfo-stat-row */
+        padding: 4px 10px;
         background: rgba(255, 255, 255, 0.02);
         border: none;
         cursor: pointer;
@@ -695,7 +690,6 @@
         transition: color 0.2s;
       }
 
-      /* Estados Ativos: Verde para Tive, Azul Neon para Queria */
       .action-btn.active-tive .action-label {
         color: #00e040;
       }
@@ -712,7 +706,6 @@
         text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
       }
 
-      /* Estado para usuários não logados */
       .app-unlogged .action-btn {
         cursor: not-allowed;
       }
@@ -720,9 +713,6 @@
         color: var(--trunfo-red);
       }
 
-      /* ============================================================
-         [PASSO 2] CORAÇÃO 8-BIT DE CURTIDAS
-         ============================================================ */
       .like-container {
         display: flex;
         align-items: center;
@@ -751,12 +741,10 @@
           transform 0.2s;
       }
 
-      /* Animação Hover */
       .app-unlogged .heart-btn:not(.liked):hover .heart-svg {
         animation: pulseSoft 1.5s infinite;
       }
 
-      /* Tooltip para utilizadores não logados */
       .heart-tooltip {
         position: absolute;
         bottom: 40px;
@@ -792,12 +780,10 @@
         opacity: 1;
       }
 
-      /* Estado Curtido (Fixo) */
       .heart-btn.liked .heart-svg {
         fill: #ff0044;
       }
 
-      /* Animação de Explosão ao Clicar */
       .heart-btn.animating .heart-svg {
         animation: likeBurst 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)
           forwards;
@@ -846,9 +832,6 @@
         display: none;
       }
 
-      /* ============================================================
-         [PASSO 4.1] ARCADE MODAL & CUSTOM COINS
-         ============================================================ */
       .font-orbitron {
         font-family: "Orbitron", monospace;
       }
@@ -962,7 +945,6 @@
         }
       }
 
-      /* Grid de Personagens */
       .avatar-item {
         width: 60px;
         height: 60px;
@@ -1011,32 +993,49 @@
         text-shadow: 0 0 10px #22d3ee;
         animation: blinkNeon 1s infinite;
       }
+
       /* ============================================================
-         COMPORTAMENTO DO PAINEL DE CHAT (MOBILE VS DESKTOP)
+         PAINEL DE CHAT (REESTRUTURADO)
          ============================================================ */
       #chatPanel {
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        /* Z-INDEX 90: Garante que o painel deslize por BAIXO da barra de menu (que é 100) */
-        z-index: 90 !important; 
+        z-index: 90; /* Mantém abaixo da Nav (100) */
+        background: #050505;
+        border-color: rgba(57, 255, 20, 0.4);
       }
 
-      /* Mobile: Desliza de baixo para cima */
-      #chatPanel {
-        transform: translateY(0); /* Estado aberto */
-      }
-      #chatPanel.is-closed {
-        transform: translateY(100%); /* Estado fechado escondido embaixo */
-      }
-
-      /* Desktop: Desliza da direita para a esquerda e encosta na navbar */
-      @media (min-width: 768px) {
+      /* MOBILE: Bottom Drawer (15% da altura) */
+      @media (max-width: 767px) {
         #chatPanel {
-          top: 72px !important; /* Começa exatamente abaixo da navbar */
-          height: calc(100vh - 72px) !important;
-          transform: translateX(0); /* Estado aberto */
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 15vh;
+          border-top-width: 2px;
+          transform: translateY(0);
         }
         #chatPanel.is-closed {
-          transform: translateX(100%); /* Estado fechado escondido na direita */
+          transform: translateY(100%);
+        }
+      }
+
+      /* DESKTOP: Janela Flutuante Centralizada na Direita (40% da altura) */
+      @media (min-width: 768px) {
+        #chatPanel {
+          top: 50%; /* Centraliza no meio da tela */
+          right: 0;
+          width: 220px;
+          height: 40vh;
+          border-left-width: 2px;
+          border-top-width: 2px;
+          border-bottom-width: 2px;
+          border-top-left-radius: 8px;
+          border-bottom-left-radius: 8px;
+          /* Centraliza verticalmente e oculta para a direita */
+          transform: translateY(-50%) translateX(0);
+        }
+        #chatPanel.is-closed {
+          transform: translateY(-50%) translateX(100%);
         }
       }
     </style>
@@ -1169,48 +1168,36 @@
     <main class="w-full px-4 md:px-12 pb-20 relative">
       <div id="toyGrid" class="masonry-grid"></div>
     </main>
-    <div id="chatPanel" class="fixed left-0 bottom-0 right-0 h-[35vh] md:left-auto md:top-[72px] md:bottom-0 md:w-[220px] bg-[#050505] border-t-2 md:border-t-0 md:border-l-2 border-[#39ff14]/50 z-[110] flex flex-col font-orbitron shadow-[0_-5px_30px_rgba(57,255,20,0.15)] md:shadow-[-5px_0_30px_rgba(57,255,20,0.15)] is-closed">
-      
-      <div class="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-10 opacity-60"></div>
-      
-      <div class="p-2 md:p-3 border-b border-[#39ff14]/30 flex justify-between items-center bg-[#0a0a0a] z-20 relative">
-        <span class="text-[#39ff14] text-[0.55rem] md:text-[0.6rem] tracking-widest uppercase animate-pulse">>> FEED_ACTIVE</span>
-        <button onclick="toggleChatPanel()" class="text-[#39ff14] hover:text-white text-[0.55rem] md:text-[0.6rem] tracking-widest px-2">[ X ]</button>
-      </div>
-      
-      <div id="chatFeed" class="flex-1 overflow-y-auto p-3 flex flex-col gap-3 text-[0.55rem] md:text-[0.6rem] text-[#39ff14] z-20 font-mono tracking-tight relative">
-        <div class="opacity-50 italic">> Conexão estabelecida...</div>
-        <div class="opacity-50 italic">> Aguardando transmissões...</div>
-      </div>
-    </div>
 
+    <div
+      id="chatPanel"
+      class="fixed flex flex-col font-orbitron border-solid shadow-[0_-5px_30px_rgba(57,255,20,0.15)] md:shadow-[-5px_0_30px_rgba(57,255,20,0.15)] is-closed"
+    >
       <div
         class="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-10 opacity-60"
       ></div>
 
       <div
-        class="p-3 border-b border-[#39ff14]/30 flex justify-between items-center bg-[#0a0a0a] z-20"
+        class="p-2 md:p-3 border-b border-[#39ff14]/30 flex justify-between items-center bg-[#0a0a0a] z-20 relative"
       >
         <span
-          class="text-[#39ff14] text-[0.65rem] tracking-widest uppercase animate-pulse"
-          >>> BBS_MUD_LINK_ACTIVE</span
+          class="text-[#39ff14] text-[0.55rem] md:text-[0.6rem] tracking-widest uppercase animate-pulse"
+          >>> FEED_ACTIVE</span
         >
         <button
           onclick="toggleChatPanel()"
-          class="text-[#39ff14] hover:text-white text-[0.65rem] tracking-widest"
+          class="text-[#39ff14] hover:text-white text-[0.55rem] md:text-[0.6rem] tracking-widest px-2"
         >
-          [ ESC ]
+          [ X ]
         </button>
       </div>
 
       <div
         id="chatFeed"
-        class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 text-[0.6rem] md:text-[0.65rem] text-[#39ff14] z-20 font-mono tracking-tight"
+        class="flex-1 overflow-y-auto p-3 flex flex-col gap-3 text-[0.55rem] md:text-[0.6rem] text-[#39ff14] z-20 font-mono tracking-tight relative"
       >
-        <div class="opacity-50 italic mb-2">
-          > Conexão estabelecida via protocolo Supabase.
-        </div>
-        <div class="opacity-50 italic mb-2">> Aguardando transmissões...</div>
+        <div class="opacity-50 italic">> Conexão estabelecida...</div>
+        <div class="opacity-50 italic">> Aguardando transmissões...</div>
       </div>
     </div>
 
@@ -1368,7 +1355,6 @@
         }
 
         try {
-          // ── MODO BUSCA: consulta via RPC no Supabase ─────────────────
           if (buscaAtiva.length >= 2) {
             const { data: itens, error: rpcError } = await supabaseClient.rpc(
               "buscar_brinquedos_search",
@@ -1389,8 +1375,6 @@
             } else {
               hasMais = false;
             }
-
-            // ── MODO NORMAL: API serverless com seed e cursor ───────────
           } else {
             const res = await fetch(
               `/api/brinquedos?cursor=${cursor}&limite=${LIMITE}&seed=${sessionSeed}`,
@@ -1476,7 +1460,7 @@
       }
 
       // ============================================================
-      // 1. RENDERIZAÇÃO (Agora com IDs normalizados "0000")
+      // 1. RENDERIZAÇÃO
       // ============================================================
       function render(items, append = false) {
         const grid = document.getElementById("toyGrid");
@@ -1496,12 +1480,8 @@
         }
 
         items.forEach((toy) => {
-          // A MÁGICA ESTÁ AQUI: Garante que "137" vire "0137" na tela inteira
           const idNormalizado = String(toy.id).padStart(4, "0");
-
           const ledHTML = buildLedDisplay(toy.raridade);
-
-          // Agora ele pergunta pela versão "0137", que é o que o banco conhece!
           const isLiked = curtidasDoUsuario.has(idNormalizado);
           const isTive = tiveDoUsuario.has(idNormalizado);
           const isQueria = queriaDoUsuario.has(idNormalizado);
@@ -1563,7 +1543,7 @@
                            placeholder="Mensagem..." 
                            onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')"
                            onclick="event.stopPropagation()"
-                           ${!isLiked && !isTive && !isQueria ? 'disabled placeholder="Interaja..."' : ''}>
+                           ${!isLiked && !isTive && !isQueria ? 'disabled placeholder="Interaja..."' : ""}>
                     <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" 
                             class="text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0 whitespace-nowrap">
                       SEND
@@ -1592,6 +1572,7 @@
           nextColIndex = (nextColIndex + 1) % currentCols;
         });
       }
+
       // ============================================================
       // INTERAÇÕES E FILTROS
       // ============================================================
@@ -1600,17 +1581,17 @@
         const card = document.getElementById(`card-${id}`);
         const isFlipped = card.classList.contains("is-flipped");
 
-        // Fecha outros cards
-        document.querySelectorAll(".masonry-item").forEach((c) => c.classList.remove("is-flipped"));
+        document
+          .querySelectorAll(".masonry-item")
+          .forEach((c) => c.classList.remove("is-flipped"));
 
         if (!isFlipped) {
           card.classList.add("is-flipped");
           grid.classList.add("grid-focused");
-
-          // Scroll inteligente: centraliza o card com um pequeno offset para a navbar
-          const yOffset = -80; 
-          const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
-          window.scrollTo({ top: y, behavior: 'smooth' });
+          const yOffset = -80;
+          const y =
+            card.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
         } else {
           grid.classList.remove("grid-focused");
         }
@@ -1627,7 +1608,6 @@
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
           buscaAtiva = term;
-          // Reseta paginação e grid para nova busca
           cursor = 0;
           allToys = [];
           hasMais = true;
@@ -1636,15 +1616,12 @@
         }, 300);
       });
 
-      // NOVA FUNÇÃO: Fecha o card ao clicar fora dele (no fundo cinza)
       document.addEventListener("click", (event) => {
         const grid = document.getElementById("toyGrid");
-        // Só faz a checagem se o grid estiver com algum card em foco
         if (grid && grid.classList.contains("grid-focused")) {
           const flippedCard = document.querySelector(
             ".masonry-item.is-flipped",
           );
-          // Se existe um card virado E o clique NÃO foi dentro dele
           if (flippedCard && !flippedCard.contains(event.target)) {
             resetarEstadoDosCards();
           }
@@ -1689,16 +1666,8 @@
         }, 1500);
       }
 
-      // ============================================================
-      // SISTEMA DE CURTIDAS (COM CHECKPOINTS E DEBUG)
-      // ============================================================
-
-      /// ============================================================
-      // SISTEMA DE INTERAÇÕES (BLINDADO COM TRATAMENTO DE ERROS)
-      // ============================================================
       async function carregarInteracoesDoBanco(userId) {
         try {
-          // Faz as 3 buscas ao mesmo tempo para deixar o login mais rápido (Promise.all)
           const [resCurtidas, resTive, resQueria] = await Promise.all([
             supabaseClient
               .from("curtidas")
@@ -1742,6 +1711,7 @@
           console.error("Erro fatal na comunicação com o banco:", e);
         }
       }
+
       async function toggleCurtida(event, brinquedoId) {
         event.stopPropagation();
 
@@ -1757,15 +1727,11 @@
         const btn = document.getElementById(`heart-btn-${idParaBanco}`);
         const countSpan = document.getElementById(`count-${idParaBanco}`);
 
-        // Pega o número atual da tela
         let count = parseInt(countSpan ? countSpan.innerText : "0") || 0;
 
         if (isLiked) {
-          // ================= AÇÃO DE DELETAR =================
           curtidasDoUsuario.delete(idParaBanco);
           if (btn) btn.classList.remove("liked");
-
-          // TRAVA MATEMÁTICA: Nunca deixa ficar negativo
           if (countSpan) countSpan.innerText = Math.max(0, count - 1);
 
           await supabaseClient
@@ -1774,14 +1740,11 @@
             .eq("usuario_id", userId)
             .eq("brinquedo_id", idParaBanco);
         } else {
-          // ================= AÇÃO DE INSERIR =================
           curtidasDoUsuario.add(idParaBanco);
           if (btn) {
             btn.classList.add("liked", "animating");
             setTimeout(() => btn.classList.remove("animating"), 600);
           }
-
-          // Adiciona 1
           if (countSpan) countSpan.innerText = count + 1;
 
           await supabaseClient
@@ -1819,19 +1782,16 @@
         let count = parseInt(countSpan ? countSpan.innerText : "0") || 0;
 
         if (isAtivo) {
-          // 1. UI Otimista: Tira a cor e diminui na tela instantaneamente
           memorySet.delete(idParaBanco);
           if (btn) btn.classList.remove(activeClass);
           if (countSpan) countSpan.innerText = Math.max(0, count - 1);
 
-          // 2. Vai no banco deletar
           const { error } = await supabaseClient
             .from(tableName)
             .delete()
             .eq("usuario_id", userId)
             .eq("brinquedo_id", idParaBanco);
 
-          // 3. Se o banco recusar, reverte a tela (Rollback)
           if (error) {
             console.error(`Erro ao remover ${tipo}:`, error.message);
             memorySet.add(idParaBanco);
@@ -1839,17 +1799,14 @@
             if (countSpan) countSpan.innerText = count;
           }
         } else {
-          // 1. UI Otimista: Pinta e soma na tela instantaneamente
           memorySet.add(idParaBanco);
           if (btn) btn.classList.add(activeClass);
           if (countSpan) countSpan.innerText = count + 1;
 
-          // 2. Vai no banco inserir
           const { error } = await supabaseClient
             .from(tableName)
             .insert([{ usuario_id: userId, brinquedo_id: idParaBanco }]);
 
-          // 3. Se o banco recusar, reverte a tela (Rollback)
           if (error) {
             console.error(`Erro ao registrar ${tipo}:`, error.message);
             memorySet.delete(idParaBanco);
@@ -1888,7 +1845,6 @@
       // INICIALIZAÇÃO CONTROLADA (ORDEM IMPORTA)
       // ============================================================
       async function init() {
-        // 1. Verifica sessão primeiro
         const {
           data: { session },
         } = await supabaseClient.auth.getSession();
@@ -1898,27 +1854,23 @@
           document.body.classList.remove("app-unlogged");
           const userName = session.user.user_metadata.full_name || "Player 1";
 
-          // 2. Aguarda as curtidas, "Tive" e "Queria Ter" serem carregadas ANTES de renderizar
-          //await carregarCurtidasDoBanco(session.user.id);
           await carregarInteracoesDoBanco(session.user.id);
 
           const savedAvatar = localStorage.getItem("retro_avatar");
           if (savedAvatar) {
             updateNavWithAvatar(savedAvatar, userName);
           } else {
-            login(); // Abre seleção de avatar
+            login();
             arcadeScreen.classList.add("hidden");
             selectionScreen.classList.remove("hidden");
             renderAvatarGrid();
           }
         }
 
-        // 3. Só agora carrega os brinquedos (já sabendo o que está curtido)
         setupObserver();
         await fetchBrinquedos(true);
       }
 
-      // Funções auxiliares mantidas
       function renderAvatarGrid() {
         const grid = document.getElementById("avatarGrid");
         grid.innerHTML = "";
@@ -1946,7 +1898,7 @@
       }
 
       // ============================================================
-      // RESET VISUAL (Salva a pátria no redimensionamento)
+      // RESET VISUAL
       // ============================================================
       function resetarEstadoDosCards() {
         const grid = document.getElementById("toyGrid");
@@ -1958,8 +1910,6 @@
         todosOsCards.forEach((card) => {
           card.classList.remove("is-flipped");
         });
-
-        // (Removemos o document.body.classList.remove("overflow-hidden") daqui)
       }
 
       // ============================================================
@@ -1967,14 +1917,9 @@
       // ============================================================
       let resizeTimer;
       window.addEventListener("resize", () => {
-        // 1. Fecha qualquer card que esteja aberto IMEDIATAMENTE
         resetarEstadoDosCards();
-
         clearTimeout(resizeTimer);
-
-        // 2. Espera 250ms garantindo que o navegador terminou de esticar a janela
         resizeTimer = setTimeout(() => {
-          // 3. Reconstrói as colunas do Masonry com a largura correta da janela
           if (allToys && allToys.length > 0) {
             render(allToys, false);
           }
@@ -1987,19 +1932,24 @@
       let chatNotificacoesNaoLidas = 0;
 
       function toggleChatPanel() {
-        const panel = document.getElementById('chatPanel');
-        const badge = document.getElementById('chatBadge');
-        const btn = document.getElementById('chatToggleBtn');
-        
-        // Ativa/Desativa o painel usando a nossa nova classe CSS
-        panel.classList.toggle('is-closed');
-        
-        // Se abriu o painel, zera as notificações
-        if (!panel.classList.contains('is-closed')) {
+        const panel = document.getElementById("chatPanel");
+        const badge = document.getElementById("chatBadge");
+        const btn = document.getElementById("chatToggleBtn");
+
+        panel.classList.toggle("is-closed");
+
+        if (!panel.classList.contains("is-closed")) {
           chatNotificacoesNaoLidas = 0;
-          badge.classList.add('hidden');
-          badge.innerText = '0';
-          btn.classList.remove('border-pink-500', 'shadow-[0_0_15px_rgba(255,0,255,0.4)]');
+          if (badge) {
+            badge.classList.add("hidden");
+            badge.innerText = "0";
+          }
+          if (btn) {
+            btn.classList.remove(
+              "border-pink-500",
+              "shadow-[0_0_15px_rgba(255,0,255,0.4)]",
+            );
+          }
         }
       }
 
