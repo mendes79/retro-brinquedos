@@ -465,13 +465,13 @@
       }
       .trunfo-photo-frame {
         border: 3px solid var(--trunfo-gold);
-        padding: 2px;
+        padding: 0; /* Removemos o padding (que era 2px) para a imagem colar na borda */
         background: #000;
         position: relative;
       }
       .trunfo-photo {
         width: 100%;
-        height: 90px;
+        height: 110px; /* Aumentamos um pouco a altura (era 90px) para dar mais presença */
         object-fit: cover;
         display: block;
         filter: sepia(20%) contrast(1.08);
@@ -1453,9 +1453,7 @@
                     ${ledHTML}
                   </div>
                   <div class="trunfo-curiosidade">"${toy.curiosidade}"</div>
-                </div>
-                <div class="trunfo-curiosidade">"${toy.curiosidade}"</div>
-
+                  
                   <div class="trunfo-actions-area">
                     <button id="btn-tive-${idNormalizado}" class="action-btn ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
                       <span class="action-label">Eu Tive</span>
@@ -1466,9 +1464,10 @@
                       <span class="action-count" id="count-queria-${idNormalizado}">${toy.queria_count || 0}</span>
                     </button>
                   </div>
-                  <div class="trunfo-footer">
+                </div>
+                
                 <div class="trunfo-footer">
-                  <span class="trunfo-footer-logo">RetroBrinquedos BR</span>
+                  <span class="trunfo-footer-logo">RETROBRINQUEDOS</span>
                   <div class="like-container">
                     <button id="heart-btn-${idNormalizado}" class="heart-btn ${isLiked ? "liked" : ""}" onclick="toggleCurtida(event, '${idNormalizado}')" aria-label="Curtir">
                       <svg class="heart-svg" viewBox="0 0 14 15" xmlns="http://www.w3.org/2000/svg">
