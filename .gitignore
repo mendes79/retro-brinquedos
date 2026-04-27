@@ -8,6 +8,7 @@ api/brinquedos_claude.js
 # Script python para atualizar o data.json
 atualiza_json.py
 index_old.html
+index_5.html
 index_gemini.html
 index_claude.html
 data_old.json

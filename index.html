@@ -1109,40 +1109,7 @@
       <h2 class="text-4xl md:text-6xl font-retro mb-8 leading-tight uppercase">
         A Coleção
       </h2>
-      <div
-        class="flex gap-2 overflow-x-auto pb-6 no-scrollbar justify-start md:justify-center"
-      >
-        <button
-          onclick="filterBy('todos')"
-          class="filter-btn bg-pink-600 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase"
-        >
-          Tudo
-        </button>
-        <button
-          onclick="filterBy('Estrela')"
-          class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase"
-        >
-          Estrela
-        </button>
-        <button
-          onclick="filterBy('Glasslite')"
-          class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase"
-        >
-          Glasslite
-        </button>
-        <button
-          onclick="filterBy('Masculino')"
-          class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase"
-        >
-          Masculino
-        </button>
-        <button
-          onclick="filterBy('Feminino')"
-          class="filter-btn bg-slate-800 hover:bg-slate-700 px-8 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all uppercase"
-        >
-          Feminino
-        </button>
-      </div>
+
     </header>
 
     <main class="w-full px-4 md:px-12 pb-20 relative">
@@ -1303,24 +1270,76 @@
         }
 
         try {
-          const res = await fetch(
-            `/api/brinquedos?cursor=${cursor}&limite=${LIMITE}&seed=${sessionSeed}`,
-          );
+          // ── MODO BUSCA: consulta direta no Supabase ─────────────────
+          if (buscaAtiva.length >= 2) {
+            const termo = buscaAtiva.toLowerCase();
 
-          if (!res.ok) throw new Error("Falha na API");
-          const data = await res.json();
+            // Busca paralela nas 3 colunas (nome, fabricante, tags[])
+            const [resNome, resFab, resTags] = await Promise.all([
+              supabaseClient
+                .from("brinquedos")
+                .select("*")
+                .ilike("nome", `%${termo}%`)
+                .range(cursor, cursor + LIMITE - 1),
+              supabaseClient
+                .from("brinquedos")
+                .select("*")
+                .ilike("fabricante", `%${termo}%`)
+                .range(cursor, cursor + LIMITE - 1),
+              supabaseClient
+                .from("brinquedos")
+                .select("*")
+                .contains("tags", [termo])
+                .range(cursor, cursor + LIMITE - 1),
+            ]);
 
-          if (reset && data.total) {
-            document.getElementById("heroCount").textContent = data.total;
-          }
+            // Merge e deduplicação por id
+            const merged = [
+              ...(resNome.data || []),
+              ...(resFab.data || []),
+              ...(resTags.data || []),
+            ];
+            const seen = new Set();
+            const itens = merged.filter((item) => {
+              if (seen.has(item.id)) return false;
+              seen.add(item.id);
+              return true;
+            });
 
-          if (data.itens && data.itens.length > 0) {
-            allToys = [...allToys, ...data.itens];
-            cursor = data.cursor;
-            hasMais = data.temMais;
-            render(data.itens, !reset);
+            if (itens.length > 0) {
+              allToys = [...allToys, ...itens];
+              cursor = cursor + itens.length;
+              // Considera esgotado se retornou menos que o limite em todas as fontes
+              hasMais =
+                (resNome.data?.length || 0) >= LIMITE ||
+                (resFab.data?.length || 0) >= LIMITE ||
+                (resTags.data?.length || 0) >= LIMITE;
+              render(itens, !reset);
+            } else {
+              hasMais = false;
+            }
+
+          // ── MODO NORMAL: API serverless com seed e cursor ───────────
           } else {
-            hasMais = false;
+            const res = await fetch(
+              `/api/brinquedos?cursor=${cursor}&limite=${LIMITE}&seed=${sessionSeed}`,
+            );
+
+            if (!res.ok) throw new Error("Falha na API");
+            const data = await res.json();
+
+            if (reset && data.total) {
+              document.getElementById("heroCount").textContent = data.total;
+            }
+
+            if (data.itens && data.itens.length > 0) {
+              allToys = [...allToys, ...data.itens];
+              cursor = data.cursor;
+              hasMais = data.temMais;
+              render(data.itens, !reset);
+            } else {
+              hasMais = false;
+            }
           }
         } catch (error) {
           console.error("Erro na carga:", error);
@@ -1510,15 +1529,24 @@
         }
       }
 
+      // ============================================================
+      // BUSCA VIA SUPABASE (nome, fabricante, tags[])
+      // ============================================================
+      let buscaAtiva = "";
+      let debounceTimer = null;
+
       document.getElementById("searchInput").addEventListener("input", (e) => {
-        const term = e.target.value.toLowerCase();
-        const filtered = allToys.filter(
-          (t) =>
-            t.nome.toLowerCase().includes(term) ||
-            t.tema.toLowerCase().includes(term) ||
-            t.fabricante.toLowerCase().includes(term),
-        );
-        render(filtered, false);
+        const term = e.target.value.trim();
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          buscaAtiva = term;
+          // Reseta paginação e grid para nova busca
+          cursor = 0;
+          allToys = [];
+          hasMais = true;
+          document.getElementById("toyGrid").innerHTML = "";
+          fetchBrinquedos(true);
+        }, 300);
       });
 
       // NOVA FUNÇÃO: Fecha o card ao clicar fora dele (no fundo cinza)
@@ -1535,23 +1563,6 @@
           }
         }
       });
-
-      function filterBy(criteria) {
-        document
-          .querySelectorAll(".filter-btn")
-          .forEach((btn) =>
-            btn.classList.replace("bg-pink-600", "bg-slate-800"),
-          );
-        if (event)
-          event.target.classList.replace("bg-slate-800", "bg-pink-600");
-        const filtered =
-          criteria === "todos"
-            ? allToys
-            : allToys.filter(
-                (toy) => toy.fabricante === criteria || toy.genero === criteria,
-              );
-        render(filtered, false);
-      }
 
       // ============================================================
       // SISTEMA DE LOGIN E CURTIDAS (SUPABASE)
