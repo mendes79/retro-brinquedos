@@ -1457,11 +1457,11 @@
                 <div class="trunfo-curiosidade">"${toy.curiosidade}"</div>
 
                   <div class="trunfo-actions-area">
-                    <button id="btn-tive-${idNormalizado}" class="action-btn ${isTive ? 'active-tive' : ''}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
+                    <button id="btn-tive-${idNormalizado}" class="action-btn ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
                       <span class="action-label">Eu Tive</span>
                       <span class="action-count" id="count-tive-${idNormalizado}">${toy.tive_count || 0}</span>
                     </button>
-                    <button id="btn-queria-${idNormalizado}" class="action-btn ${isQueria ? 'active-queria' : ''}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
+                    <button id="btn-queria-${idNormalizado}" class="action-btn ${isQueria ? "active-queria" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
                       <span class="action-label">Queria Ter</span>
                       <span class="action-count" id="count-queria-${idNormalizado}">${toy.queria_count || 0}</span>
                     </button>
@@ -1602,25 +1602,34 @@
       // ============================================================
       async function carregarInteracoesDoBanco(userId) {
         // 1. Carrega Curtidas
-        const { data: dataCurtidas } = await supabaseClient.from("curtidas").select("brinquedo_id").eq("usuario_id", userId);
-        if (dataCurtidas) curtidasDoUsuario = new Set(dataCurtidas.map(i => String(i.brinquedo_id).padStart(4, "0")));
+        const { data: dataCurtidas } = await supabaseClient
+          .from("curtidas")
+          .select("brinquedo_id")
+          .eq("usuario_id", userId);
+        if (dataCurtidas)
+          curtidasDoUsuario = new Set(
+            dataCurtidas.map((i) => String(i.brinquedo_id).padStart(4, "0")),
+          );
 
         // 2. Carrega "Eu Tive"
-        const { data: dataTive } = await supabaseClient.from("interacoes_tive").select("brinquedo_id").eq("usuario_id", userId);
-        if (dataTive) tiveDoUsuario = new Set(dataTive.map(i => String(i.brinquedo_id).padStart(4, "0")));
+        const { data: dataTive } = await supabaseClient
+          .from("interacoes_tive")
+          .select("brinquedo_id")
+          .eq("usuario_id", userId);
+        if (dataTive)
+          tiveDoUsuario = new Set(
+            dataTive.map((i) => String(i.brinquedo_id).padStart(4, "0")),
+          );
 
         // 3. Carrega "Queria Ter"
-        const { data: dataQueria } = await supabaseClient.from("interacoes_queria").select("brinquedo_id").eq("usuario_id", userId);
-        if (dataQueria) queriaDoUsuario = new Set(dataQueria.map(i => String(i.brinquedo_id).padStart(4, "0")));
-      }
-
-        if (data) {
-          // Normaliza os IDs (ex: "0137") e joga na memória. O render() cuidará do visual.
-          const idsNormalizados = data.map((item) =>
-            String(item.brinquedo_id).padStart(4, "0"),
+        const { data: dataQueria } = await supabaseClient
+          .from("interacoes_queria")
+          .select("brinquedo_id")
+          .eq("usuario_id", userId);
+        if (dataQueria)
+          queriaDoUsuario = new Set(
+            dataQueria.map((i) => String(i.brinquedo_id).padStart(4, "0")),
           );
-          curtidasDoUsuario = new Set(idsNormalizados);
-        }
       }
 
       async function toggleCurtida(event, brinquedoId) {
@@ -1674,26 +1683,30 @@
       async function toggleInteracao(event, brinquedoId, tipo) {
         event.stopPropagation();
 
-        const { data: { session } } = await supabaseClient.auth.getSession();
+        const {
+          data: { session },
+        } = await supabaseClient.auth.getSession();
         if (!session) return;
 
         const userId = session.user.id;
         const idParaBanco = String(brinquedoId).padStart(4, "0");
 
         let memorySet, tableName, activeClass;
-        if (tipo === 'tive') {
-            memorySet = tiveDoUsuario;
-            tableName = 'interacoes_tive';
-            activeClass = 'active-tive';
+        if (tipo === "tive") {
+          memorySet = tiveDoUsuario;
+          tableName = "interacoes_tive";
+          activeClass = "active-tive";
         } else {
-            memorySet = queriaDoUsuario;
-            tableName = 'interacoes_queria';
-            activeClass = 'active-queria';
+          memorySet = queriaDoUsuario;
+          tableName = "interacoes_queria";
+          activeClass = "active-queria";
         }
 
         const isAtivo = memorySet.has(idParaBanco);
         const btn = document.getElementById(`btn-${tipo}-${idParaBanco}`);
-        const countSpan = document.getElementById(`count-${tipo}-${idParaBanco}`);
+        const countSpan = document.getElementById(
+          `count-${tipo}-${idParaBanco}`,
+        );
         let count = parseInt(countSpan ? countSpan.innerText : "0") || 0;
 
         if (isAtivo) {
@@ -1701,13 +1714,19 @@
           memorySet.delete(idParaBanco);
           if (btn) btn.classList.remove(activeClass);
           if (countSpan) countSpan.innerText = Math.max(0, count - 1);
-          await supabaseClient.from(tableName).delete().eq("usuario_id", userId).eq("brinquedo_id", idParaBanco);
+          await supabaseClient
+            .from(tableName)
+            .delete()
+            .eq("usuario_id", userId)
+            .eq("brinquedo_id", idParaBanco);
         } else {
           // Inserir
           memorySet.add(idParaBanco);
           if (btn) btn.classList.add(activeClass);
           if (countSpan) countSpan.innerText = count + 1;
-          await supabaseClient.from(tableName).insert([{ usuario_id: userId, brinquedo_id: idParaBanco }]);
+          await supabaseClient
+            .from(tableName)
+            .insert([{ usuario_id: userId, brinquedo_id: idParaBanco }]);
         }
       }
 
