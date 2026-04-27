@@ -1390,14 +1390,20 @@
         const grid = document.getElementById("toyGrid");
         const card = document.getElementById(`card-${id}`);
         const isFlipped = card.classList.contains("is-flipped");
+
         document
           .querySelectorAll(".masonry-item")
           .forEach((c) => c.classList.remove("is-flipped"));
+
         if (!isFlipped) {
           card.classList.add("is-flipped");
           grid.classList.add("grid-focused");
+          // NOVA AÇÃO: Trava a rolagem do site inteiro
+          document.body.classList.add("overflow-hidden");
         } else {
           grid.classList.remove("grid-focused");
+          // NOVA AÇÃO: Destrava a rolagem
+          document.body.classList.remove("overflow-hidden");
         }
       }
 
@@ -1410,6 +1416,21 @@
             t.fabricante.toLowerCase().includes(term),
         );
         render(filtered, false);
+      });
+
+      // NOVA FUNÇÃO: Fecha o card ao clicar fora dele (no fundo cinza)
+      document.addEventListener("click", (event) => {
+        const grid = document.getElementById("toyGrid");
+        // Só faz a checagem se o grid estiver com algum card em foco
+        if (grid && grid.classList.contains("grid-focused")) {
+          const flippedCard = document.querySelector(
+            ".masonry-item.is-flipped",
+          );
+          // Se existe um card virado E o clique NÃO foi dentro dele
+          if (flippedCard && !flippedCard.contains(event.target)) {
+            resetarEstadoDosCards();
+          }
+        }
       });
 
       function filterBy(criteria) {
@@ -1624,17 +1645,18 @@
       // RESET VISUAL (Salva a pátria no redimensionamento)
       // ============================================================
       function resetarEstadoDosCards() {
-        // 1. Remove a classe do grid que ativa o fundo cinza nos outros cards
         const grid = document.getElementById("toyGrid");
         if (grid) {
           grid.classList.remove("grid-focused");
         }
 
-        // 2. Procura todos os cards e tira o estado de "virado"
         const todosOsCards = document.querySelectorAll(".masonry-item");
         todosOsCards.forEach((card) => {
           card.classList.remove("is-flipped");
         });
+
+        // NOVA AÇÃO: Destrava a rolagem do site inteiro
+        document.body.classList.remove("overflow-hidden");
       }
 
       // ============================================================
