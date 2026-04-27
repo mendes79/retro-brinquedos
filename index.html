@@ -1620,6 +1620,42 @@
         return r.sort(() => Math.random() - 0.5).slice(0, count);
       }
 
+      // ============================================================
+      // RESET VISUAL (Salva a pátria no redimensionamento)
+      // ============================================================
+      function resetarEstadoDosCards() {
+        // 1. Remove a classe do grid que ativa o fundo cinza nos outros cards
+        const grid = document.getElementById("toyGrid");
+        if (grid) {
+          grid.classList.remove("grid-focused");
+        }
+
+        // 2. Procura todos os cards e tira o estado de "virado"
+        const todosOsCards = document.querySelectorAll(".masonry-item");
+        todosOsCards.forEach((card) => {
+          card.classList.remove("is-flipped");
+        });
+      }
+
+      // ============================================================
+      // OUVINTE DE REDIMENSIONAMENTO BLINDADO
+      // ============================================================
+      let resizeTimer;
+      window.addEventListener("resize", () => {
+        // 1. Fecha qualquer card que esteja aberto IMEDIATAMENTE
+        resetarEstadoDosCards();
+
+        clearTimeout(resizeTimer);
+
+        // 2. Espera 250ms garantindo que o navegador terminou de esticar a janela
+        resizeTimer = setTimeout(() => {
+          // 3. Reconstrói as colunas do Masonry com a largura correta da janela
+          if (allToys && allToys.length > 0) {
+            render(allToys, false);
+          }
+        }, 250);
+      });
+
       init();
     </script>
   </body>
