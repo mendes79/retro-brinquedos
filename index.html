@@ -453,22 +453,30 @@
       }
 
       .trunfo-photo-wrapper {
-        margin: 8px 10px 4px;
-        position: relative;
-        flex-shrink: 0;
-      }
-      .trunfo-photo-frame {
-        border: 3px solid var(--trunfo-gold);
-        padding: 2px;
-        background: #000;
-        position: relative;
-      }
-      .trunfo-photo {
+        /* O min-height: 0 é o truque mágico para o Firefox entender 
+        que a caixa não pode crescer infinitamente dentro de um flexbox */
+        min-height: 0;
         width: 100%;
-        height: 90px;
-        object-fit: cover;
+      }
+
+      .trunfo-photo-frame {
+        position: relative;
+        width: 100%;
+        height: 100%; /* Garante que ocupe o espaço exato destinado a ela */
+        overflow: hidden; /* Corta qualquer pedacinho que tentar vazar */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Mantenha aqui as suas regras de borda, padding e cores originais */
+      }
+
+      .trunfo-photo {
+        max-width: 100%;
+        max-height: 100%;
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Faz a imagem preencher o quadro lindamente sem distorcer. Se preferir não cortar nada, mude para 'contain' */
         display: block;
-        filter: sepia(20%) contrast(1.08);
       }
       .trunfo-photo-year {
         position: absolute;
