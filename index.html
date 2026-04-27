@@ -1003,6 +1003,35 @@
         text-shadow: 0 0 10px #22d3ee;
         animation: blinkNeon 1s infinite;
       }
+
+      /* ============================================================
+         BOTÃO SAIR (ESTILO GLASSLITE)
+         ============================================================ */
+      .glasslite-btn {
+        background-color: #e3000f; /* Vermelho clássico da marca */
+        color: #ffffff;
+        font-family: "Archivo Black", sans-serif;
+        font-size: 0.7rem;
+        font-style: italic;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 3px;
+        border: 1px solid #ff6b6b;
+        box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+        cursor: pointer;
+        transition:
+          transform 0.1s,
+          filter 0.2s;
+        letter-spacing: 0.05em;
+      }
+      .glasslite-btn:hover {
+        filter: brightness(1.2);
+        transform: translateY(-1px);
+      }
+      .glasslite-btn:active {
+        transform: translateY(1px);
+        box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
+      }
     </style>
   </head>
 
@@ -1046,16 +1075,9 @@
       <div id="userArea" class="flex gap-4 items-center">
         <button
           onclick="login()"
-          class="text-xs font-bold hover:text-cyan-400 transition"
+          class="bg-pink-600 text-white px-6 py-2 rounded-full text-xs font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50"
         >
           ENTRAR
-        </button>
-        <div class="h-4 w-[1px] bg-slate-700"></div>
-        <button
-          onclick="login()"
-          class="bg-white text-slate-900 px-4 py-2 rounded-full text-xs font-bold hover:bg-cyan-400 transition transform hover:scale-105 uppercase"
-        >
-          Colecionar
         </button>
       </div>
     </nav>
@@ -1770,13 +1792,17 @@
 
       function updateNavWithAvatar(avatarPath, name) {
         document.getElementById("userArea").innerHTML = `
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3 md:gap-4">
             <div class="flex flex-col items-end">
-              <span class="text-[8px] text-cyan-400/70 font-orbitron uppercase tracking-widest">Player 1</span>
-              <span class="text-[10px] font-bold text-white uppercase tracking-tighter">${name}</span>
+              <span class="text-[10px] md:text-xs text-cyan-400 font-orbitron uppercase tracking-widest">Player 1</span>
+              <span class="text-sm md:text-base font-bold text-white uppercase tracking-tighter">${name}</span>
             </div>
-            <div class="w-10 h-10 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900"><img src="${avatarPath}" class="w-full h-full object-contain"></div>
-            <button onclick="logOut()" class="ml-2 text-[10px] text-gray-500 hover:text-red-500 uppercase font-orbitron">[ SAIR ]</button>
+            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(34,211,238,0.4)]">
+              <img src="${avatarPath}" class="w-full h-full object-contain">
+            </div>
+            <button onclick="logOut()" class="glasslite-btn ml-2">
+              Sair
+            </button>
           </div>`;
       }
 
