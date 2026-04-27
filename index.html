@@ -338,7 +338,7 @@
       /* ============================================================
          MECÂNICA 3D FLIP E FOCO (RESTAURADA)
          ============================================================ */
-      #toyGrid.grid-focused .masonry-item:not(.is-flipped) {
+      /*#toyGrid.grid-focused .masonry-item:not(.is-flipped) {
         filter: grayscale(100%) brightness(0.8);
         opacity: 0.5;
         pointer-events: none;
@@ -355,7 +355,26 @@
         transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
         transform-style: preserve-3d;
         cursor: pointer;
+      }*/
+
+      /* EFEITO DE FOCO 3D (O que você sugeriu para mobile/desktop) */
+      #toyGrid.grid-focused .masonry-item:not(.is-flipped) {
+        filter: grayscale(100%) blur(2px);
+        opacity: 0.2;
+        pointer-events: none;
       }
+
+      #toyGrid.grid-focused .masonry-item.is-flipped {
+        z-index: 150; /* O card fica acima de tudo */
+        filter: grayscale(0%) blur(0);
+        opacity: 1;
+      }
+
+      .is-flipped .card-inner {
+        transform: rotateY(180deg) scale(1.08); /* Efeito de aproximação */
+        box-shadow: 0 40px 70px rgba(0, 0, 0, 0.9); /* Sombra 3D projetada */
+      }
+
       .is-flipped .card-inner {
         transform: rotateY(180deg) scale(1.05);
         z-index: 90;
@@ -386,6 +405,7 @@
         left: 0;
         height: 100%;
         min-height: 540px; /* Era 480. Aumentamos a altura mínima para acomodar o novo campo de chat sem esmagar o rodapé */
+        max-height: 90vh; /* Garante que o card não ultrapasse a tela */
         transform: rotateY(180deg);
         display: flex;
         flex-direction: column;
@@ -1008,7 +1028,8 @@
          ============================================================ */
       #chatPanel {
         /* No Mobile: Reduzimos de 35vh para 18vh (cerca de 50% de redução) */
-        height: 18vh;
+        height: 15vh; /* Mobile: Reduzido para ocupar apenas uma faixa inferior */
+        z-index: 120; /* Acima de quase tudo, mas abaixo do card em foco */
         transition: transform 0.3s ease-in-out;
       }
       /* Fechado no mobile (desce para baixo) */
@@ -1019,8 +1040,10 @@
       @media (min-width: 768px) {
         #chatPanel {
           /* No Desktop: Garantimos que ele comece exatamente onde a nav termina e não ocupe a tela toda */
-          top: var(--nav-height); 
-          height: calc(100vh - var(--nav-height));
+          /*top: var(--nav-height); 
+          height: calc(100vh - var(--nav-height));*/
+          top: 72px !important; /* Alinhado exatamente abaixo da nav */
+          height: calc(100vh - 72px);
           width: 200px; /* Leve redução adicional para ganhar área de grid */
         }
       }
@@ -1540,15 +1563,17 @@
                   </div>
                 </div>
                 
-                <div class="px-2 py-1.5 bg-[#050505] border-t border-white/5 flex gap-1 items-center shrink-0">
-                    <span class="text-[#39ff14] font-orbitron text-[0.55rem]">></span>
-                    <input type="text" id="comentario-input-${idNormalizado}" 
-                           class="flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.55rem] px-1 py-0.5 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" 
+                <div class="px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()">
+                    <span class="text-[#39ff14] font-orbitron text-[0.55rem] shrink-0">></span>
+                    <input type="text" 
+                           id="comentario-input-${idNormalizado}" 
+                           class="flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" 
                            placeholder="Mensagem..." 
                            onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')"
+                           onclick="event.stopPropagation()"
                            ${!isLiked && !isTive && !isQueria ? 'disabled placeholder="Interaja..."' : ''}>
-                    <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}')" 
-                            class="text-cyan-400 hover:text-pink-500 font-orbitron text-[0.5rem] tracking-tighter uppercase px-1 transition-colors shrink-0">
+                    <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" 
+                            class="text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0 whitespace-nowrap">
                       SEND
                     </button>
                   </div>
@@ -1583,16 +1608,17 @@
         const card = document.getElementById(`card-${id}`);
         const isFlipped = card.classList.contains("is-flipped");
 
-        document
-          .querySelectorAll(".masonry-item")
-          .forEach((c) => c.classList.remove("is-flipped"));
+        // Fecha outros cards
+        document.querySelectorAll(".masonry-item").forEach((c) => c.classList.remove("is-flipped"));
 
         if (!isFlipped) {
           card.classList.add("is-flipped");
           grid.classList.add("grid-focused");
 
-          // A MÁGICA: A câmera desliza e centraliza o card perfeitamente na tela
-          card.scrollIntoView({ behavior: "smooth", block: "center" });
+          // Scroll inteligente: centraliza o card com um pequeno offset para a navbar
+          const yOffset = -80; 
+          const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: 'smooth' });
         } else {
           grid.classList.remove("grid-focused");
         }
