@@ -417,7 +417,11 @@ async function toggleCurtida(event, brinquedoId) {
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
-  if (!session) return;
+  if (!session) {
+    dispararTilt("FAÇA LOGIN PARA CURTIR");
+    login();
+    return;
+  }
 
   const userId = session.user.id;
   const idParaBanco = String(brinquedoId).padStart(4, "0");
@@ -453,7 +457,11 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
-  if (!session) return;
+  if (!session) {
+    dispararTilt("FAÇA LOGIN PARA INTERAGIR");
+    login();
+    return;
+  }
 
   const userId = session.user.id;
   const idParaBanco = String(brinquedoId).padStart(4, "0");
@@ -503,100 +511,300 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   }
 }
 
-/* 3.9. REALTIME CHAT (SUPABASE WEBSOCKETS) */
+/* ============================================================
+   SEÇÃO 3.9. PAINEL LED — ENGINE COMPLETA
+   ============================================================ */
 
-let chatNotificacoesNaoLidas = 0;
+/* 3.9.1. ESTADO DO PAINEL */
+let ledPainelAtivo = localStorage.getItem("led_painel") !== "off";
+let ledFilaAtual = [];
+let ledEmExibicao = false;
+let ledTiltAtivo = false;
+let ledGlitchSessao = false;
+let ledEasterEggContador = 0;
+let ledEasterEggTimer = null;
 
-/* 3.9.1. Controle do Drawer e Visibilidade */
-function toggleChatPanel() {
-  const panel = document.getElementById("chatPanel");
-  const badge = document.getElementById("chatBadge");
-  const btn = document.getElementById("chatToggleBtn");
+/* 3.9.2. CONTEÚDO FIXO — MENSAGENS FAKE (fallback) */
+const LED_MENSAGENS_FAKE = [
+  "JOGADOR_77 curtiu He-Man Masters of Universe",
+  "CAROL_BH marcou EU TIVE em Estrela Júpiter",
+  "MARCOS_SP marcou QUERIA TER em Robocop Estrela",
+  "NERD_RETRÔ curtiu Tartarugas Ninja Glasslite",
+  "ALINE_RJ marcou EU TIVE em Boneca Susi Estrela",
+  "RETROGAMER marcou QUERIA TER em Super Nintendo",
+  "PEDRO_MG curtiu Hot Wheels Mattel Anos 90",
+  "TURMA_80s marcou EU TIVE em Falcon Gulliver",
+  "CLASSICO_BR curtiu Transformers Estrela",
+  "RAINHA_90s marcou QUERIA TER em Polly Pocket",
+  "NINTENDISTA curtiu Duck Hunt Nintendo",
+  "PLAYER_DOS_8BITS marcou EU TIVE em Atari 2600",
+  "NOSTALGIA_SP curtiu Lego Fabuland anos 80",
+  "RETROWAVE marcou QUERIA TER em Street Fighter Glasslite",
+  "FELIPPE_BH curtiu Brinquedo da Bandeirante",
+  "COLECIONADOR_RJ marcou EU TIVE em Playmobil",
+  "GEEK_ANOS90 curtiu Action Man Estrela",
+  "CRIANÇA_DE_80 marcou QUERIA TER em Scalextric",
+  "RETRÔ_GAMES curtiu Nintendinho NES",
+  "MEMÓRIA_VIVA marcou EU TIVE em Barbie Estrela anos 80",
+];
 
-  panel.classList.toggle("is-closed");
+/* 3.9.3. FRASES DO SISTEMA */
+const LED_FRASES_SISTEMA = [
+  "PLEASE INSERT COIN",
+  "VOLTAMOS EM BREVE...",
+  "ISSO É TUDO PESSOAL!",
+  "VOLTAMOS DEPOIS DOS RECLAMES DO PLIM-PLIM",
+  "TILT !!!",
+  "GAME OVER — CONTINUE?",
+  "HIGH SCORE — SEU NOME AQUI",
+  "PRESS START TO PLAY",
+  "NÃO SE ESQUEÇA DE CURTIR SEUS BRINQUEDOS FAVORITOS",
+  "COMPARTILHE SUAS MEMÓRIAS COM SEUS AMIGOS",
+  "CLIQUE NO SWITCH PARA DESLIGAR ESSE PAINEL",
+  "VOCÊ SE LEMBRA DESSE BRINQUEDO?",
+  "REVIVA A MAGIA DA INFÂNCIA — RETROBRINQUEDOS BR",
+];
 
-  if (!panel.classList.contains("is-closed")) {
-    chatNotificacoesNaoLidas = 0;
-    if (badge) {
-      badge.classList.add("hidden");
-      badge.innerText = "0";
-    }
-    if (btn)
-      btn.classList.remove(
-        "border-pink-500",
-        "shadow-[0_0_15px_rgba(255,0,255,0.4)]",
-      );
+/* 3.9.4. SPRITES ASCII PARA O PAINEL */
+const LED_SPRITES = [
+  "  c( . .)o   <( . .)>   <( . .) >   <  .  .  >",
+  "  >=>=>=>=>=>=>=>=>   RIVER RAID   =>=>=>=>=>=>",
+  "  [*]--[*]--[*]   ENDURO CHAMPIONSHIP   [*]--[*]",
+  "  /\\ /\\ /\\ ASTEROIDS /\\ /\\ /\\",
+  "  @---@---@ SPACE INVADERS @---@---@",
+];
+
+/* 3.9.5. INICIALIZAÇÃO DO PAINEL */
+function iniciarPainelLED() {
+  const toggle = document.getElementById("ledToggleInput");
+  if (toggle) toggle.checked = ledPainelAtivo;
+
+  const painel = document.getElementById("ledPanel");
+  if (!painel) return;
+
+  if (ledPainelAtivo) {
+    painel.classList.remove("is-off");
+    animarLigar();
+    setTimeout(() => iniciarCicloLED(), 800);
+  } else {
+    painel.classList.add("is-off");
+  }
+
+  // Easter egg: 13 cliques no "R"
+  const easterBtn = document.getElementById("easterEggBtn");
+  if (easterBtn) {
+    easterBtn.addEventListener("click", () => {
+      ledEasterEggContador++;
+      clearTimeout(ledEasterEggTimer);
+      ledEasterEggTimer = setTimeout(() => {
+        ledEasterEggContador = 0;
+      }, 3000);
+      if (ledEasterEggContador >= 13) {
+        ledEasterEggContador = 0;
+        dispararGlitch(6000);
+      }
+    });
+  }
+
+  // Glitch aleatório por sessão (15% de chance)
+  if (Math.random() < 0.15) {
+    ledGlitchSessao = true;
+    const delay = 15000 + Math.random() * 40000;
+    setTimeout(() => dispararGlitch(4000), delay);
   }
 }
 
-/* 3.9.2. Inscrição para receber atualizações do banco */
+/* 3.9.6. TOGGLE ON/OFF DO PAINEL */
+function toggleLedPanel(ligado) {
+  const painel = document.getElementById("ledPanel");
+  if (!painel) return;
+  ledPainelAtivo = ligado;
+  localStorage.setItem("led_painel", ligado ? "on" : "off");
+
+  if (ligado) {
+    painel.classList.remove("is-off");
+    animarLigar();
+    setTimeout(() => iniciarCicloLED(), 800);
+  } else {
+    animarDesligar(() => painel.classList.add("is-off"));
+  }
+}
+
+/* 3.9.7. ANIMAÇÕES DE LIGAR / DESLIGAR */
+function animarLigar() {
+  const painel = document.getElementById("ledPanel");
+  if (!painel) return;
+  painel.classList.remove("powering-off");
+  painel.classList.add("powering-on");
+  setTimeout(() => painel.classList.remove("powering-on"), 500);
+}
+
+function animarDesligar(callback) {
+  const painel = document.getElementById("ledPanel");
+  if (!painel) return;
+  painel.classList.add("powering-off");
+  setTimeout(() => {
+    painel.classList.remove("powering-off");
+    if (callback) callback();
+  }, 500);
+}
+
+/* 3.9.8. ENGINE DA FILA DE MENSAGENS */
+async function montarFila() {
+  // Busca últimas mensagens reais do banco
+  let mensagensReais = [];
+  try {
+    const { data, error } = await supabaseClient
+      .from("feed_live")
+      .select("usuario_nome, acao, brinquedo_nome, detalhe")
+      .order("created_at", { ascending: false })
+      .limit(20);
+    if (!error && data) {
+      mensagensReais = data.map(
+        (m) =>
+          `${m.usuario_nome.toUpperCase()} ${m.acao} ${m.brinquedo_nome}${m.detalhe ? ' — "' + m.detalhe + '"' : ""}`,
+      );
+    }
+  } catch (e) {
+    /* silencioso */
+  }
+
+  // Mescla reais + fake, prioriza reais
+  const pool =
+    mensagensReais.length >= 5
+      ? mensagensReais
+      : [...mensagensReais, ...LED_MENSAGENS_FAKE].slice(0, 20);
+
+  // Escolhe quantidade randômica (10 a 20)
+  const qtd = 10 + Math.floor(Math.random() * 11);
+  const embaralhado = [...pool].sort(() => Math.random() - 0.5).slice(0, qtd);
+
+  // Monta fila: mensagens + separador + frase/sprite
+  const fila = [
+    ...embaralhado,
+    "   . . .   ",
+    Math.random() < 0.4
+      ? LED_SPRITES[Math.floor(Math.random() * LED_SPRITES.length)]
+      : LED_FRASES_SISTEMA[
+          Math.floor(Math.random() * LED_FRASES_SISTEMA.length)
+        ],
+  ];
+
+  return fila;
+}
+
+/* 3.9.9. CICLO PRINCIPAL DE EXIBIÇÃO */
+async function iniciarCicloLED() {
+  if (!ledPainelAtivo || ledTiltAtivo) return;
+  ledFilaAtual = await montarFila();
+  exibirProximaMensagem();
+}
+
+function exibirProximaMensagem() {
+  if (!ledPainelAtivo || ledTiltAtivo || ledFilaAtual.length === 0) {
+    if (!ledTiltAtivo) iniciarCicloLED();
+    return;
+  }
+
+  const msg = ledFilaAtual.shift();
+  exibirMensagemNoLED(msg, () => {
+    if (ledFilaAtual.length > 0) {
+      exibirProximaMensagem();
+    } else {
+      // Pausa de 1.5s entre ciclos, então reinicia
+      setTimeout(() => iniciarCicloLED(), 1500);
+    }
+  });
+}
+
+function exibirMensagemNoLED(texto, onComplete) {
+  const el = document.getElementById("ledContent");
+  if (!el) return;
+
+  el.textContent = texto;
+  el.classList.remove("tilt-mode");
+
+  // Calcula duração com base no comprimento do texto
+  const velocidade = 80; // px por segundo aproximado
+  const larguraEstimada = texto.length * 9;
+  const duracao = Math.max(
+    6,
+    (larguraEstimada + window.innerWidth) / velocidade,
+  );
+
+  el.style.animation = "none";
+  el.offsetHeight; // reflow forçado
+  el.style.animation = `ledScroll ${duracao}s linear 1`;
+
+  // Ao terminar a animação, chama próxima
+  const handler = () => {
+    el.removeEventListener("animationend", handler);
+    onComplete();
+  };
+  el.addEventListener("animationend", handler);
+}
+
+/* 3.9.10. MENSAGEM PRIORITÁRIA (TILT — SEM LOGIN) */
+function dispararTilt(mensagem) {
+  if (!ledPainelAtivo) return;
+  ledTiltAtivo = true;
+
+  const el = document.getElementById("ledContent");
+  const painel = document.getElementById("ledPanel");
+  if (!el || !painel) return;
+
+  // Para animação atual
+  el.style.animation = "none";
+  el.offsetHeight;
+
+  // Ativa modo TILT
+  el.textContent = `⚡ ${mensagem} ⚡`;
+  el.classList.add("tilt-mode");
+  painel.style.borderColor = "rgba(255,32,32,0.5)";
+  painel.style.boxShadow =
+    "0 0 16px rgba(255,32,32,0.2) inset, 0 2px 8px rgba(0,0,0,0.4)";
+
+  // Pisca por 3 segundos e volta
+  setTimeout(() => {
+    ledTiltAtivo = false;
+    el.classList.remove("tilt-mode");
+    painel.style.borderColor = "";
+    painel.style.boxShadow = "";
+    iniciarCicloLED();
+  }, 3000);
+}
+
+/* 3.9.11. EFEITO GLITCH */
+function dispararGlitch(duracao = 4000) {
+  const painel = document.getElementById("ledPanel");
+  if (!painel) return;
+  painel.classList.add("glitch-line");
+  setTimeout(() => painel.classList.remove("glitch-line"), duracao);
+}
+
+/* 3.9.12. INJEÇÃO DE MENSAGEM PRIORITÁRIA (fura a fila) */
+function ledInjetarPrioritario(texto) {
+  ledFilaAtual.unshift(texto);
+}
+
+/* 3.9.13. REALTIME — RECEBE NOVAS MENSAGENS DO BANCO */
 const feedChannel = supabaseClient.channel("museu-feed");
 feedChannel
   .on(
     "postgres_changes",
     { event: "INSERT", schema: "public", table: "feed_live" },
     (payload) => {
-      renderNovaMensagem(payload.new, true);
+      const m = payload.new;
+      const txt = `${m.usuario_nome.toUpperCase()} ${m.acao} ${m.brinquedo_nome}${m.detalhe ? ' — "' + m.detalhe + '"' : ""}`;
+      ledInjetarPrioritario(txt);
     },
   )
   .subscribe();
 
-/* 3.9.3. Desenha os balões de texto e alerta a UI (Glow) */
-function renderNovaMensagem(msg, isNova = true) {
-  const feed = document.getElementById("chatFeed");
-  if (!feed) return;
-  if (feed.innerText.includes("Aguardando transmissões")) feed.innerHTML = "";
-
-  const dataHora = new Date(msg.created_at).toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  const msgHTML = `
-    <div class="border-l-2 border-[#39ff14]/30 pl-2 py-1 mb-1 animate-[cardFadeIn_0.3s_ease-out]">
-      <div class="text-[0.45rem] md:text-[0.5rem] text-[#39ff14]/60 mb-0.5 font-orbitron">[${dataHora}] DATA.LINK</div>
-      <div class="text-[#39ff14] leading-tight">
-        <span class="font-bold text-white">${msg.usuario_nome}</span> ${msg.acao} <span class="text-cyan-400 font-bold">${msg.brinquedo_nome}</span>
-        ${msg.detalhe ? `<br><span class="text-pink-400 block mt-1">"${msg.detalhe}"</span>` : ""}
-      </div>
-    </div>`;
-
-  feed.insertAdjacentHTML("beforeend", msgHTML);
-  feed.scrollTop = feed.scrollHeight;
-
-  const panel = document.getElementById("chatPanel");
-  if (isNova && panel && panel.classList.contains("is-closed")) {
-    chatNotificacoesNaoLidas++;
-    const badge = document.getElementById("chatBadge");
-    const btn = document.getElementById("chatToggleBtn");
-    if (badge) {
-      badge.innerText =
-        chatNotificacoesNaoLidas > 99 ? "99+" : chatNotificacoesNaoLidas;
-      badge.classList.remove("hidden");
-    }
-    if (btn)
-      btn.classList.add(
-        "border-pink-500",
-        "shadow-[0_0_15px_rgba(255,0,255,0.4)]",
-        "text-white",
-      );
-  }
-}
-
-/* 3.9.4. Resgata e desenha mensagens antigas */
-async function carregarHistoricoFeed() {
-  const { data, error } = await supabaseClient
-    .from("feed_live")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(15);
-  if (!error && data)
-    data.reverse().forEach((msg) => renderNovaMensagem(msg, false));
-}
-carregarHistoricoFeed();
-
-/* 3.9.5. Rotinas de Envio de Novas Mensagens do front pro backend */
+/* 3.9.14. ENVIO DE COMENTÁRIO DO CARD */
 async function enviarComentario(idNormalizado, nomeBrinquedo) {
   if (!isUserLogged) {
+    dispararTilt("FAÇA LOGIN PARA COMENTAR");
     login();
     return;
   }
@@ -610,18 +818,16 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
   if (!session) return;
 
   const userName = session.user.user_metadata.full_name || "Player 1";
-  input.value = ""; // Otimista
+  input.value = "";
 
-  const { error } = await supabaseClient
-    .from("feed_live")
-    .insert([
-      {
-        usuario_nome: userName,
-        acao: "transmitiu mensagem em",
-        brinquedo_nome: nomeBrinquedo,
-        detalhe: texto,
-      },
-    ]);
+  const { error } = await supabaseClient.from("feed_live").insert([
+    {
+      usuario_nome: userName,
+      acao: "transmitiu mensagem em",
+      brinquedo_nome: nomeBrinquedo,
+      detalhe: texto,
+    },
+  ]);
   if (error) {
     console.error("Erro no envio:", error);
     input.value = texto;
@@ -634,8 +840,9 @@ function handleComentarioEnter(event, idNormalizado, nomeBrinquedo) {
     enviarComentario(idNormalizado, nomeBrinquedo);
   }
 }
-
-/* 3.10. INICIALIZAÇÃO DA APLICAÇÃO (BOOT) */
+/* ============================================================
+   SEÇÃO 3.10. INICIALIZAÇÃO DA APLICAÇÃO (BOOT)
+   ============================================================ */
 
 /* 3.10.1. Adapta o layout para mudanças de tela limpas */
 let resizeTimer;
@@ -656,10 +863,8 @@ async function init() {
     isUserLogged = true;
     document.body.classList.remove("app-unlogged");
     const userName = session.user.user_metadata.full_name || "Player 1";
-
     await carregarInteracoesDoBanco(session.user.id);
     const savedAvatar = localStorage.getItem("retro_avatar");
-
     if (savedAvatar) {
       updateNavWithAvatar(savedAvatar, userName);
     } else {
@@ -672,6 +877,23 @@ async function init() {
 
   setupObserver();
   await fetchBrinquedos(true);
+  ajustarPainelLED();
+  iniciarPainelLED();
 }
+
+function ajustarPainelLED() {
+  const nav = document.querySelector("nav");
+  const painel = document.getElementById("ledPanel");
+  if (!nav || !painel) return;
+  const alturaNav = nav.getBoundingClientRect().height;
+  painel.style.top = alturaNav + "px";
+
+  // Atualiza também o padding do hero para não ficar atrás do painel
+  const hero = document.querySelector(".hero-section");
+  if (hero) hero.style.paddingTop = alturaNav + 28 + "px";
+}
+
+// Recalcula se a navbar mudar de tamanho (ex: wrap no mobile)
+window.addEventListener("resize", ajustarPainelLED);
 
 init();
