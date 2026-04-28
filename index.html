@@ -1952,6 +1952,137 @@
           }
         }
       }
+      // ============================================================
+      // SUPABASE REALTIME (O MOTOR DO CHAT)
+      // ============================================================
+
+      // 1. Conecta ao canal para ouvir novas mensagens em tempo real
+      const feedChannel = supabaseClient.channel("museu-feed");
+      feedChannel
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "feed_live" },
+          (payload) => {
+            renderNovaMensagem(payload.new, true);
+          },
+        )
+        .subscribe();
+
+      // 2. Renderiza a mensagem na tela
+      function renderNovaMensagem(msg, isNova = true) {
+        const feed = document.getElementById("chatFeed");
+        if (!feed) return;
+
+        // Remove os textos de "Aguardando..." no primeiro uso
+        if (feed.innerText.includes("Aguardando transmissões")) {
+          feed.innerHTML = "";
+        }
+
+        const dataHora = new Date(msg.created_at).toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        const msgHTML = `
+          <div class="border-l-2 border-[#39ff14]/30 pl-2 py-1 mb-1 animate-[cardFadeIn_0.3s_ease-out]">
+            <div class="text-[0.45rem] md:text-[0.5rem] text-[#39ff14]/60 mb-0.5 font-orbitron">
+              [${dataHora}] DATA.LINK
+            </div>
+            <div class="text-[#39ff14] leading-tight">
+              <span class="font-bold text-white">${msg.usuario_nome}</span> 
+              ${msg.acao} <span class="text-cyan-400 font-bold">${msg.brinquedo_nome}</span>
+              ${msg.detalhe ? `<br><span class="text-pink-400 block mt-1">"${msg.detalhe}"</span>` : ""}
+            </div>
+          </div>
+        `;
+
+        feed.insertAdjacentHTML("beforeend", msgHTML);
+        feed.scrollTop = feed.scrollHeight; // Rola pro fim automaticamente
+
+        // Se a mensagem for nova e o painel estiver fechado, pisca a notificação
+        const panel = document.getElementById("chatPanel");
+        if (isNova && panel && panel.classList.contains("is-closed")) {
+          chatNotificacoesNaoLidas++;
+          const badge = document.getElementById("chatBadge");
+          const btn = document.getElementById("chatToggleBtn");
+
+          if (badge) {
+            badge.innerText =
+              chatNotificacoesNaoLidas > 99 ? "99+" : chatNotificacoesNaoLidas;
+            badge.classList.remove("hidden");
+          }
+          if (btn) {
+            btn.classList.add(
+              "border-pink-500",
+              "shadow-[0_0_15px_rgba(255,0,255,0.4)]",
+              "text-white",
+            );
+          }
+        }
+      }
+
+      // 3. Carrega as últimas 15 mensagens ao abrir o site
+      async function carregarHistoricoFeed() {
+        const { data, error } = await supabaseClient
+          .from("feed_live")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(15);
+
+        if (!error && data) {
+          data.reverse().forEach((msg) => renderNovaMensagem(msg, false));
+        }
+      }
+
+      // Chama o histórico no boot
+      carregarHistoricoFeed();
+
+      // 4. Envio de Comentários
+      async function enviarComentario(idNormalizado, nomeBrinquedo) {
+        if (!isUserLogged) {
+          login();
+          return;
+        }
+
+        const input = document.getElementById(
+          `comentario-input-${idNormalizado}`,
+        );
+        const texto = input ? input.value.trim() : "";
+
+        if (!texto) return;
+
+        const {
+          data: { session },
+        } = await supabaseClient.auth.getSession();
+        if (!session) return;
+
+        const userName = session.user.user_metadata.full_name || "Player 1";
+
+        // Limpa o input imediatamente (UI Otimista)
+        input.value = "";
+
+        // Dispara pro banco (O Realtime vai capturar e devolver para a tela instantaneamente)
+        const { error } = await supabaseClient.from("feed_live").insert([
+          {
+            usuario_nome: userName,
+            acao: "transmitiu mensagem em",
+            brinquedo_nome: nomeBrinquedo,
+            detalhe: texto,
+          },
+        ]);
+
+        if (error) {
+          console.error("Erro no envio:", error);
+          input.value = texto; // Devolve o texto pro input se der erro de rede
+        }
+      }
+
+      function handleComentarioEnter(event, idNormalizado, nomeBrinquedo) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          enviarComentario(idNormalizado, nomeBrinquedo);
+        }
+      }
 
       init();
     </script>
