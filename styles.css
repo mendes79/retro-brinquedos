@@ -1,0 +1,981 @@
+/* ============================================================
+   SEÇÃO 2: ESTILOS CUSTOMIZADOS
+   ============================================================ */
+
+/* 2.1. VARIÁVEIS E BASE */
+:root {
+  --neon-pink: #ff00ff;
+  --neon-blue: #00ffff;
+  --neon-yellow: #ffe600;
+  --trunfo-red: #c0392b;
+  --trunfo-gold: #f0c040;
+  --trunfo-dark: #1a1a2e;
+  --nav-height: 72px;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #0f172a;
+  color: white;
+  overflow-x: hidden;
+}
+
+.font-retro {
+  font-family: "Archivo Black", sans-serif;
+}
+.font-orbitron {
+  font-family: "Orbitron", monospace;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 2.2. HERO SECTION E EFEITOS */
+.hero-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  padding-top: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 2.2.1. Background Grid Retro 80s */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    #0d0221 0%,
+    #1a0533 30%,
+    #0a1628 70%,
+    #001a33 100%
+  );
+  overflow: hidden;
+}
+.hero-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(0, 255, 255, 0.18) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255, 0, 255, 0.1) 1px, transparent 1px);
+  background-size:
+    40px 40px,
+    80px 80px;
+  background-position:
+    0 0,
+    20px 20px;
+}
+.hero-bg::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 18px,
+      rgba(255, 0, 255, 0.12) 18px,
+      rgba(255, 0, 255, 0.12) 19px
+    ),
+    repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent 9%,
+      rgba(0, 255, 255, 0.1) 9%,
+      rgba(0, 255, 255, 0.1) calc(9% + 1px)
+    );
+  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
+  mask-image: linear-gradient(to top, black 0%, transparent 100%);
+  transform: perspective(600px) rotateX(40deg);
+  transform-origin: bottom center;
+}
+
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  mix-blend-mode: luminosity;
+  opacity: 0.22;
+}
+
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 30%,
+    rgba(15, 23, 42, 0.85) 100%
+  );
+}
+
+.hero-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 320px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(15, 23, 42, 0.55) 50%,
+    #0f172a 100%
+  );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem 2.5rem 6rem;
+  max-width: min(860px, 90vw);
+  width: 100%;
+}
+
+.hero-tag {
+  display: inline-block;
+  border: 1px solid rgba(0, 255, 255, 0.5);
+  background: rgba(0, 255, 255, 0.06);
+  color: var(--neon-blue);
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  padding: 4px 16px;
+  border-radius: 2px;
+  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-family: "Archivo Black", sans-serif;
+  font-size: clamp(2rem, 5.5vw, 4rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  background: linear-gradient(
+    135deg,
+    #fff 0%,
+    var(--neon-blue) 40%,
+    var(--neon-pink) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.2rem;
+  filter: drop-shadow(0 0 40px rgba(255, 0, 255, 0.35));
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.hero-subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+  max-width: 520px;
+  margin: 0 auto 2rem;
+  line-height: 1.7;
+}
+
+/* 2.2.2. Botão Principal Hero (Animação Shine) */
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+  color: #0f172a;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 14px 36px;
+  border-radius: 100px;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+}
+.hero-cta:hover {
+  transform: scale(1.06);
+  filter: brightness(1.15);
+}
+.hero-cta::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 60%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: skewX(-20deg);
+  animation: shine 3s infinite;
+}
+@keyframes shine {
+  0% {
+    left: -80%;
+  }
+  50% {
+    left: 120%;
+  }
+  100% {
+    left: 120%;
+  }
+}
+
+/* 2.2.3. Estatísticas e Indicador Animado */
+.hero-stats {
+  display: flex;
+  gap: 2.5rem;
+  justify-content: center;
+  margin-top: 2.5rem;
+  padding-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+.hero-stat-item {
+  text-align: center;
+}
+.hero-stat-number {
+  font-family: "Orbitron", monospace;
+  font-size: 1.5rem;
+  color: var(--neon-yellow);
+  display: block;
+}
+.hero-stat-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+}
+.hero-scroll-arrow {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.5;
+  animation: bounce 2s infinite;
+}
+.hero-scroll-arrow span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(45deg);
+}
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(8px);
+  }
+}
+
+/* 2.3. MASONRY GRID E ANIMAÇÕES DOS CARDS */
+.masonry-grid {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  width: 100%;
+}
+.masonry-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 0;
+}
+.masonry-item {
+  perspective: 1200px;
+  transition:
+    filter 0.5s ease,
+    opacity 0.5s ease;
+  position: relative;
+  width: 100%;
+}
+.card-enter {
+  animation: cardFadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+@keyframes cardFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 2.3.1. Engine 3D e Mecânica Desktop vs Mobile */
+.card-inner {
+  position: relative;
+  width: 100%;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  #toyGrid.grid-focused .masonry-item:not(.is-flipped) {
+    filter: grayscale(100%) blur(2px);
+    opacity: 0.2;
+  }
+  .is-flipped .card-inner {
+    transform: rotateY(180deg) scale(1.08);
+  }
+  .is-flipped .card-back {
+    box-shadow: 0 40px 70px rgba(0, 0, 0, 0.9);
+  }
+}
+
+@media (min-width: 768px) {
+  .card-inner {
+    will-change: transform;
+  }
+  .is-flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+  .is-flipped .card-back {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.masonry-item.is-flipped {
+  z-index: 150 !important;
+}
+.card-front,
+.card-back {
+  width: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+}
+.card-front {
+  position: relative;
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+.card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  min-height: 540px;
+  max-height: 90vh;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  background: var(--trunfo-dark);
+  border-radius: 1rem;
+  outline: 4px solid var(--trunfo-gold);
+  outline-offset: -6px;
+  border: 6px solid #0d0b1e;
+}
+
+/* 2.4. TEMPLATE SUPER TRUNFO (Ficha e Estatísticas) */
+.trunfo-header {
+  background: linear-gradient(180deg, #8b0000 0%, var(--trunfo-red) 100%);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.trunfo-top-bar {
+  background: #6b0000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 8px;
+  font-size: 0.5rem;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-family: "Orbitron", monospace;
+}
+.trunfo-code-badge {
+  font-family: "Orbitron", monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--trunfo-gold);
+  letter-spacing: 0.08em;
+}
+.trunfo-title-area {
+  padding: 6px 10px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.trunfo-star {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  background: var(--trunfo-gold);
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+}
+.trunfo-title-text {
+  font-family: "Archivo Black", sans-serif;
+  font-size: 0.72rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.trunfo-photo-wrapper {
+  margin: 0;
+  border-top: 2px solid var(--trunfo-gold);
+  border-bottom: 2px solid var(--trunfo-gold);
+  position: relative;
+  flex-shrink: 0;
+  background: #000;
+}
+.trunfo-photo-frame {
+  border: none;
+  padding: 0;
+  background: transparent;
+  position: relative;
+}
+.trunfo-photo {
+  width: 100%;
+  height: 115px;
+  object-fit: cover;
+  display: block;
+  filter: sepia(20%) contrast(1.08);
+}
+.trunfo-photo-year {
+  position: absolute;
+  bottom: 5px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  color: var(--trunfo-gold);
+  font-family: "Orbitron", monospace;
+  font-size: 0.5rem;
+  padding: 1px 5px;
+  letter-spacing: 0.1em;
+}
+
+.trunfo-stats-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background: #0f0e1e;
+  border-top: 2px solid var(--trunfo-gold);
+}
+.trunfo-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 10px;
+  font-size: 0.65rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 8px;
+}
+.trunfo-stat-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.03);
+}
+.trunfo-label {
+  font-family: "Orbitron", monospace;
+  font-size: 0.45rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--trunfo-gold);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.trunfo-value {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* 2.4.1. Display LED de Raridade */
+.trunfo-raridade-area {
+  padding: 6px 10px 6px;
+  background: #0f0e1e;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.trunfo-raridade-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.trunfo-raridade-label {
+  font-family: "Orbitron", monospace;
+  font-size: 0.45rem;
+  letter-spacing: 0.12em;
+  color: var(--trunfo-gold);
+  text-transform: uppercase;
+}
+.trunfo-raridade-value {
+  font-family: "Orbitron", monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+}
+.led-display {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.led-row {
+  display: flex;
+  gap: 3px;
+}
+.led {
+  flex: 1;
+  height: 6px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.led.on-green {
+  background: #00e040;
+  border-color: #00ff55;
+  box-shadow:
+    0 0 5px #00e040,
+    0 0 10px rgba(0, 224, 64, 0.5);
+}
+.led.on-yellow {
+  background: #ffe600;
+  border-color: #fff000;
+  box-shadow:
+    0 0 5px #ffe600,
+    0 0 10px rgba(255, 230, 0, 0.5);
+}
+.led.on-red {
+  background: #ff2020;
+  border-color: #ff4444;
+  box-shadow:
+    0 0 5px #ff2020,
+    0 0 10px rgba(255, 32, 32, 0.5);
+}
+
+/* 2.4.2. Texto de Curiosidade */
+.trunfo-curiosidade {
+  margin: 6px 10px 8px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 2px solid var(--neon-pink);
+  font-size: 0.58rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  max-height: 75px;
+  overflow-y: auto;
+}
+.trunfo-curiosidade::-webkit-scrollbar {
+  width: 4px;
+}
+.trunfo-curiosidade::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+.trunfo-curiosidade::-webkit-scrollbar-thumb {
+  background: var(--neon-pink);
+  border-radius: 4px;
+}
+.trunfo-curiosidade::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-blue);
+}
+
+/* 2.5. AÇÕES DO USUÁRIO NO CARD (Tive/Queria, Coração) */
+.trunfo-actions-area {
+  display: flex;
+  background: #0f0e1e;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: auto;
+}
+.action-btn {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  outline: none;
+}
+.action-btn:first-child {
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.action-label {
+  font-family: "Orbitron", monospace;
+  font-size: 0.45rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.2s;
+}
+.action-count {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.6rem;
+  font-weight: 700;
+  transition: color 0.2s;
+}
+
+.action-btn.active-tive .action-label {
+  color: #00e040;
+}
+.action-btn.active-tive .action-count {
+  color: #00e040;
+  text-shadow: 0 0 5px rgba(0, 224, 64, 0.5);
+}
+.action-btn.active-queria .action-label {
+  color: var(--neon-blue);
+}
+.action-btn.active-queria .action-count {
+  color: var(--neon-blue);
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+.app-unlogged .action-btn {
+  cursor: not-allowed;
+}
+.app-unlogged .action-btn:hover .action-label {
+  color: var(--trunfo-red);
+}
+
+/* 2.5.1. Rodapé e Botão de Curtida */
+.trunfo-footer {
+  background: linear-gradient(0deg, #6b0000, var(--trunfo-red));
+  padding: 5px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  border-top: 2px solid var(--trunfo-gold);
+}
+.trunfo-footer-logo {
+  font-family: "Orbitron", monospace;
+  font-size: 0.4rem;
+  color: #ffffff;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.like-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.heart-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+.heart-svg {
+  width: 18px;
+  height: 18px;
+  fill: #3a0000;
+  filter: drop-shadow(1px 0 0 white) drop-shadow(-1px 0 0 white)
+    drop-shadow(0 1px 0 white) drop-shadow(0 -1px 0 white);
+  transition:
+    fill 0.3s,
+    transform 0.2s;
+}
+.app-unlogged .heart-btn:not(.liked):hover .heart-svg {
+  animation: pulseSoft 1.5s infinite;
+}
+
+/* 2.5.2. Tooltip de Aviso (Login necessário) */
+.heart-tooltip {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid var(--neon-pink);
+  color: #fff;
+  font-family: "Orbitron", monospace;
+  font-size: 0.75rem;
+  padding: 10px;
+  white-space: normal;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+  z-index: 100;
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+}
+@media (max-width: 640px) {
+  .heart-tooltip {
+    font-size: 0.65rem;
+    padding: 8px;
+    bottom: 35px;
+  }
+}
+.app-unlogged .heart-btn:hover .heart-tooltip {
+  opacity: 1;
+}
+.heart-btn.liked .heart-svg {
+  fill: #ff0044;
+}
+.heart-btn.animating .heart-svg {
+  animation: likeBurst 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.like-count {
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--trunfo-gold);
+  min-width: 1.2rem;
+  text-align: right;
+}
+
+@keyframes pulseSoft {
+  0%,
+  100% {
+    transform: scale(1);
+    fill: #3a0000;
+  }
+  50% {
+    transform: scale(1.15);
+    fill: #5a0000;
+  }
+}
+@keyframes likeBurst {
+  0% {
+    transform: scale(1);
+    fill: #3a0000;
+  }
+  30% {
+    transform: scale(1.6);
+    fill: var(--neon-pink);
+  }
+  60% {
+    transform: scale(1.2);
+    fill: var(--neon-blue);
+  }
+  100% {
+    transform: scale(1);
+    fill: #ff0044;
+  }
+}
+
+/* 2.6. ARCADE MODAL (LOGIN & AVATARES) */
+.arcade-box {
+  background: #050505;
+  border: 3px solid #39ff14;
+  border-radius: 12px;
+  box-shadow:
+    0 0 20px rgba(57, 255, 20, 0.4),
+    inset 0 0 30px rgba(57, 255, 20, 0.1);
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(57, 255, 20, 0.05) 2px,
+    rgba(57, 255, 20, 0.05) 4px
+  );
+}
+.insert-coin-text {
+  animation: blinkNeon 1.5s infinite;
+  filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.6));
+}
+.coins-wrapper {
+  position: relative;
+}
+.coin-btn {
+  width: 70px;
+  height: 70px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+}
+.coin-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.coins-wrapper:hover .coin-btn:not(:hover) {
+  filter: grayscale(100%) blur(2px);
+  opacity: 0.4;
+  transform: scale(0.9);
+}
+.coins-wrapper .coin-btn:hover {
+  transform: scale(1.15) translateY(-5px);
+  filter: drop-shadow(0 15px 12px rgba(57, 255, 20, 0.9));
+  z-index: 10;
+}
+.coin-inserted {
+  animation: insertFlash 0.3s forwards;
+  pointer-events: none;
+}
+.game-over-text {
+  text-shadow:
+    4px 4px 0 #4a0000,
+    0 0 20px #ff0000;
+  animation: glitchGameOver 0.2s infinite;
+}
+
+@keyframes blinkNeon {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+@keyframes insertFlash {
+  0% {
+    transform: scale(1.15);
+    filter: brightness(1.5) drop-shadow(0 15px 12px rgba(57, 255, 20, 1));
+  }
+  100% {
+    transform: scale(0.9) translateY(10px);
+    filter: brightness(0);
+    opacity: 0;
+  }
+}
+@keyframes glitchGameOver {
+  0%,
+  100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-3px, 2px);
+  }
+  40% {
+    transform: translate(-1px, -2px);
+  }
+  60% {
+    transform: translate(3px, 1px);
+  }
+  80% {
+    transform: translate(1px, -1px);
+  }
+}
+
+/* 2.6.1. Galeria de Seleção de Avatares */
+.avatar-item {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #1e293b;
+  background: #0f172a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 4px;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .avatar-item {
+    width: 80px;
+    height: 80px;
+  }
+}
+.avatar-item:hover {
+  border-color: #22d3ee;
+  transform: scale(1.1);
+  box-shadow: 0 0 15px #22d3ee;
+  z-index: 10;
+}
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: grayscale(40%);
+  transition: filter 0.2s;
+}
+.avatar-item:hover .avatar-img {
+  filter: grayscale(0%);
+}
+.avatar-selected {
+  animation: selectFlash 0.5s step-end infinite;
+  border-color: #fff !important;
+}
+@keyframes selectFlash {
+  50% {
+    background: #22d3ee;
+  }
+}
+.select-player-text {
+  text-shadow: 0 0 10px #22d3ee;
+  animation: blinkNeon 1s infinite;
+}
+
+/* 2.7. PAINEL DE CHAT E TERMINAL (RESPONSIVIDADE) */
+#chatPanel {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 90;
+  background: #050505;
+  border-color: rgba(57, 255, 20, 0.4);
+}
+@media (max-width: 767px) {
+  #chatPanel {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 15vh;
+    border-top-width: 2px;
+    transform: translateY(0);
+  }
+  #chatPanel.is-closed {
+    transform: translateY(100%);
+  }
+}
+@media (min-width: 768px) {
+  #chatPanel {
+    top: 50%;
+    right: 0;
+    width: 220px;
+    height: 40vh;
+    border-left-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    transform: translateY(-50%) translateX(0);
+  }
+  #chatPanel.is-closed {
+    transform: translateY(-50%) translateX(100%);
+  }
+}
