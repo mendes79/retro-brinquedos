@@ -11,7 +11,7 @@
   --trunfo-gold: #f0c040;
   --trunfo-dark: #1a1a2e;
   --nav-height: 72px;
-  --led-height: 28px;
+  --led-height: 42px; /* Altura do painel LED Era 28, aumentei 50% */
 }
 
 body {
@@ -340,7 +340,7 @@ body {
   }
   .led-content {
     font-size: 11px;
-    line-height: 24px;
+    line-height: 42px; /* altura do painel LED era 28 aumentei 50%*/
   }
 }
 
@@ -1078,14 +1078,14 @@ body {
   display: inline-block;
   white-space: nowrap;
   font-family: "Courier New", Courier, monospace;
-  font-size: 13px;
+  font-size: 17px; /* Tamanho da fonte do conteúdo LED - era 13 para painel 28 */
   font-weight: 700;
   letter-spacing: 0.08em;
   color: #39ff14;
   text-shadow:
     0 0 4px rgba(57, 255, 20, 0.6),
     0 0 8px rgba(57, 255, 20, 0.2);
-  line-height: 28px;
+  line-height: 42px; /* Altura do painel LED era 28, aumentei 50% */
   animation: ledScroll 40s linear infinite;
   animation-delay: -20s;
   will-change: transform;
@@ -1197,12 +1197,16 @@ body {
 }
 
 /* Mobile: painel um pouco menor */
+/* Aumentei o tamanho do painel LED  24 -> 36 e 11 -> 14*/
 @media (max-width: 767px) {
+  :root {
+    --led-height: 36px;
+  }
   .led-panel {
-    height: 24px;
+    height: 36px;
   }
   .led-content {
-    font-size: 11px;
-    line-height: 24px;
+    font-size: 14px;
+    line-height: 36px;
   }
 }

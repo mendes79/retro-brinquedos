@@ -212,7 +212,8 @@ function render(items, append = false) {
           
           <div class="px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()">
               <span class="text-[#39ff14] font-orbitron text-[0.55rem] shrink-0">></span>
-              <input type="text" id="comentario-input-${idNormalizado}" class="flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" onclick="event.stopPropagation()" ${!isLiked && !isTive && !isQueria ? 'disabled placeholder="Interaja..."' : ""}>
+              // DEPOIS
+              <input type="text" id="comentario-input-${idNormalizado}" class="flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" onclick="event.stopPropagation()" ${!isUserLogged ? 'disabled placeholder="Faça login..."' : ""}>
               <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" class="text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0 whitespace-nowrap">SEND</button>
           </div>
 
@@ -419,7 +420,6 @@ async function toggleCurtida(event, brinquedoId) {
   } = await supabaseClient.auth.getSession();
   if (!session) {
     dispararTilt("FAÇA LOGIN PARA CURTIR");
-    login();
     return;
   }
 
@@ -459,7 +459,6 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   } = await supabaseClient.auth.getSession();
   if (!session) {
     dispararTilt("FAÇA LOGIN PARA INTERAGIR");
-    login();
     return;
   }
 
@@ -705,30 +704,26 @@ function exibirProximaMensagem() {
     if (!ledTiltAtivo) iniciarCicloLED();
     return;
   }
-
-  const msg = ledFilaAtual.shift();
-  exibirMensagemNoLED(msg, () => {
-    if (ledFilaAtual.length > 0) {
-      exibirProximaMensagem();
-    } else {
-      // Pausa de 1.5s entre ciclos, então reinicia
-      setTimeout(() => iniciarCicloLED(), 1500);
-    }
+  exibirFilaComoTicker(ledFilaAtual, () => {
+    ledFilaAtual = [];
+    setTimeout(() => iniciarCicloLED(), 1500);
   });
 }
 
-function exibirMensagemNoLED(texto, onComplete) {
+function exibirFilaComoTicker(fila, onComplete) {
   const el = document.getElementById("ledContent");
   if (!el) return;
 
-  el.textContent = texto;
-  el.classList.remove("tilt-mode");
+  const SEP = "   ✦   ";
+  const textoCompleto = fila.join(SEP);
 
-  // Calcula duração com base no comprimento do texto
-  const velocidade = 80; // px por segundo aproximado
-  const larguraEstimada = texto.length * 9;
+  el.classList.remove("tilt-mode");
+  el.textContent = textoCompleto;
+
+  const velocidade = 80; // px/s
+  const larguraEstimada = textoCompleto.length * 10;
   const duracao = Math.max(
-    6,
+    10,
     (larguraEstimada + window.innerWidth) / velocidade,
   );
 
@@ -736,7 +731,6 @@ function exibirMensagemNoLED(texto, onComplete) {
   el.offsetHeight; // reflow forçado
   el.style.animation = `ledScroll ${duracao}s linear 1`;
 
-  // Ao terminar a animação, chama próxima
   const handler = () => {
     el.removeEventListener("animationend", handler);
     onComplete();
@@ -805,7 +799,6 @@ feedChannel
 async function enviarComentario(idNormalizado, nomeBrinquedo) {
   if (!isUserLogged) {
     dispararTilt("FAÇA LOGIN PARA COMENTAR");
-    login();
     return;
   }
   const input = document.getElementById(`comentario-input-${idNormalizado}`);
@@ -888,9 +881,14 @@ function ajustarPainelLED() {
   const alturaNav = nav.getBoundingClientRect().height;
   painel.style.top = alturaNav + "px";
 
-  // Atualiza também o padding do hero para não ficar atrás do painel
   const hero = document.querySelector(".hero-section");
-  if (hero) hero.style.paddingTop = alturaNav + 28 + "px";
+  const ledHeight =
+    parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--led-height",
+      ),
+    ) || 42;
+  if (hero) hero.style.paddingTop = alturaNav + ledHeight + "px";
 }
 
 // Recalcula se a navbar mudar de tamanho (ex: wrap no mobile)
