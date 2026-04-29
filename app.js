@@ -713,7 +713,7 @@ function exibirFilaComoTicker(fila, onComplete) {
   const el = document.getElementById("ledContent");
   if (!el) return;
 
-  const SEP = "   ✦   ";
+  const SEP = "          ✦          ";
   const textoCompleto = fila.join(SEP);
 
   el.classList.remove("tilt-mode");
@@ -746,25 +746,34 @@ function dispararTilt(mensagem) {
   const painel = document.getElementById("ledPanel");
   if (!el || !painel) return;
 
-  // Para animação atual
+  // Para animação de scroll atual
   el.style.animation = "none";
   el.offsetHeight;
 
-  // Ativa modo TILT
   el.textContent = `⚡ ${mensagem} ⚡`;
   el.classList.add("tilt-mode");
   painel.style.borderColor = "rgba(255,32,32,0.5)";
   painel.style.boxShadow =
     "0 0 16px rgba(255,32,32,0.2) inset, 0 2px 8px rgba(0,0,0,0.4)";
 
-  // Pisca por 3 segundos e volta
-  setTimeout(() => {
-    ledTiltAtivo = false;
-    el.classList.remove("tilt-mode");
-    painel.style.borderColor = "";
-    painel.style.boxShadow = "";
-    iniciarCicloLED();
-  }, 3000);
+  // Pisca 3 vezes: 0.7s visível, 0.7s invisível
+  let ciclo = 0;
+  const totalCiclos = 3;
+  const intervalo = 700;
+
+  const piscar = setInterval(() => {
+    el.style.opacity = el.style.opacity === "0" ? "1" : "0";
+    ciclo++;
+    if (ciclo >= totalCiclos * 2) {
+      clearInterval(piscar);
+      el.style.opacity = "1";
+      ledTiltAtivo = false;
+      el.classList.remove("tilt-mode");
+      painel.style.borderColor = "";
+      painel.style.boxShadow = "";
+      iniciarCicloLED();
+    }
+  }, intervalo);
 }
 
 /* 3.9.11. EFEITO GLITCH */

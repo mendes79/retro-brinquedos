@@ -11,7 +11,7 @@
   --trunfo-gold: #f0c040;
   --trunfo-dark: #1a1a2e;
   --nav-height: 72px;
-  --led-height: 42px; /* Altura do painel LED Era 28, aumentei 50% */
+  --led-height: 56px; /* Altura do painel LED Era 28, aumentei 50% */
 }
 
 body {
@@ -1017,7 +1017,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 28px;
+  height: 56px;
   background: #080808;
   overflow: hidden;
   border-bottom: 1px solid rgba(57, 255, 20, 0.15);
@@ -1078,14 +1078,12 @@ body {
   display: inline-block;
   white-space: nowrap;
   font-family: "Courier New", Courier, monospace;
-  font-size: 17px; /* Tamanho da fonte do conteúdo LED - era 13 para painel 28 */
-  font-weight: 700;
+  font-size: 17px;
+  font-weight: 400;
   letter-spacing: 0.08em;
   color: #39ff14;
-  text-shadow:
-    0 0 4px rgba(57, 255, 20, 0.6),
-    0 0 8px rgba(57, 255, 20, 0.2);
-  line-height: 42px; /* Altura do painel LED era 28, aumentei 50% */
+  text-shadow: 0 0 3px rgba(57, 255, 20, 0.4);
+  line-height: 56px;
   animation: ledScroll 40s linear infinite;
   animation-delay: -20s;
   will-change: transform;
@@ -1105,20 +1103,13 @@ body {
 
 /* Estado TILT (login necessário) */
 .led-content.tilt-mode {
-  animation: ledTilt 0.08s step-end infinite;
   color: #ff2020;
-  text-shadow:
-    0 0 6px rgba(255, 32, 32, 0.9),
-    0 0 12px rgba(255, 32, 32, 0.4);
-}
-@keyframes ledTilt {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
+  text-shadow: 0 0 4px rgba(255, 32, 32, 0.6);
+  text-align: center;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Estado GLITCH */
@@ -1200,13 +1191,14 @@ body {
 /* Aumentei o tamanho do painel LED  24 -> 36 e 11 -> 14*/
 @media (max-width: 767px) {
   :root {
-    --led-height: 36px;
+    --led-height: 48px;
   }
   .led-panel {
-    height: 36px;
+    height: 48px;
   }
   .led-content {
     font-size: 14px;
-    line-height: 36px;
+    font-weight: 400;
+    line-height: 48px;
   }
 }
