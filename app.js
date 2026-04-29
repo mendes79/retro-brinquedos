@@ -212,7 +212,6 @@ function render(items, append = false) {
           
           <div class="px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()">
               <span class="text-[#39ff14] font-orbitron text-[0.55rem] shrink-0">></span>
-              // DEPOIS
               <input type="text" id="comentario-input-${idNormalizado}" class="flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" onclick="event.stopPropagation()" ${!isUserLogged ? 'disabled placeholder="Faça login..."' : ""}>
               <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" class="text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0 whitespace-nowrap">SEND</button>
           </div>
