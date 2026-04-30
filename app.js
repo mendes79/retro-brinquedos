@@ -747,7 +747,6 @@ function exibirFilaComoTicker(fila, onComplete) {
 
 /* 3.9.10. MENSAGEM PRIORITÁRIA (TILT — GERAL) */
 function dispararTilt(mensagem) {
-  // Guarda se o painel estava desligado antes do aviso
   const estavaDesligado = !ledPainelAtivo;
   ledTiltAtivo = true;
 
@@ -755,13 +754,11 @@ function dispararTilt(mensagem) {
   const painel = document.getElementById("ledPanel");
   if (!el || !painel) return;
 
-  // Se estiver oculto, força a abertura e a animação de ligar
   if (estavaDesligado) {
     painel.classList.remove("is-off");
     animarLigar();
   }
 
-  // Para animação de scroll atual
   el.style.animation = "none";
   el.offsetHeight; // reflow
 
@@ -771,7 +768,6 @@ function dispararTilt(mensagem) {
   painel.style.boxShadow =
     "0 0 16px rgba(255,32,32,0.2) inset, 0 2px 8px rgba(0,0,0,0.4)";
 
-  // Pisca 3 vezes
   let ciclo = 0;
   const totalCiclos = 3;
   const intervalo = 700;
@@ -783,14 +779,21 @@ function dispararTilt(mensagem) {
       clearInterval(piscar);
       el.style.opacity = "1";
       ledTiltAtivo = false;
-      el.classList.remove("tilt-mode");
+
       painel.style.borderColor = "";
       painel.style.boxShadow = "";
 
-      // Quando acabar: se estava desligado antes, desliga de novo. Se não, volta ao ticker.
       if (estavaDesligado) {
-        animarDesligar(() => painel.classList.add("is-off"));
+        // Mantém vermelho enquanto faz o fade off, só limpa no callback
+        animarDesligar(() => {
+          painel.classList.add("is-off");
+          el.classList.remove("tilt-mode");
+          el.textContent = "";
+        });
       } else {
+        // Apaga o texto temporariamente enquanto o Supabase carrega o próximo Ticker
+        el.classList.remove("tilt-mode");
+        el.textContent = "";
         iniciarCicloLED();
       }
     }
@@ -908,17 +911,20 @@ function dispararTiltBanimento(mensagem, tempoCongelado = 4000) {
       clearInterval(piscar);
       el.style.opacity = "1";
 
-      // Congela a tela vermelha
       setTimeout(() => {
         ledTiltAtivo = false;
-        el.classList.remove("tilt-mode");
         painel.style.borderColor = "";
         painel.style.boxShadow = "";
 
-        // Verifica o estado original para saber o que fazer com a tela
         if (estavaDesligado) {
-          animarDesligar(() => painel.classList.add("is-off"));
+          animarDesligar(() => {
+            painel.classList.add("is-off");
+            el.classList.remove("tilt-mode");
+            el.textContent = "";
+          });
         } else {
+          el.classList.remove("tilt-mode");
+          el.textContent = "";
           iniciarCicloLED();
         }
       }, tempoCongelado);
