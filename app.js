@@ -236,15 +236,13 @@ function render(items, append = false) {
 
 /* 3.5. MECÂNICA DE INTERAÇÃO (Flip e Desfocar) */
 
-/* 3.5.1. Vira o card com cálculo de scroll */
+/* 3.5.1. Vira o card com cálculo de scroll dinâmico */
 function handleFlip(id) {
   const grid = document.getElementById("toyGrid");
   const card = document.getElementById(`card-${id}`);
   const isFlipped = card.classList.contains("is-flipped");
 
-  // 🔴 TRAVA DE MISSCLICK: Se já existe um card em foco e o usuário
-  // clica em um card de fundo, nós abortamos a abertura do novo.
-  // O evento subirá para o document e fechará o atual naturalmente.
+  // Trava de propagação (Missclick)
   if (grid.classList.contains("grid-focused") && !isFlipped) {
     return;
   }
@@ -256,7 +254,22 @@ function handleFlip(id) {
   if (!isFlipped) {
     card.classList.add("is-flipped");
     grid.classList.add("grid-focused");
-    const yOffset = -80;
+
+    // 📏 CÁLCULO DINÂMICO DE ALTURA DO CABEÇALHO
+    const nav = document.querySelector("nav");
+    const led = document.getElementById("ledPanel");
+
+    // Pega a altura real da nav (fallback para 72px caso não ache)
+    let headerHeight = nav ? nav.getBoundingClientRect().height : 72;
+
+    // Se o painel LED estiver ativado e visível, soma a altura dele
+    if (ledPainelAtivo && led) {
+      headerHeight += led.getBoundingClientRect().height;
+    }
+
+    // Subtrai a altura do cabeçalho + 16px (1rem) de respiro para não grudar na borda
+    const yOffset = -(headerHeight + 16);
+
     const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
     window.scrollTo({ top: y, behavior: "smooth" });
   } else {
