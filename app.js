@@ -713,7 +713,7 @@ function exibirFilaComoTicker(fila, onComplete) {
   const el = document.getElementById("ledContent");
   if (!el) return;
 
-  const SEP = "          ✦          ";
+  const SEP = "      .        ✦        .      ";
   const textoCompleto = fila.join(SEP);
 
   el.classList.remove("tilt-mode");
@@ -750,7 +750,7 @@ function dispararTilt(mensagem) {
   el.style.animation = "none";
   el.offsetHeight;
 
-  el.textContent = `⚡ ${mensagem} ⚡`;
+  el.textContent = `⚡ ${mensagem} ⚡${mensagem} ⚡${mensagem} ⚡`;
   el.classList.add("tilt-mode");
   painel.style.borderColor = "rgba(255,32,32,0.5)";
   painel.style.boxShadow =

@@ -11,7 +11,7 @@
   --trunfo-gold: #f0c040;
   --trunfo-dark: #1a1a2e;
   --nav-height: 72px;
-  --led-height: 56px; /* Altura do painel LED Era 28, aumentei 50% */
+  --led-height: 42px; /* Altura do painel LED Era 28, aumentei 50% */
 }
 
 body {
@@ -1017,7 +1017,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 56px;
+  height: 42px;
   background: #080808;
   overflow: hidden;
   border-bottom: 1px solid rgba(57, 255, 20, 0.15);
@@ -1083,7 +1083,7 @@ body {
   letter-spacing: 0.08em;
   color: #39ff14;
   text-shadow: 0 0 3px rgba(57, 255, 20, 0.4);
-  line-height: 56px;
+  line-height: 42px;
   animation: ledScroll 40s linear infinite;
   animation-delay: -20s;
   will-change: transform;
@@ -1191,14 +1191,14 @@ body {
 /* Aumentei o tamanho do painel LED  24 -> 36 e 11 -> 14*/
 @media (max-width: 767px) {
   :root {
-    --led-height: 48px;
+    --led-height: 36px;
   }
   .led-panel {
-    height: 48px;
+    height: 36px;
   }
   .led-content {
     font-size: 14px;
     font-weight: 400;
-    line-height: 48px;
+    line-height: 36px;
   }
 }
