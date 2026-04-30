@@ -797,6 +797,26 @@ body {
   }
 }
 
+/* 2.5.3. Área de Comentário (Estado Deslogado) */
+.app-unlogged .comment-area {
+  cursor: not-allowed;
+}
+.app-unlogged .chat-arrow {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+.app-unlogged .chat-input {
+  border-bottom-color: rgba(255, 255, 255, 0.2) !important;
+  cursor: not-allowed;
+}
+.app-unlogged .chat-input::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+.app-unlogged .chat-send-btn {
+  color: rgba(255, 255, 255, 0.4) !important;
+  cursor: not-allowed;
+  pointer-events: none; /* Impede hover e clique */
+}
+
 /* 2.6. ARCADE MODAL (LOGIN & AVATARES) */
 .arcade-box {
   background: #050505;

@@ -210,10 +210,10 @@ function render(items, append = false) {
             </div>
           </div>
           
-          <div class="px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()">
-              <span class="text-[#39ff14] font-orbitron text-[0.55rem] shrink-0">></span>
-              <input type="text" id="comentario-input-${idNormalizado}" class="flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" onclick="event.stopPropagation()" ${!isUserLogged ? 'disabled placeholder="Faça login..."' : ""}>
-              <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" class="text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0 whitespace-nowrap">SEND</button>
+          <div class="comment-area px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()">
+              <span class="chat-arrow text-[#39ff14] font-orbitron text-[0.55rem] shrink-0">></span>
+              <input type="text" id="comentario-input-${idNormalizado}" class="chat-input flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" onclick="event.stopPropagation()" ${!isUserLogged ? 'disabled placeholder="Faça login para comentar..."' : ""}>
+              <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" class="chat-send-btn text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0 whitespace-nowrap" ${!isUserLogged ? "disabled" : ""}>SEND</button>
           </div>
 
           <div class="trunfo-footer">
@@ -942,7 +942,6 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
   const texto = input ? input.value.trim() : "";
   if (!texto) return;
 
-  // Busca a sessão PRIMEIRO para sabermos quem é o infrator
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
@@ -951,51 +950,42 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
   const userId = session.user.id;
   const userName = session.user.user_metadata.full_name || "Player 1";
 
-  // 🔴 FILTRO ANTI-TOXICIDADE: Sistema de 3 Vidas (Vinculado ao ID do Usuário)
+  // 🔴 FILTRO ANTI-TOXICIDADE: Sistema de 3 Vidas
   if (contemPalavraProibida(texto)) {
     input.value = "";
 
-    // Cria uma chave única para esse usuário (ex: retro_strikes_12345abcde)
     const strikeKey = `retro_strikes_${userId}`;
     let strikes = parseInt(localStorage.getItem(strikeKey) || "0");
     strikes++;
     localStorage.setItem(strikeKey, strikes);
 
     if (strikes >= 3) {
-      // 💀 TERCEIRA INFRAÇÃO = BANIMENTO
       dispararTiltBanimento(
         "ÚLTIMO AVISO IGNORADO — SUA CONTA FOI BANIDA",
         4000,
       );
-
-      // Insere o cara na lista negra do Supabase
       await supabaseClient.from("lista_negra").insert([
         {
           usuario_id: userId,
           motivo: "Uso de palavras proibidas (3 infrações)",
         },
       ]);
-
-      // Limpa a ficha criminal local para não bugar futuros logins
       localStorage.removeItem(strikeKey);
-
-      // Chuta o usuário para fora após 5.5s
       setTimeout(() => {
         logOut();
       }, 5500);
     } else {
-      // ⚠️ PRIMEIRA OU SEGUNDA INFRAÇÃO
       let chances = 3 - strikes;
       dispararTiltBanimento(
         `PALAVRA IMPRÓPRIA — VOCÊ TEM MAIS ${chances} CHANCE(S) ANTES DO BANIMENTO`,
         4000,
       );
     }
-
-    return; // Trava o envio
+    return;
   }
 
-  // Se o texto for limpo, fluxo normal de envio
+  // ✅ GUARDA O PLACEHOLDER ORIGINAL E LIMPA O INPUT
+  const placeholderOriginal = input.placeholder;
   input.value = "";
 
   const { error } = await supabaseClient.from("feed_live").insert([
@@ -1009,7 +999,15 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
 
   if (error) {
     console.error("Erro no envio:", error);
-    input.value = texto; // Devolve o texto em caso de erro na rede
+    input.value = texto; // Devolve o texto caso a rede falhe
+  } else {
+    // 🎉 FEEDBACK VISUAL DE SUCESSO
+    input.placeholder = "Enviada! ✉️";
+
+    // Devolve o placeholder original ao normal após 2.5 segundos
+    setTimeout(() => {
+      if (input) input.placeholder = placeholderOriginal;
+    }, 2500);
   }
 }
 
