@@ -852,8 +852,8 @@ function contemPalavraProibida(texto) {
   return regexProibidas.test(texto);
 }
 
-/* TILT Vermelho Prolongado para Banimento */
-function dispararTiltBanimento(mensagem) {
+/* TILT Vermelho Prolongado para Alerta / Banimento */
+function dispararTiltBanimento(mensagem, tempoCongelado = 4000) {
   if (!ledPainelAtivo) return;
   ledTiltAtivo = true;
 
@@ -864,16 +864,17 @@ function dispararTiltBanimento(mensagem) {
   el.style.animation = "none";
   el.offsetHeight; // reflow
 
-  // Não repete a mensagem porque ela já é longa
   el.textContent = `🚨 ${mensagem} 🚨`;
   el.classList.add("tilt-mode");
   painel.style.borderColor = "rgba(255,32,32,0.8)";
   painel.style.boxShadow =
     "0 0 16px rgba(255,32,32,0.5) inset, 0 2px 8px rgba(0,0,0,0.6)";
 
+  el.style.opacity = "1"; // Começa aceso para dar tempo de ler logo de cara
+
   let ciclo = 0;
-  const totalCiclos = 3;
-  const intervalo = 700;
+  const totalCiclos = 2; // Reduzi de 3 para 2 ciclos de piscar, assim foca na leitura
+  const intervalo = 1200; // 1.2 segundos (quase o dobro do tempo)
 
   const piscar = setInterval(() => {
     el.style.opacity = el.style.opacity === "0" ? "1" : "0";
@@ -882,14 +883,14 @@ function dispararTiltBanimento(mensagem) {
       clearInterval(piscar);
       el.style.opacity = "1";
 
-      // Congela a tela vermelha por mais 3 segundos antes de perdoar (por enquanto)
+      // Congela a tela vermelha (padrão 4 segundos)
       setTimeout(() => {
         ledTiltAtivo = false;
         el.classList.remove("tilt-mode");
         painel.style.borderColor = "";
         painel.style.boxShadow = "";
         iniciarCicloLED();
-      }, 3000);
+      }, tempoCongelado);
     }
   }, intervalo);
 }
@@ -904,33 +905,52 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
   const texto = input ? input.value.trim() : "";
   if (!texto) return;
 
-  // 🔴 FILTRO ANTI-TOXICIDADE: Punição e Banimento
+  // 🔴 FILTRO ANTI-TOXICIDADE: Sistema de 3 Vidas (Strikes)
   if (contemPalavraProibida(texto)) {
     input.value = "";
-    dispararTiltBanimento(
-      "ESTE ESPAÇO NÃO É DESTINADO A COMENTÁRIOS IMPRÓPRIOS — SUJEITO A BANIMENTO",
-    );
 
-    const {
-      data: { session },
-    } = await supabaseClient.auth.getSession();
-    if (session) {
-      // 1. Insere o cara na lista negra do Supabase
-      await supabaseClient.from("lista_negra").insert([
-        {
-          usuario_id: session.user.id,
-          motivo: "Uso de palavras proibidas: " + texto,
-        },
-      ]);
+    // Puxa quantas infrações o cara já cometeu
+    let strikes = parseInt(localStorage.getItem("retro_strikes") || "0");
+    strikes++;
+    localStorage.setItem("retro_strikes", strikes);
 
-      // 2. Chuta o usuário para fora após o tempo do TILT (3.5 segundos)
-      setTimeout(() => {
-        logOut();
-      }, 3500);
+    if (strikes >= 3) {
+      // 💀 TERCEIRA INFRAÇÃO = BANIMENTO
+      dispararTiltBanimento(
+        "ÚLTIMO AVISO IGNORADO — SUA CONTA FOI BANIDA",
+        4000,
+      );
+
+      const {
+        data: { session },
+      } = await supabaseClient.auth.getSession();
+      if (session) {
+        // Insere o cara na lista negra do Supabase
+        await supabaseClient.from("lista_negra").insert([
+          {
+            usuario_id: session.user.id,
+            motivo: "Uso de palavras proibidas (3 infrações)",
+          },
+        ]);
+
+        // Chuta o usuário para fora após 5.5s (dá tempo dele ler que foi banido)
+        setTimeout(() => {
+          logOut();
+        }, 5500);
+      }
+    } else {
+      // ⚠️ PRIMEIRA OU SEGUNDA INFRAÇÃO = ADVERTÊNCIA
+      let chances = 3 - strikes;
+      dispararTiltBanimento(
+        `PALAVRA IMPRÓPRIA — VOCÊ TEM MAIS ${chances} CHANCE(S) ANTES DO BANIMENTO`,
+        4000,
+      );
     }
-    return; // Trava o envio da ofensa pro feed
+
+    return; // Trava o envio pro banco
   }
 
+  // Se o texto for limpo, fluxo normal de envio
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
