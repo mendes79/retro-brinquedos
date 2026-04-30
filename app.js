@@ -745,18 +745,25 @@ function exibirFilaComoTicker(fila, onComplete) {
   el.addEventListener("animationend", handler);
 }
 
-/* 3.9.10. MENSAGEM PRIORITÁRIA (TILT — SEM LOGIN) */
+/* 3.9.10. MENSAGEM PRIORITÁRIA (TILT — GERAL) */
 function dispararTilt(mensagem) {
-  if (!ledPainelAtivo) return;
+  // Guarda se o painel estava desligado antes do aviso
+  const estavaDesligado = !ledPainelAtivo;
   ledTiltAtivo = true;
 
   const el = document.getElementById("ledContent");
   const painel = document.getElementById("ledPanel");
   if (!el || !painel) return;
 
+  // Se estiver oculto, força a abertura e a animação de ligar
+  if (estavaDesligado) {
+    painel.classList.remove("is-off");
+    animarLigar();
+  }
+
   // Para animação de scroll atual
   el.style.animation = "none";
-  el.offsetHeight;
+  el.offsetHeight; // reflow
 
   el.textContent = `⚡ ${mensagem} ⚡${mensagem} ⚡${mensagem} ⚡`;
   el.classList.add("tilt-mode");
@@ -764,7 +771,7 @@ function dispararTilt(mensagem) {
   painel.style.boxShadow =
     "0 0 16px rgba(255,32,32,0.2) inset, 0 2px 8px rgba(0,0,0,0.4)";
 
-  // Pisca 3 vezes: 0.7s visível, 0.7s invisível
+  // Pisca 3 vezes
   let ciclo = 0;
   const totalCiclos = 3;
   const intervalo = 700;
@@ -779,7 +786,13 @@ function dispararTilt(mensagem) {
       el.classList.remove("tilt-mode");
       painel.style.borderColor = "";
       painel.style.boxShadow = "";
-      iniciarCicloLED();
+
+      // Quando acabar: se estava desligado antes, desliga de novo. Se não, volta ao ticker.
+      if (estavaDesligado) {
+        animarDesligar(() => painel.classList.add("is-off"));
+      } else {
+        iniciarCicloLED();
+      }
     }
   }, intervalo);
 }
@@ -861,12 +874,17 @@ function contemPalavraProibida(texto) {
 
 /* TILT Vermelho Prolongado para Alerta / Banimento */
 function dispararTiltBanimento(mensagem, tempoCongelado = 4000) {
-  if (!ledPainelAtivo) return;
+  const estavaDesligado = !ledPainelAtivo;
   ledTiltAtivo = true;
 
   const el = document.getElementById("ledContent");
   const painel = document.getElementById("ledPanel");
   if (!el || !painel) return;
+
+  if (estavaDesligado) {
+    painel.classList.remove("is-off");
+    animarLigar();
+  }
 
   el.style.animation = "none";
   el.offsetHeight; // reflow
@@ -877,11 +895,11 @@ function dispararTiltBanimento(mensagem, tempoCongelado = 4000) {
   painel.style.boxShadow =
     "0 0 16px rgba(255,32,32,0.5) inset, 0 2px 8px rgba(0,0,0,0.6)";
 
-  el.style.opacity = "1"; // Começa aceso para dar tempo de ler logo de cara
+  el.style.opacity = "1";
 
   let ciclo = 0;
-  const totalCiclos = 2; // Reduzi de 3 para 2 ciclos de piscar, assim foca na leitura
-  const intervalo = 1200; // 1.2 segundos (quase o dobro do tempo)
+  const totalCiclos = 2;
+  const intervalo = 1200;
 
   const piscar = setInterval(() => {
     el.style.opacity = el.style.opacity === "0" ? "1" : "0";
@@ -890,13 +908,19 @@ function dispararTiltBanimento(mensagem, tempoCongelado = 4000) {
       clearInterval(piscar);
       el.style.opacity = "1";
 
-      // Congela a tela vermelha (padrão 4 segundos)
+      // Congela a tela vermelha
       setTimeout(() => {
         ledTiltAtivo = false;
         el.classList.remove("tilt-mode");
         painel.style.borderColor = "";
         painel.style.boxShadow = "";
-        iniciarCicloLED();
+
+        // Verifica o estado original para saber o que fazer com a tela
+        if (estavaDesligado) {
+          animarDesligar(() => painel.classList.add("is-off"));
+        } else {
+          iniciarCicloLED();
+        }
       }, tempoCongelado);
     }
   }, intervalo);
