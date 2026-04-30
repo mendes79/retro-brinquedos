@@ -912,14 +912,24 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
   const texto = input ? input.value.trim() : "";
   if (!texto) return;
 
-  // 🔴 FILTRO ANTI-TOXICIDADE: Sistema de 3 Vidas (Strikes)
+  // Busca a sessão PRIMEIRO para sabermos quem é o infrator
+  const {
+    data: { session },
+  } = await supabaseClient.auth.getSession();
+  if (!session) return;
+
+  const userId = session.user.id;
+  const userName = session.user.user_metadata.full_name || "Player 1";
+
+  // 🔴 FILTRO ANTI-TOXICIDADE: Sistema de 3 Vidas (Vinculado ao ID do Usuário)
   if (contemPalavraProibida(texto)) {
     input.value = "";
 
-    // Puxa quantas infrações o cara já cometeu
-    let strikes = parseInt(localStorage.getItem("retro_strikes") || "0");
+    // Cria uma chave única para esse usuário (ex: retro_strikes_12345abcde)
+    const strikeKey = `retro_strikes_${userId}`;
+    let strikes = parseInt(localStorage.getItem(strikeKey) || "0");
     strikes++;
-    localStorage.setItem("retro_strikes", strikes);
+    localStorage.setItem(strikeKey, strikes);
 
     if (strikes >= 3) {
       // 💀 TERCEIRA INFRAÇÃO = BANIMENTO
@@ -928,25 +938,23 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
         4000,
       );
 
-      const {
-        data: { session },
-      } = await supabaseClient.auth.getSession();
-      if (session) {
-        // Insere o cara na lista negra do Supabase
-        await supabaseClient.from("lista_negra").insert([
-          {
-            usuario_id: session.user.id,
-            motivo: "Uso de palavras proibidas (3 infrações)",
-          },
-        ]);
+      // Insere o cara na lista negra do Supabase
+      await supabaseClient.from("lista_negra").insert([
+        {
+          usuario_id: userId,
+          motivo: "Uso de palavras proibidas (3 infrações)",
+        },
+      ]);
 
-        // Chuta o usuário para fora após 5.5s (dá tempo dele ler que foi banido)
-        setTimeout(() => {
-          logOut();
-        }, 5500);
-      }
+      // Limpa a ficha criminal local para não bugar futuros logins
+      localStorage.removeItem(strikeKey);
+
+      // Chuta o usuário para fora após 5.5s
+      setTimeout(() => {
+        logOut();
+      }, 5500);
     } else {
-      // ⚠️ PRIMEIRA OU SEGUNDA INFRAÇÃO = ADVERTÊNCIA
+      // ⚠️ PRIMEIRA OU SEGUNDA INFRAÇÃO
       let chances = 3 - strikes;
       dispararTiltBanimento(
         `PALAVRA IMPRÓPRIA — VOCÊ TEM MAIS ${chances} CHANCE(S) ANTES DO BANIMENTO`,
@@ -954,16 +962,10 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
       );
     }
 
-    return; // Trava o envio pro banco
+    return; // Trava o envio
   }
 
   // Se o texto for limpo, fluxo normal de envio
-  const {
-    data: { session },
-  } = await supabaseClient.auth.getSession();
-  if (!session) return;
-
-  const userName = session.user.user_metadata.full_name || "Player 1";
   input.value = "";
 
   const { error } = await supabaseClient.from("feed_live").insert([
@@ -974,9 +976,10 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
       detalhe: texto,
     },
   ]);
+
   if (error) {
     console.error("Erro no envio:", error);
-    input.value = texto;
+    input.value = texto; // Devolve o texto em caso de erro na rede
   }
 }
 
