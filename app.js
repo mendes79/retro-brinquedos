@@ -242,6 +242,13 @@ function handleFlip(id) {
   const card = document.getElementById(`card-${id}`);
   const isFlipped = card.classList.contains("is-flipped");
 
+  // 🔴 TRAVA DE MISSCLICK: Se já existe um card em foco e o usuário
+  // clica em um card de fundo, nós abortamos a abertura do novo.
+  // O evento subirá para o document e fechará o atual naturalmente.
+  if (grid.classList.contains("grid-focused") && !isFlipped) {
+    return;
+  }
+
   document
     .querySelectorAll(".masonry-item")
     .forEach((c) => c.classList.remove("is-flipped"));
