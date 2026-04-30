@@ -804,6 +804,96 @@ feedChannel
   )
   .subscribe();
 
+/* ============================================================
+   SISTEMA DE FILTRO E MODERAÇÃO (ANTI-TOXICIDADE)
+   ============================================================ */
+const palavrasProibidas = [
+  "lula",
+  "bolsonaro",
+  "bolsominion",
+  "lule",
+  "bozo",
+  "fascista",
+  "genocida",
+  "mito",
+  "comunista",
+  "caralho",
+  "porra",
+  "puta",
+  "buceta",
+  "pica",
+  "merda",
+  "foder",
+  "fode",
+  "cu",
+  "fdp",
+  "cuzão",
+  "desgraça",
+  "desgrama",
+  "penis",
+  "pênis",
+  "vagina",
+  "xoxota",
+  "xereca",
+  "bosta",
+  "arrombado",
+  "cacete",
+  "anus",
+  "ânus",
+];
+
+// O \b garante que vai buscar a palavra exata (evita bloquear "curso" por causa de "cu")
+const regexProibidas = new RegExp(
+  `\\b(${palavrasProibidas.join("|")})\\b`,
+  "i",
+);
+
+function contemPalavraProibida(texto) {
+  return regexProibidas.test(texto);
+}
+
+/* TILT Vermelho Prolongado para Banimento */
+function dispararTiltBanimento(mensagem) {
+  if (!ledPainelAtivo) return;
+  ledTiltAtivo = true;
+
+  const el = document.getElementById("ledContent");
+  const painel = document.getElementById("ledPanel");
+  if (!el || !painel) return;
+
+  el.style.animation = "none";
+  el.offsetHeight; // reflow
+
+  // Não repete a mensagem porque ela já é longa
+  el.textContent = `🚨 ${mensagem} 🚨`;
+  el.classList.add("tilt-mode");
+  painel.style.borderColor = "rgba(255,32,32,0.8)";
+  painel.style.boxShadow =
+    "0 0 16px rgba(255,32,32,0.5) inset, 0 2px 8px rgba(0,0,0,0.6)";
+
+  let ciclo = 0;
+  const totalCiclos = 3;
+  const intervalo = 700;
+
+  const piscar = setInterval(() => {
+    el.style.opacity = el.style.opacity === "0" ? "1" : "0";
+    ciclo++;
+    if (ciclo >= totalCiclos * 2) {
+      clearInterval(piscar);
+      el.style.opacity = "1";
+
+      // Congela a tela vermelha por mais 3 segundos antes de perdoar (por enquanto)
+      setTimeout(() => {
+        ledTiltAtivo = false;
+        el.classList.remove("tilt-mode");
+        painel.style.borderColor = "";
+        painel.style.boxShadow = "";
+        iniciarCicloLED();
+      }, 3000);
+    }
+  }, intervalo);
+}
+
 /* 3.9.14. ENVIO DE COMENTÁRIO DO CARD */
 async function enviarComentario(idNormalizado, nomeBrinquedo) {
   if (!isUserLogged) {
@@ -813,6 +903,17 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
   const input = document.getElementById(`comentario-input-${idNormalizado}`);
   const texto = input ? input.value.trim() : "";
   if (!texto) return;
+
+  // 🔴 NOVO: FILTRO ANTI-TOXICIDADE
+  if (contemPalavraProibida(texto)) {
+    input.value = ""; // Apaga a ofensa imediatamente
+    dispararTiltBanimento(
+      "ESTE ESPAÇO NÃO É DESTINADO A COMENTÁRIOS IMPRÓPRIOS — SUJEITO A BANIMENTO",
+    );
+
+    // TODO: Adicionar lógica Supabase para inserir o usuário na tabela lista_negra
+    return; // Trava a função e impede o envio pro banco!
+  }
 
   const {
     data: { session },
