@@ -463,6 +463,7 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
+
   if (!session) {
     dispararTilt("FAÇA LOGIN PARA INTERAGIR");
     return;
@@ -470,16 +471,31 @@ async function toggleInteracao(event, brinquedoId, tipo) {
 
   const userId = session.user.id;
   const idParaBanco = String(brinquedoId).padStart(4, "0");
+
+  // Variáveis para o alvo atual e para o seu "Oposto"
   let memorySet, tableName, activeClass;
+  let oppSet, oppTable, oppClass, oppTipo;
 
   if (tipo === "tive") {
     memorySet = tiveDoUsuario;
     tableName = "interacoes_tive";
     activeClass = "active-tive";
+
+    // Define o oposto
+    oppSet = queriaDoUsuario;
+    oppTable = "interacoes_queria";
+    oppClass = "active-queria";
+    oppTipo = "queria";
   } else {
     memorySet = queriaDoUsuario;
     tableName = "interacoes_queria";
     activeClass = "active-queria";
+
+    // Define o oposto
+    oppSet = tiveDoUsuario;
+    oppTable = "interacoes_tive";
+    oppClass = "active-tive";
+    oppTipo = "tive";
   }
 
   const isAtivo = memorySet.has(idParaBanco);
@@ -488,26 +504,54 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   let count = parseInt(countSpan ? countSpan.innerText : "0") || 0;
 
   if (isAtivo) {
+    // Ação normal de REMOVER a própria marcação
     memorySet.delete(idParaBanco);
     if (btn) btn.classList.remove(activeClass);
     if (countSpan) countSpan.innerText = Math.max(0, count - 1);
+
     const { error } = await supabaseClient
       .from(tableName)
       .delete()
       .eq("usuario_id", userId)
       .eq("brinquedo_id", idParaBanco);
+
     if (error) {
       memorySet.add(idParaBanco);
       if (btn) btn.classList.add(activeClass);
       if (countSpan) countSpan.innerText = count;
     }
   } else {
+    // 🔴 EXCLUSÃO MÚTUA: Se o oposto estiver marcado, remove ele primeiro!
+    if (oppSet.has(idParaBanco)) {
+      oppSet.delete(idParaBanco);
+      const oppBtn = document.getElementById(`btn-${oppTipo}-${idParaBanco}`);
+      const oppCountSpan = document.getElementById(
+        `count-${oppTipo}-${idParaBanco}`,
+      );
+      let oppCount = parseInt(oppCountSpan ? oppCountSpan.innerText : "0") || 0;
+
+      // UI Otimista: desmarca o botão oposto instantaneamente
+      if (oppBtn) oppBtn.classList.remove(oppClass);
+      if (oppCountSpan) oppCountSpan.innerText = Math.max(0, oppCount - 1);
+
+      // Manda apagar do banco silenciosamente
+      supabaseClient
+        .from(oppTable)
+        .delete()
+        .eq("usuario_id", userId)
+        .eq("brinquedo_id", idParaBanco)
+        .then();
+    }
+
+    // Ação normal de ADICIONAR a marcação atual
     memorySet.add(idParaBanco);
     if (btn) btn.classList.add(activeClass);
     if (countSpan) countSpan.innerText = count + 1;
+
     const { error } = await supabaseClient
       .from(tableName)
       .insert([{ usuario_id: userId, brinquedo_id: idParaBanco }]);
+
     if (error) {
       memorySet.delete(idParaBanco);
       if (btn) btn.classList.remove(activeClass);
