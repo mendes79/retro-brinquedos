@@ -904,15 +904,31 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
   const texto = input ? input.value.trim() : "";
   if (!texto) return;
 
-  // 🔴 NOVO: FILTRO ANTI-TOXICIDADE
+  // 🔴 FILTRO ANTI-TOXICIDADE: Punição e Banimento
   if (contemPalavraProibida(texto)) {
-    input.value = ""; // Apaga a ofensa imediatamente
+    input.value = "";
     dispararTiltBanimento(
       "ESTE ESPAÇO NÃO É DESTINADO A COMENTÁRIOS IMPRÓPRIOS — SUJEITO A BANIMENTO",
     );
 
-    // TODO: Adicionar lógica Supabase para inserir o usuário na tabela lista_negra
-    return; // Trava a função e impede o envio pro banco!
+    const {
+      data: { session },
+    } = await supabaseClient.auth.getSession();
+    if (session) {
+      // 1. Insere o cara na lista negra do Supabase
+      await supabaseClient.from("lista_negra").insert([
+        {
+          usuario_id: session.user.id,
+          motivo: "Uso de palavras proibidas: " + texto,
+        },
+      ]);
+
+      // 2. Chuta o usuário para fora após o tempo do TILT (3.5 segundos)
+      setTimeout(() => {
+        logOut();
+      }, 3500);
+    }
+    return; // Trava o envio da ofensa pro feed
   }
 
   const {
@@ -958,23 +974,49 @@ window.addEventListener("resize", () => {
 });
 
 /* 3.10.2. Chama Auth, recupera tokens e desenha primeira página */
+/* 3.10.2. Chama Auth, recupera tokens e desenha primeira página */
 async function init() {
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
+
   if (session) {
-    isUserLogged = true;
-    document.body.classList.remove("app-unlogged");
-    const userName = session.user.user_metadata.full_name || "Player 1";
-    await carregarInteracoesDoBanco(session.user.id);
-    const savedAvatar = localStorage.getItem("retro_avatar");
-    if (savedAvatar) {
-      updateNavWithAvatar(savedAvatar, userName);
+    // 🔴 CHECAGEM DE BANIMENTO NO BOOT
+    const { data: banData } = await supabaseClient
+      .from("lista_negra")
+      .select("id")
+      .eq("usuario_id", session.user.id)
+      .limit(1);
+
+    if (banData && banData.length > 0) {
+      // O usuário está na lista negra! Desloga e avisa.
+      await supabaseClient.auth.signOut();
+      localStorage.removeItem("retro_avatar");
+      isUserLogged = false;
+      document.body.classList.add("app-unlogged");
+
+      // Dispara o alerta após 1 segundo para a tela já ter carregado
+      setTimeout(() => {
+        dispararTiltBanimento(
+          "ACESSO NEGADO — CONTA BANIDA POR VIOLAÇÃO DE TERMOS",
+        );
+      }, 1000);
     } else {
-      login();
-      arcadeScreen.classList.add("hidden");
-      selectionScreen.classList.remove("hidden");
-      renderAvatarGrid();
+      // ✅ Tudo certo, fluxo de login normal
+      isUserLogged = true;
+      document.body.classList.remove("app-unlogged");
+      const userName = session.user.user_metadata.full_name || "Player 1";
+      await carregarInteracoesDoBanco(session.user.id);
+
+      const savedAvatar = localStorage.getItem("retro_avatar");
+      if (savedAvatar) {
+        updateNavWithAvatar(savedAvatar, userName);
+      } else {
+        login();
+        arcadeScreen.classList.add("hidden");
+        selectionScreen.classList.remove("hidden");
+        renderAvatarGrid();
+      }
     }
   }
 
