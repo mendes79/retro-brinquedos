@@ -713,7 +713,8 @@ function exibirFilaComoTicker(fila, onComplete) {
   const el = document.getElementById("ledContent");
   if (!el) return;
 
-  const SEP = "      .        ✦        .      ";
+  const SEP =
+    "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0✦\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
   const textoCompleto = fila.join(SEP);
 
   el.classList.remove("tilt-mode");
