@@ -629,11 +629,14 @@ const LED_FRASES_SISTEMA = [
 
 /* 3.9.4. SPRITES ASCII PARA O PAINEL */
 const LED_SPRITES = [
-  "  c( . .)o   <( . .)>   <( . .) >   <  .  .  >",
-  "  >=>=>=>=>=>=>=>=>   RIVER RAID   =>=>=>=>=>=>",
-  "  [*]--[*]--[*]   ENDURO CHAMPIONSHIP   [*]--[*]",
-  "  /\\ /\\ /\\ ASTEROIDS /\\ /\\ /\\",
-  "  @---@---@ SPACE INVADERS @---@---@",
+  " ᗧ · · · · · · ᗣ · · ᗣ · · ᗣ ", // Pac-Man comendo as pastilhas
+  " ᗣ ᗣ ᗣ ᗣ · · · · · · · ᗤ ", // Pac-Man fugindo (Fantasma azul)
+  " /M\\  \\o/  /M\\  \\o/       _A_ ", // Space Invaders (Nave atirando de baixo)
+  " >===>  - - - - -  (O)  {X}  [||] ", // R-Type / Shmup (Nave atirando em inimigos)
+  " |   ·             |      PONG      |             ·   | ", // Pong clássico
+  " /\\   ·  ·  ·  *   O   o   . ", // Asteroids (Nave atirando nas pedras)
+  " (>'-')>  ======O      <('-'<) ", // Street Fighter (Hadouken)
+  " ~~~|===|~~~   [H]   ~~~|===|~~~ ", // River Raid (Helicóptero nas margens do rio)
 ];
 
 /* 3.9.5. INICIALIZAÇÃO DO PAINEL */
