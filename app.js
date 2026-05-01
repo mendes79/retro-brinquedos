@@ -379,21 +379,21 @@ function updateNavWithAvatar(avatarPath, name) {
 
   document.getElementById("userArea").innerHTML = `
     <div class="flex items-center gap-1.5 md:gap-4">
-      <!-- Nome do usuário (+25%) -->
+      <!-- Nome do usuário (+15% = 15px) -->
       <div class="flex flex-col items-end">
         <span class="text-[10px] md:text-xs text-cyan-400 font-orbitron uppercase tracking-widest hidden sm:block">Player 1</span>
-        <span class="text-[13px] md:text-lg font-bold text-white uppercase tracking-tighter truncate max-w-[65px] xs:max-w-[90px] md:max-w-none text-right leading-tight">
+        <span class="text-[15px] md:text-lg font-bold text-white uppercase tracking-tighter truncate max-w-[65px] xs:max-w-[90px] md:max-w-none text-right leading-tight">
           ${firstName}
         </span>
       </div>
       
-      <!-- Avatar (+25% no mobile: de 28px para 35px) -->
-      <div class="w-[35px] h-[35px] md:w-12 md:h-12 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(34,211,238,0.4)] shrink-0">
+      <!-- Avatar (+15% = de 35px para 40px) -->
+      <div class="w-[40px] h-[40px] md:w-12 md:h-12 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(34,211,238,0.4)] shrink-0">
         <img src="${avatarPath}" class="w-full h-full object-contain">
       </div>
       
-      <!-- Botão Sair (+25%: texto text-[11.5px] e padding igualado ao botão ENTRAR) -->
-      <button onclick="logOut()" class="bg-pink-600 text-white px-3 md:px-5 py-1.5 md:py-2 rounded-full text-[11.5px] md:text-sm font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50 shrink-0">
+      <!-- Botão Sair (+15% = texto de 11.5 para 13px e padding px-3.5) -->
+      <button onclick="logOut()" class="bg-pink-600 text-white px-3.5 md:px-5 py-1.5 md:py-2 rounded-full text-[13px] md:text-sm font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50 shrink-0">
         SAIR
       </button>
     </div>`;
