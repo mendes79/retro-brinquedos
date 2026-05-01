@@ -1111,8 +1111,21 @@ function handleComentarioEnter(event, idNormalizado, nomeBrinquedo) {
    ============================================================ */
 
 /* 3.10.1. Adapta o layout para mudanças de tela limpas */
+let ultimaLarguraTela = window.innerWidth; // Salva a largura inicial
 let resizeTimer;
+
 window.addEventListener("resize", () => {
+  const larguraAtual = window.innerWidth;
+
+  // 🛡️ TRAVA ANTI-TECLADO: Se a largura não mudou (apenas a altura mudou), aborta!
+  if (larguraAtual === ultimaLarguraTela) {
+    return;
+  }
+
+  // Atualiza a memória com a nova largura
+  ultimaLarguraTela = larguraAtual;
+
+  // Lógica original: Reseta os cards e redesenha a grade se a tela de fato mudou de largura
   resetarEstadoDosCards();
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
