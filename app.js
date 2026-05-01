@@ -212,7 +212,7 @@ function render(items, append = false) {
           
           <div class="comment-area px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()">
               <span class="chat-arrow text-[#39ff14] font-orbitron text-[0.55rem] shrink-0">></span>
-              <input type="text" id="comentario-input-${idNormalizado}" class="chat-input flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" onclick="event.stopPropagation()" ${!isUserLogged ? 'disabled placeholder="Faça login para comentar..."' : ""}>
+              <input type="text" id="comentario-input-${idNormalizado}" maxlength="140" class="chat-input flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" onclick="event.stopPropagation()" ${!isUserLogged ? 'disabled placeholder="Faça login para comentar..."' : ""}>
               <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" class="chat-send-btn text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0 whitespace-nowrap" ${!isUserLogged ? "disabled" : ""}>SEND</button>
           </div>
 
@@ -999,7 +999,7 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
     return;
   }
   const input = document.getElementById(`comentario-input-${idNormalizado}`);
-  const texto = input ? input.value.trim() : "";
+  const texto = input ? input.value.trim().substring(0, 140) : "";
   if (!texto) return;
 
   const {

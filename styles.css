@@ -329,8 +329,19 @@ body {
   transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
   cursor: pointer;
+  will-change: transform;
 }
 
+/* 🔴 TIREI DO MEDIA QUERY: Agora vira em qualquer dispositivo! */
+.is-flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.is-flipped .card-back {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Ajustes apenas dimensionais pro Mobile */
 @media (max-width: 767px) {
   :root {
     --led-height: 24px;
@@ -340,19 +351,11 @@ body {
   }
   .led-content {
     font-size: 11px;
-    line-height: 42px; /* altura do painel LED era 28 aumentei 50%*/
+    line-height: 42px;
   }
-}
-
-@media (min-width: 768px) {
-  .card-inner {
-    will-change: transform;
-  }
+  /* Bônus: Dá um leve "zoom" no mobile quando vira pra destacar a carta */
   .is-flipped .card-inner {
-    transform: rotateY(180deg);
-  }
-  .is-flipped .card-back {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transform: rotateY(180deg) scale(1.02);
   }
 }
 
