@@ -210,10 +210,10 @@ function render(items, append = false) {
             </div>
           </div>
           
-          <div class="comment-area px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()">
+          <div class="comment-area px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onpointerdown="event.stopPropagation()">
               <span class="chat-arrow text-[#39ff14] font-orbitron text-[0.55rem] shrink-0">></span>
-              <input type="text" id="comentario-input-${idNormalizado}" maxlength="140" class="chat-input flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" onclick="event.stopPropagation()" ${!isUserLogged ? 'disabled placeholder="Faça login para comentar..."' : ""}>
-              <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" class="chat-send-btn text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0 whitespace-nowrap" ${!isUserLogged ? "disabled" : ""}>SEND</button>
+              <input type="text" id="comentario-input-${idNormalizado}" maxlength="140" class="chat-input flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onpointerdown="event.stopPropagation()" ${!isUserLogged ? 'disabled placeholder="Faça login para comentar..."' : ""}>
+              <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onpointerdown="event.stopPropagation()" class="chat-send-btn text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0 whitespace-nowrap" ${!isUserLogged ? "disabled" : ""}>SEND</button>
           </div>
 
           <div class="trunfo-footer">
@@ -589,7 +589,7 @@ async function toggleInteracao(event, brinquedoId, tipo) {
    ============================================================ */
 
 /* 3.9.1. ESTADO DO PAINEL */
-let ledPainelAtivo = localStorage.getItem("led_painel") !== "off";
+let ledPainelAtivo = false; /*localStorage.getItem("led_painel") !== "off";*/
 let ledFilaAtual = [];
 let ledEmExibicao = false;
 let ledTiltAtivo = false;
