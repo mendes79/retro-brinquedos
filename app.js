@@ -375,27 +375,25 @@ function getRandomFromRange(min, max, count) {
 }
 
 function updateNavWithAvatar(avatarPath, name) {
-  // Pega apenas o primeiro nome para garantir o encaixe perfeito no celular
   const firstName = name.split(" ")[0];
 
   document.getElementById("userArea").innerHTML = `
     <div class="flex items-center gap-1.5 md:gap-4">
-      <!-- Nome do usuário (Agora visível no celular!) -->
+      <!-- Nome do usuário -->
       <div class="flex flex-col items-end">
-        <!-- O 'Player 1' some em telas minúsculas para poupar espaço -->
         <span class="text-[9px] md:text-xs text-cyan-400 font-orbitron uppercase tracking-widest hidden sm:block">Player 1</span>
-        <span class="text-[11px] md:text-lg font-bold text-white uppercase tracking-tighter truncate max-w-[70px] xs:max-w-[100px] md:max-w-none text-right">
+        <span class="text-[10px] md:text-lg font-bold text-white uppercase tracking-tighter truncate max-w-[50px] xs:max-w-[70px] md:max-w-none text-right leading-tight">
           ${firstName}
         </span>
       </div>
       
-      <!-- Avatar -->
-      <div class="w-[34px] h-[34px] md:w-12 md:h-12 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(34,211,238,0.4)] shrink-0">
+      <!-- Avatar um pouco menor no mobile extremo para caber tudo na linha -->
+      <div class="w-[28px] h-[28px] md:w-12 md:h-12 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(34,211,238,0.4)] shrink-0">
         <img src="${avatarPath}" class="w-full h-full object-contain">
       </div>
       
       <!-- Botão Sair -->
-      <button onclick="logOut()" class="bg-pink-600 text-white px-3 md:px-5 py-1.5 md:py-2 rounded-full text-[10px] md:text-sm font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50 shrink-0">
+      <button onclick="logOut()" class="bg-pink-600 text-white px-2.5 md:px-5 py-1.5 md:py-2 rounded-full text-[9px] md:text-sm font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50 shrink-0">
         SAIR
       </button>
     </div>`;
