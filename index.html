@@ -17,29 +17,30 @@
 
   <body class="antialiased app-unlogged">
     <nav
-      class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-[100] px-2.5 md:px-6 py-2 md:py-2.5 flex flex-wrap items-center justify-between gap-y-2 gap-x-1 md:gap-x-4 transition-all"
+      class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-[100] px-3 md:px-6 py-2.5 md:py-3 flex flex-wrap items-center justify-between gap-y-3 gap-x-1 md:gap-x-4 transition-all"
     >
-      <!-- 1. LOGO E TÍTULO (Lado Esquerdo Linha 1 no Mobile, Lado Esquerdo no Desktop) -->
-      <div class="flex items-center gap-1.5 md:gap-2 shrink-0 order-1">
+      <!-- 1. LOGO E TÍTULO -->
+      <div class="flex items-center gap-2 md:gap-3 shrink-0 order-1">
         <div
           id="easterEggBtn"
-          class="w-7 h-7 md:w-8 md:h-8 bg-pink-600 rounded-lg flex items-center justify-center font-bold text-base md:text-lg shadow-lg shadow-pink-900/50 cursor-pointer select-none shrink-0"
+          class="w-[34px] h-[34px] md:w-10 md:h-10 bg-pink-600 rounded-lg flex items-center justify-center font-bold text-[1.1rem] md:text-xl shadow-lg shadow-pink-900/50 cursor-pointer select-none shrink-0"
           title="RetroBrinquedos BR"
         >
           R
         </div>
-        <!-- Título reduzido para caber ao lado das redes no mobile -->
         <h1
-          class="text-[0.6rem] sm:text-xs md:text-lg font-retro tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-400 uppercase shrink-0"
+          class="text-[11px] sm:text-sm md:text-xl font-retro tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-400 uppercase shrink-0"
         >
           RetroBrinquedos
         </h1>
       </div>
 
-      <!-- 3. SOCIAIS + ENTRAR (Lado Direito Linha 1 no Mobile, Lado Direito no Desktop) -->
-      <div class="flex items-center gap-2 md:gap-4 shrink-0 order-2 md:order-3">
-        <!-- Ícones Sociais (Agora sempre visíveis, um pouco menores no mobile) -->
-        <div class="flex items-center gap-2 md:gap-3">
+      <!-- 3. SOCIAIS + ENTRAR -->
+      <div
+        class="flex items-center gap-2.5 md:gap-5 shrink-0 order-2 md:order-3"
+      >
+        <!-- Ícones Sociais (+20% em w e h) -->
+        <div class="flex items-center gap-2.5 md:gap-4">
           <!-- Instagram -->
           <a
             href="#"
@@ -48,7 +49,7 @@
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-3.5 h-3.5 md:w-4 md:h-4"
+              class="w-[17px] h-[17px] md:w-5 md:h-5"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -65,7 +66,7 @@
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-3.5 h-3.5 md:w-4 md:h-4"
+              class="w-[17px] h-[17px] md:w-5 md:h-5"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -82,7 +83,7 @@
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-3.5 h-3.5 md:w-4 md:h-4"
+              class="w-[17px] h-[17px] md:w-5 md:h-5"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -93,27 +94,27 @@
           </a>
         </div>
 
-        <!-- Botão Entrar -->
+        <!-- Botão Entrar (+20% em font e padding) -->
         <div id="userArea" class="flex gap-2 items-center shrink-0">
           <button
             onclick="login()"
-            class="bg-pink-600 text-white px-2.5 md:px-4 py-1.5 rounded-full text-[9px] md:text-xs font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50 whitespace-nowrap"
+            class="bg-pink-600 text-white px-3 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50 whitespace-nowrap"
           >
             ENTRAR
           </button>
         </div>
       </div>
 
-      <!-- 2. TOGGLE + BUSCA (Linha 2 inteira no Mobile, Centro no Desktop) -->
+      <!-- 2. TOGGLE + BUSCA -->
       <div
-        class="flex items-center gap-2 md:gap-4 w-full md:w-auto md:max-w-xs flex-grow order-3 md:order-2 shrink-0 md:shrink"
+        class="flex items-center gap-3 md:gap-5 w-full md:w-auto md:max-w-sm flex-grow order-3 md:order-2 shrink-0 md:shrink"
       >
         <!-- Toggle LED -->
         <div class="led-toggle-wrapper shrink-0" title="Painel LED on/off">
-          <span class="led-toggle-label text-[0.35rem] md:text-[0.38rem]"
+          <span class="led-toggle-label text-[0.45rem] md:text-[0.5rem]"
             >DISPLAY</span
           >
-          <label class="switch scale-75 md:scale-100 origin-bottom">
+          <label class="switch scale-90 md:scale-100 origin-bottom">
             <input
               type="checkbox"
               id="ledToggleInput"
@@ -123,16 +124,16 @@
           </label>
         </div>
 
-        <!-- Barra de Pesquisa -->
+        <!-- Barra de Pesquisa (+20% na fonte e paddings verticais) -->
         <div class="relative w-full flex-grow">
           <input
             type="text"
             id="searchInput"
             placeholder="Busque 'Estrela', etc..."
-            class="w-full bg-slate-800 border border-slate-700 rounded-full py-1.5 px-8 md:px-9 text-xs md:text-sm focus:ring-2 focus:ring-pink-500 outline-none text-slate-200 transition-all"
+            class="w-full bg-slate-800 border border-slate-700 rounded-full py-2 px-9 md:px-10 text-sm md:text-base focus:ring-2 focus:ring-pink-500 outline-none text-slate-200 transition-all"
           />
           <svg
-            class="w-3.5 h-3.5 md:w-4 md:h-4 absolute left-3 top-2.5 text-slate-500"
+            class="w-4 h-4 md:w-5 md:h-5 absolute left-3 top-2.5 md:top-2.5 text-slate-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

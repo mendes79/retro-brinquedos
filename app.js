@@ -376,15 +376,20 @@ function getRandomFromRange(min, max, count) {
 
 function updateNavWithAvatar(avatarPath, name) {
   document.getElementById("userArea").innerHTML = `
-    <div class="flex items-center gap-3 md:gap-4">
-      <div class="flex flex-col items-end">
-        <span class="text-[10px] md:text-xs text-cyan-400 font-orbitron uppercase tracking-widest">Player 1</span>
-        <span class="text-sm md:text-base font-bold text-white uppercase tracking-tighter">${name}</span>
+    <div class="flex items-center gap-2.5 md:gap-4">
+      <!-- Oculta o nome no celular para não quebrar a linha, mostra no tablet/desktop -->
+      <div class="hidden sm:flex flex-col items-end">
+        <span class="text-[11px] md:text-xs text-cyan-400 font-orbitron uppercase tracking-widest">Player 1</span>
+        <span class="text-base md:text-lg font-bold text-white uppercase tracking-tighter">${name}</span>
       </div>
-      <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(34,211,238,0.4)]">
+      
+      <!-- Avatar 20% maior -->
+      <div class="w-[34px] h-[34px] md:w-12 md:h-12 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(34,211,238,0.4)]">
         <img src="${avatarPath}" class="w-full h-full object-contain">
       </div>
-      <button onclick="logOut()" class="bg-pink-600 text-white px-6 py-2 rounded-full text-xs font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50 ml-2">Sair</button>
+      
+      <!-- Botão Sair alinhado ao tamanho do ENTRAR -->
+      <button onclick="logOut()" class="bg-pink-600 text-white px-3 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50">SAIR</button>
     </div>`;
 }
 
