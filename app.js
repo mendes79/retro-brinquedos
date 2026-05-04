@@ -136,6 +136,26 @@ function buildLedDisplay(value) {
   return `<div class="led-display"><div class="led-row">${leds}</div><div class="led-row">${leds}</div></div>`;
 }
 
+/* ---------------------------------------------------
+   GERADOR DE CÓDIGO SUPER TRUNFO 3.4.2.B
+--------------------------------------------------- */
+function gerarIdSuperTrunfo(idBrinquedo) {
+  // Converte o ID para número (caso seja string)
+  const idNum =
+    typeof idBrinquedo === "number"
+      ? idBrinquedo
+      : parseInt(String(idBrinquedo).replace(/\D/g, "")) || 0;
+
+  // Padrão clássico de baralho: Letras de A a H, Números de 1 a 4
+  const letras = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
+  // Multiplicadores primos (3 e 7) espalham os resultados para parecerem bem aleatórios
+  const letra = letras[(idNum * 3) % letras.length];
+  const numero = ((idNum * 7) % 4) + 1;
+
+  return `${letra}${numero}`;
+}
+
 /* 3.4.3. Monta e insere os cards 3D no HTML */
 function render(items, append = false) {
   const grid = document.getElementById("toyGrid");
@@ -160,7 +180,9 @@ function render(items, append = false) {
     const isLiked = curtidasDoUsuario.has(idNormalizado);
     const isTive = tiveDoUsuario.has(idNormalizado);
     const isQueria = queriaDoUsuario.has(idNormalizado);
-    const trunfoCode = toy.codigo_trunfo || "A1";
+
+    // 🃏 AQUI ESTÁ A MÁGICA: Chama a função que criamos para gerar o ID caso não venha do banco
+    const trunfoCode = toy.codigo_trunfo || gerarIdSuperTrunfo(toy.id);
 
     const cardHTML = `
     <div class="masonry-item card-enter" id="card-${idNormalizado}">
