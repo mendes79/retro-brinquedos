@@ -20,6 +20,7 @@ let curtidasDoUsuario = new Set();
 let tiveDoUsuario = new Set();
 let queriaDoUsuario = new Set();
 let currentCols = 0;
+let columnElements = [];
 
 const sentinel = document.createElement("div");
 sentinel.id = "scrollSentinel";
