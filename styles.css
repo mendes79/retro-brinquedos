@@ -309,8 +309,9 @@ body {
     opacity 0.5s ease;
   position: relative;
   width: 100%;
-  /* Um valor mínimo para o card não ter 0px de altura antes da imagem chegar */
-  min-height: 200px;
+  /* REMOVEMOS o min-height fixo para não criar buracos no mobile */
+  min-height: auto;
+  margin-bottom: 0; /* O gap agora é controlado pelo container da coluna */
 }
 .card-enter {
   animation: cardFadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
@@ -383,8 +384,9 @@ body {
 .card-front img {
   display: block;
   width: 100%;
-  height: auto; /* Mantém a proporção real da foto original */
-  content-visibility: auto; /* Otimização nativa do Chrome para renderização */
+  height: auto;
+  /* Garante que o navegador reserve o espaço correto assim que os metadados da imagem chegam */
+  contain-intrinsic-size: auto 300px;
 }
 
 .card-back {

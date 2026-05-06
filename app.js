@@ -377,10 +377,12 @@ async function render(items, append = false) {
 
     shortest.insertAdjacentHTML("beforeend", cardHTML);
 
-    // 💡 A SOLUÇÃO: Pausa o loop por um frame de animação.
-    // Isso obriga o navegador a calcular a altura real do card que acabamos de inserir
-    // antes de o loop perguntar novamente qual é a 'shortest' coluna.
-    await new Promise((resolve) => requestAnimationFrame(resolve));
+    // 💡 A NOVA SOLUÇÃO: Esperamos dois frames de animação em vez de um.
+    // Isso dá tempo para o navegador processar o 'height: auto' da imagem
+    // inserida e atualizar o offsetHeight da coluna de forma precisa.
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve)),
+    );
   }
 }
 
