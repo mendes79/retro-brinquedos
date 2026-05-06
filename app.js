@@ -95,7 +95,7 @@ function verificarSentinela() {
   });
 }
 
-//* ============================================================
+/* ============================================================
    3.3. INFINITE SCROLL OTIMIZADO
    ============================================================ */
 
@@ -127,7 +127,8 @@ async function fetchBrinquedos(reset = false) {
       );
       if (!res.ok) throw new Error("Falha na API");
       const data = await res.json();
-      if (reset && data.total) document.getElementById("heroCount").textContent = data.total;
+      if (reset && data.total)
+        document.getElementById("heroCount").textContent = data.total;
       itens = data.itens || [];
       cursor = data.cursor;
       hasMais = data.temMais;
@@ -146,7 +147,7 @@ async function fetchBrinquedos(reset = false) {
   } finally {
     isLoading = false;
     // Tenta redisparar apenas se o sentinel ainda estiver visível após o render
-    setTimeout(verificarSentinela, 300); 
+    setTimeout(verificarSentinela, 300);
   }
 }
 
@@ -175,10 +176,10 @@ async function render(items, append = false) {
     const idNormalizado = String(toy.id).padStart(4, "0");
     const trunfoCode = toy.codigo_trunfo || gerarIdSuperTrunfo(toy.id);
     const ledHTML = buildLedDisplay(toy.raridade);
-    
+
     // Identificamos a coluna mais curta NO MOMENTO da inserção
     const shortest = columnElements.reduce((min, col) =>
-      col.offsetHeight < min.offsetHeight ? col : min
+      col.offsetHeight < min.offsetHeight ? col : min,
     );
 
     const cardHTML = `...`; // (Mantenha seu template de card HTML original aqui)
@@ -211,8 +212,19 @@ function gerarIdSuperTrunfo(idBrinquedo) {
   return `${letra}${numero}`;
 }
 
+/* 3.4.2 C */
+/* Função auxiliar para injetar transformações na URL do Cloudinary */
+function otimizarUrlCloudinary(url, largura = 600) {
+  if (!url || !url.includes("cloudinary.com")) return url;
+  // f_auto: formato automático (WebP/AVIF)
+  // q_auto: qualidade automática inteligente
+  // w_XXX: redimensiona para a largura necessária
+  return url.replace("/upload/", `/upload/f_auto,q_auto,w_${largura},c_limit/`);
+}
+
 /* 3.4.3. Monta e insere os cards 3D no HTML */
-function render(items, append = false) {
+/* 3.4.3. MASONRY COM INSERÇÃO SEQUENCIAL E IMAGENS OTIMIZADAS */
+async function render(items, append = false) {
   const grid = document.getElementById("toyGrid");
   const targetCols = getColumnCount();
 
@@ -220,7 +232,6 @@ function render(items, append = false) {
     grid.innerHTML = "";
     columnElements = [];
     currentCols = targetCols;
-    nextColIndex = 0;
     for (let i = 0; i < currentCols; i++) {
       const colDiv = document.createElement("div");
       colDiv.className = "masonry-column";
@@ -229,21 +240,24 @@ function render(items, append = false) {
     }
   }
 
-  items.forEach((toy) => {
+  // 🔄 LOOP SEQUENCIAL: Essencial para o cálculo de offsetHeight funcionar
+  for (const toy of items) {
     const idNormalizado = String(toy.id).padStart(4, "0");
     const ledHTML = buildLedDisplay(toy.raridade);
     const isLiked = curtidasDoUsuario.has(idNormalizado);
     const isTive = tiveDoUsuario.has(idNormalizado);
     const isQueria = queriaDoUsuario.has(idNormalizado);
-
-    // 🃏 AQUI ESTÁ A MÁGICA: Chama a função que criamos para gerar o ID caso não venha do banco
     const trunfoCode = toy.codigo_trunfo || gerarIdSuperTrunfo(toy.id);
+
+    // ✅ CHAMADA DA OTIMIZAÇÃO: 600px para frente, 500px para o verso (menor)
+    const urlFrenteOtimizada = otimizarUrlCloudinary(toy.url_frente, 600);
+    const urlVersoOtimizada = otimizarUrlCloudinary(toy.url_verso, 500);
 
     const cardHTML = `
     <div class="masonry-item card-enter" id="card-${idNormalizado}">
       <div class="card-inner" onclick="handleFlip('${idNormalizado}')">
         <div class="card-front">
-          <img src="${toy.url_frente}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
+          <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
         </div>
         <div class="card-back flex flex-col">
           <div class="trunfo-header">
@@ -258,10 +272,11 @@ function render(items, append = false) {
           </div>
           <div class="trunfo-photo-wrapper">
             <div class="trunfo-photo-frame">
-              <img src="${toy.url_verso}" alt="${toy.nome} verso" class="trunfo-photo" loading="lazy">
+              <img src="${urlVersoOtimizada}" alt="${toy.nome} verso" class="trunfo-photo" loading="lazy">
               <span class="trunfo-photo-year">${toy.ano}</span>
             </div>
           </div>
+          
           <div class="trunfo-stats-area">
             <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${toy.fabricante}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${toy.categoria}</span></div>
@@ -287,16 +302,16 @@ function render(items, append = false) {
             </div>
           </div>
           
-          <div class="comment-area px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onpointerdown="event.stopPropagation()">
+          <div class="comment-area px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()">
               <span class="chat-arrow text-[#39ff14] font-orbitron text-[0.55rem] shrink-0">></span>
-              <input type="text" id="comentario-input-${idNormalizado}" maxlength="140" class="chat-input flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onpointerdown="event.stopPropagation()" ${!isUserLogged ? 'disabled placeholder="Faça login para comentar..."' : ""}>
-              <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onpointerdown="event.stopPropagation()" class="chat-send-btn text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0 whitespace-nowrap" ${!isUserLogged ? "disabled" : ""}>SEND</button>
+              <input type="text" id="comentario-input-${idNormalizado}" maxlength="140" class="chat-input flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" ${!isUserLogged ? 'disabled placeholder="Faça login..."' : ""}>
+              <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" class="chat-send-btn text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0" ${!isUserLogged ? "disabled" : ""}>SEND</button>
           </div>
 
           <div class="trunfo-footer">
             <span class="trunfo-footer-logo">RETROBRINQUEDOS</span>
             <div class="like-container">
-              <button id="heart-btn-${idNormalizado}" class="heart-btn ${isLiked ? "liked" : ""}" onclick="toggleCurtida(event, '${idNormalizado}')" aria-label="Curtir">
+              <button id="heart-btn-${idNormalizado}" class="heart-btn ${isLiked ? "liked" : ""}" onclick="toggleCurtida(event, '${idNormalizado}')">
                 <svg class="heart-svg" viewBox="0 0 14 15" xmlns="http://www.w3.org/2000/svg"><path d="M4 5V3H6V5H8V3H10V5H12V9H10V11H8V13H6V11H4V9H2V5Z" /></svg>
                 <div class="heart-tooltip">Faça login para curtir</div>
               </button>
@@ -306,12 +321,13 @@ function render(items, append = false) {
         </div>
       </div>
     </div>`;
-    /* MASONRY REAL: sempre insere na coluna mais curta */
+
+    /* 🎯 CÁLCULO PRECISO: Insere na coluna que está REALMENTE mais curta */
     const shortest = columnElements.reduce((min, col) =>
       col.offsetHeight < min.offsetHeight ? col : min,
     );
     shortest.insertAdjacentHTML("beforeend", cardHTML);
-  });
+  }
 }
 
 /* 3.5. MECÂNICA DE INTERAÇÃO (Flip e Desfocar) */
