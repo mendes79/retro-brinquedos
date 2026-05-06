@@ -19,6 +19,7 @@ let isUserLogged = false;
 let curtidasDoUsuario = new Set();
 let tiveDoUsuario = new Set();
 let queriaDoUsuario = new Set();
+let currentCols = 0;
 
 const sentinel = document.createElement("div");
 sentinel.id = "scrollSentinel";
@@ -169,6 +170,16 @@ async function fetchBrinquedos(reset = false) {
     // Tenta redisparar apenas se o sentinel ainda estiver visível após o render
     setTimeout(verificarSentinela, 300);
   }
+}
+
+/* 3.4.1. Define colunas do grid pelo tamanho da tela */
+function getColumnCount() {
+  const width = window.innerWidth;
+  if (width >= 1536) return 6; // Desktop Extra Largo
+  if (width >= 1280) return 5; // Desktop Largo
+  if (width >= 1024) return 4; // Desktop comum / Tablet Horizontal
+  if (width >= 640) return 3; // Tablet Vertical
+  return 2; // Mobile (Padrão)
 }
 
 /* ============================================================
