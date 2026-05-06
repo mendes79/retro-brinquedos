@@ -374,7 +374,13 @@ async function render(items, append = false) {
     const shortest = columnElements.reduce((min, col) =>
       col.offsetHeight < min.offsetHeight ? col : min,
     );
+
     shortest.insertAdjacentHTML("beforeend", cardHTML);
+
+    // 💡 A SOLUÇÃO: Pausa o loop por um frame de animação.
+    // Isso obriga o navegador a calcular a altura real do card que acabamos de inserir
+    // antes de o loop perguntar novamente qual é a 'shortest' coluna.
+    await new Promise((resolve) => requestAnimationFrame(resolve));
   }
 }
 

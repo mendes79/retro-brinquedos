@@ -309,6 +309,8 @@ body {
     opacity 0.5s ease;
   position: relative;
   width: 100%;
+  /* Um valor mínimo para o card não ter 0px de altura antes da imagem chegar */
+  min-height: 200px;
 }
 .card-enter {
   animation: cardFadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
@@ -373,10 +375,18 @@ body {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
 }
 .card-front {
-  position: relative;
-  z-index: 2;
-  transform: rotateY(0deg);
+  background: #1e293b; /* Cor sólida (esqueleto) enquanto a imagem baixa */
+  border-radius: 1rem;
+  overflow: hidden;
 }
+
+.card-front img {
+  display: block;
+  width: 100%;
+  height: auto; /* Mantém a proporção real da foto original */
+  content-visibility: auto; /* Otimização nativa do Chrome para renderização */
+}
+
 .card-back {
   position: absolute;
   top: 0;
