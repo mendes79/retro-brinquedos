@@ -81,24 +81,31 @@ async function fetchBrinquedos(reset = false) {
   }
 }
 
-/* 3.3.2. Verifica momento exato de disparar mais chamadas */
+/* 3.3.2. Verifica se o sentinel ainda está visível após um fetch terminar
+   e dispara mais um lote se necessário — cobre o gap do desktop (6 colunas) */
 function verificarSentinela() {
-  if (hasMais && document.getElementById("toyGrid").children.length > 0) {
-    setTimeout(() => {
-      const rect = sentinel.getBoundingClientRect();
-      if (rect.top > 0 && rect.top < window.innerHeight + 600)
-        fetchBrinquedos();
-    }, 150);
-  }
+  if (!hasMais) return;
+  // Aguarda o browser pintar os novos cards antes de medir
+  requestAnimationFrame(() => {
+    const rect = sentinel.getBoundingClientRect();
+    // ✅ Margem generosa: cobre mesmo telas 4K com 6 colunas
+    if (rect.top < window.innerHeight + 1200 && !isLoading) {
+      fetchBrinquedos();
+    }
+  });
 }
 
-/* 3.3.3. Monta o vigia de scroll dinâmico */
+/* 3.3.3. Monta o vigia de scroll dinâmico (único ponto de disparo) */
 function setupObserver() {
   const observer = new IntersectionObserver(
     (entries) => {
-      if (entries[0].isIntersecting && !isLoading && hasMais) fetchBrinquedos();
+      // ✅ isIntersecting garante que só dispara quando realmente visível
+      if (entries[0].isIntersecting && !isLoading && hasMais) {
+        fetchBrinquedos();
+      }
     },
-    { rootMargin: "800px" },
+    // ✅ rootMargin aumentado: pré-carrega antes do usuário chegar ao fim
+    { rootMargin: "1200px" },
   );
   document.querySelector("main").appendChild(sentinel);
   observer.observe(sentinel);
@@ -108,7 +115,6 @@ function setupObserver() {
 
 let currentCols = 0;
 let columnElements = [];
-let nextColIndex = 0;
 
 /* 3.4.1. Define colunas do grid pelo tamanho da tela */
 function getColumnCount() {
@@ -251,8 +257,11 @@ function render(items, append = false) {
         </div>
       </div>
     </div>`;
-    columnElements[nextColIndex].insertAdjacentHTML("beforeend", cardHTML);
-    nextColIndex = (nextColIndex + 1) % currentCols;
+    /* MASONRY REAL: sempre insere na coluna mais curta */
+    const shortest = columnElements.reduce((min, col) =>
+      col.offsetHeight < min.offsetHeight ? col : min,
+    );
+    shortest.insertAdjacentHTML("beforeend", cardHTML);
   });
 }
 
