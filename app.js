@@ -95,51 +95,100 @@ function verificarSentinela() {
   });
 }
 
-/* 3.3.3. Monta o vigia de scroll dinâmico (único ponto de disparo) */
-function setupObserver() {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      // ✅ isIntersecting garante que só dispara quando realmente visível
-      if (entries[0].isIntersecting && !isLoading && hasMais) {
-        fetchBrinquedos();
-      }
-    },
-    // ✅ rootMargin aumentado: pré-carrega antes do usuário chegar ao fim
-    { rootMargin: "1200px" },
-  );
-  document.querySelector("main").appendChild(sentinel);
-  observer.observe(sentinel);
-}
+//* ============================================================
+   3.3. INFINITE SCROLL OTIMIZADO
+   ============================================================ */
 
-/* 3.4. RENDERIZAÇÃO DO DOM (Componentes Visuais) */
+async function fetchBrinquedos(reset = false) {
+  if (isLoading || (!hasMais && !reset)) return;
+  isLoading = true;
 
-let currentCols = 0;
-let columnElements = [];
-
-/* 3.4.1. Define colunas do grid pelo tamanho da tela */
-function getColumnCount() {
-  const width = window.innerWidth;
-  if (width >= 1536) return 6;
-  if (width >= 1280) return 5;
-  if (width >= 1024) return 4;
-  if (width >= 640) return 3;
-  return 2;
-}
-
-/* 3.4.2. Gera código HTML dos LEDs de raridade */
-function buildLedDisplay(value) {
-  const v = Math.round(Math.min(10, Math.max(0, value)));
-  function ledClass(idx) {
-    if (idx > v) return "led";
-    if (idx <= 6) return "led on-green";
-    if (idx <= 8) return "led on-yellow";
-    return "led on-red";
+  // Adiciona um feedback visual discreto (Missão Pendente: Loading)
+  const grid = document.getElementById("toyGrid");
+  if (reset) {
+    cursor = 0;
+    allToys = [];
+    hasMais = true;
+    grid.innerHTML = "";
   }
-  const leds = Array.from(
-    { length: 10 },
-    (_, i) => `<div class="${ledClass(i + 1)}"></div>`,
-  ).join("");
-  return `<div class="led-display"><div class="led-row">${leds}</div><div class="led-row">${leds}</div></div>`;
+
+  try {
+    let itens = [];
+    if (buscaAtiva.length >= 2) {
+      const { data, error: rpcError } = await supabaseClient.rpc(
+        "buscar_brinquedos_search",
+        { termo_busca: buscaAtiva, cursor_val: cursor, limite_val: LIMITE },
+      );
+      if (rpcError) throw rpcError;
+      itens = data || [];
+    } else {
+      const res = await fetch(
+        `/api/brinquedos?cursor=${cursor}&limite=${LIMITE}&seed=${sessionSeed}`,
+      );
+      if (!res.ok) throw new Error("Falha na API");
+      const data = await res.json();
+      if (reset && data.total) document.getElementById("heroCount").textContent = data.total;
+      itens = data.itens || [];
+      cursor = data.cursor;
+      hasMais = data.temMais;
+    }
+
+    if (itens.length > 0) {
+      allToys = reset ? itens : [...allToys, ...itens];
+      // A mágica: usamos uma Promise para garantir que o render terminou antes de liberar o loading
+      await render(itens, !reset);
+      if (!reset) cursor = cursor + (buscaAtiva.length >= 2 ? itens.length : 0);
+    } else {
+      hasMais = false;
+    }
+  } catch (error) {
+    console.error("Erro na carga:", error);
+  } finally {
+    isLoading = false;
+    // Tenta redisparar apenas se o sentinel ainda estiver visível após o render
+    setTimeout(verificarSentinela, 300); 
+  }
+}
+
+/* ============================================================
+   3.4.3. RENDER MASONRY COM CHECAGEM DE ALTURA REAL
+   ============================================================ */
+
+async function render(items, append = false) {
+  const grid = document.getElementById("toyGrid");
+  const targetCols = getColumnCount();
+
+  if (!append || currentCols !== targetCols) {
+    grid.innerHTML = "";
+    columnElements = [];
+    currentCols = targetCols;
+    for (let i = 0; i < currentCols; i++) {
+      const colDiv = document.createElement("div");
+      colDiv.className = "masonry-column";
+      grid.appendChild(colDiv);
+      columnElements.push(colDiv);
+    }
+  }
+
+  // Renderização sequencial assíncrona para garantir medição de altura
+  for (const toy of items) {
+    const idNormalizado = String(toy.id).padStart(4, "0");
+    const trunfoCode = toy.codigo_trunfo || gerarIdSuperTrunfo(toy.id);
+    const ledHTML = buildLedDisplay(toy.raridade);
+    
+    // Identificamos a coluna mais curta NO MOMENTO da inserção
+    const shortest = columnElements.reduce((min, col) =>
+      col.offsetHeight < min.offsetHeight ? col : min
+    );
+
+    const cardHTML = `...`; // (Mantenha seu template de card HTML original aqui)
+
+    // Inserção imediata para que o offsetHeight mude para o próximo item
+    shortest.insertAdjacentHTML("beforeend", cardHTML);
+
+    // Dica de Performance: Se a imagem demorar, o offsetHeight pode falhar.
+    // O ideal futuro é carregar a imagem via JS antes de inserir ou usar aspect-ratio fixo.
+  }
 }
 
 /* ---------------------------------------------------
