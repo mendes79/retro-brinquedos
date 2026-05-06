@@ -181,6 +181,7 @@ function getColumnCount() {
   if (width >= 640) return 3; // Tablet Vertical
   return 2; // Mobile (Padrão)
 }
+
 /* 3.4.2. Gera código HTML dos LEDs de raridade */
 function buildLedDisplay(value) {
   const v = Math.round(Math.min(10, Math.max(0, value)));
@@ -196,6 +197,7 @@ function buildLedDisplay(value) {
   ).join("");
   return `<div class="led-display"><div class="led-row">${leds}</div><div class="led-row">${leds}</div></div>`;
 }
+
 /* ============================================================
    3.4.3. RENDER MASONRY COM CHECAGEM DE ALTURA REAL
    ============================================================ */
