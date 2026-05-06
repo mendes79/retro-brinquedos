@@ -95,6 +95,26 @@ function verificarSentinela() {
   });
 }
 
+/* 3.11.1. Monta o vigia de scroll dinâmico (único ponto de disparo) */
+function setupObserver() {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      // isIntersecting garante que só dispara quando realmente visível
+      if (entries[0].isIntersecting && !isLoading && hasMais) {
+        fetchBrinquedos();
+      }
+    },
+    // rootMargin aumentado: pré-carrega antes do usuário chegar ao fim
+    { rootMargin: "1200px" },
+  );
+
+  const mainElement = document.querySelector("main");
+  if (mainElement) {
+    mainElement.appendChild(sentinel);
+    observer.observe(sentinel);
+  }
+}
+
 /* ============================================================
    3.3. INFINITE SCROLL OTIMIZADO
    ============================================================ */
