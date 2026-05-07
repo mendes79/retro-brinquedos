@@ -125,16 +125,30 @@ async function fetchBrinquedos(reset = false) {
   if (isLoading || (!hasMais && !reset)) return;
   isLoading = true;
 
-  // Adiciona um feedback visual discreto (Missão Pendente: Loading)
   const grid = document.getElementById("toyGrid");
+
+  // --- 1. FASE DE PREPARAÇÃO (SKELETONS) ---
   if (reset) {
     cursor = 0;
     allToys = [];
     hasMais = true;
-    grid.innerHTML = "";
+    // Preenche o grid vazio com 6 esqueletos neon
+    grid.innerHTML = Array(6)
+      .fill('<div class="skeleton-card"></div>')
+      .join("");
+  } else {
+    // Adiciona um container temporário de esqueletos ao final para o scroll infinito
+    const loader = document.createElement("div");
+    loader.id = "temp-loader";
+    loader.className = "col-span-full flex gap-4 w-full mt-4";
+    loader.innerHTML = Array(3)
+      .fill('<div class="skeleton-card flex-1"></div>')
+      .join("");
+    grid.appendChild(loader);
   }
 
   try {
+    // --- 2. CHAMADA DOS DADOS ---
     let itens = [];
     if (buscaAtiva.length >= 2) {
       const { data, error: rpcError } = await supabaseClient.rpc(
@@ -149,26 +163,40 @@ async function fetchBrinquedos(reset = false) {
       );
       if (!res.ok) throw new Error("Falha na API");
       const data = await res.json();
-      if (reset && data.total)
+
+      if (reset && data.total) {
         document.getElementById("heroCount").textContent = data.total;
+      }
+
       itens = data.itens || [];
       cursor = data.cursor;
       hasMais = data.temMais;
     }
 
+    // --- 3. LIMPEZA DOS SKELETONS ---
+    if (reset) grid.innerHTML = ""; // Limpa os 6 esqueletos iniciais
+    const tempLoader = document.getElementById("temp-loader");
+    if (tempLoader) tempLoader.remove(); // Remove os esqueletos do fim da página
+
+    // --- 4. RENDERIZAÇÃO REAL ---
     if (itens.length > 0) {
       allToys = reset ? itens : [...allToys, ...itens];
-      // A mágica: usamos uma Promise para garantir que o render terminou antes de liberar o loading
       await render(itens, !reset);
-      if (!reset) cursor = cursor + (buscaAtiva.length >= 2 ? itens.length : 0);
+
+      // Ajuste de cursor para busca RPC
+      if (buscaAtiva.length >= 2 && !reset) {
+        cursor += itens.length;
+      }
     } else {
       hasMais = false;
     }
   } catch (error) {
     console.error("Erro na carga:", error);
+    // Em caso de erro, remove os skeletons para não travar a UI
+    const tempLoader = document.getElementById("temp-loader");
+    if (tempLoader) tempLoader.remove();
   } finally {
     isLoading = false;
-    // Tenta redisparar apenas se o sentinel ainda estiver visível após o render
     setTimeout(verificarSentinela, 300);
   }
 }
