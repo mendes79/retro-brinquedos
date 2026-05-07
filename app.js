@@ -127,28 +127,36 @@ async function fetchBrinquedos(reset = false) {
 
   const grid = document.getElementById("toyGrid");
 
-  // --- 1. FASE DE PREPARAÇÃO (SKELETONS) ---
+  // --- 1. FASE DE PREPARAÇÃO (EXIBIÇÃO DOS SKELETONS) ---
   if (reset) {
     cursor = 0;
     allToys = [];
     hasMais = true;
-    // Preenche o grid vazio com 6 esqueletos neon
-    grid.innerHTML = Array(6)
-      .fill('<div class="skeleton-card"></div>')
-      .join("");
+
+    // Calcula colunas e preenche com skeletons antes da carga
+    const targetCols = getColumnCount();
+    grid.innerHTML = "";
+    for (let i = 0; i < targetCols; i++) {
+      const colDiv = document.createElement("div");
+      colDiv.className = "masonry-column";
+      // 2 skeletons por coluna para preencher a dobra inicial da tela
+      colDiv.innerHTML = Array(2)
+        .fill('<div class="skeleton-card"></div>')
+        .join("");
+      grid.appendChild(colDiv);
+    }
   } else {
-    // Adiciona um container temporário de esqueletos ao final para o scroll infinito
-    const loader = document.createElement("div");
-    loader.id = "temp-loader";
-    loader.className = "col-span-full flex gap-4 w-full mt-4";
-    loader.innerHTML = Array(3)
-      .fill('<div class="skeleton-card flex-1"></div>')
-      .join("");
-    grid.appendChild(loader);
+    // Scroll Infinito: adiciona um skeleton no final de cada coluna existente
+    const cols = document.querySelectorAll(".masonry-column");
+    cols.forEach((col) => {
+      const skeleton = document.createElement("div");
+      skeleton.className = "skeleton-card temp-skeleton";
+      col.appendChild(skeleton);
+    });
   }
 
   try {
-    // --- 2. CHAMADA DOS DADOS ---
+    // --- 2. CHAMADA DOS DADOS (SUPABASE / VERCEL) ---
     let itens = [];
     if (buscaAtiva.length >= 2) {
       const { data, error: rpcError } = await supabaseClient.rpc(
@@ -174,16 +182,19 @@ async function fetchBrinquedos(reset = false) {
     }
 
     // --- 3. LIMPEZA DOS SKELETONS ---
-    if (reset) grid.innerHTML = ""; // Limpa os 6 esqueletos iniciais
-    const tempLoader = document.getElementById("temp-loader");
-    if (tempLoader) tempLoader.remove(); // Remove os esqueletos do fim da página
+    if (reset) {
+      grid.innerHTML = ""; // Limpa tudo para o render() reconstruir as colunas
+    } else {
+      // Remove apenas os skeletons temporários do scroll
+      document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
+    }
 
-    // --- 4. RENDERIZAÇÃO REAL ---
+    // --- 4. RENDERIZAÇÃO DOS CARDS REAIS ---
     if (itens.length > 0) {
       allToys = reset ? itens : [...allToys, ...itens];
       await render(itens, !reset);
 
-      // Ajuste de cursor para busca RPC
+      // Ajuste de cursor manual para busca RPC
       if (buscaAtiva.length >= 2 && !reset) {
         cursor += itens.length;
       }
@@ -192,11 +203,14 @@ async function fetchBrinquedos(reset = false) {
     }
   } catch (error) {
     console.error("Erro na carga:", error);
-    // Em caso de erro, remove os skeletons para não travar a UI
-    const tempLoader = document.getElementById("temp-loader");
-    if (tempLoader) tempLoader.remove();
+    // Limpeza de emergência em caso de falha na rede
+    if (reset)
+      grid.innerHTML =
+        "<p class='text-center col-span-full text-pink-500 font-retro'>ERRO DE CONEXÃO COM O ARQUIVO</p>";
+    document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
   } finally {
     isLoading = false;
+    // Delay para garantir que o DOM se estabilizou
     setTimeout(verificarSentinela, 300);
   }
 }

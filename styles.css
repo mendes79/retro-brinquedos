@@ -1259,6 +1259,7 @@ body {
   animation: skeletonPulse 1.5s infinite ease-in-out;
   position: relative;
   overflow: hidden;
+  margin-bottom: 1.5rem;
 }
 
 /* Linha de brilho passando (Scanline effect) */
