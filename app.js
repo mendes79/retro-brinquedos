@@ -37,10 +37,9 @@ async function fetchBrinquedos(reset = false) {
 
   const grid = document.getElementById("toyGrid");
 
-  // --- 1. SKELETONS ---
   if (reset) {
     cursor = 0;
-    allToys = [];
+    allToys = []; // ✅ Limpa memória local
     hasMais = true;
     const targetCols = getColumnCount();
     grid.innerHTML = "";
@@ -52,6 +51,7 @@ async function fetchBrinquedos(reset = false) {
         .join("");
       grid.appendChild(colDiv);
     }
+    columnElements = Array.from(grid.querySelectorAll(".masonry-column"));
   } else {
     const cols = document.querySelectorAll(".masonry-column");
     cols.forEach((col) => {
@@ -63,8 +63,7 @@ async function fetchBrinquedos(reset = false) {
 
   try {
     let itens = [];
-    // ✅ NORMALIZAÇÃO: Busca sempre em minúsculas para o banco
-    const termoNormalizado = buscaAtiva.toLowerCase();
+    const termoNormalizado = buscaAtiva.toLowerCase(); // ✅ Case-insensitive
 
     if (termoNormalizado.length >= 2) {
       const { data, error: rpcError } = await supabaseClient.rpc(
@@ -90,7 +89,7 @@ async function fetchBrinquedos(reset = false) {
       hasMais = data.temMais;
     }
 
-    // --- 2. LÓGICA "MEU QUARTO" (Filtro Local) ---
+    // Filtro "Meu Quarto"
     if (filtroAtivo !== "todos") {
       itens = itens.filter((toy) => {
         const idStr = String(toy.id).padStart(4, "0");
@@ -101,8 +100,7 @@ async function fetchBrinquedos(reset = false) {
       });
     }
 
-    // --- 3. ANTI-DUPLICIDADE ---
-    // Filtramos itens que já existam no allToys (prevenção de ghosting)
+    // ✅ ANTI-DUPLICIDADE: Filtra IDs que já estão no array allToys
     const idsExistentes = new Set(
       allToys.map((t) => String(t.id).padStart(4, "0")),
     );
@@ -110,22 +108,15 @@ async function fetchBrinquedos(reset = false) {
       (toy) => !idsExistentes.has(String(toy.id).padStart(4, "0")),
     );
 
-    // --- 4. LIMPEZA E RENDER ---
     if (reset) grid.innerHTML = "";
     document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
 
     if (itensNovos.length > 0) {
       allToys = reset ? itensNovos : [...allToys, ...itensNovos];
       await render(itensNovos, !reset);
-
-      if (buscaAtiva.length >= 2 && !reset) {
-        cursor += itens.length;
-      }
+      if (buscaAtiva.length >= 2 && !reset) cursor += itens.length;
     } else if (reset && itensNovos.length === 0) {
-      grid.innerHTML = `<div class="col-span-full text-center py-20">
-            <p class="text-pink-500 font-retro text-xl">NENHUM ITEM ENCONTRADO</p>
-            <p class="text-slate-500 font-orbitron text-xs mt-2">TENTE OUTRO TERMO OU VERIFIQUE SUA COLEÇÃO</p>
-        </div>`;
+      grid.innerHTML = `<div class="col-span-full text-center py-20"><p class="text-pink-500 font-retro text-xl">NENHUM ITEM ENCONTRADO</p></div>`;
       hasMais = false;
     } else {
       hasMais = false;
@@ -317,24 +308,31 @@ async function render(items, append = false) {
     }
   }
 
-  // Renderização sequencial assíncrona para garantir medição de altura
   for (const toy of items) {
     const idNormalizado = String(toy.id).padStart(4, "0");
-    const trunfoCode = toy.codigo_trunfo || gerarIdSuperTrunfo(toy.id);
-    const ledHTML = buildLedDisplay(toy.raridade);
 
-    // Identificamos a coluna mais curta NO MOMENTO da inserção
+    // ✅ TRAVA CRÍTICA: Se o card já existe no DOM, ignora a inserção
+    if (document.getElementById(`card-${idNormalizado}`)) continue;
+
+    const ledHTML = buildLedDisplay(toy.raridade);
+    const isLiked = curtidasDoUsuario.has(idNormalizado);
+    const isTive = tiveDoUsuario.has(idNormalizado);
+    const isQueria = queriaDoUsuario.has(idNormalizado);
+    const trunfoCode = toy.codigo_trunfo || gerarIdSuperTrunfo(toy.id);
+    const urlFrenteOtimizada = otimizarUrlCloudinary(toy.url_frente, 600);
+    const urlVersoOtimizada = otimizarUrlCloudinary(toy.url_verso, 500);
+
+    const cardHTML = `...`; // Mantenha seu template HTML completo aqui
+
     const shortest = columnElements.reduce((min, col) =>
       col.offsetHeight < min.offsetHeight ? col : min,
     );
-
-    const cardHTML = `...`; // (Mantenha seu template de card HTML original aqui)
-
-    // Inserção imediata para que o offsetHeight mude para o próximo item
     shortest.insertAdjacentHTML("beforeend", cardHTML);
 
-    // Dica de Performance: Se a imagem demorar, o offsetHeight pode falhar.
-    // O ideal futuro é carregar a imagem via JS antes de inserir ou usar aspect-ratio fixo.
+    // Sincronia de renderização
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve)),
+    );
   }
 }
 
@@ -568,15 +566,14 @@ let buscaAtiva = "";
 let debounceTimer = null;
 
 document.getElementById("searchInput").addEventListener("input", (e) => {
-  // ✅ Normalizamos para minúsculas aqui para evitar o problema do Case-Sensitive
   const term = e.target.value.trim().toLowerCase();
-
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
+    // ✅ Bloqueia se o termo for idêntico ao anterior
+    if (term === buscaAtiva) return;
     buscaAtiva = term;
-    // O fetchBrinquedos(true) já faz o reset de cursor, allToys e grid internamente
     fetchBrinquedos(true);
-  }, 400); // Aumentei para 400ms para dar um respiro maior ao usuário
+  }, 500);
 });
 
 /* 3.7. ARCADE LOGIN E SISTEMA DE AVATARES */
