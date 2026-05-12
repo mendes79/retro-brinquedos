@@ -338,6 +338,13 @@ async function render(items, append = false) {
     // ✅ TRAVA CRÍTICA: Se o card já existe no DOM, ignora a inserção
     if (document.getElementById(`card-${idNormalizado}`)) continue;
 
+    // ✅ REMOÇÃO DE EMERGÊNCIA: Se já existir um card com esse ID (zumbi),
+    // removemos ele antes de renderizar o novo e limpo.
+    const zumbi = document.getElementById(`card-${idNormalizado}`);
+    if (zumbi) {
+      console.warn(`Limpando card duplicado: ${idNormalizado}`);
+      zumbi.remove();
+    }
     const ledHTML = buildLedDisplay(toy.raridade);
     const isLiked = curtidasDoUsuario.has(idNormalizado);
     const isTive = tiveDoUsuario.has(idNormalizado);
@@ -472,7 +479,17 @@ async function render(items, append = false) {
           
           <div class="comment-area px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()">
               <span class="chat-arrow text-[#39ff14] font-orbitron text-[0.55rem] shrink-0">></span>
-              <input type="text" id="comentario-input-${idNormalizado}" maxlength="140" class="chat-input flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" placeholder="Mensagem..." onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" ${!isUserLogged ? 'disabled placeholder="Faça login..."' : ""}>
+              <input 
+                type="text" 
+                id="comentario-input-${idNormalizado}" 
+                name="comentario-${idNormalizado}" 
+                autocomplete="off" 
+                maxlength="140" 
+                class="chat-input flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" 
+                placeholder="Mensagem..." 
+                onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" 
+                ${!isUserLogged ? 'disabled placeholder="Faça login..."' : ""}
+              >
               <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" class="chat-send-btn text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0" ${!isUserLogged ? "disabled" : ""}>SEND</button>
           </div>
 
