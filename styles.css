@@ -1278,3 +1278,28 @@ body {
   );
   animation: shine 2s infinite;
 }
+/* Estilo dos botões do Meu Quarto */
+.filter-btn {
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.65rem;
+  color: #94a3b8;
+  padding: 6px 15px;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  background: transparent;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  border-color: #39ff14; /* Neon Green */
+  color: #39ff14;
+}
+
+.filter-btn.active {
+  background: rgba(57, 255, 20, 0.1);
+  border-color: #39ff14;
+  color: #39ff14;
+  box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.2);
+}

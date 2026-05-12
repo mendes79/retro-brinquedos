@@ -92,6 +92,39 @@
           </svg>
         </div>
       </div>
+      <div
+        id="userFilters"
+        class="hidden w-full flex gap-3 overflow-x-auto no-scrollbar py-2 px-3 md:px-6 border-t border-white/5 bg-black/20 order-5"
+      >
+        <button
+          id="filter-todos"
+          onclick="filtrarMeuQuarto('todos')"
+          class="filter-btn active"
+        >
+          TODOS
+        </button>
+        <button
+          id="filter-tive"
+          onclick="filtrarMeuQuarto('tive')"
+          class="filter-btn"
+        >
+          FUI DONO
+        </button>
+        <button
+          id="filter-queria"
+          onclick="filtrarMeuQuarto('queria')"
+          class="filter-btn"
+        >
+          QUERIA TER
+        </button>
+        <button
+          id="filter-curtidas"
+          onclick="filtrarMeuQuarto('curtidas')"
+          class="filter-btn"
+        >
+          FAVORITOS
+        </button>
+      </div>
     </nav>
 
     <div id="ledPanel" class="led-panel">

@@ -21,6 +21,7 @@ let tiveDoUsuario = new Set();
 let queriaDoUsuario = new Set();
 let currentCols = 0;
 let columnElements = [];
+let filtroAtivo = "todos"; // 'todos', 'tive', 'queria', 'curtidas'
 
 const sentinel = document.createElement("div");
 sentinel.id = "scrollSentinel";
@@ -34,31 +35,49 @@ async function fetchBrinquedos(reset = false) {
   if (isLoading || (!hasMais && !reset)) return;
   isLoading = true;
 
+  const grid = document.getElementById("toyGrid");
+
+  // --- 1. SKELETONS ---
   if (reset) {
     cursor = 0;
     allToys = [];
     hasMais = true;
-    document.getElementById("toyGrid").innerHTML = "";
+    const targetCols = getColumnCount();
+    grid.innerHTML = "";
+    for (let i = 0; i < targetCols; i++) {
+      const colDiv = document.createElement("div");
+      colDiv.className = "masonry-column";
+      colDiv.innerHTML = Array(2)
+        .fill('<div class="skeleton-card"></div>')
+        .join("");
+      grid.appendChild(colDiv);
+    }
+  } else {
+    const cols = document.querySelectorAll(".masonry-column");
+    cols.forEach((col) => {
+      const skeleton = document.createElement("div");
+      skeleton.className = "skeleton-card temp-skeleton";
+      col.appendChild(skeleton);
+    });
   }
 
   try {
-    if (buscaAtiva.length >= 2) {
-      // Usa RPC nativa do banco para buscas via texto
-      const { data: itens, error: rpcError } = await supabaseClient.rpc(
+    let itens = [];
+    // ✅ NORMALIZAÇÃO: Busca sempre em minúsculas para o banco
+    const termoNormalizado = buscaAtiva.toLowerCase();
+
+    if (termoNormalizado.length >= 2) {
+      const { data, error: rpcError } = await supabaseClient.rpc(
         "buscar_brinquedos_search",
-        { termo_busca: buscaAtiva, cursor_val: cursor, limite_val: LIMITE },
+        {
+          termo_busca: termoNormalizado,
+          cursor_val: cursor,
+          limite_val: LIMITE,
+        },
       );
       if (rpcError) throw rpcError;
-      if (itens && itens.length > 0) {
-        allToys = [...allToys, ...itens];
-        cursor = cursor + itens.length;
-        hasMais = itens.length === LIMITE;
-        render(itens, !reset);
-      } else {
-        hasMais = false;
-      }
+      itens = data || [];
     } else {
-      // Chama API Node (Vercel) padrão
       const res = await fetch(
         `/api/brinquedos?cursor=${cursor}&limite=${LIMITE}&seed=${sessionSeed}`,
       );
@@ -66,20 +85,57 @@ async function fetchBrinquedos(reset = false) {
       const data = await res.json();
       if (reset && data.total)
         document.getElementById("heroCount").textContent = data.total;
-      if (data.itens && data.itens.length > 0) {
-        allToys = [...allToys, ...data.itens];
-        cursor = data.cursor;
-        hasMais = data.temMais;
-        render(data.itens, !reset);
-      } else {
-        hasMais = false;
+      itens = data.itens || [];
+      cursor = data.cursor;
+      hasMais = data.temMais;
+    }
+
+    // --- 2. LÓGICA "MEU QUARTO" (Filtro Local) ---
+    if (filtroAtivo !== "todos") {
+      itens = itens.filter((toy) => {
+        const idStr = String(toy.id).padStart(4, "0");
+        if (filtroAtivo === "tive") return tiveDoUsuario.has(idStr);
+        if (filtroAtivo === "queria") return queriaDoUsuario.has(idStr);
+        if (filtroAtivo === "curtidas") return curtidasDoUsuario.has(idStr);
+        return true;
+      });
+    }
+
+    // --- 3. ANTI-DUPLICIDADE ---
+    // Filtramos itens que já existam no allToys (prevenção de ghosting)
+    const idsExistentes = new Set(
+      allToys.map((t) => String(t.id).padStart(4, "0")),
+    );
+    const itensNovos = itens.filter(
+      (toy) => !idsExistentes.has(String(toy.id).padStart(4, "0")),
+    );
+
+    // --- 4. LIMPEZA E RENDER ---
+    if (reset) grid.innerHTML = "";
+    document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
+
+    if (itensNovos.length > 0) {
+      allToys = reset ? itensNovos : [...allToys, ...itensNovos];
+      await render(itensNovos, !reset);
+
+      if (buscaAtiva.length >= 2 && !reset) {
+        cursor += itens.length;
       }
+    } else if (reset && itensNovos.length === 0) {
+      grid.innerHTML = `<div class="col-span-full text-center py-20">
+            <p class="text-pink-500 font-retro text-xl">NENHUM ITEM ENCONTRADO</p>
+            <p class="text-slate-500 font-orbitron text-xs mt-2">TENTE OUTRO TERMO OU VERIFIQUE SUA COLEÇÃO</p>
+        </div>`;
+      hasMais = false;
+    } else {
+      hasMais = false;
     }
   } catch (error) {
     console.error("Erro na carga:", error);
+    document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
   } finally {
     isLoading = false;
-    verificarSentinela();
+    setTimeout(verificarSentinela, 300);
   }
 }
 
@@ -512,16 +568,15 @@ let buscaAtiva = "";
 let debounceTimer = null;
 
 document.getElementById("searchInput").addEventListener("input", (e) => {
-  const term = e.target.value.trim();
+  // ✅ Normalizamos para minúsculas aqui para evitar o problema do Case-Sensitive
+  const term = e.target.value.trim().toLowerCase();
+
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
     buscaAtiva = term;
-    cursor = 0;
-    allToys = [];
-    hasMais = true;
-    document.getElementById("toyGrid").innerHTML = "";
+    // O fetchBrinquedos(true) já faz o reset de cursor, allToys e grid internamente
     fetchBrinquedos(true);
-  }, 300);
+  }, 400); // Aumentei para 400ms para dar um respiro maior ao usuário
 });
 
 /* 3.7. ARCADE LOGIN E SISTEMA DE AVATARES */
@@ -609,6 +664,7 @@ function updateNavWithAvatar(avatarPath, name) {
         SAIR
       </button>
     </div>`;
+  document.getElementById("userFilters")?.classList.remove("hidden");
 }
 
 async function logOut() {
@@ -794,6 +850,23 @@ async function toggleInteracao(event, brinquedoId, tipo) {
       if (countSpan) countSpan.innerText = count;
     }
   }
+}
+
+/* 3.8. FUNÇÃO DE FILTRO DO "MEU QUARTO" */
+async function filtrarMeuQuarto(tipo) {
+  // 1. Atualiza a variável global que o fetchBrinquedos usa
+  filtroAtivo = tipo;
+
+  // 2. Atualiza visualmente os botões
+  document.querySelectorAll(".filter-btn").forEach((btn) => {
+    btn.classList.remove("active");
+  });
+
+  const btnAtivo = document.getElementById(`filter-${tipo}`);
+  if (btnAtivo) btnAtivo.classList.add("active");
+
+  // 3. Reseta e recarrega o grid
+  await fetchBrinquedos(true);
 }
 
 /* ============================================================
