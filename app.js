@@ -43,36 +43,121 @@ async function fetchBrinquedos(reset = false) {
   isLoading = true;
   const grid = document.getElementById("toyGrid");
 
-  if (reset) {
-    // --- 1. RESET ABSOLUTO DE ESTADO ---
-    cursor = 0;
-    allToys = []; // ✅ Limpa memória local imediatamente
-    hasMais = true;
+  async function fetchBrinquedos(reset = false) {
+    // ✅ TRAVA DE SEGURANÇA: Impede disparos simultâneos durante a busca
+    if (isLoading && reset) return;
+    if (isLoading || (!hasMais && !reset)) return;
 
-    // Captura o termo atualizado para garantir sincronia com o input
-    const inputBusca = document.getElementById("searchInput");
-    buscaAtiva = inputBusca ? inputBusca.value.trim().toLowerCase() : "";
+    isLoading = true;
+    const grid = document.getElementById("toyGrid");
 
-    const targetCols = getColumnCount();
-    grid.innerHTML = ""; // ✅ Limpa o HTML do grid instantaneamente
+    if (reset) {
+      // --- 1. RESET ABSOLUTO DE ESTADO ---
+      cursor = 0;
+      allToys = []; // ✅ Limpa memória local imediatamente
+      hasMais = true;
 
-    for (let i = 0; i < targetCols; i++) {
-      const colDiv = document.createElement("div");
-      colDiv.className = "masonry-column";
-      colDiv.innerHTML = Array(2)
-        .fill('<div class="skeleton-card"></div>')
-        .join("");
-      grid.appendChild(colDiv);
+      // Captura o termo atualizado para garantir sincronia com o input
+      const inputBusca = document.getElementById("searchInput");
+      buscaAtiva = inputBusca ? inputBusca.value.trim().toLowerCase() : "";
+
+      const targetCols = getColumnCount();
+      grid.innerHTML = ""; // ✅ Limpa o HTML do grid instantaneamente
+
+      for (let i = 0; i < targetCols; i++) {
+        const colDiv = document.createElement("div");
+        colDiv.className = "masonry-column";
+        colDiv.innerHTML = Array(2)
+          .fill('<div class="skeleton-card"></div>')
+          .join("");
+        grid.appendChild(colDiv);
+      }
+      columnElements = Array.from(grid.querySelectorAll(".masonry-column"));
+    } else {
+      // Adição de skeletons para scroll infinito
+      const cols = document.querySelectorAll(".masonry-column");
+      cols.forEach((col) => {
+        const skeleton = document.createElement("div");
+        skeleton.className = "skeleton-card temp-skeleton";
+        col.appendChild(skeleton);
+      });
     }
-    columnElements = Array.from(grid.querySelectorAll(".masonry-column"));
-  } else {
-    // Adição de skeletons para scroll infinito
-    const cols = document.querySelectorAll(".masonry-column");
-    cols.forEach((col) => {
-      const skeleton = document.createElement("div");
-      skeleton.className = "skeleton-card temp-skeleton";
-      col.appendChild(skeleton);
-    });
+
+    try {
+      let itens = [];
+      const termoNormalizado = buscaAtiva.toLowerCase();
+
+      if (termoNormalizado.length >= 2) {
+        const { data, error: rpcError } = await supabaseClient.rpc(
+          "buscar_brinquedos_search",
+          {
+            termo_busca: termoNormalizado,
+            cursor_val: cursor,
+            limite_val: LIMITE,
+          },
+        );
+        if (rpcError) throw rpcError;
+        itens = data || [];
+      } else {
+        const res = await fetch(
+          `/api/brinquedos?cursor=${cursor}&limite=${LIMITE}&seed=${sessionSeed}`,
+        );
+        if (!res.ok) throw new Error("Falha na API");
+        const data = await res.json();
+
+        if (reset && data.total) {
+          document.getElementById("heroCount").textContent = data.total;
+        }
+
+        itens = data.itens || [];
+        cursor = data.cursor;
+        hasMais = data.temMais;
+      }
+
+      // Filtro "Meu Quarto"
+      if (filtroAtivo !== "todos") {
+        itens = itens.filter((toy) => {
+          const idStr = String(toy.id).padStart(4, "0");
+          if (filtroAtivo === "tive") return tiveDoUsuario.has(idStr);
+          if (filtroAtivo === "queria") return queriaDoUsuario.has(idStr);
+          if (filtroAtivo === "curtidas") return curtidasDoUsuario.has(idStr);
+          return true;
+        });
+      }
+
+      // ✅ ANTI-DUPLICIDADE: Proteção dupla (Memória e DOM)
+      const idsExistentes = new Set(
+        allToys.map((t) => String(t.id).padStart(4, "0")),
+      );
+      const itensNovos = itens.filter((toy) => {
+        const idStr = String(toy.id).padStart(4, "0");
+        // Se já existir no DOM (zumbi), removemos antes de permitir o novo
+        const cardExistente = document.getElementById(`card-${idStr}`);
+        if (cardExistente && reset) cardExistente.remove();
+
+        return !idsExistentes.has(idStr);
+      });
+
+      if (reset) grid.innerHTML = "";
+      document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
+
+      if (itensNovos.length > 0) {
+        allToys = reset ? itensNovos : [...allToys, ...itensNovos];
+        await render(itensNovos, !reset);
+        if (buscaAtiva.length >= 2 && !reset) cursor += itens.length;
+      } else if (reset && itensNovos.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-20"><p class="text-pink-500 font-retro text-xl">NENHUM ITEM ENCONTRADO</p></div>`;
+        hasMais = false;
+      } else {
+        hasMais = false;
+      }
+    } catch (error) {
+      console.error("Erro na carga:", error);
+      document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
+    } finally {
+      isLoading = false;
+      setTimeout(verificarSentinela, 300);
+    }
   }
 
   try {
@@ -335,16 +420,16 @@ async function render(items, append = false) {
   for (const toy of items) {
     const idNormalizado = String(toy.id).padStart(4, "0");
 
-    // ✅ TRAVA CRÍTICA: Se o card já existe no DOM, ignora a inserção
-    if (document.getElementById(`card-${idNormalizado}`)) continue;
-
-    // ✅ REMOÇÃO DE EMERGÊNCIA: Se já existir um card com esse ID (zumbi),
-    // removemos ele antes de renderizar o novo e limpo.
-    const zumbi = document.getElementById(`card-${idNormalizado}`);
-    if (zumbi) {
-      console.warn(`Limpando card duplicado: ${idNormalizado}`);
-      zumbi.remove();
+    // ✅ REMOÇÃO PROATIVA: Se já existir um card com esse ID no DOM,
+    // nós o removemos para garantir que o novo card seja o único e funcional.
+    const cardExistente = document.getElementById(`card-${idNormalizado}`);
+    if (cardExistente) {
+      console.warn(
+        `Limpando card duplicado detectado pelo F12: ${idNormalizado}`,
+      );
+      cardExistente.remove();
     }
+
     const ledHTML = buildLedDisplay(toy.raridade);
     const isLiked = curtidasDoUsuario.has(idNormalizado);
     const isTive = tiveDoUsuario.has(idNormalizado);
@@ -353,14 +438,17 @@ async function render(items, append = false) {
     const urlFrenteOtimizada = otimizarUrlCloudinary(toy.url_frente, 600);
     const urlVersoOtimizada = otimizarUrlCloudinary(toy.url_verso, 500);
 
-    const cardHTML = `...`; // Mantenha seu template HTML completo aqui
+    const cardHTML = `...`; // (Mantenha seu template HTML completo aqui)
 
+    // Identifica a coluna mais curta para manter o equilíbrio do Masonry
     const shortest = columnElements.reduce((min, col) =>
       col.offsetHeight < min.offsetHeight ? col : min,
     );
+
+    // Insere o card de forma atômica
     shortest.insertAdjacentHTML("beforeend", cardHTML);
 
-    // Sincronia de renderização
+    // Sincronia de renderização para medição precisa de altura
     await new Promise((resolve) =>
       requestAnimationFrame(() => requestAnimationFrame(resolve)),
     );
@@ -602,22 +690,30 @@ function resetarEstadoDosCards() {
     .forEach((card) => card.classList.remove("is-flipped"));
 }
 
-/* 3.6. BUSCA INTELIGENTE (Debounce e Trigger) */
+/* 3.6. BUSCA INTELIGENTE (Debounce e Trigger - Versão Blindada) */
 let buscaAtiva = "";
 let debounceTimer = null;
 
 document.getElementById("searchInput").addEventListener("input", (e) => {
+  // ✅ Normalização imediata para evitar problemas de Case-Sensitive
   const term = e.target.value.trim().toLowerCase();
 
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
-    // ✅ Só dispara se o termo realmente mudou E não estamos ocupados
+    // ✅ Bloqueia disparos redundantes se o termo for idêntico ao anterior
     if (term === buscaAtiva) return;
 
-    // Se o usuário apagou tudo, resetamos para a vitrine principal
+    // Atualiza o estado global da busca
     buscaAtiva = term;
+
+    // ✅ Forçamos o reset das variáveis de paginação antes de chamar o fetch
+    cursor = 0;
+    allToys = [];
+    hasMais = true;
+
+    // Chama a carga principal com a flag de reset ativada
     fetchBrinquedos(true);
-  }, 600); // Aumentamos para 600ms para garantir que o processo anterior respire
+  }, 600); // 600ms de respiro para estabilizar o processo anterior
 });
 
 /* 3.7. ARCADE LOGIN E SISTEMA DE AVATARES */
