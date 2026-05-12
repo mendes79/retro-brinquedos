@@ -128,6 +128,17 @@ async function fetchBrinquedos(reset = false) {
       hasMais = data.temMais;
     }
 
+    // Filtro "Meu Quarto"
+    if (filtroAtivo !== "todos") {
+      itens = itens.filter((toy) => {
+        const idStr = String(toy.id).padStart(4, "0");
+        if (filtroAtivo === "tive") return tiveDoUsuario.has(idStr);
+        if (filtroAtivo === "queria") return queriaDoUsuario.has(idStr);
+        if (filtroAtivo === "curtidas") return curtidasDoUsuario.has(idStr);
+        return true;
+      });
+    }
+
     // --- 3. LIMPEZA DOS SKELETONS ---
     if (reset) {
       grid.innerHTML = ""; // Limpa tudo para o render() reconstruir as colunas
@@ -136,15 +147,32 @@ async function fetchBrinquedos(reset = false) {
       document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
     }
 
-    // --- 4. RENDERIZAÇÃO DOS CARDS REAIS ---
-    if (itens.length > 0) {
-      allToys = reset ? itens : [...allToys, ...itens];
-      await render(itens, !reset);
+    // --- 4. DEDUPLICAÇÃO: Garante unicidade antes de tocar no DOM ---
+    // ✅ Filtra itens cujo ID já existe em allToys (memória) OU no DOM (zumbi)
+    const idsEmMemoria = new Set(
+      allToys.map((t) => String(t.id).padStart(4, "0")),
+    );
+    const itensNovos = itens.filter((toy) => {
+      const idStr = String(toy.id).padStart(4, "0");
+      return !idsEmMemoria.has(idStr);
+    });
+
+    // --- 5. RENDERIZAÇÃO DOS CARDS REAIS ---
+    if (itensNovos.length > 0) {
+      allToys = reset ? itensNovos : [...allToys, ...itensNovos];
+      await render(itensNovos, !reset);
 
       // Ajuste de cursor manual para busca RPC
       if (buscaAtiva.length >= 2 && !reset) {
         cursor += itens.length;
       }
+    } else if (reset) {
+      grid.innerHTML = `
+        <div class="col-span-full text-center py-20">
+          <p class="text-pink-500 font-retro text-xl">NENHUM ITEM ENCONTRADO</p>
+          <p class="text-slate-500 font-orbitron text-xs mt-2">VERIFIQUE O TERMO OU SUA COLEÇÃO</p>
+        </div>`;
+      hasMais = false;
     } else {
       hasMais = false;
     }
@@ -239,6 +267,12 @@ async function render(items, append = false) {
   // 🔄 LOOP SEQUENCIAL: Essencial para o cálculo de offsetHeight funcionar
   for (const toy of items) {
     const idNormalizado = String(toy.id).padStart(4, "0");
+
+    // 🛡️ GUARDA DE UNICIDADE: Última linha de defesa antes de tocar no DOM.
+    // Remove qualquer zumbi remanescente para garantir que o ID seja único.
+    const cardZumbi = document.getElementById(`card-${idNormalizado}`);
+    if (cardZumbi) cardZumbi.remove();
+
     const ledHTML = buildLedDisplay(toy.raridade);
     const isLiked = curtidasDoUsuario.has(idNormalizado);
     const isTive = tiveDoUsuario.has(idNormalizado);
@@ -1266,7 +1300,17 @@ window.addEventListener("resize", () => {
   resetarEstadoDosCards();
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
-    if (allToys && allToys.length > 0) render(allToys, false);
+    // ✅ Usa render() com allToys deduplicated — allToys já é a fonte de verdade
+    // após fetchBrinquedos filtrar por idsEmMemoria. Passamos false para forçar
+    // reconstrução das colunas com o novo número de colunas.
+    if (allToys && allToys.length > 0) {
+      const unique = [
+        ...new Map(
+          allToys.map((t) => [String(t.id).padStart(4, "0"), t]),
+        ).values(),
+      ];
+      render(unique, false);
+    }
   }, 250);
 });
 
