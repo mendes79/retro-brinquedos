@@ -30,19 +30,32 @@ sentinel.className =
 
 /* 3.3. INFINITE SCROLL E CHAMADAS DE API */
 
-/* 3.3.1. Função de requisição do Supabase/Vercel API */
 async function fetchBrinquedos(reset = false) {
+  // ✅ TRAVA DE SEGURANÇA REFORÇADA: Impede disparos simultâneos
+  // Se for um reset (busca) e já estiver carregando, abortamos para evitar duplicidade
+  if (isLoading && reset) {
+    console.warn("Carga de busca em andamento. Abortando disparo duplicado.");
+    return;
+  }
+  // Se for scroll infinito e já estiver carregando, apenas ignora
   if (isLoading || (!hasMais && !reset)) return;
-  isLoading = true;
 
+  isLoading = true;
   const grid = document.getElementById("toyGrid");
 
   if (reset) {
+    // --- 1. RESET ABSOLUTO DE ESTADO ---
     cursor = 0;
-    allToys = []; // ✅ Limpa memória local
+    allToys = []; // ✅ Limpa memória local imediatamente
     hasMais = true;
+
+    // Captura o termo atualizado para garantir sincronia com o input
+    const inputBusca = document.getElementById("searchInput");
+    buscaAtiva = inputBusca ? inputBusca.value.trim().toLowerCase() : "";
+
     const targetCols = getColumnCount();
-    grid.innerHTML = "";
+    grid.innerHTML = ""; // ✅ Limpa o HTML do grid instantaneamente
+
     for (let i = 0; i < targetCols; i++) {
       const colDiv = document.createElement("div");
       colDiv.className = "masonry-column";
@@ -53,6 +66,7 @@ async function fetchBrinquedos(reset = false) {
     }
     columnElements = Array.from(grid.querySelectorAll(".masonry-column"));
   } else {
+    // Adição de skeletons para scroll infinito
     const cols = document.querySelectorAll(".masonry-column");
     cols.forEach((col) => {
       const skeleton = document.createElement("div");
@@ -82,8 +96,11 @@ async function fetchBrinquedos(reset = false) {
       );
       if (!res.ok) throw new Error("Falha na API");
       const data = await res.json();
-      if (reset && data.total)
+
+      if (reset && data.total) {
         document.getElementById("heroCount").textContent = data.total;
+      }
+
       itens = data.itens || [];
       cursor = data.cursor;
       hasMais = data.temMais;
@@ -100,13 +117,16 @@ async function fetchBrinquedos(reset = false) {
       });
     }
 
-    // ✅ ANTI-DUPLICIDADE: Filtra IDs que já estão no array allToys
+    // ✅ ANTI-DUPLICIDADE: Filtra IDs que já estão no array allToys ou no DOM
     const idsExistentes = new Set(
       allToys.map((t) => String(t.id).padStart(4, "0")),
     );
-    const itensNovos = itens.filter(
-      (toy) => !idsExistentes.has(String(toy.id).padStart(4, "0")),
-    );
+    const itensNovos = itens.filter((toy) => {
+      const idStr = String(toy.id).padStart(4, "0");
+      return (
+        !idsExistentes.has(idStr) && !document.getElementById(`card-${idStr}`)
+      );
+    });
 
     if (reset) grid.innerHTML = "";
     document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
@@ -116,7 +136,11 @@ async function fetchBrinquedos(reset = false) {
       await render(itensNovos, !reset);
       if (buscaAtiva.length >= 2 && !reset) cursor += itens.length;
     } else if (reset && itensNovos.length === 0) {
-      grid.innerHTML = `<div class="col-span-full text-center py-20"><p class="text-pink-500 font-retro text-xl">NENHUM ITEM ENCONTRADO</p></div>`;
+      grid.innerHTML = `
+        <div class="col-span-full text-center py-20">
+          <p class="text-pink-500 font-retro text-xl">NENHUM ITEM ENCONTRADO</p>
+          <p class="text-slate-500 font-orbitron text-xs mt-2">VERIFIQUE O TERMO OU SUA COLEÇÃO</p>
+        </div>`;
       hasMais = false;
     } else {
       hasMais = false;
@@ -567,13 +591,16 @@ let debounceTimer = null;
 
 document.getElementById("searchInput").addEventListener("input", (e) => {
   const term = e.target.value.trim().toLowerCase();
+
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
-    // ✅ Bloqueia se o termo for idêntico ao anterior
+    // ✅ Só dispara se o termo realmente mudou E não estamos ocupados
     if (term === buscaAtiva) return;
+
+    // Se o usuário apagou tudo, resetamos para a vitrine principal
     buscaAtiva = term;
     fetchBrinquedos(true);
-  }, 500);
+  }, 600); // Aumentamos para 600ms para garantir que o processo anterior respire
 });
 
 /* 3.7. ARCADE LOGIN E SISTEMA DE AVATARES */
