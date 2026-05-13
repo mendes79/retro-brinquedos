@@ -14,6 +14,8 @@ index_claude.html
 data_old.json
 migrar.js
 app_old.js
+app_old2.js
+
 
 # Pasta local de imagens (já estão no Cloudinary)
 images/

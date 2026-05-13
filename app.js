@@ -149,9 +149,7 @@ async function fetchBrinquedos(reset = false) {
 
     // --- 4. DEDUPLICAÇÃO: Garante unicidade antes de tocar no DOM ---
     // ✅ Filtra itens cujo ID já existe em allToys (memória) OU no DOM (zumbi)
-    const idsEmMemoria = new Set(
-      allToys.map((t) => String(t.id).padStart(4, "0")),
-    );
+    const idsEmMemoria = new Set(allToys.map((t) => String(t.id).padStart(4, "0")));
     const itensNovos = itens.filter((toy) => {
       const idStr = String(toy.id).padStart(4, "0");
       return !idsEmMemoria.has(idStr);
@@ -546,30 +544,88 @@ function getRandomFromRange(min, max, count) {
 }
 
 function updateNavWithAvatar(avatarPath, name) {
+  // Usa o primeiro nome mas sem truncamento artificial por max-w fixo.
+  // O CSS cuida do overflow apenas em telas muito pequenas.
   const firstName = name.split(" ")[0];
 
   document.getElementById("userArea").innerHTML = `
-    <div class="flex items-center gap-1.5 md:gap-4">
-      <!-- Nome do usuário (+15% = 15px) -->
-      <div class="flex flex-col items-end">
-        <span class="text-[10px] md:text-xs text-cyan-400 font-orbitron uppercase tracking-widest hidden sm:block">Player 1</span>
-        <span class="text-[15px] md:text-lg font-bold text-white uppercase tracking-tighter truncate max-w-[65px] xs:max-w-[90px] md:max-w-none text-right leading-tight">
+    <div class="flex items-center gap-1.5 md:gap-3 relative" id="avatarMenuWrapper">
+
+      <!-- Nome + Player 1 -->
+      <div class="flex flex-col items-end hidden sm:flex">
+        <span class="text-[10px] md:text-xs text-cyan-400 font-orbitron uppercase tracking-widest leading-none">Player 1</span>
+        <span class="text-[13px] md:text-base font-bold text-white uppercase tracking-tighter leading-tight max-w-[120px] md:max-w-[180px] truncate text-right">
           ${firstName}
         </span>
       </div>
-      
-      <!-- Avatar (+15% = de 35px para 40px) -->
-      <div class="w-[40px] h-[40px] md:w-12 md:h-12 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(34,211,238,0.4)] shrink-0">
-        <img src="${avatarPath}" class="w-full h-full object-contain">
-      </div>
-      
-      <!-- Botão Sair (+15% = texto de 11.5 para 13px e padding px-3.5) -->
-      <button onclick="logOut()" class="bg-pink-600 text-white px-3.5 md:px-5 py-1.5 md:py-2 rounded-full text-[13px] md:text-sm font-bold hover:bg-cyan-400 hover:text-slate-900 transition transform hover:scale-105 uppercase tracking-wider shadow-lg shadow-pink-900/50 shrink-0">
-        SAIR
+
+      <!-- Avatar clicável que abre o dropdown -->
+      <button
+        id="avatarMenuBtn"
+        onclick="toggleAvatarMenu(event)"
+        class="w-[40px] h-[40px] md:w-11 md:h-11 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(34,211,238,0.4)] shrink-0 focus:outline-none hover:border-pink-500 transition-colors"
+        aria-label="Menu do usuário"
+      >
+        <img src="${avatarPath}" class="w-full h-full object-contain" alt="avatar">
       </button>
+
+      <!-- Dropdown retrô -->
+      <div
+        id="avatarDropdown"
+        class="hidden absolute top-[calc(100%+10px)] right-0 z-[200] min-w-[180px]
+               bg-slate-900 border border-cyan-500/40 rounded-lg shadow-[0_0_20px_rgba(34,211,238,0.15)]
+               overflow-hidden"
+      >
+        <!-- Cabeçalho do menu -->
+        <div class="px-4 py-2.5 border-b border-white/10 bg-black/30">
+          <p class="font-orbitron text-[0.55rem] text-cyan-400/70 uppercase tracking-widest">Meu Quarto</p>
+          <p class="font-bold text-white text-sm uppercase tracking-tight truncate">${firstName}</p>
+        </div>
+
+        <!-- Itens de filtro -->
+        <div class="py-1">
+          <button onclick="filtrarMeuQuarto('todos'); toggleAvatarMenu()" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-white hover:bg-cyan-500/10 transition-colors flex items-center gap-2.5">
+            <span class="text-base">🕹</span> Todos
+          </button>
+          <button onclick="filtrarMeuQuarto('tive'); toggleAvatarMenu()" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-white hover:bg-cyan-500/10 transition-colors flex items-center gap-2.5">
+            <span class="text-base">🏆</span> Fui Dono
+          </button>
+          <button onclick="filtrarMeuQuarto('queria'); toggleAvatarMenu()" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-white hover:bg-cyan-500/10 transition-colors flex items-center gap-2.5">
+            <span class="text-base">⭐</span> Queria Ter
+          </button>
+          <button onclick="filtrarMeuQuarto('curtidas'); toggleAvatarMenu()" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-white hover:bg-cyan-500/10 transition-colors flex items-center gap-2.5">
+            <span class="text-base">❤️</span> Favoritos
+          </button>
+        </div>
+
+        <!-- Separador + Sair -->
+        <div class="border-t border-white/10">
+          <button onclick="logOut()" class="w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-pink-400 hover:text-white hover:bg-pink-600/20 transition-colors flex items-center gap-2.5">
+            <span class="text-base">⏏</span> Sair
+          </button>
+        </div>
+      </div>
     </div>`;
-  document.getElementById("userFilters")?.classList.remove("hidden");
+
+  // A barra de filtros da nav fica oculta — os filtros agora vivem no dropdown
+  document.getElementById("userFilters")?.classList.add("hidden");
 }
+
+/* Abre/fecha o dropdown do avatar */
+function toggleAvatarMenu(event) {
+  if (event) event.stopPropagation();
+  const dropdown = document.getElementById("avatarDropdown");
+  if (!dropdown) return;
+  dropdown.classList.toggle("hidden");
+}
+
+/* Fecha o dropdown ao clicar fora dele */
+document.addEventListener("click", (e) => {
+  const wrapper = document.getElementById("avatarMenuWrapper");
+  if (wrapper && !wrapper.contains(e.target)) {
+    document.getElementById("avatarDropdown")?.classList.add("hidden");
+  }
+});
 
 async function logOut() {
   await supabaseClient.auth.signOut();
@@ -765,9 +821,13 @@ async function filtrarMeuQuarto(tipo) {
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.classList.remove("active");
   });
-
   const btnAtivo = document.getElementById(`filter-${tipo}`);
   if (btnAtivo) btnAtivo.classList.add("active");
+
+  // 🛡️ FIX 1.3: Limpa o estado de flip ANTES de reconstruir o grid.
+  // Sem isso, o `grid-focused` fica preso no DOM da sessão anterior
+  // e bloqueia o flip de todos os cards do novo filtro.
+  resetarEstadoDosCards();
 
   // 3. Reseta e recarrega o grid
   await fetchBrinquedos(true);
@@ -1304,11 +1364,7 @@ window.addEventListener("resize", () => {
     // após fetchBrinquedos filtrar por idsEmMemoria. Passamos false para forçar
     // reconstrução das colunas com o novo número de colunas.
     if (allToys && allToys.length > 0) {
-      const unique = [
-        ...new Map(
-          allToys.map((t) => [String(t.id).padStart(4, "0"), t]),
-        ).values(),
-      ];
+      const unique = [...new Map(allToys.map((t) => [String(t.id).padStart(4, "0"), t])).values()];
       render(unique, false);
     }
   }, 250);
@@ -1347,6 +1403,10 @@ async function init() {
       isUserLogged = true;
       document.body.classList.remove("app-unlogged");
       const userName = session.user.user_metadata.full_name || "Player 1";
+
+      // 🛡️ AWAIT GARANTIDO: Os Sets de interações DEVEM estar populados
+      // antes de fetchBrinquedos(true) ser chamado, caso contrário os filtros
+      // "Meu Quarto" encontram Sets vazios e não exibem nenhum card.
       await carregarInteracoesDoBanco(session.user.id);
 
       const savedAvatar = localStorage.getItem("retro_avatar");
@@ -1361,6 +1421,8 @@ async function init() {
     }
   }
 
+  // 🛡️ setupObserver() antes do fetch para que o IntersectionObserver
+  // já esteja ativo quando os cards forem inseridos no DOM.
   setupObserver();
   await fetchBrinquedos(true);
   ajustarPainelLED();
