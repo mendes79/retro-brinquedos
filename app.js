@@ -149,7 +149,9 @@ async function fetchBrinquedos(reset = false) {
 
     // --- 4. DEDUPLICAÇÃO: Garante unicidade antes de tocar no DOM ---
     // ✅ Filtra itens cujo ID já existe em allToys (memória) OU no DOM (zumbi)
-    const idsEmMemoria = new Set(allToys.map((t) => String(t.id).padStart(4, "0")));
+    const idsEmMemoria = new Set(
+      allToys.map((t) => String(t.id).padStart(4, "0")),
+    );
     const itensNovos = itens.filter((toy) => {
       const idStr = String(toy.id).padStart(4, "0");
       return !idsEmMemoria.has(idStr);
@@ -812,24 +814,29 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   }
 }
 
-/* 3.8. FUNÇÃO DE FILTRO DO "MEU QUARTO" */
+/* 3.8. FUNÇÃO DE FILTRO DO "MEU QUARTO" - VERSÃO CORRIGIDA */
 async function filtrarMeuQuarto(tipo) {
-  // 1. Atualiza a variável global que o fetchBrinquedos usa
+  // 1. LIMPEZA DE BUSCA: Garante que o usuário veja a categoria limpa
+  const inputBusca = document.getElementById("searchInput");
+  if (inputBusca) {
+    inputBusca.value = ""; // Limpa visualmente o campo
+  }
+  buscaAtiva = ""; // Reseta a variável global de busca
+
+  // 2. Atualiza a variável global que o fetchBrinquedos usa
   filtroAtivo = tipo;
 
-  // 2. Atualiza visualmente os botões
-  document.querySelectorAll(".filter-btn").forEach((btn) => {
-    btn.classList.remove("active");
+  // 3. Atualiza visualmente o estado dos botões do dropdown (se necessário)
+  document.querySelectorAll(".dropdown-filter-item").forEach((btn) => {
+    // Você pode adicionar uma classe 'text-cyan-400' para marcar o filtro ativo aqui
+    btn.classList.remove("bg-cyan-500/10", "text-white");
   });
-  const btnAtivo = document.getElementById(`filter-${tipo}`);
-  if (btnAtivo) btnAtivo.classList.add("active");
 
-  // 🛡️ FIX 1.3: Limpa o estado de flip ANTES de reconstruir o grid.
-  // Sem isso, o `grid-focused` fica preso no DOM da sessão anterior
-  // e bloqueia o flip de todos os cards do novo filtro.
+  // 🛡️ FIX: Limpa o estado de flip e foco ANTES de reconstruir o grid
   resetarEstadoDosCards();
 
-  // 3. Reseta e recarrega o grid
+  // 4. Reseta e recarrega o grid do zero
+  // O 'true' aqui é vital para limpar o allToys e resetar o cursor no banco
   await fetchBrinquedos(true);
 }
 
@@ -1364,7 +1371,11 @@ window.addEventListener("resize", () => {
     // após fetchBrinquedos filtrar por idsEmMemoria. Passamos false para forçar
     // reconstrução das colunas com o novo número de colunas.
     if (allToys && allToys.length > 0) {
-      const unique = [...new Map(allToys.map((t) => [String(t.id).padStart(4, "0"), t])).values()];
+      const unique = [
+        ...new Map(
+          allToys.map((t) => [String(t.id).padStart(4, "0"), t]),
+        ).values(),
+      ];
       render(unique, false);
     }
   }, 250);
