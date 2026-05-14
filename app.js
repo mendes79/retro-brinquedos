@@ -113,23 +113,31 @@ async function fetchBrinquedos(reset = false) {
     if (filtroAtivo !== "todos" && buscaAtiva.length < 2) {
       // Seleciona o Set correto para o filtro ativo
       const setAtivo =
-        filtroAtivo === "tive"   ? tiveDoUsuario :
-        filtroAtivo === "queria" ? queriaDoUsuario :
-                                   curtidasDoUsuario;
+        filtroAtivo === "tive"
+          ? tiveDoUsuario
+          : filtroAtivo === "queria"
+            ? queriaDoUsuario
+            : curtidasDoUsuario;
 
       const idsFiltro = [...setAtivo];
 
       // Se o Set estiver vazio, não há nada a buscar
       if (idsFiltro.length === 0) {
         if (reset) grid.innerHTML = "";
-        document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
+        document
+          .querySelectorAll(".temp-skeleton")
+          .forEach((el) => el.remove());
         grid.innerHTML = `
           <div class="col-span-full text-center py-20">
             <p class="text-pink-500 font-retro text-xl">NENHUM ITEM AQUI AINDA</p>
             <p class="text-slate-500 font-orbitron text-xs mt-2">
-              ${filtroAtivo === "tive"    ? "MARQUE OS BRINQUEDOS QUE VOCÊ TEVE" :
-                filtroAtivo === "queria"  ? "MARQUE OS BRINQUEDOS QUE VOCÊ QUERIA TER" :
-                                            "CURTA OS BRINQUEDOS QUE VOCÊ AMOU"}
+              ${
+                filtroAtivo === "tive"
+                  ? "MARQUE OS BRINQUEDOS QUE VOCÊ TEVE"
+                  : filtroAtivo === "queria"
+                    ? "MARQUE OS BRINQUEDOS QUE VOCÊ QUERIA TER"
+                    : "CURTA OS BRINQUEDOS QUE VOCÊ AMOU"
+              }
             </p>
           </div>`;
         hasMais = false;
@@ -137,16 +145,16 @@ async function fetchBrinquedos(reset = false) {
       }
 
       // Busca todos os itens do filtro de uma vez (sem paginação — coleção pessoal
-      // raramente terá centenas de itens)
+      // raramente terá centenas de itens).
+      // ⚠️ IDs são VARCHAR "0052" no banco — NÃO converter para int, passar como string.
       const { data, error: filtroError } = await supabaseClient
         .from("brinquedos")
         .select("*")
-        .in("id", idsFiltro.map((id) => parseInt(id, 10)));
+        .in("id", idsFiltro);
 
       if (filtroError) throw filtroError;
       itens = data || [];
       hasMais = false; // Coleção pessoal: todos os itens chegam de uma vez
-
     } else if (buscaAtiva.length >= 2) {
       // BUSCA POR TEXTO: usa o RPC com unaccent
       const { data, error: rpcError } = await supabaseClient.rpc(
@@ -155,7 +163,6 @@ async function fetchBrinquedos(reset = false) {
       );
       if (rpcError) throw rpcError;
       itens = data || [];
-
     } else {
       // MODO NORMAL (Todos): paginação aleatória via Vercel
       const res = await fetch(
@@ -183,7 +190,9 @@ async function fetchBrinquedos(reset = false) {
 
     // --- 4. DEDUPLICAÇÃO: Garante unicidade antes de tocar no DOM ---
     // ✅ Filtra itens cujo ID já existe em allToys (memória) OU no DOM (zumbi)
-    const idsEmMemoria = new Set(allToys.map((t) => String(t.id).padStart(4, "0")));
+    const idsEmMemoria = new Set(
+      allToys.map((t) => String(t.id).padStart(4, "0")),
+    );
     const itensNovos = itens.filter((toy) => {
       const idStr = String(toy.id).padStart(4, "0");
       return !idsEmMemoria.has(idStr);
@@ -673,16 +682,27 @@ async function logOut() {
 async function carregarInteracoesDoBanco(userId, tentativa = 1) {
   try {
     const [resCurtidas, resTive, resQueria] = await Promise.all([
-      supabaseClient.from("curtidas").select("brinquedo_id").eq("usuario_id", userId),
-      supabaseClient.from("interacoes_tive").select("brinquedo_id").eq("usuario_id", userId),
-      supabaseClient.from("interacoes_queria").select("brinquedo_id").eq("usuario_id", userId),
+      supabaseClient
+        .from("curtidas")
+        .select("brinquedo_id")
+        .eq("usuario_id", userId),
+      supabaseClient
+        .from("interacoes_tive")
+        .select("brinquedo_id")
+        .eq("usuario_id", userId),
+      supabaseClient
+        .from("interacoes_queria")
+        .select("brinquedo_id")
+        .eq("usuario_id", userId),
     ]);
 
     // 🛡️ RETRY: Se qualquer query falhar e ainda temos tentativas, aguarda e tenta novamente.
     // Evita Sets vazios causados por cold start do Supabase ou token recém-renovado.
     const houveErro = resCurtidas.error || resTive.error || resQueria.error;
     if (houveErro && tentativa < 3) {
-      console.warn(`carregarInteracoes: tentativa ${tentativa} falhou, retentando...`);
+      console.warn(
+        `carregarInteracoes: tentativa ${tentativa} falhou, retentando...`,
+      );
       await new Promise((r) => setTimeout(r, 600 * tentativa));
       return carregarInteracoesDoBanco(userId, tentativa + 1);
     }
@@ -700,7 +720,9 @@ async function carregarInteracoesDoBanco(userId, tentativa = 1) {
         resQueria.data.map((i) => String(i.brinquedo_id).padStart(4, "0")),
       );
 
-    console.log(`✅ Interações carregadas — Tive: ${tiveDoUsuario.size} | Queria: ${queriaDoUsuario.size} | Curtidas: ${curtidasDoUsuario.size}`);
+    console.log(
+      `✅ Interações carregadas — Tive: ${tiveDoUsuario.size} | Queria: ${queriaDoUsuario.size} | Curtidas: ${curtidasDoUsuario.size}`,
+    );
   } catch (e) {
     console.error("Erro no carregamento de interações:", e);
   }
@@ -860,9 +882,14 @@ async function filtrarMeuQuarto(tipo) {
   const btnAtivo = document.getElementById(`filter-${tipo}`);
   if (btnAtivo) btnAtivo.classList.add("active");
 
+  // 🛡️ FIX BUSCA HERDADA: Limpa o termo de busca ao trocar de filtro.
+  // Sem isso, um "bola" digitado em "Todos" seria herdado por "Fui Dono",
+  // exibindo resultados de busca em vez da coleção pessoal.
+  buscaAtiva = "";
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) searchInput.value = "";
+
   // 🛡️ FIX 1.3: Limpa o estado de flip ANTES de reconstruir o grid.
-  // Sem isso, o `grid-focused` fica preso no DOM da sessão anterior
-  // e bloqueia o flip de todos os cards do novo filtro.
   resetarEstadoDosCards();
 
   // 3. Reseta e recarrega o grid
@@ -1400,7 +1427,11 @@ window.addEventListener("resize", () => {
     // após fetchBrinquedos filtrar por idsEmMemoria. Passamos false para forçar
     // reconstrução das colunas com o novo número de colunas.
     if (allToys && allToys.length > 0) {
-      const unique = [...new Map(allToys.map((t) => [String(t.id).padStart(4, "0"), t])).values()];
+      const unique = [
+        ...new Map(
+          allToys.map((t) => [String(t.id).padStart(4, "0"), t]),
+        ).values(),
+      ];
       render(unique, false);
     }
   }, 250);
