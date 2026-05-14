@@ -1513,7 +1513,7 @@ function ajustarPainelLED() {
   if (hero) hero.style.paddingTop = alturaNav + ledHeight + "px";
 }
 
-// Recalcula se a navbar mudar de tamanho (ex: wrap no mobile)
+// Recalcula se a navbar mudar de tamanho (ex: wrap no mobile).
 window.addEventListener("resize", ajustarPainelLED);
 
 init();
