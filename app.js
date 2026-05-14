@@ -105,14 +105,59 @@ async function fetchBrinquedos(reset = false) {
   try {
     // --- 2. CHAMADA DOS DADOS (SUPABASE / VERCEL) ---
     let itens = [];
-    if (buscaAtiva.length >= 2) {
+
+    // 🛡️ FILTROS "MEU QUARTO": Busca server-side direta pelos IDs do Set local.
+    // Isso elimina a "loteria de paginação": em vez de buscar 20 itens aleatórios
+    // e esperar que os marcados apareçam, buscamos EXATAMENTE os IDs que o usuário
+    // marcou. Sem race condition, sem dependência de scroll infinito.
+    if (filtroAtivo !== "todos" && buscaAtiva.length < 2) {
+      // Seleciona o Set correto para o filtro ativo
+      const setAtivo =
+        filtroAtivo === "tive"   ? tiveDoUsuario :
+        filtroAtivo === "queria" ? queriaDoUsuario :
+                                   curtidasDoUsuario;
+
+      const idsFiltro = [...setAtivo];
+
+      // Se o Set estiver vazio, não há nada a buscar
+      if (idsFiltro.length === 0) {
+        if (reset) grid.innerHTML = "";
+        document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-20">
+            <p class="text-pink-500 font-retro text-xl">NENHUM ITEM AQUI AINDA</p>
+            <p class="text-slate-500 font-orbitron text-xs mt-2">
+              ${filtroAtivo === "tive"    ? "MARQUE OS BRINQUEDOS QUE VOCÊ TEVE" :
+                filtroAtivo === "queria"  ? "MARQUE OS BRINQUEDOS QUE VOCÊ QUERIA TER" :
+                                            "CURTA OS BRINQUEDOS QUE VOCÊ AMOU"}
+            </p>
+          </div>`;
+        hasMais = false;
+        return; // Sai do try, vai pro finally
+      }
+
+      // Busca todos os itens do filtro de uma vez (sem paginação — coleção pessoal
+      // raramente terá centenas de itens)
+      const { data, error: filtroError } = await supabaseClient
+        .from("brinquedos")
+        .select("*")
+        .in("id", idsFiltro.map((id) => parseInt(id, 10)));
+
+      if (filtroError) throw filtroError;
+      itens = data || [];
+      hasMais = false; // Coleção pessoal: todos os itens chegam de uma vez
+
+    } else if (buscaAtiva.length >= 2) {
+      // BUSCA POR TEXTO: usa o RPC com unaccent
       const { data, error: rpcError } = await supabaseClient.rpc(
         "buscar_brinquedos_search",
         { termo_busca: buscaAtiva, cursor_val: cursor, limite_val: LIMITE },
       );
       if (rpcError) throw rpcError;
       itens = data || [];
+
     } else {
+      // MODO NORMAL (Todos): paginação aleatória via Vercel
       const res = await fetch(
         `/api/brinquedos?cursor=${cursor}&limite=${LIMITE}&seed=${sessionSeed}`,
       );
@@ -128,17 +173,6 @@ async function fetchBrinquedos(reset = false) {
       hasMais = data.temMais;
     }
 
-    // Filtro "Meu Quarto"
-    if (filtroAtivo !== "todos") {
-      itens = itens.filter((toy) => {
-        const idStr = String(toy.id).padStart(4, "0");
-        if (filtroAtivo === "tive") return tiveDoUsuario.has(idStr);
-        if (filtroAtivo === "queria") return queriaDoUsuario.has(idStr);
-        if (filtroAtivo === "curtidas") return curtidasDoUsuario.has(idStr);
-        return true;
-      });
-    }
-
     // --- 3. LIMPEZA DOS SKELETONS ---
     if (reset) {
       grid.innerHTML = ""; // Limpa tudo para o render() reconstruir as colunas
@@ -149,9 +183,7 @@ async function fetchBrinquedos(reset = false) {
 
     // --- 4. DEDUPLICAÇÃO: Garante unicidade antes de tocar no DOM ---
     // ✅ Filtra itens cujo ID já existe em allToys (memória) OU no DOM (zumbi)
-    const idsEmMemoria = new Set(
-      allToys.map((t) => String(t.id).padStart(4, "0")),
-    );
+    const idsEmMemoria = new Set(allToys.map((t) => String(t.id).padStart(4, "0")));
     const itensNovos = itens.filter((toy) => {
       const idStr = String(toy.id).padStart(4, "0");
       return !idsEmMemoria.has(idStr);
@@ -638,22 +670,22 @@ async function logOut() {
 /* 3.8. GESTÃO DE DADOS (CURTIDAS E COLEÇÃO DO USUÁRIO) */
 
 /* 3.8.1. Puxa perfil e preenche as Memórias Visuais (Sets) */
-async function carregarInteracoesDoBanco(userId) {
+async function carregarInteracoesDoBanco(userId, tentativa = 1) {
   try {
     const [resCurtidas, resTive, resQueria] = await Promise.all([
-      supabaseClient
-        .from("curtidas")
-        .select("brinquedo_id")
-        .eq("usuario_id", userId),
-      supabaseClient
-        .from("interacoes_tive")
-        .select("brinquedo_id")
-        .eq("usuario_id", userId),
-      supabaseClient
-        .from("interacoes_queria")
-        .select("brinquedo_id")
-        .eq("usuario_id", userId),
+      supabaseClient.from("curtidas").select("brinquedo_id").eq("usuario_id", userId),
+      supabaseClient.from("interacoes_tive").select("brinquedo_id").eq("usuario_id", userId),
+      supabaseClient.from("interacoes_queria").select("brinquedo_id").eq("usuario_id", userId),
     ]);
+
+    // 🛡️ RETRY: Se qualquer query falhar e ainda temos tentativas, aguarda e tenta novamente.
+    // Evita Sets vazios causados por cold start do Supabase ou token recém-renovado.
+    const houveErro = resCurtidas.error || resTive.error || resQueria.error;
+    if (houveErro && tentativa < 3) {
+      console.warn(`carregarInteracoes: tentativa ${tentativa} falhou, retentando...`);
+      await new Promise((r) => setTimeout(r, 600 * tentativa));
+      return carregarInteracoesDoBanco(userId, tentativa + 1);
+    }
 
     if (resCurtidas.data)
       curtidasDoUsuario = new Set(
@@ -667,8 +699,10 @@ async function carregarInteracoesDoBanco(userId) {
       queriaDoUsuario = new Set(
         resQueria.data.map((i) => String(i.brinquedo_id).padStart(4, "0")),
       );
+
+    console.log(`✅ Interações carregadas — Tive: ${tiveDoUsuario.size} | Queria: ${queriaDoUsuario.size} | Curtidas: ${curtidasDoUsuario.size}`);
   } catch (e) {
-    console.error("Erro no banco:", e);
+    console.error("Erro no carregamento de interações:", e);
   }
 }
 
@@ -814,29 +848,24 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   }
 }
 
-/* 3.8. FUNÇÃO DE FILTRO DO "MEU QUARTO" - VERSÃO CORRIGIDA */
+/* 3.8. FUNÇÃO DE FILTRO DO "MEU QUARTO" */
 async function filtrarMeuQuarto(tipo) {
-  // 1. LIMPEZA DE BUSCA: Garante que o usuário veja a categoria limpa
-  const inputBusca = document.getElementById("searchInput");
-  if (inputBusca) {
-    inputBusca.value = ""; // Limpa visualmente o campo
-  }
-  buscaAtiva = ""; // Reseta a variável global de busca
-
-  // 2. Atualiza a variável global que o fetchBrinquedos usa
+  // 1. Atualiza a variável global que o fetchBrinquedos usa
   filtroAtivo = tipo;
 
-  // 3. Atualiza visualmente o estado dos botões do dropdown (se necessário)
-  document.querySelectorAll(".dropdown-filter-item").forEach((btn) => {
-    // Você pode adicionar uma classe 'text-cyan-400' para marcar o filtro ativo aqui
-    btn.classList.remove("bg-cyan-500/10", "text-white");
+  // 2. Atualiza visualmente os botões
+  document.querySelectorAll(".filter-btn").forEach((btn) => {
+    btn.classList.remove("active");
   });
+  const btnAtivo = document.getElementById(`filter-${tipo}`);
+  if (btnAtivo) btnAtivo.classList.add("active");
 
-  // 🛡️ FIX: Limpa o estado de flip e foco ANTES de reconstruir o grid
+  // 🛡️ FIX 1.3: Limpa o estado de flip ANTES de reconstruir o grid.
+  // Sem isso, o `grid-focused` fica preso no DOM da sessão anterior
+  // e bloqueia o flip de todos os cards do novo filtro.
   resetarEstadoDosCards();
 
-  // 4. Reseta e recarrega o grid do zero
-  // O 'true' aqui é vital para limpar o allToys e resetar o cursor no banco
+  // 3. Reseta e recarrega o grid
   await fetchBrinquedos(true);
 }
 
@@ -1371,11 +1400,7 @@ window.addEventListener("resize", () => {
     // após fetchBrinquedos filtrar por idsEmMemoria. Passamos false para forçar
     // reconstrução das colunas com o novo número de colunas.
     if (allToys && allToys.length > 0) {
-      const unique = [
-        ...new Map(
-          allToys.map((t) => [String(t.id).padStart(4, "0"), t]),
-        ).values(),
-      ];
+      const unique = [...new Map(allToys.map((t) => [String(t.id).padStart(4, "0"), t])).values()];
       render(unique, false);
     }
   }, 250);
