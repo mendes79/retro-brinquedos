@@ -1524,7 +1524,7 @@ body {
 @font-face {
   font-family: "LEDDisplay";
   /* 📁 Coloque o arquivo em /fonts/BoldLED.ttf na raiz do projeto */
-  src: url("/fonts/Bold LED Board-7.ttf") format("truetype");
+  src: url("/fonts/bold_led_board-7.ttf") format("truetype");
   font-display: swap;
 }
 
