@@ -726,8 +726,8 @@ body {
   outline: none;
 }
 .heart-svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   fill: #3a0000;
   filter: drop-shadow(1px 0 0 white) drop-shadow(-1px 0 0 white)
     drop-shadow(0 1px 0 white) drop-shadow(0 -1px 0 white);
@@ -1615,6 +1615,9 @@ body {
 .whatsapp-icon {
   width: 15px;
   height: 15px;
-  fill: #25d366; /* Verde oficial WhatsApp */
+  fill: #ffffff; /* Verde oficial WhatsApp */
   filter: drop-shadow(0 0 3px rgba(37, 211, 102, 0.4));
+}
+.whatsapp-share-btn:hover .whatsapp-icon {
+  fill: #25d366;
 }
