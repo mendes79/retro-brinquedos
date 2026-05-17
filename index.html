@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RetroBrinquedos BR | Arquivo Digital 80s/90s</title>
 
+    <!-- Open Graph — controla o preview no WhatsApp e redes sociais -->
+    <meta property="og:title"       content="RetroBrinquedos BR — O Museu dos Brinquedos Inesquecíveis" />
+    <meta property="og:description" content="Reviva a magia da infância. Arquivo digital interativo dos brinquedos dos anos 80 e 90." />
+    <meta property="og:image"       content="https://retro-brinquedos.vercel.app/img/og-cover.png" />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url"         content="https://retro-brinquedos.vercel.app" />
+    <meta property="og:type"        content="website" />
+    <meta name="twitter:card"       content="summary_large_image" />
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -198,7 +208,7 @@
       <div id="toyGrid" class="masonry-grid"></div>
     </main>
 
-    <!-- Footer fixo: Texto centralizado absoluto e ícones na margem direita. -->
+    <!-- Footer fixo: Texto centralizado absoluto e ícones na margem direita -->
     <footer
       class="fixed bottom-0 w-full z-[90] bg-slate-900/95 backdrop-blur-md border-t border-slate-800 py-3 md:py-1.5"
     >
@@ -368,6 +378,57 @@
             GAME<br />OVER
           </h2>
         </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         DRAWER DE COMENTÁRIOS (Item 3.2)
+         Mobile: desliza de baixo | Desktop: painel lateral direito
+         ============================================================ -->
+    <div id="comentariosDrawer" class="comentarios-drawer" onclick="fecharDrawerSeForaDoPanel(event)">
+      <div class="comentarios-panel" onclick="event.stopPropagation()">
+
+        <!-- Cabeçalho -->
+        <div class="drawer-header">
+          <div class="drawer-header-info">
+            <span class="drawer-label">COMENTÁRIOS</span>
+            <span id="drawerNomeBrinquedo" class="drawer-nome"></span>
+          </div>
+          <button class="drawer-close-btn" onclick="fecharDrawerComentarios()">✕</button>
+        </div>
+
+        <!-- Lista de comentários -->
+        <div id="drawerListaComentarios" class="drawer-lista">
+          <p class="drawer-loading">Carregando...</p>
+        </div>
+
+        <!-- Input de envio -->
+        <div class="drawer-input-area" id="drawerInputArea">
+          <span class="drawer-prompt">&gt;</span>
+          <input
+            type="text"
+            id="drawerComentarioInput"
+            autocomplete="off"
+            maxlength="140"
+            placeholder="Escreva sua memória..."
+            class="drawer-input"
+            onkeypress="handleDrawerEnter(event)"
+          />
+          <button class="drawer-send-btn" onclick="enviarComentarioDrawer()">SEND</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL DE CARD COMPARTILHADO (Item 5.2)
+         Abre quando a URL contém ?card=XXXX
+         ============================================================ -->
+    <div id="cardCompartilhadoModal" class="card-modal-overlay hidden" onclick="fecharCardModal()">
+      <div class="card-modal-box" onclick="event.stopPropagation()">
+        <button class="card-modal-close" onclick="fecharCardModal()">[ ESC ]</button>
+        <p class="card-modal-label">Alguém compartilhou esta memória com você</p>
+        <div id="cardCompartilhadoContainer" class="card-modal-container"></div>
+        <button class="card-modal-cta" onclick="fecharCardModal()">▶ Ver a Coleção Completa</button>
       </div>
     </div>
 

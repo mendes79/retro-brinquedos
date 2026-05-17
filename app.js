@@ -113,31 +113,23 @@ async function fetchBrinquedos(reset = false) {
     if (filtroAtivo !== "todos" && buscaAtiva.length < 2) {
       // Seleciona o Set correto para o filtro ativo
       const setAtivo =
-        filtroAtivo === "tive"
-          ? tiveDoUsuario
-          : filtroAtivo === "queria"
-            ? queriaDoUsuario
-            : curtidasDoUsuario;
+        filtroAtivo === "tive"   ? tiveDoUsuario :
+        filtroAtivo === "queria" ? queriaDoUsuario :
+                                   curtidasDoUsuario;
 
       const idsFiltro = [...setAtivo];
 
       // Se o Set estiver vazio, não há nada a buscar
       if (idsFiltro.length === 0) {
         if (reset) grid.innerHTML = "";
-        document
-          .querySelectorAll(".temp-skeleton")
-          .forEach((el) => el.remove());
+        document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
         grid.innerHTML = `
           <div class="col-span-full text-center py-20">
             <p class="text-pink-500 font-retro text-xl">NENHUM ITEM AQUI AINDA</p>
             <p class="text-slate-500 font-orbitron text-xs mt-2">
-              ${
-                filtroAtivo === "tive"
-                  ? "MARQUE OS BRINQUEDOS QUE VOCÊ TEVE"
-                  : filtroAtivo === "queria"
-                    ? "MARQUE OS BRINQUEDOS QUE VOCÊ QUERIA TER"
-                    : "CURTA OS BRINQUEDOS QUE VOCÊ AMOU"
-              }
+              ${filtroAtivo === "tive"    ? "MARQUE OS BRINQUEDOS QUE VOCÊ TEVE" :
+                filtroAtivo === "queria"  ? "MARQUE OS BRINQUEDOS QUE VOCÊ QUERIA TER" :
+                                            "CURTA OS BRINQUEDOS QUE VOCÊ AMOU"}
             </p>
           </div>`;
         hasMais = false;
@@ -155,6 +147,7 @@ async function fetchBrinquedos(reset = false) {
       if (filtroError) throw filtroError;
       itens = data || [];
       hasMais = false; // Coleção pessoal: todos os itens chegam de uma vez
+
     } else if (buscaAtiva.length >= 2) {
       // BUSCA POR TEXTO: usa o RPC com unaccent
       const { data, error: rpcError } = await supabaseClient.rpc(
@@ -163,6 +156,7 @@ async function fetchBrinquedos(reset = false) {
       );
       if (rpcError) throw rpcError;
       itens = data || [];
+
     } else {
       // MODO NORMAL (Todos): paginação aleatória via Vercel
       const res = await fetch(
@@ -190,9 +184,7 @@ async function fetchBrinquedos(reset = false) {
 
     // --- 4. DEDUPLICAÇÃO: Garante unicidade antes de tocar no DOM ---
     // ✅ Filtra itens cujo ID já existe em allToys (memória) OU no DOM (zumbi)
-    const idsEmMemoria = new Set(
-      allToys.map((t) => String(t.id).padStart(4, "0")),
-    );
+    const idsEmMemoria = new Set(allToys.map((t) => String(t.id).padStart(4, "0")));
     const itensNovos = itens.filter((toy) => {
       const idStr = String(toy.id).padStart(4, "0");
       return !idsEmMemoria.has(idStr);
@@ -372,50 +364,47 @@ async function render(items, append = false) {
               </button>
             </div>
           </div>
-          
-          <div class="comment-area px-2 py-2 bg-[#050505] border-t border-white/5 flex flex-nowrap gap-2 items-center" onclick="event.stopPropagation()">
-              <span class="chat-arrow text-[#39ff14] font-orbitron text-[0.55rem] shrink-0">></span>
-              <input 
-                type="text" 
-                id="comentario-input-${idNormalizado}" 
-                name="comentario-${idNormalizado}" 
-                autocomplete="off" 
-                maxlength="140" 
-                class="chat-input flex-1 bg-transparent border-b border-[#39ff14]/20 text-white text-[0.6rem] px-1 py-1 outline-none font-mono placeholder-slate-700 focus:border-[#39ff14] transition-colors w-0" 
-                placeholder="Mensagem..." 
-                onkeypress="handleComentarioEnter(event, '${idNormalizado}', '${toy.nome}')" 
-                ${!isUserLogged ? 'disabled placeholder="Faça login..."' : ""}
-              >
-              <button onclick="enviarComentario('${idNormalizado}', '${toy.nome}'); event.stopPropagation();" class="chat-send-btn text-cyan-400 hover:text-pink-500 font-orbitron text-[0.55rem] tracking-tighter uppercase font-bold shrink-0" ${!isUserLogged ? "disabled" : ""}>SEND</button>
-          </div>
 
+          <!-- FOOTER: 3 ícones — Curtida | Comentário | WhatsApp -->
           <div class="trunfo-footer">
-            <span class="trunfo-footer-logo">RETROBRINQUEDOS</span>
-            <div class="like-container">
-              <!-- 📲 Share WhatsApp -->
+            <div class="footer-icons-container">
+
+              <!-- ❤ Curtida -->
               <button
+                id="heart-btn-${idNormalizado}"
+                class="footer-icon-btn heart-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "icon-locked" : ""}"
+                onclick="toggleCurtida(event, '${idNormalizado}')"
+                title="${isUserLogged ? "Curtir" : "Faça login para curtir"}"
+              >
+                <svg class="heart-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+                </svg>
+                <span class="footer-icon-count" id="count-${idNormalizado}">${toy.curtidas_count || 0}</span>
+                ${!isUserLogged ? '<div class="heart-tooltip">Faça login para curtir</div>' : ""}
+              </button>
+
+              <!-- 💬 Comentários -->
+              <button
+                class="footer-icon-btn comment-icon-btn ${!isUserLogged ? "icon-locked" : ""}"
+                onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${toy.nome.replace(/'/g, "\\'")}')"
+                title="${isUserLogged ? "Comentar" : "Faça login para comentar"}"
+              >
+                <svg class="footer-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/>
+                </svg>
+              </button>
+
+              <!-- 📲 WhatsApp -->
+              <button
+                class="footer-icon-btn whatsapp-share-btn"
                 onclick="compartilharWhatsApp(event, '${idNormalizado}', '${toy.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;")}'); event.stopPropagation();"
-                class="whatsapp-share-btn"
                 title="Compartilhar no WhatsApp"
               >
-                <svg class="whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg class="footer-icon-svg whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                 </svg>
               </button>
-              <button id="heart-btn-${idNormalizado}" class="heart-btn ${isLiked ? "liked" : ""}" onclick="toggleCurtida(event, '${idNormalizado}')">
-                <svg class="heart-svg" viewBox="0 0 8 7" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
-                  <!-- Coração pixel-art 8-bit — grade 8×7px -->
-                  <rect x="1" y="0" width="2" height="1"/><rect x="5" y="0" width="2" height="1"/>
-                  <rect x="0" y="1" width="3" height="1"/><rect x="5" y="1" width="3" height="1"/>
-                  <rect x="0" y="2" width="8" height="1"/>
-                  <rect x="0" y="3" width="8" height="1"/>
-                  <rect x="1" y="4" width="6" height="1"/>
-                  <rect x="2" y="5" width="4" height="1"/>
-                  <rect x="3" y="6" width="2" height="1"/>
-                </svg>
-                <div class="heart-tooltip">Faça login para curtir</div>
-              </button>
-              <span class="like-count" id="count-${idNormalizado}">${toy.curtidas_count || 0}</span>
+
             </div>
           </div>
         </div>
@@ -429,9 +418,19 @@ async function render(items, append = false) {
 
     shortest.insertAdjacentHTML("beforeend", cardHTML);
 
-    // 💡 A NOVA SOLUÇÃO: Esperamos dois frames de animação em vez de um.
-    // Isso dá tempo para o navegador processar o 'height: auto' da imagem
-    // inserida e atualizar o offsetHeight da coluna de forma precisa.
+    // 💡 MASONRY PRECISO: Aguarda a imagem da frente carregar antes de medir
+    // offsetHeight. Em mobile com conexão lenta o rAF duplo não é suficiente —
+    // a imagem ainda não tem altura real quando medimos, causando desbalanceamento.
+    const imgInserida = shortest.querySelector(`#card-${idNormalizado} .card-front img`);
+    if (imgInserida && !imgInserida.complete) {
+      await new Promise((resolve) => {
+        const timeout = setTimeout(resolve, 800); // segurança: máx 800ms
+        imgInserida.addEventListener("load",  () => { clearTimeout(timeout); resolve(); }, { once: true });
+        imgInserida.addEventListener("error", () => { clearTimeout(timeout); resolve(); }, { once: true });
+      });
+    }
+
+    // rAF duplo para garantir que o browser atualizou o layout após o load
     await new Promise((resolve) =>
       requestAnimationFrame(() => requestAnimationFrame(resolve)),
     );
@@ -517,16 +516,194 @@ function resetarEstadoDosCards() {
     .forEach((card) => card.classList.remove("is-flipped"));
 }
 
-/* 3.5.3. Compartilhamento via WhatsApp (4.2.1) */
+/* 3.5.3. Compartilhamento via WhatsApp (5.1 — emojis universais) */
 function compartilharWhatsApp(event, id, nome) {
   if (event) event.stopPropagation();
   const url = `${window.location.origin}${window.location.pathname}?card=${id}`;
-  const texto = `🕹 *RetroBrinquedos BR* — Você se lembra deste? *${nome}* — Reviva a nostalgia dos anos 80/90! 👾\n${url}`;
-  window.open(
-    `https://wa.me/?text=${encodeURIComponent(texto)}`,
-    "_blank",
-    "noopener,noreferrer",
-  );
+  // Emojis substituídos por versões de maior compatibilidade cross-platform
+  const texto = `*RetroBrinquedos BR* - Voce se lembra deste? *${nome}* - Reviva a nostalgia dos anos 80/90!\n${url}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank", "noopener,noreferrer");
+}
+
+/* ============================================================
+   3.5.4. DRAWER DE COMENTÁRIOS (Item 3.2)
+   ============================================================ */
+let drawerIdAtivo = null;
+let drawerNomeAtivo = null;
+
+async function abrirDrawerComentarios(event, id, nome) {
+  if (event) event.stopPropagation();
+  if (!isUserLogged) return;
+
+  drawerIdAtivo  = id;
+  drawerNomeAtivo = nome;
+
+  document.getElementById("drawerNomeBrinquedo").textContent = nome;
+  document.getElementById("drawerListaComentarios").innerHTML = '<p class="drawer-loading">Carregando...</p>';
+  document.getElementById("drawerComentarioInput").value = "";
+
+  const drawer = document.getElementById("comentariosDrawer");
+  drawer.classList.add("open");
+  document.body.classList.add("drawer-open");
+
+  await carregarComentariosDrawer(id);
+}
+
+function fecharDrawerComentarios() {
+  document.getElementById("comentariosDrawer").classList.remove("open");
+  document.body.classList.remove("drawer-open");
+  drawerIdAtivo  = null;
+  drawerNomeAtivo = null;
+}
+
+function fecharDrawerSeForaDoPanel(event) {
+  if (event.target === document.getElementById("comentariosDrawer")) {
+    fecharDrawerComentarios();
+  }
+}
+
+async function carregarComentariosDrawer(id) {
+  const lista = document.getElementById("drawerListaComentarios");
+  try {
+    const { data, error } = await supabaseClient
+      .from("comentarios")
+      .select("id, texto, created_at, usuario_nome, usuario_avatar")
+      .eq("brinquedo_id", parseInt(id, 10))
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      lista.innerHTML = '<p class="drawer-empty">Nenhum comentário ainda. Seja o primeiro!</p>';
+      return;
+    }
+
+    lista.innerHTML = data.map((c) => `
+      <div class="drawer-comentario">
+        <img src="${c.usuario_avatar || "/img/avatar_default.png"}" class="drawer-avatar" alt="avatar">
+        <div class="drawer-comentario-body">
+          <span class="drawer-user">${c.usuario_nome || "Anônimo"}</span>
+          <span class="drawer-texto">${c.texto}</span>
+        </div>
+      </div>
+    `).join("");
+  } catch (e) {
+    lista.innerHTML = '<p class="drawer-empty">Erro ao carregar comentários.</p>';
+    console.error("Erro comentários:", e);
+  }
+}
+
+async function enviarComentarioDrawer() {
+  if (!isUserLogged || !drawerIdAtivo) return;
+  const input = document.getElementById("drawerComentarioInput");
+  const texto = input.value.trim();
+  if (!texto) return;
+
+  const session = await supabaseClient.auth.getSession();
+  const user    = session?.data?.session?.user;
+  if (!user) return;
+
+  const userName   = user.user_metadata?.full_name || "Jogador";
+  const userAvatar = localStorage.getItem("retro_avatar") || "/img/avatar_default.png";
+
+  const { error } = await supabaseClient.from("comentarios").insert({
+    brinquedo_id:   parseInt(drawerIdAtivo, 10),
+    usuario_id:     user.id,
+    usuario_nome:   userName,
+    usuario_avatar: userAvatar,
+    texto,
+  });
+
+  if (!error) {
+    input.value = "";
+    await carregarComentariosDrawer(drawerIdAtivo);
+    // Scroll para o topo (comentário mais recente)
+    document.getElementById("drawerListaComentarios").scrollTop = 0;
+  } else {
+    console.error("Erro ao enviar comentário:", error);
+  }
+}
+
+function handleDrawerEnter(event) {
+  if (event.key === "Enter") enviarComentarioDrawer();
+}
+
+/* ============================================================
+   3.5.5. MODAL DE CARD COMPARTILHADO via ?card=XXXX (Item 5.2)
+   ============================================================ */
+async function verificarCardCompartilhado() {
+  const params = new URLSearchParams(window.location.search);
+  const cardId = params.get("card");
+  if (!cardId) return;
+
+  // Limpa a URL para evitar re-abertura no reload
+  history.replaceState({}, "", window.location.pathname);
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("brinquedos")
+      .select("*")
+      .eq("id", cardId)
+      .single();
+
+    if (error || !data) return;
+
+    const idNormalizado    = String(data.id).padStart(4, "0");
+    const urlVersoOtimizada = otimizarUrlCloudinary(data.url_verso, 500);
+    const trunfoCode       = data.codigo_trunfo || gerarIdSuperTrunfo(data.id);
+    const ledHTML          = buildLedDisplay(data.raridade);
+
+    document.getElementById("cardCompartilhadoContainer").innerHTML = `
+      <div class="card-modal-trunfo">
+        <div class="trunfo-header">
+          <div class="trunfo-top-bar">
+            <span>Super Trunfo • RetroBrinquedos</span>
+            <span class="trunfo-code-badge">${trunfoCode}</span>
+          </div>
+          <div class="trunfo-title-area">
+            <div class="trunfo-star"></div>
+            <span class="trunfo-title-text">${data.nome}</span>
+          </div>
+        </div>
+        <div class="trunfo-photo-wrapper">
+          <div class="trunfo-photo-frame">
+            <img src="${urlVersoOtimizada}" alt="${data.nome}" class="trunfo-photo">
+            <span class="trunfo-photo-year">${data.ano}</span>
+          </div>
+        </div>
+        <div class="trunfo-stats-area">
+          <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${data.fabricante}</span></div>
+          <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
+          <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
+          <div class="trunfo-raridade-area">
+            <div class="trunfo-raridade-header">
+              <span class="trunfo-raridade-label">⬡ Raridade</span>
+              <span class="trunfo-raridade-value">${data.raridade}/10</span>
+            </div>
+            ${ledHTML}
+          </div>
+          <div class="trunfo-curiosidade">"${data.curiosidade}"</div>
+        </div>
+        <div class="trunfo-footer">
+          <div class="footer-icons-container">
+            <span class="footer-icon-btn icon-locked" title="Faça login para curtir">
+              <svg class="heart-svg" viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+              <span class="footer-icon-count">${data.curtidas_count || 0}</span>
+            </span>
+          </div>
+        </div>
+      </div>`;
+
+    // Abre o modal
+    document.getElementById("cardCompartilhadoModal").classList.remove("hidden");
+  } catch (e) {
+    console.error("Erro ao abrir card compartilhado:", e);
+  }
+}
+
+function fecharCardModal() {
+  document.getElementById("cardCompartilhadoModal").classList.add("hidden");
 }
 
 /* 3.6. BUSCA INTELIGENTE (Debounce e Trigger - Versão Blindada) */
@@ -709,27 +886,16 @@ async function logOut() {
 async function carregarInteracoesDoBanco(userId, tentativa = 1) {
   try {
     const [resCurtidas, resTive, resQueria] = await Promise.all([
-      supabaseClient
-        .from("curtidas")
-        .select("brinquedo_id")
-        .eq("usuario_id", userId),
-      supabaseClient
-        .from("interacoes_tive")
-        .select("brinquedo_id")
-        .eq("usuario_id", userId),
-      supabaseClient
-        .from("interacoes_queria")
-        .select("brinquedo_id")
-        .eq("usuario_id", userId),
+      supabaseClient.from("curtidas").select("brinquedo_id").eq("usuario_id", userId),
+      supabaseClient.from("interacoes_tive").select("brinquedo_id").eq("usuario_id", userId),
+      supabaseClient.from("interacoes_queria").select("brinquedo_id").eq("usuario_id", userId),
     ]);
 
     // 🛡️ RETRY: Se qualquer query falhar e ainda temos tentativas, aguarda e tenta novamente.
     // Evita Sets vazios causados por cold start do Supabase ou token recém-renovado.
     const houveErro = resCurtidas.error || resTive.error || resQueria.error;
     if (houveErro && tentativa < 3) {
-      console.warn(
-        `carregarInteracoes: tentativa ${tentativa} falhou, retentando...`,
-      );
+      console.warn(`carregarInteracoes: tentativa ${tentativa} falhou, retentando...`);
       await new Promise((r) => setTimeout(r, 600 * tentativa));
       return carregarInteracoesDoBanco(userId, tentativa + 1);
     }
@@ -747,9 +913,7 @@ async function carregarInteracoesDoBanco(userId, tentativa = 1) {
         resQueria.data.map((i) => String(i.brinquedo_id).padStart(4, "0")),
       );
 
-    console.log(
-      `✅ Interações carregadas — Tive: ${tiveDoUsuario.size} | Queria: ${queriaDoUsuario.size} | Curtidas: ${curtidasDoUsuario.size}`,
-    );
+    console.log(`✅ Interações carregadas — Tive: ${tiveDoUsuario.size} | Queria: ${queriaDoUsuario.size} | Curtidas: ${curtidasDoUsuario.size}`);
   } catch (e) {
     console.error("Erro no carregamento de interações:", e);
   }
@@ -1454,11 +1618,7 @@ window.addEventListener("resize", () => {
     // após fetchBrinquedos filtrar por idsEmMemoria. Passamos false para forçar
     // reconstrução das colunas com o novo número de colunas.
     if (allToys && allToys.length > 0) {
-      const unique = [
-        ...new Map(
-          allToys.map((t) => [String(t.id).padStart(4, "0"), t]),
-        ).values(),
-      ];
+      const unique = [...new Map(allToys.map((t) => [String(t.id).padStart(4, "0"), t])).values()];
       render(unique, false);
     }
   }, 250);
@@ -1521,6 +1681,8 @@ async function init() {
   await fetchBrinquedos(true);
   ajustarPainelLED();
   iniciarPainelLED();
+  // 5.2 — Abre modal se a URL contiver ?card=XXXX
+  verificarCardCompartilhado();
 }
 
 function ajustarPainelLED() {

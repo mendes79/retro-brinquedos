@@ -361,9 +361,19 @@ body {
     font-size: 11px;
     line-height: 42px;
   }
-  /* Bônus: Dá um leve "zoom" no mobile quando vira pra destacar a carta */
-  .is-flipped .card-inner {
-    transform: rotateY(180deg) scale(1.02);
+  /* Card virado no mobile: +30% largura centralizado na tela */
+  .masonry-item.is-flipped {
+    position: relative;
+    z-index: 150 !important;
+  }
+  .masonry-item.is-flipped .card-inner {
+    transform: rotateY(180deg);
+    width: 130%; /* +30% em relação à coluna */
+    margin-left: -15%; /* centraliza o excedente */
+    transition:
+      transform 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+      width 0.4s ease,
+      margin-left 0.4s ease;
   }
 }
 
@@ -693,52 +703,141 @@ body {
   color: var(--trunfo-red);
 }
 
-/* 2.5.1. Rodapé e Botão de Curtida */
+/* 2.5.1. Footer do card — 3 ícones */
 .trunfo-footer {
   background: linear-gradient(0deg, #6b0000, var(--trunfo-red));
-  padding: 5px 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-  border-top: 2px solid var(--trunfo-gold);
-}
-.trunfo-footer-logo {
-  font-family: "Orbitron", monospace;
-  font-size: 0.4rem;
-  color: #ffffff;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.like-container {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.heart-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
+  padding: 6px 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  border-top: 2px solid var(--trunfo-gold);
+}
+.footer-icons-container {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.footer-icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 6px;
   outline: none;
-}
-.heart-svg {
-  width: 14px;
-  height: 14px;
-  fill: #3a0000;
-  filter: drop-shadow(1px 0 0 white) drop-shadow(-1px 0 0 white)
-    drop-shadow(0 1px 0 white) drop-shadow(0 -1px 0 white);
   transition:
-    fill 0.3s,
-    transform 0.2s;
-  image-rendering: pixelated;
-  shape-rendering: crispEdges;
+    transform 0.2s ease,
+    opacity 0.2s ease;
+  position: relative;
 }
-.app-unlogged .heart-btn:not(.liked):hover .heart-svg {
-  animation: pulseSoft 1.5s infinite;
+.footer-icon-btn:hover {
+  transform: scale(1.18);
+}
+.footer-icon-btn:active {
+  transform: scale(0.92);
+}
+
+/* Ícone locked (não logado): cinza opaco, sem interação */
+.footer-icon-btn.icon-locked {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(100%);
+}
+.app-unlogged .footer-icon-btn:not(.whatsapp-share-btn) {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(100%);
+}
+
+/* SVG base dos ícones do footer */
+.footer-icon-svg {
+  width: 16px;
+  height: 16px;
+  fill: rgba(255, 255, 255, 0.75);
+  transition: fill 0.25s ease;
+}
+.footer-icon-btn:hover .footer-icon-svg {
+  fill: #ffffff;
+}
+
+/* Contagem de curtidas */
+.footer-icon-count {
+  font-family: "Orbitron", monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--trunfo-gold);
+  min-width: 1rem;
+}
+
+/* ── Coração estilo Pinterest ── */
+.heart-svg {
+  width: 17px;
+  height: 17px;
+  fill: transparent;
+  stroke: rgba(255, 255, 255, 0.8);
+  stroke-width: 1.5;
+  transition:
+    fill 0.3s ease,
+    stroke 0.3s ease,
+    transform 0.2s ease;
+}
+/* Curtido: verde destaque */
+.heart-btn.liked .heart-svg {
+  fill: #22c55e;
+  stroke: #22c55e;
+}
+/* Hover logado */
+.heart-btn:not(.icon-locked):hover .heart-svg {
+  fill: rgba(34, 197, 94, 0.3);
+  stroke: #22c55e;
+}
+/* Animação de burst ao curtir */
+.heart-btn.animating .heart-svg {
+  animation: likeBurst 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+@keyframes likeBurst {
+  0% {
+    transform: scale(1);
+    fill: transparent;
+    stroke: rgba(255, 255, 255, 0.8);
+  }
+  30% {
+    transform: scale(1.7);
+    fill: rgba(34, 197, 94, 0.5);
+    stroke: #22c55e;
+  }
+  60% {
+    transform: scale(1.3);
+    fill: rgba(34, 197, 94, 0.8);
+    stroke: #22c55e;
+  }
+  100% {
+    transform: scale(1);
+    fill: #22c55e;
+    stroke: #22c55e;
+  }
+}
+
+/* Ícone comentário: cyan no hover */
+.comment-icon-btn:hover .footer-icon-svg {
+  fill: #22d3ee;
+}
+/* Ícone WhatsApp: verde no hover */
+.whatsapp-share-btn .whatsapp-icon {
+  fill: rgba(255, 255, 255, 0.75);
+}
+.whatsapp-share-btn:hover .whatsapp-icon {
+  fill: #25d366;
+}
+.whatsapp-share-btn {
+  opacity: 1 !important;
+  pointer-events: all !important;
+  filter: none !important;
 }
 
 /* 2.5.2. Tooltip de Aviso (Login necessário) */
@@ -1563,7 +1662,7 @@ body {
 @font-face {
   font-family: "LEDDisplay";
   /* 📁 Coloque o arquivo em /fonts/BoldLED.ttf na raiz do projeto */
-  src: url("/fonts/bold_led_board-7.ttf") format("truetype");
+  src: url("/fonts/Bold LED Board-7.ttf") format("truetype");
   font-display: swap;
 }
 
@@ -1615,9 +1714,291 @@ body {
 .whatsapp-icon {
   width: 15px;
   height: 15px;
-  fill: #ffffff; /* Verde oficial WhatsApp */
+  fill: #25d366; /* Verde oficial WhatsApp */
   filter: drop-shadow(0 0 3px rgba(37, 211, 102, 0.4));
 }
-.whatsapp-share-btn:hover .whatsapp-icon {
-  fill: #25d366;
+
+/* ============================================================
+   2.12. DRAWER DE COMENTÁRIOS (Item 3.2)
+   ============================================================ */
+.comentarios-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+  /* Overlay escuro — só aparece quando .open */
+}
+.comentarios-drawer.open {
+  pointer-events: all;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* MOBILE: painel sobe de baixo */
+.comentarios-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 70vh;
+  background: #0f172a;
+  border-top: 2px solid var(--trunfo-gold);
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 301;
+  overflow: hidden;
+}
+.comentarios-drawer.open .comentarios-panel {
+  transform: translateY(0);
+}
+
+/* DESKTOP: painel lateral direito */
+@media (min-width: 768px) {
+  .comentarios-panel {
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: auto;
+    width: 360px;
+    max-height: 100vh;
+    border-radius: 0;
+    border-top: none;
+    border-left: 2px solid var(--trunfo-gold);
+    transform: translateX(100%);
+  }
+  .comentarios-drawer.open .comentarios-panel {
+    transform: translateX(0);
+  }
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  background: #0a1020;
+}
+.drawer-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.drawer-label {
+  font-family: "Orbitron", monospace;
+  font-size: 0.5rem;
+  color: var(--trunfo-gold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.drawer-nome {
+  font-family: "Archivo Black", sans-serif;
+  font-size: 0.85rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.drawer-close-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.drawer-close-btn:hover {
+  color: #fff;
+}
+
+.drawer-lista {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.drawer-loading,
+.drawer-empty {
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  padding: 20px 0;
+  letter-spacing: 0.1em;
+}
+.drawer-comentario {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.drawer-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: contain;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  background: #1e293b;
+}
+.drawer-comentario-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.drawer-user {
+  font-family: "Orbitron", monospace;
+  font-size: 0.5rem;
+  color: var(--neon-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.drawer-texto {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
+}
+
+.drawer-input-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #050a14;
+  flex-shrink: 0;
+}
+.drawer-prompt {
+  font-family: "Orbitron", monospace;
+  font-size: 0.7rem;
+  color: #39ff14;
+  flex-shrink: 0;
+}
+.drawer-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(57, 255, 20, 0.25);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 4px 2px;
+  outline: none;
+  font-family: "Inter", sans-serif;
+  transition: border-color 0.2s;
+}
+.drawer-input:focus {
+  border-bottom-color: #39ff14;
+}
+.drawer-send-btn {
+  background: transparent;
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+  font-family: "Orbitron", monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  flex-shrink: 0;
+}
+.drawer-send-btn:hover {
+  background: var(--neon-blue);
+  color: #0f172a;
+}
+
+/* ============================================================
+   2.13. MODAL CARD COMPARTILHADO (Item 5.2)
+   ============================================================ */
+.card-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.card-modal-overlay.hidden {
+  display: none;
+}
+
+.card-modal-box {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: cardFadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.card-modal-close {
+  position: absolute;
+  top: -8px;
+  right: 0;
+  background: transparent;
+  border: none;
+  color: #39ff14;
+  font-family: "Orbitron", monospace;
+  font-size: 0.65rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;
+}
+.card-modal-close:hover {
+  color: #fff;
+}
+.card-modal-label {
+  font-family: "Orbitron", monospace;
+  font-size: 0.55rem;
+  color: var(--trunfo-gold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.card-modal-container {
+  width: 100%;
+}
+.card-modal-trunfo {
+  border-radius: 1rem;
+  overflow: hidden;
+  outline: 4px solid var(--trunfo-gold);
+  outline-offset: -6px;
+  border: 6px solid #0d0b1e;
+  background: var(--trunfo-dark);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 40px rgba(240, 192, 64, 0.3);
+  animation: cardFadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.card-modal-cta {
+  background: var(--trunfo-gold);
+  color: #0f172a;
+  font-family: "Orbitron", monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.card-modal-cta:hover {
+  background: #fff;
+  transform: scale(1.04);
 }
