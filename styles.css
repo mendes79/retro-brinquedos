@@ -372,29 +372,36 @@ body {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    pointer-events: none; /* Deixa passar cliques no fundo para fechar */
+    pointer-events: none;
   }
 
-  /* O card interno mantém seu tamanho elástico perfeito de Super Trunfo */
+  /* ✅ CORREÇÃO 3D: Força o preserve-3d e isola o contexto de rotação no mobile */
   .masonry-item.is-flipped .card-inner {
     position: relative !important;
-    width: min(
-      320px,
-      85vw
-    ) !important; /* Aumentado em ~30% de forma responsiva */
+    width: min(320px, 85vw) !important;
     height: auto !important;
     max-height: calc(
       100dvh - var(--nav-height, 72px) - var(--led-height, 24px) - 40px
     ) !important;
     overflow-y: auto;
     overflow-x: hidden;
-    pointer-events: all; /* Ativa cliques internos apenas no card */
+    pointer-events: all;
     border-radius: 1rem;
     box-shadow:
       0 0 50px rgba(0, 0, 0, 0.9),
       0 0 20px rgba(240, 192, 64, 0.2);
     z-index: 402;
-    transform: rotateY(180deg);
+    transform: rotateY(180deg) !important; /* Mantém o giro do JS coerente */
+    transform-style: preserve-3d !important; /* REFORÇADO: impede colapso 3D */
+    will-change: transform;
+  }
+
+  /* ✅ FIX DA FRENTE VAZANDO: Força o ocultamento das faces no plano fixo do mobile */
+  .masonry-item.is-flipped .card-front,
+  .masonry-item.is-flipped .card-back {
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+    transform-style: preserve-3d !important;
   }
 
   /* Overlay escuro com desfoque de fundo ancorado no pai */
@@ -406,10 +413,10 @@ body {
     z-index: 401;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    pointer-events: all; /* Permite clicar no fundo escuro para fechar o card */
+    pointer-events: all;
   }
 
-  /* Esconde a barra de rolagem horrorosa do card interno no mobile */
+  /* Esconde a barra de rolagem do card interno no mobile */
   .masonry-item.is-flipped .card-inner::-webkit-scrollbar {
     width: 0px;
     background: transparent;
