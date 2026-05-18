@@ -470,8 +470,9 @@ async function render(items, append = false) {
 
 /* 3.5. MECÂNICA DE INTERAÇÃO (Flip e Desfocar) */
 
-/* 3.5.1. VIRA O CARD (DESKTOP) OU ABRE MODAL ESPELHO (MOBILE) */
-async function handleFlip(id) {
+/* 3.5.1. VIRA E EXPANDE O CARD COM COREOGRAFIA EM SÉRIE (MOBILE/DESKTOP) */
+function handleFlip(id) {
+  // 🛡️ ESCUDO DE FOCO MOBILE (Anti-Bubbling Nativo)
   const evento = window.event;
   if (evento && evento.target) {
     const tag = evento.target.tagName.toLowerCase();
@@ -486,13 +487,6 @@ async function handleFlip(id) {
     }
   }
 
-  // 📱 INTERCEPTAÇÃO MOBILE: Se for tela menor que 768px, abre no modal idêntico ao compartilhado
-  if (window.innerWidth < 768) {
-    abrirModalEspelhoMobile(id);
-    return;
-  }
-
-  // 💻 COMPORTAMENTO DESKTOP ORIGINAL (Mantido 100% intacto)
   const grid = document.getElementById("toyGrid");
   const card = document.getElementById(`card-${id}`);
   const isFlipped = card.classList.contains("is-flipped");
@@ -501,28 +495,78 @@ async function handleFlip(id) {
     return;
   }
 
-  document
-    .querySelectorAll(".masonry-item")
-    .forEach((c) => c.classList.remove("is-flipped"));
+  // Se o usuário clicou para fechar o card ativo
+  if (isFlipped) {
+    card.classList.remove("is-flipped", "card-expanded");
+    grid.classList.remove("grid-focused");
+    card.style.removeProperty("--tx");
+    card.style.removeProperty("--ty");
+    card.style.removeProperty("--scale");
+    document.body.style.overflow = ""; // Libera scroll de fundo
+    return;
+  }
 
-  if (!isFlipped) {
-    card.classList.add("is-flipped");
-    grid.classList.add("grid-focused");
+  // Fecha qualquer outro card aberto preventivamente
+  document.querySelectorAll(".masonry-item").forEach((c) => {
+    c.classList.remove("is-flipped", "card-expanded");
+    c.style.removeProperty("--tx");
+    c.style.removeProperty("--ty");
+    c.style.removeProperty("--scale");
+  });
 
-    const nav = document.querySelector("nav");
-    const led = document.getElementById("ledPanel");
-    let headerHeight = nav ? nav.getBoundingClientRect().height : 72;
+  // Vira localmente o card selecionado (Fase 1)
+  card.classList.add("is-flipped");
+  grid.classList.add("grid-focused");
 
-    if (ledPainelAtivo && led) {
-      headerHeight += led.getBoundingClientRect().height;
-    }
+  // 📏 CÁLCULO DINÂMICO DO HEADER COMUNS
+  const nav = document.querySelector("nav");
+  const led = document.getElementById("ledPanel");
+  let headerHeight = nav ? nav.getBoundingClientRect().height : 72;
+  if (ledPainelAtivo && led) {
+    headerHeight += led.getBoundingClientRect().height;
+  }
 
+  // 💻 MECÂNICA DESKTOP (Mantida via Scroll Suave Original)
+  if (window.innerWidth >= 768) {
     const yOffset = -(headerHeight + 16);
     const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
     window.scrollTo({ top: y, behavior: "smooth" });
-  } else {
-    grid.classList.remove("grid-focused");
+    return;
   }
+
+  // 📱 MECÂNICA MOBILE: CÁLCULO ORBITAL DO CENTRO DA TELA (Fase 2)
+  document.body.style.overflow = "hidden"; // Trava fundo
+
+  // Dimensões da viewport e do card
+  const rect = card.getBoundingClientRect();
+  const viewW = window.innerWidth;
+  const viewH = window.innerHeight;
+
+  // Centro geométrico do card atual
+  const cardCenterX = rect.left + rect.width / 2;
+  const cardCenterY = rect.top + rect.height / 2;
+
+  // Alvo: Centro geométrico do espaço útil da tela (Abaixo da Nav/LED)
+  const targetX = viewW / 2;
+  const targetY = headerHeight + (viewH - headerHeight) / 2;
+
+  // Distância exata que o transform translate precisará percorrer
+  const tx = targetX - cardCenterX;
+  const ty = targetY - cardCenterY;
+
+  // Calcula escala mantendo margem responsiva lateral para as quinas do card
+  const larguraAlvoMobile = Math.min(320, viewW * 0.88);
+  const scale = larguraAlvoMobile / rect.width;
+
+  // Injeta a órbita matemática diretamente como variáveis atômicas de estilo
+  card.style.setProperty("--tx", `${tx}px`);
+  card.style.setProperty("--ty", `${ty}px`);
+  card.style.setProperty("--scale", `${scale}`);
+
+  // Dispara o deslocamento e o zoom após o microtask do ciclo de renderização
+  requestAnimationFrame(() => {
+    card.classList.add("card-expanded");
+  });
 }
 
 /* 3.5.2. Escuta cliques externos para fechar cards */
@@ -535,13 +579,17 @@ document.addEventListener("click", (event) => {
   }
 });
 
+//Escutador de cliques externos
 function resetarEstadoDosCards() {
   const grid = document.getElementById("toyGrid");
   if (grid) grid.classList.remove("grid-focused");
-  document.body.style.overflow = ""; // ✅ Devolve o scroll do mobile de segurança
-  document
-    .querySelectorAll(".masonry-item")
-    .forEach((card) => card.classList.remove("is-flipped"));
+  document.body.style.overflow = ""; // Libera scroll do mobile
+  document.querySelectorAll(".masonry-item").forEach((card) => {
+    card.classList.remove("is-flipped", "card-expanded");
+    card.style.removeProperty("--tx");
+    card.style.removeProperty("--ty");
+    card.style.removeProperty("--scale");
+  });
 }
 
 /* Exibe mensagem temporária no painel LED (usado pelos botões locked) */

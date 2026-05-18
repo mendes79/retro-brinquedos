@@ -364,7 +364,7 @@ body {
     font-size: 14px;
     line-height: 36px;
   }
-}
+} /* ✅ FECHA O @MEDIA AQUI, EXATAMENTE COMO VOCÊ APONTOU */
 
 .masonry-item.is-flipped {
   z-index: 150 !important;
@@ -408,6 +408,60 @@ body {
   outline: 4px solid var(--trunfo-gold);
   outline-offset: -6px;
   border: 6px solid #0d0b1e;
+}
+
+/* ============================================================
+   📱 CLASSES COMPLEMENTARES DE ÓRBITA MOBILE (FASE 2)
+   Adicionadas de forma isolada fora do @media para evitar conflitos de bloco
+   ============================================================ */
+@media (max-width: 767px) {
+  .masonry-item {
+    position: relative;
+    z-index: 1;
+    transition:
+      transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+      z-index 0s 0.4s;
+    transform-style: preserve-3d !important;
+  }
+
+  /* Quando ativado pelo JS, move e amplia usando o translate orbital */
+  .masonry-item.is-flipped.card-expanded {
+    z-index: 400 !important;
+    transform: translate3d(var(--tx), var(--ty), 0) scale(var(--scale)) !important;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  /* Aplica rolagem interna na ficha Super Trunfo expandida se necessário */
+  .masonry-item.is-flipped.card-expanded .card-back {
+    max-height: 75vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  .masonry-item.is-flipped.card-expanded .card-back::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+
+  /* Cenografia do fundo borrado */
+  .masonry-item.is-flipped::before {
+    content: "";
+    position: fixed;
+    inset: -200vh -200vw;
+    width: 400vw;
+    height: 400vh;
+    background: rgba(5, 5, 10, 0.85);
+    z-index: -1;
+    opacity: 0;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition: opacity 0.35s ease;
+    pointer-events: all;
+  }
+
+  .masonry-item.is-flipped.card-expanded::before {
+    opacity: 1;
+  }
 }
 
 /* 2.4. TEMPLATE SUPER TRUNFO (Ficha e Estatísticas) */
