@@ -539,20 +539,10 @@ function resetarEstadoDosCards() {
     .forEach((card) => card.classList.remove("is-flipped"));
 }
 
-/* Exibe mensagem temporária no painel LED (usado pelos botões locked) */
+/* Exibe animação LED vermelha piscante nos botões locked —
+   reutiliza exatamente o mesmo dispararTilt já usado por "Eu Tive"/"Queria Ter" */
 function mostrarMensagemLED(mensagem) {
-  const ledContent = document.getElementById("ledContent");
-  if (!ledContent) return;
-  const textoOriginal = ledContent.textContent;
-  ledContent.textContent = ">>> " + mensagem + " <<<";
-  // Liga o painel se estiver desligado
-  if (!ledPainelAtivo) {
-    document.getElementById("ledToggleInput").checked = true;
-    toggleLedPanel(true);
-  }
-  setTimeout(() => {
-    ledContent.textContent = textoOriginal;
-  }, 3500);
+  dispararTilt(mensagem);
 }
 function compartilharWhatsApp(event, id, nome) {
   if (event) event.stopPropagation();
@@ -606,6 +596,14 @@ function fecharDrawerSeForaDoPanel(event) {
 
 async function carregarComentariosDrawer(id) {
   const lista = document.getElementById("drawerListaComentarios");
+
+  // Emojis temáticos — alternados por índice do comentário
+  const emojisRetro = [
+    "🕹","👾","🖖","👹","👻","🎮","🛸","☄️","🤖","😊",
+    "🔭","💩","📡","🔫","👨‍🚀","🌌","🚀","🐙","🪅","🧸",
+    "🧠","🎯","🏆","💾","📺","📻","🎲","🃏","🪀","🪁",
+  ];
+
   try {
     const { data, error } = await supabaseClient
       .from("comentarios")
@@ -623,29 +621,34 @@ async function carregarComentariosDrawer(id) {
       return;
     }
 
-    // Formata data de forma amigável
+    // Pega nome e ID do usuário logado para destacar os próprios comentários
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    const meuId   = session?.user?.id;
+    const meuNome = session?.user?.user_metadata?.full_name || "Você";
+
     const formatarData = (iso) => {
       const d = new Date(iso);
       return d.toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "2-digit",
+        day: "2-digit", month: "2-digit", year: "2-digit",
       });
     };
 
-    lista.innerHTML = data
-      .map(
-        (c) => `
-      <div class="drawer-comentario">
-        <div class="drawer-avatar-placeholder">👾</div>
-        <div class="drawer-comentario-body">
-          <span class="drawer-data">${formatarData(c.created_at)}</span>
-          <span class="drawer-texto">${c.texto}</span>
-        </div>
-      </div>
-    `,
-      )
-      .join("");
+    lista.innerHTML = data.map((c, i) => {
+      const emoji = emojisRetro[i % emojisRetro.length];
+      const eMeu  = meuId && c.usuario_id === meuId;
+      const nome  = eMeu ? meuNome : "Player";
+      return `
+        <div class="drawer-comentario">
+          <div class="drawer-avatar-placeholder">${emoji}</div>
+          <div class="drawer-comentario-body">
+            <div class="drawer-meta">
+              <span class="drawer-user${eMeu ? " drawer-user-me" : ""}">${nome}</span>
+              <span class="drawer-data">${formatarData(c.created_at)}</span>
+            </div>
+            <span class="drawer-texto">${c.texto}</span>
+          </div>
+        </div>`;
+    }).join("");
   } catch (e) {
     lista.innerHTML =
       '<p class="drawer-empty">Erro ao carregar comentários.</p>';

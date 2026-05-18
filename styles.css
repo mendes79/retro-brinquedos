@@ -366,9 +366,6 @@ body {
   }
 }
 
-.masonry-item.is-flipped {
-  z-index: 150 !important;
-}
 .card-front,
 .card-back {
   width: 100%;
@@ -411,56 +408,22 @@ body {
 }
 
 /* ============================================================
-   📱 CLASSES COMPLEMENTARES DE ÓRBITA MOBILE (FASE 2)
-   Adicionadas de forma isolada fora do @media para evitar conflitos de bloco
+   2.3.2. MOBILE — flip idêntico ao desktop, sem transform orbital
    ============================================================ */
 @media (max-width: 767px) {
-  .masonry-item {
-    position: relative;
-    z-index: 1;
-    transition:
-      transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-      z-index 0s 0.4s;
-    transform-style: preserve-3d !important;
+  .masonry-item.is-flipped {
+    z-index: 150 !important;
   }
-
-  /* Quando ativado pelo JS, move e amplia usando o translate orbital */
-  .masonry-item.is-flipped.card-expanded {
-    z-index: 400 !important;
-    transform: translate3d(var(--tx), var(--ty), 0) scale(var(--scale)) !important;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  }
-
-  /* Aplica rolagem interna na ficha Super Trunfo expandida se necessário */
-  .masonry-item.is-flipped.card-expanded .card-back {
-    max-height: 75vh !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-  }
-
-  .masonry-item.is-flipped.card-expanded .card-back::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
-  }
-
-  /* Cenografia do fundo borrado */
+  /* Overlay escuro quando card está virado */
   .masonry-item.is-flipped::before {
     content: "";
     position: fixed;
-    inset: -200vh -200vw;
-    width: 400vw;
-    height: 400vh;
-    background: rgba(5, 5, 10, 0.85);
+    inset: 0;
+    background: rgba(5, 5, 10, 0.75);
     z-index: -1;
-    opacity: 0;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    transition: opacity 0.35s ease;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     pointer-events: all;
-  }
-
-  .masonry-item.is-flipped.card-expanded::before {
-    opacity: 1;
   }
 }
 
@@ -1888,12 +1851,22 @@ body {
   flex-direction: column;
   gap: 2px;
 }
+.drawer-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 .drawer-user {
   font-family: "Orbitron", monospace;
   font-size: 0.5rem;
   color: var(--neon-blue);
   text-transform: uppercase;
   letter-spacing: 0.1em;
+}
+/* Próprios comentários destacados em dourado */
+.drawer-user-me {
+  color: var(--trunfo-gold) !important;
 }
 .drawer-texto {
   font-size: 0.78rem;
@@ -2021,10 +1994,10 @@ body {
   background: var(--trunfo-dark);
   display: flex;
   flex-direction: column;
-  /* Altura proporcional ao card real */
-  min-height: 480px;
-  max-height: 75vh;
-  overflow-y: auto;
+  /* height auto: card cresce até seu tamanho natural sem barra de rolagem */
+  height: auto;
+  max-height: 82vh;
+  overflow-y: visible;
   box-shadow: 0 0 40px rgba(240, 192, 64, 0.3);
   animation: cardFadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
