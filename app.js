@@ -473,10 +473,12 @@ async function render(items, append = false) {
 /* 3.5.1. Vira o card com cálculo de scroll dinâmico */
 function handleFlip(id) {
   // 🛡️ ESCUDO DE FOCO MOBILE (Anti-Bubbling Nativo)
+  // Verifica onde o usuário tocou antes de tentar girar a carta
   const evento = window.event;
   if (evento && evento.target) {
     const tag = evento.target.tagName.toLowerCase();
 
+    // Se tocou em um campo de texto, botão, SVG (ícones) ou dentro da área do chat, ABORTA o giro!
     if (
       tag === "input" ||
       tag === "button" ||
@@ -492,18 +494,22 @@ function handleFlip(id) {
   const card = document.getElementById(`card-${id}`);
   const isFlipped = card.classList.contains("is-flipped");
 
+  // Trava de propagação (Missclick de fundo)
   if (grid.classList.contains("grid-focused") && !isFlipped) {
     return;
   }
 
+  // Remove a classe de todas as cartas
   document
     .querySelectorAll(".masonry-item")
     .forEach((c) => c.classList.remove("is-flipped"));
 
+  // Se não estava virada, vira agora e ajusta o scroll
   if (!isFlipped) {
     card.classList.add("is-flipped");
     grid.classList.add("grid-focused");
 
+    // 📏 CÁLCULO DINÂMICO DE ALTURA DO CABEÇALHO
     const nav = document.querySelector("nav");
     const led = document.getElementById("ledPanel");
 
@@ -513,18 +519,20 @@ function handleFlip(id) {
       headerHeight += led.getBoundingClientRect().height;
     }
 
-    // ✅ FIX MOBILE CENTRALIZADO: No desktop faz scroll suave, no mobile o CSS Fixed assume
+    // ✅ FIX MOBILE CENTRALIZADO: No desktop faz scroll suave, no mobile o position: fixed assume a tela
     if (window.innerWidth >= 768) {
       const yOffset = -(headerHeight + 16);
       const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
     } else {
-      // Trava o scroll do fundo no mobile enquanto o card estiver expandido
+      // No mobile, removemos o scroll forçado para evitar brigas com o position: fixed
+      // Apenas impedimos o scroll da página de fundo enquanto o card está aberto
       document.body.style.overflow = "hidden";
     }
   } else {
+    // Se já estava virada, fecha e tira o foco do grid
     grid.classList.remove("grid-focused");
-    document.body.style.overflow = ""; // Devolve o scroll ao fechar
+    document.body.style.overflow = ""; // ✅ Devolve o scroll do mobile ao fechar
   }
 }
 
@@ -541,7 +549,7 @@ document.addEventListener("click", (event) => {
 function resetarEstadoDosCards() {
   const grid = document.getElementById("toyGrid");
   if (grid) grid.classList.remove("grid-focused");
-  document.body.style.overflow = ""; // ✅ Garante a liberação do scroll do body no mobile
+  document.body.style.overflow = ""; // ✅ Devolve o scroll do mobile de segurança
   document
     .querySelectorAll(".masonry-item")
     .forEach((card) => card.classList.remove("is-flipped"));
