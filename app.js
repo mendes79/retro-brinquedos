@@ -498,40 +498,35 @@ function handleFlip(id) {
   // 📱 MECÂNICA MOBILE (Telas menores que 768px)
   if (window.innerWidth < 768) {
     if (isFlipped) {
-      // Se clicou para fechar
       card.classList.remove("is-flipped");
       grid.classList.remove("grid-focused");
       return;
     }
 
-    // Fase 1: Gira localmente na coluna do Masonry com o verso Super Trunfo íntegro
+    // Fase 1: Gira localmente na coluna do Masonry com o verso Super Trunfo legítimo
     card.classList.add("is-flipped");
     grid.classList.add("grid-focused");
 
-    // Fase 2: Após o término do giro (300ms), projeta o clone expandido no centro geométrico
+    // Fase 2: Lança o clone expandido plano no centro após o término do giro
     setTimeout(() => {
-      // Garante que o usuário não fechou o card nesse micro-intervalo
       if (!card.classList.contains("is-flipped")) return;
 
-      // Cria ou recupera o contêiner do Overlay dinamicamente
       let overlay = document.getElementById("mobileExpandOverlay");
       if (!overlay) {
         overlay = document.createElement("div");
         overlay.id = "mobileExpandOverlay";
         overlay.className = "mobile-expand-overlay";
-        // Fecha o clone se clicar no borrão de fundo
         overlay.onclick = () => fecharCloneMobile(id);
         document.body.appendChild(overlay);
       }
 
-      // Clona o nó completo do brinquedo de forma profunda (com botões e estados)
+      // Clona profundamente o nó do card virado
       const clone = card.cloneNode(true);
       clone.id = `clone-${id}`;
 
-      // ✅ IMPORTANTE: Ajusta os clicks internos do clone para funções reais
+      // Ajusta o clique do botão de comentário do clone para abrir o drawer real
       const btnComentario = clone.querySelector(".comment-tab-btn");
       if (btnComentario) {
-        // Redireciona o clique do botão de comentário do clone para abrir o drawer legítimo
         const nomeLimpo =
           card.querySelector(".trunfo-title-text")?.textContent || "";
         btnComentario.onclick = (e) => {
@@ -540,11 +535,10 @@ function handleFlip(id) {
         };
       }
 
-      // Limpa o contêiner anterior e injeta o clone fresco
       overlay.innerHTML = "";
       overlay.appendChild(clone);
 
-      // Ativa a animação elástica e trava o scroll do fundo
+      // Ativa a exibição do overlay e blinda a viewport contra rolagens
       overlay.classList.add("active");
       document.body.style.overflow = "hidden";
     }, 320);
@@ -552,7 +546,7 @@ function handleFlip(id) {
     return;
   }
 
-  // 💻 MECÂNICA DESKTOP ORIGINAL (Mantida 100% Intacta e Segura)
+  // 💻 MECÂNICA DESKTOP ORIGINAL (Mantida 100% Intacta)
   document
     .querySelectorAll(".masonry-item")
     .forEach((c) => c.classList.remove("is-flipped"));
