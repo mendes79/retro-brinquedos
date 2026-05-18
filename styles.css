@@ -351,20 +351,65 @@ body {
 
 /* Card virado no mobile: O contêiner pai fica FIXO e CENTRALIZADO na viewport */
 /* ============================================================
-   REGULAGEM MOBILE LIMPA (SEM CONFLITOS 3D)
+   📱 MOTOR VISUAL DO CLONE EXPANDIDO MOBILE (FASE 2)
+   Blindado contra quebras de grid masonry e travamento de resize
    ============================================================ */
 @media (max-width: 767px) {
-  :root {
-    --led-height: 36px;
+  /* Contêiner de isolamento: flutua absoluto por cima de tudo */
+  .mobile-expand-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 6, 12, 0.88);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.25, 1, 0.5, 1);
   }
-  .led-panel {
-    height: 36px;
+
+  .mobile-expand-overlay.active {
+    opacity: 1;
+    pointer-events: all;
   }
-  .led-content {
-    font-size: 14px;
-    line-height: 36px;
+
+  /* O card clonado dentro do overlay ganha a ampliação perfeita de forma fluida */
+  .mobile-expand-overlay .masonry-item {
+    width: min(320px, 86vw) !important;
+    height: auto !important;
+    transform: scale(0.6) rotateY(180deg); /* Começa menor e já virado */
+    opacity: 0;
+    transition:
+      transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.3s ease;
+    pointer-events: all;
   }
-} /* ✅ FECHA O @MEDIA AQUI, EXATAMENTE COMO VOCÊ APONTOU */
+
+  /* Animação elástica estilo pop-up de Arcade */
+  .mobile-expand-overlay.active .masonry-item {
+    transform: scale(1) rotateY(180deg) !important;
+    opacity: 1;
+  }
+
+  /* Garante rolagem interna na ficha técnica clonada se a tela for muito baixa */
+  .mobile-expand-overlay .card-back {
+    position: relative !important;
+    max-height: 74vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    transform: rotateY(
+      0deg
+    ) !important; /* Anula rotação extra para manter leitura estável */
+  }
+
+  .mobile-expand-overlay .card-back::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+}
 
 .masonry-item.is-flipped {
   z-index: 150 !important;

@@ -470,7 +470,7 @@ async function render(items, append = false) {
 
 /* 3.5. MECÂNICA DE INTERAÇÃO (Flip e Desfocar) */
 
-/* 3.5.1. VIRA E EXPANDE O CARD COM COREOGRAFIA EM SÉRIE (MOBILE/DESKTOP) */
+/* 3.5.1. VIRA LOCALMENTE E LANÇA CLONE EXPANDIDO NO MOBILE */
 function handleFlip(id) {
   // 🛡️ ESCUDO DE FOCO MOBILE (Anti-Bubbling Nativo)
   const evento = window.event;
@@ -495,78 +495,105 @@ function handleFlip(id) {
     return;
   }
 
-  // Se o usuário clicou para fechar o card ativo
-  if (isFlipped) {
-    card.classList.remove("is-flipped", "card-expanded");
-    grid.classList.remove("grid-focused");
-    card.style.removeProperty("--tx");
-    card.style.removeProperty("--ty");
-    card.style.removeProperty("--scale");
-    document.body.style.overflow = ""; // Libera scroll de fundo
+  // 📱 MECÂNICA MOBILE (Telas menores que 768px)
+  if (window.innerWidth < 768) {
+    if (isFlipped) {
+      // Se clicou para fechar
+      card.classList.remove("is-flipped");
+      grid.classList.remove("grid-focused");
+      return;
+    }
+
+    // Fase 1: Gira localmente na coluna do Masonry com o verso Super Trunfo íntegro
+    card.classList.add("is-flipped");
+    grid.classList.add("grid-focused");
+
+    // Fase 2: Após o término do giro (300ms), projeta o clone expandido no centro geométrico
+    setTimeout(() => {
+      // Garante que o usuário não fechou o card nesse micro-intervalo
+      if (!card.classList.contains("is-flipped")) return;
+
+      // Cria ou recupera o contêiner do Overlay dinamicamente
+      let overlay = document.getElementById("mobileExpandOverlay");
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "mobileExpandOverlay";
+        overlay.className = "mobile-expand-overlay";
+        // Fecha o clone se clicar no borrão de fundo
+        overlay.onclick = () => fecharCloneMobile(id);
+        document.body.appendChild(overlay);
+      }
+
+      // Clona o nó completo do brinquedo de forma profunda (com botões e estados)
+      const clone = card.cloneNode(true);
+      clone.id = `clone-${id}`;
+
+      // ✅ IMPORTANTE: Ajusta os clicks internos do clone para funções reais
+      const btnComentario = clone.querySelector(".comment-tab-btn");
+      if (btnComentario) {
+        // Redireciona o clique do botão de comentário do clone para abrir o drawer legítimo
+        const nomeLimpo =
+          card.querySelector(".trunfo-title-text")?.textContent || "";
+        btnComentario.onclick = (e) => {
+          fecharCloneMobile(id);
+          abrirDrawerComentarios(e, id, nomeLimpo);
+        };
+      }
+
+      // Limpa o contêiner anterior e injeta o clone fresco
+      overlay.innerHTML = "";
+      overlay.appendChild(clone);
+
+      // Ativa a animação elástica e trava o scroll do fundo
+      overlay.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }, 320);
+
     return;
   }
 
-  // Fecha qualquer outro card aberto preventivamente
-  document.querySelectorAll(".masonry-item").forEach((c) => {
-    c.classList.remove("is-flipped", "card-expanded");
-    c.style.removeProperty("--tx");
-    c.style.removeProperty("--ty");
-    c.style.removeProperty("--scale");
-  });
+  // 💻 MECÂNICA DESKTOP ORIGINAL (Mantida 100% Intacta e Segura)
+  document
+    .querySelectorAll(".masonry-item")
+    .forEach((c) => c.classList.remove("is-flipped"));
 
-  // Vira localmente o card selecionado (Fase 1)
-  card.classList.add("is-flipped");
-  grid.classList.add("grid-focused");
+  if (!isFlipped) {
+    card.classList.add("is-flipped");
+    grid.classList.add("grid-focused");
 
-  // 📏 CÁLCULO DINÂMICO DO HEADER COMUNS
-  const nav = document.querySelector("nav");
-  const led = document.getElementById("ledPanel");
-  let headerHeight = nav ? nav.getBoundingClientRect().height : 72;
-  if (ledPainelAtivo && led) {
-    headerHeight += led.getBoundingClientRect().height;
-  }
+    const nav = document.querySelector("nav");
+    const led = document.getElementById("ledPanel");
+    let headerHeight = nav ? nav.getBoundingClientRect().height : 72;
+    if (ledPainelAtivo && led) {
+      headerHeight += led.getBoundingClientRect().height;
+    }
 
-  // 💻 MECÂNICA DESKTOP (Mantida via Scroll Suave Original)
-  if (window.innerWidth >= 768) {
     const yOffset = -(headerHeight + 16);
     const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
     window.scrollTo({ top: y, behavior: "smooth" });
-    return;
+  } else {
+    grid.classList.remove("grid-focused");
   }
+}
 
-  // 📱 MECÂNICA MOBILE: CÁLCULO ORBITAL DO CENTRO DA TELA (Fase 2)
-  document.body.style.overflow = "hidden"; // Trava fundo
+/* Função auxiliar para recolher o clone de forma síncrona */
+function fecharCloneMobile(id) {
+  const overlay = document.getElementById("mobileExpandOverlay");
+  const cardReal = document.getElementById(`card-${id}`);
+  const grid = document.getElementById("toyGrid");
 
-  // Dimensões da viewport e do card
-  const rect = card.getBoundingClientRect();
-  const viewW = window.innerWidth;
-  const viewH = window.innerHeight;
+  if (overlay) overlay.classList.remove("active");
+  if (cardReal) cardReal.classList.remove("is-flipped");
+  if (grid) grid.classList.remove("grid-focused");
 
-  // Centro geométrico do card atual
-  const cardCenterX = rect.left + rect.width / 2;
-  const cardCenterY = rect.top + rect.height / 2;
+  document.body.style.overflow = ""; // Devolve o scroll útil de fundo
 
-  // Alvo: Centro geométrico do espaço útil da tela (Abaixo da Nav/LED)
-  const targetX = viewW / 2;
-  const targetY = headerHeight + (viewH - headerHeight) / 2;
-
-  // Distância exata que o transform translate precisará percorrer
-  const tx = targetX - cardCenterX;
-  const ty = targetY - cardCenterY;
-
-  // Calcula escala mantendo margem responsiva lateral para as quinas do card
-  const larguraAlvoMobile = Math.min(320, viewW * 0.88);
-  const scale = larguraAlvoMobile / rect.width;
-
-  // Injeta a órbita matemática diretamente como variáveis atômicas de estilo
-  card.style.setProperty("--tx", `${tx}px`);
-  card.style.setProperty("--ty", `${ty}px`);
-  card.style.setProperty("--scale", `${scale}`);
-
-  // Dispara o deslocamento e o zoom após o microtask do ciclo de renderização
-  requestAnimationFrame(() => {
-    card.classList.add("card-expanded");
-  });
+  // Limpa o DOM do overlay após o término da transição fade-out
+  setTimeout(() => {
+    if (overlay && !overlay.classList.contains("active")) {
+      overlay.innerHTML = "";
+    }
+  }, 350);
 }
 
 /* 3.5.2. Escuta cliques externos para fechar cards */
@@ -584,12 +611,14 @@ function resetarEstadoDosCards() {
   const grid = document.getElementById("toyGrid");
   if (grid) grid.classList.remove("grid-focused");
   document.body.style.overflow = ""; // Libera scroll do mobile
-  document.querySelectorAll(".masonry-item").forEach((card) => {
-    card.classList.remove("is-flipped", "card-expanded");
-    card.style.removeProperty("--tx");
-    card.style.removeProperty("--ty");
-    card.style.removeProperty("--scale");
-  });
+
+  // Limpa overlays móveis se existirem ativos
+  const overlay = document.getElementById("mobileExpandOverlay");
+  if (overlay) overlay.classList.remove("active");
+
+  document
+    .querySelectorAll(".masonry-item")
+    .forEach((card) => card.classList.remove("is-flipped", "card-expanded"));
 }
 
 /* Exibe mensagem temporária no painel LED (usado pelos botões locked) */
