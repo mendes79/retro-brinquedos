@@ -491,15 +491,21 @@ function handleFlip(id) {
       headerHeight += led.getBoundingClientRect().height;
     }
 
-    const yOffset = -(headerHeight + 16);
-    const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
-
-    window.scrollTo({ top: y, behavior: "smooth" });
+    // ✅ FIX MOBILE CENTRALIZADO: No desktop faz scroll suave, no mobile o position: fixed assume a tela
+    if (window.innerWidth >= 768) {
+      const yOffset = -(headerHeight + 16);
+      const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    } else {
+      // No mobile, removemos o scroll forçado para evitar brigas com o position: fixed
+      // Apenas impedimos o scroll da página de fundo enquanto o card está aberto
+      document.body.style.overflow = "hidden";
+    }
   } else {
     // Se já estava virada, fecha e tira o foco do grid
     grid.classList.remove("grid-focused");
+    document.body.style.overflow = ""; // ✅ Devolve o scroll do mobile ao fechar
   }
-}
 
 /* 3.5.2. Escuta cliques externos para fechar cards */
 document.addEventListener("click", (event) => {
@@ -514,6 +520,7 @@ document.addEventListener("click", (event) => {
 function resetarEstadoDosCards() {
   const grid = document.getElementById("toyGrid");
   if (grid) grid.classList.remove("grid-focused");
+  document.body.style.overflow = ""; // ✅ Devolve o scroll do mobile de segurança
   document
     .querySelectorAll(".masonry-item")
     .forEach((card) => card.classList.remove("is-flipped"));
