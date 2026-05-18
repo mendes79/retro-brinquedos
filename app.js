@@ -470,7 +470,7 @@ async function render(items, append = false) {
 
 /* 3.5. MECÂNICA DE INTERAÇÃO (Flip e Desfocar) */
 
-/* 3.5.1. VIRA LOCALMENTE E LANÇA CLONE EXPANDIDO NO MOBILE */
+/* 3.5.1. Vira o card com cálculo de scroll dinâmico (Idêntico em Todas as Telas) */
 function handleFlip(id) {
   // 🛡️ ESCUDO DE FOCO MOBILE (Anti-Bubbling Nativo)
   const evento = window.event;
@@ -495,58 +495,6 @@ function handleFlip(id) {
     return;
   }
 
-  // 📱 MECÂNICA MOBILE (Telas menores que 768px)
-  if (window.innerWidth < 768) {
-    if (isFlipped) {
-      card.classList.remove("is-flipped");
-      grid.classList.remove("grid-focused");
-      return;
-    }
-
-    // Fase 1: Gira localmente na coluna do Masonry com o verso Super Trunfo legítimo
-    card.classList.add("is-flipped");
-    grid.classList.add("grid-focused");
-
-    // Fase 2: Lança o clone expandido plano no centro após o término do giro
-    setTimeout(() => {
-      if (!card.classList.contains("is-flipped")) return;
-
-      let overlay = document.getElementById("mobileExpandOverlay");
-      if (!overlay) {
-        overlay = document.createElement("div");
-        overlay.id = "mobileExpandOverlay";
-        overlay.className = "mobile-expand-overlay";
-        overlay.onclick = () => fecharCloneMobile(id);
-        document.body.appendChild(overlay);
-      }
-
-      // Clona profundamente o nó do card virado
-      const clone = card.cloneNode(true);
-      clone.id = `clone-${id}`;
-
-      // Ajusta o clique do botão de comentário do clone para abrir o drawer real
-      const btnComentario = clone.querySelector(".comment-tab-btn");
-      if (btnComentario) {
-        const nomeLimpo =
-          card.querySelector(".trunfo-title-text")?.textContent || "";
-        btnComentario.onclick = (e) => {
-          fecharCloneMobile(id);
-          abrirDrawerComentarios(e, id, nomeLimpo);
-        };
-      }
-
-      overlay.innerHTML = "";
-      overlay.appendChild(clone);
-
-      // Ativa a exibição do overlay e blinda a viewport contra rolagens
-      overlay.classList.add("active");
-      document.body.style.overflow = "hidden";
-    }, 320);
-
-    return;
-  }
-
-  // 💻 MECÂNICA DESKTOP ORIGINAL (Mantida 100% Intacta)
   document
     .querySelectorAll(".masonry-item")
     .forEach((c) => c.classList.remove("is-flipped"));
@@ -558,36 +506,18 @@ function handleFlip(id) {
     const nav = document.querySelector("nav");
     const led = document.getElementById("ledPanel");
     let headerHeight = nav ? nav.getBoundingClientRect().height : 72;
+
     if (ledPainelAtivo && led) {
       headerHeight += led.getBoundingClientRect().height;
     }
 
+    // Calcula a rolagem idêntica para centralizar o card abaixo da Nav/LED
     const yOffset = -(headerHeight + 16);
     const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
     window.scrollTo({ top: y, behavior: "smooth" });
   } else {
     grid.classList.remove("grid-focused");
   }
-}
-
-/* Função auxiliar para recolher o clone de forma síncrona */
-function fecharCloneMobile(id) {
-  const overlay = document.getElementById("mobileExpandOverlay");
-  const cardReal = document.getElementById(`card-${id}`);
-  const grid = document.getElementById("toyGrid");
-
-  if (overlay) overlay.classList.remove("active");
-  if (cardReal) cardReal.classList.remove("is-flipped");
-  if (grid) grid.classList.remove("grid-focused");
-
-  document.body.style.overflow = ""; // Devolve o scroll útil de fundo
-
-  // Limpa o DOM do overlay após o término da transição fade-out
-  setTimeout(() => {
-    if (overlay && !overlay.classList.contains("active")) {
-      overlay.innerHTML = "";
-    }
-  }, 350);
 }
 
 /* 3.5.2. Escuta cliques externos para fechar cards */
@@ -600,19 +530,13 @@ document.addEventListener("click", (event) => {
   }
 });
 
-//Escutador de cliques externos
 function resetarEstadoDosCards() {
   const grid = document.getElementById("toyGrid");
   if (grid) grid.classList.remove("grid-focused");
-  document.body.style.overflow = ""; // Libera scroll do mobile
-
-  // Limpa overlays móveis se existirem ativos
-  const overlay = document.getElementById("mobileExpandOverlay");
-  if (overlay) overlay.classList.remove("active");
-
+  document.body.style.overflow = ""; // Garante scroll livre do body
   document
     .querySelectorAll(".masonry-item")
-    .forEach((card) => card.classList.remove("is-flipped", "card-expanded"));
+    .forEach((card) => card.classList.remove("is-flipped"));
 }
 
 /* Exibe mensagem temporária no painel LED (usado pelos botões locked) */
