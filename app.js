@@ -113,23 +113,31 @@ async function fetchBrinquedos(reset = false) {
     if (filtroAtivo !== "todos" && buscaAtiva.length < 2) {
       // Seleciona o Set correto para o filtro ativo
       const setAtivo =
-        filtroAtivo === "tive"   ? tiveDoUsuario :
-        filtroAtivo === "queria" ? queriaDoUsuario :
-                                   curtidasDoUsuario;
+        filtroAtivo === "tive"
+          ? tiveDoUsuario
+          : filtroAtivo === "queria"
+            ? queriaDoUsuario
+            : curtidasDoUsuario;
 
       const idsFiltro = [...setAtivo];
 
       // Se o Set estiver vazio, não há nada a buscar
       if (idsFiltro.length === 0) {
         if (reset) grid.innerHTML = "";
-        document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
+        document
+          .querySelectorAll(".temp-skeleton")
+          .forEach((el) => el.remove());
         grid.innerHTML = `
           <div class="col-span-full text-center py-20">
             <p class="text-pink-500 font-retro text-xl">NENHUM ITEM AQUI AINDA</p>
             <p class="text-slate-500 font-orbitron text-xs mt-2">
-              ${filtroAtivo === "tive"    ? "MARQUE OS BRINQUEDOS QUE VOCÊ TEVE" :
-                filtroAtivo === "queria"  ? "MARQUE OS BRINQUEDOS QUE VOCÊ QUERIA TER" :
-                                            "CURTA OS BRINQUEDOS QUE VOCÊ AMOU"}
+              ${
+                filtroAtivo === "tive"
+                  ? "MARQUE OS BRINQUEDOS QUE VOCÊ TEVE"
+                  : filtroAtivo === "queria"
+                    ? "MARQUE OS BRINQUEDOS QUE VOCÊ QUERIA TER"
+                    : "CURTA OS BRINQUEDOS QUE VOCÊ AMOU"
+              }
             </p>
           </div>`;
         hasMais = false;
@@ -147,7 +155,6 @@ async function fetchBrinquedos(reset = false) {
       if (filtroError) throw filtroError;
       itens = data || [];
       hasMais = false; // Coleção pessoal: todos os itens chegam de uma vez
-
     } else if (buscaAtiva.length >= 2) {
       // BUSCA POR TEXTO: usa o RPC com unaccent
       const { data, error: rpcError } = await supabaseClient.rpc(
@@ -156,7 +163,6 @@ async function fetchBrinquedos(reset = false) {
       );
       if (rpcError) throw rpcError;
       itens = data || [];
-
     } else {
       // MODO NORMAL (Todos): paginação aleatória via Vercel
       const res = await fetch(
@@ -184,7 +190,9 @@ async function fetchBrinquedos(reset = false) {
 
     // --- 4. DEDUPLICAÇÃO: Garante unicidade antes de tocar no DOM ---
     // ✅ Filtra itens cujo ID já existe em allToys (memória) OU no DOM (zumbi)
-    const idsEmMemoria = new Set(allToys.map((t) => String(t.id).padStart(4, "0")));
+    const idsEmMemoria = new Set(
+      allToys.map((t) => String(t.id).padStart(4, "0")),
+    );
     const itensNovos = itens.filter((toy) => {
       const idStr = String(toy.id).padStart(4, "0");
       return !idsEmMemoria.has(idStr);
@@ -421,12 +429,28 @@ async function render(items, append = false) {
     // 💡 MASONRY PRECISO: Aguarda a imagem da frente carregar antes de medir
     // offsetHeight. Em mobile com conexão lenta o rAF duplo não é suficiente —
     // a imagem ainda não tem altura real quando medimos, causando desbalanceamento.
-    const imgInserida = shortest.querySelector(`#card-${idNormalizado} .card-front img`);
+    const imgInserida = shortest.querySelector(
+      `#card-${idNormalizado} .card-front img`,
+    );
     if (imgInserida && !imgInserida.complete) {
       await new Promise((resolve) => {
         const timeout = setTimeout(resolve, 800); // segurança: máx 800ms
-        imgInserida.addEventListener("load",  () => { clearTimeout(timeout); resolve(); }, { once: true });
-        imgInserida.addEventListener("error", () => { clearTimeout(timeout); resolve(); }, { once: true });
+        imgInserida.addEventListener(
+          "load",
+          () => {
+            clearTimeout(timeout);
+            resolve();
+          },
+          { once: true },
+        );
+        imgInserida.addEventListener(
+          "error",
+          () => {
+            clearTimeout(timeout);
+            resolve();
+          },
+          { once: true },
+        );
       });
     }
 
@@ -522,7 +546,11 @@ function compartilharWhatsApp(event, id, nome) {
   const url = `${window.location.origin}${window.location.pathname}?card=${id}`;
   // Emojis substituídos por versões de maior compatibilidade cross-platform
   const texto = `*RetroBrinquedos BR* - Voce se lembra deste? *${nome}* - Reviva a nostalgia dos anos 80/90!\n${url}`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank", "noopener,noreferrer");
+  window.open(
+    `https://wa.me/?text=${encodeURIComponent(texto)}`,
+    "_blank",
+    "noopener,noreferrer",
+  );
 }
 
 /* ============================================================
@@ -535,11 +563,12 @@ async function abrirDrawerComentarios(event, id, nome) {
   if (event) event.stopPropagation();
   if (!isUserLogged) return;
 
-  drawerIdAtivo  = id;
+  drawerIdAtivo = id;
   drawerNomeAtivo = nome;
 
   document.getElementById("drawerNomeBrinquedo").textContent = nome;
-  document.getElementById("drawerListaComentarios").innerHTML = '<p class="drawer-loading">Carregando...</p>';
+  document.getElementById("drawerListaComentarios").innerHTML =
+    '<p class="drawer-loading">Carregando...</p>';
   document.getElementById("drawerComentarioInput").value = "";
 
   const drawer = document.getElementById("comentariosDrawer");
@@ -552,7 +581,7 @@ async function abrirDrawerComentarios(event, id, nome) {
 function fecharDrawerComentarios() {
   document.getElementById("comentariosDrawer").classList.remove("open");
   document.body.classList.remove("drawer-open");
-  drawerIdAtivo  = null;
+  drawerIdAtivo = null;
   drawerNomeAtivo = null;
 }
 
@@ -568,18 +597,22 @@ async function carregarComentariosDrawer(id) {
     const { data, error } = await supabaseClient
       .from("comentarios")
       .select("id, texto, created_at, usuario_nome, usuario_avatar")
-      .eq("brinquedo_id", parseInt(id, 10))
+      .eq("brinquedo_id", id)
+      .eq("aprovado", true)
       .order("created_at", { ascending: false })
       .limit(50);
 
     if (error) throw error;
 
     if (!data || data.length === 0) {
-      lista.innerHTML = '<p class="drawer-empty">Nenhum comentário ainda. Seja o primeiro!</p>';
+      lista.innerHTML =
+        '<p class="drawer-empty">Nenhum comentário ainda. Seja o primeiro!</p>';
       return;
     }
 
-    lista.innerHTML = data.map((c) => `
+    lista.innerHTML = data
+      .map(
+        (c) => `
       <div class="drawer-comentario">
         <img src="${c.usuario_avatar || "/img/avatar_default.png"}" class="drawer-avatar" alt="avatar">
         <div class="drawer-comentario-body">
@@ -587,9 +620,12 @@ async function carregarComentariosDrawer(id) {
           <span class="drawer-texto">${c.texto}</span>
         </div>
       </div>
-    `).join("");
+    `,
+      )
+      .join("");
   } catch (e) {
-    lista.innerHTML = '<p class="drawer-empty">Erro ao carregar comentários.</p>';
+    lista.innerHTML =
+      '<p class="drawer-empty">Erro ao carregar comentários.</p>';
     console.error("Erro comentários:", e);
   }
 }
@@ -601,18 +637,26 @@ async function enviarComentarioDrawer() {
   if (!texto) return;
 
   const session = await supabaseClient.auth.getSession();
-  const user    = session?.data?.session?.user;
+  const user = session?.data?.session?.user;
   if (!user) return;
 
-  const userName   = user.user_metadata?.full_name || "Jogador";
-  const userAvatar = localStorage.getItem("retro_avatar") || "/img/avatar_default.png";
+  const userName = user.user_metadata?.full_name || "Jogador";
+  const userAvatar =
+    localStorage.getItem("retro_avatar") || "/img/avatar_default.png";
+
+  // Filtro anti-toxicidade antes de qualquer INSERT
+  if (contemPalavraProibida(texto)) {
+    dispararTiltBanimento("LINGUAGEM INADEQUADA DETECTADA");
+    return;
+  }
 
   const { error } = await supabaseClient.from("comentarios").insert({
-    brinquedo_id:   parseInt(drawerIdAtivo, 10),
-    usuario_id:     user.id,
-    usuario_nome:   userName,
+    brinquedo_id: drawerIdAtivo, // text, não int
+    usuario_id: user.id,
+    usuario_nome: userName,
     usuario_avatar: userAvatar,
     texto,
+    aprovado: true, // aprovação automática pelo filtro
   });
 
   if (!error) {
@@ -649,10 +693,10 @@ async function verificarCardCompartilhado() {
 
     if (error || !data) return;
 
-    const idNormalizado    = String(data.id).padStart(4, "0");
+    const idNormalizado = String(data.id).padStart(4, "0");
     const urlVersoOtimizada = otimizarUrlCloudinary(data.url_verso, 500);
-    const trunfoCode       = data.codigo_trunfo || gerarIdSuperTrunfo(data.id);
-    const ledHTML          = buildLedDisplay(data.raridade);
+    const trunfoCode = data.codigo_trunfo || gerarIdSuperTrunfo(data.id);
+    const ledHTML = buildLedDisplay(data.raridade);
 
     document.getElementById("cardCompartilhadoContainer").innerHTML = `
       <div class="card-modal-trunfo">
@@ -696,7 +740,9 @@ async function verificarCardCompartilhado() {
       </div>`;
 
     // Abre o modal
-    document.getElementById("cardCompartilhadoModal").classList.remove("hidden");
+    document
+      .getElementById("cardCompartilhadoModal")
+      .classList.remove("hidden");
   } catch (e) {
     console.error("Erro ao abrir card compartilhado:", e);
   }
@@ -886,16 +932,27 @@ async function logOut() {
 async function carregarInteracoesDoBanco(userId, tentativa = 1) {
   try {
     const [resCurtidas, resTive, resQueria] = await Promise.all([
-      supabaseClient.from("curtidas").select("brinquedo_id").eq("usuario_id", userId),
-      supabaseClient.from("interacoes_tive").select("brinquedo_id").eq("usuario_id", userId),
-      supabaseClient.from("interacoes_queria").select("brinquedo_id").eq("usuario_id", userId),
+      supabaseClient
+        .from("curtidas")
+        .select("brinquedo_id")
+        .eq("usuario_id", userId),
+      supabaseClient
+        .from("interacoes_tive")
+        .select("brinquedo_id")
+        .eq("usuario_id", userId),
+      supabaseClient
+        .from("interacoes_queria")
+        .select("brinquedo_id")
+        .eq("usuario_id", userId),
     ]);
 
     // 🛡️ RETRY: Se qualquer query falhar e ainda temos tentativas, aguarda e tenta novamente.
     // Evita Sets vazios causados por cold start do Supabase ou token recém-renovado.
     const houveErro = resCurtidas.error || resTive.error || resQueria.error;
     if (houveErro && tentativa < 3) {
-      console.warn(`carregarInteracoes: tentativa ${tentativa} falhou, retentando...`);
+      console.warn(
+        `carregarInteracoes: tentativa ${tentativa} falhou, retentando...`,
+      );
       await new Promise((r) => setTimeout(r, 600 * tentativa));
       return carregarInteracoesDoBanco(userId, tentativa + 1);
     }
@@ -913,7 +970,9 @@ async function carregarInteracoesDoBanco(userId, tentativa = 1) {
         resQueria.data.map((i) => String(i.brinquedo_id).padStart(4, "0")),
       );
 
-    console.log(`✅ Interações carregadas — Tive: ${tiveDoUsuario.size} | Queria: ${queriaDoUsuario.size} | Curtidas: ${curtidasDoUsuario.size}`);
+    console.log(
+      `✅ Interações carregadas — Tive: ${tiveDoUsuario.size} | Queria: ${queriaDoUsuario.size} | Curtidas: ${curtidasDoUsuario.size}`,
+    );
   } catch (e) {
     console.error("Erro no carregamento de interações:", e);
   }
@@ -1618,7 +1677,11 @@ window.addEventListener("resize", () => {
     // após fetchBrinquedos filtrar por idsEmMemoria. Passamos false para forçar
     // reconstrução das colunas com o novo número de colunas.
     if (allToys && allToys.length > 0) {
-      const unique = [...new Map(allToys.map((t) => [String(t.id).padStart(4, "0"), t])).values()];
+      const unique = [
+        ...new Map(
+          allToys.map((t) => [String(t.id).padStart(4, "0"), t]),
+        ).values(),
+      ];
       render(unique, false);
     }
   }, 250);
