@@ -350,76 +350,19 @@ body {
 }
 
 /* Card virado no mobile: O contêiner pai fica FIXO e CENTRALIZADO na viewport */
+/* ============================================================
+   REGULAGEM MOBILE LIMPA (SEM CONFLITOS 3D)
+   ============================================================ */
 @media (max-width: 767px) {
   :root {
-    --led-height: 24px;
+    --led-height: 36px;
   }
   .led-panel {
-    height: 24px;
+    height: 36px;
   }
   .led-content {
-    font-size: 11px;
-    line-height: 42px;
-  }
-
-  /* Quando virado: O contêiner pai PULA para fora do grid Masonry */
-  .masonry-item.is-flipped {
-    position: fixed !important;
-    inset: 0 !important;
-    width: 100vw !important;
-    height: 100dvh !important;
-    z-index: 400 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    pointer-events: none;
-  }
-
-  /* ✅ CORREÇÃO 3D: Força o preserve-3d e isola o contexto de rotação no mobile */
-  .masonry-item.is-flipped .card-inner {
-    position: relative !important;
-    width: min(320px, 85vw) !important;
-    height: auto !important;
-    max-height: calc(
-      100dvh - var(--nav-height, 72px) - var(--led-height, 24px) - 40px
-    ) !important;
-    overflow-y: auto;
-    overflow-x: hidden;
-    pointer-events: all;
-    border-radius: 1rem;
-    box-shadow:
-      0 0 50px rgba(0, 0, 0, 0.9),
-      0 0 20px rgba(240, 192, 64, 0.2);
-    z-index: 402;
-    transform: rotateY(180deg) !important; /* Mantém o giro do JS coerente */
-    transform-style: preserve-3d !important; /* REFORÇADO: impede colapso 3D */
-    will-change: transform;
-  }
-
-  /* ✅ FIX DA FRENTE VAZANDO: Força o ocultamento das faces no plano fixo do mobile */
-  .masonry-item.is-flipped .card-front,
-  .masonry-item.is-flipped .card-back {
-    backface-visibility: hidden !important;
-    -webkit-backface-visibility: hidden !important;
-    transform-style: preserve-3d !important;
-  }
-
-  /* Overlay escuro com desfoque de fundo ancorado no pai */
-  .masonry-item.is-flipped::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.82);
-    z-index: 401;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    pointer-events: all;
-  }
-
-  /* Esconde a barra de rolagem do card interno no mobile */
-  .masonry-item.is-flipped .card-inner::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
+    font-size: 14px;
+    line-height: 36px;
   }
 }
 

@@ -470,15 +470,11 @@ async function render(items, append = false) {
 
 /* 3.5. MECÂNICA DE INTERAÇÃO (Flip e Desfocar) */
 
-/* 3.5.1. Vira o card com cálculo de scroll dinâmico */
-function handleFlip(id) {
-  // 🛡️ ESCUDO DE FOCO MOBILE (Anti-Bubbling Nativo)
-  // Verifica onde o usuário tocou antes de tentar girar a carta
+/* 3.5.1. VIRA O CARD (DESKTOP) OU ABRE MODAL ESPELHO (MOBILE) */
+async function handleFlip(id) {
   const evento = window.event;
   if (evento && evento.target) {
     const tag = evento.target.tagName.toLowerCase();
-
-    // Se tocou em um campo de texto, botão, SVG (ícones) ou dentro da área do chat, ABORTA o giro!
     if (
       tag === "input" ||
       tag === "button" ||
@@ -490,49 +486,42 @@ function handleFlip(id) {
     }
   }
 
+  // 📱 INTERCEPTAÇÃO MOBILE: Se for tela menor que 768px, abre no modal idêntico ao compartilhado
+  if (window.innerWidth < 768) {
+    abrirModalEspelhoMobile(id);
+    return;
+  }
+
+  // 💻 COMPORTAMENTO DESKTOP ORIGINAL (Mantido 100% intacto)
   const grid = document.getElementById("toyGrid");
   const card = document.getElementById(`card-${id}`);
   const isFlipped = card.classList.contains("is-flipped");
 
-  // Trava de propagação (Missclick de fundo)
   if (grid.classList.contains("grid-focused") && !isFlipped) {
     return;
   }
 
-  // Remove a classe de todas as cartas
   document
     .querySelectorAll(".masonry-item")
     .forEach((c) => c.classList.remove("is-flipped"));
 
-  // Se não estava virada, vira agora e ajusta o scroll
   if (!isFlipped) {
     card.classList.add("is-flipped");
     grid.classList.add("grid-focused");
 
-    // 📏 CÁLCULO DINÂMICO DE ALTURA DO CABEÇALHO
     const nav = document.querySelector("nav");
     const led = document.getElementById("ledPanel");
-
     let headerHeight = nav ? nav.getBoundingClientRect().height : 72;
 
     if (ledPainelAtivo && led) {
       headerHeight += led.getBoundingClientRect().height;
     }
 
-    // ✅ FIX MOBILE CENTRALIZADO: No desktop faz scroll suave, no mobile o position: fixed assume a tela
-    if (window.innerWidth >= 768) {
-      const yOffset = -(headerHeight + 16);
-      const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    } else {
-      // No mobile, removemos o scroll forçado para evitar brigas com o position: fixed
-      // Apenas impedimos o scroll da página de fundo enquanto o card está aberto
-      document.body.style.overflow = "hidden";
-    }
+    const yOffset = -(headerHeight + 16);
+    const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    window.scrollTo({ top: y, behavior: "smooth" });
   } else {
-    // Se já estava virada, fecha e tira o foco do grid
     grid.classList.remove("grid-focused");
-    document.body.style.overflow = ""; // ✅ Devolve o scroll do mobile ao fechar
   }
 }
 
@@ -782,6 +771,83 @@ async function verificarCardCompartilhado() {
 
 function fecharCardModal() {
   document.getElementById("cardCompartilhadoModal").classList.add("hidden");
+  document.body.style.overflow = ""; // Libera o scroll do celular de volta
+}
+
+/* 3.5.6. MOTOR DO MODAL ESPELHO PARA SELEÇÃO MOBILE */
+async function abrirModalEspelhoMobile(cardId) {
+  try {
+    // Busca o brinquedo direto na memória RAM (allToys) para resposta instantânea (0ms)
+    const data = allToys.find(
+      (t) => String(t.id).padStart(4, "0") === String(cardId).padStart(4, "0"),
+    );
+    if (!data) return;
+
+    const idNormalizado = String(data.id).padStart(4, "0");
+    const urlVersoOtimizada = otimizarUrlCloudinary(data.url_verso, 500);
+    const trunfoCode = data.codigo_trunfo || gerarIdSuperTrunfo(data.id);
+    const ledHTML = buildLedDisplay(data.raridade);
+
+    // Alimenta o mesmo container de modal que o index.html já possui pronto
+    document.getElementById("cardCompartilhadoContainer").innerHTML = `
+      <div class="card-modal-trunfo">
+        <div class="trunfo-header">
+          <div class="trunfo-top-bar">
+            <span>Super Trunfo • RetroBrinquedos</span>
+            <span class="trunfo-code-badge">${trunfoCode}</span>
+          </div>
+          <div class="trunfo-title-area">
+            <div class="trunfo-star"></div>
+            <span class="trunfo-title-text">${data.nome}</span>
+          </div>
+        </div>
+        <div class="trunfo-photo-wrapper">
+          <div class="trunfo-photo-frame">
+            <img src="${urlVersoOtimizada}" alt="${data.nome}" class="trunfo-photo">
+            <span class="trunfo-photo-year">${data.ano}</span>
+          </div>
+        </div>
+        <div class="trunfo-stats-area">
+          <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${data.fabricante}</span></div>
+          <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
+          <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
+          <div class="trunfo-raridade-area">
+            <div class="trunfo-raridade-header">
+              <span class="trunfo-raridade-label">⬡ Raridade</span>
+              <span class="trunfo-raridade-value">${data.raridade}/10</span>
+            </div>
+            ${ledHTML}
+          </div>
+          <div class="trunfo-curiosidade">"${data.curiosidade}"</div>
+        </div>
+        <div class="trunfo-footer">
+          <div class="footer-icons-container">
+            <button class="footer-tab-btn whatsapp-tab-btn w-full" onclick="compartilharWhatsApp(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'")}')">
+              <svg class="tab-icon-svg !w-5 !h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+              <span class="text-[11px] font-orbitron uppercase tracking-wider text-white ml-1">Compartilhar Memória</span>
+            </button>
+          </div>
+        </div>
+      </div>`;
+
+    // Remove temporariamente a frase de "Alguém compartilhou" se o clique veio do próprio celular
+    const modalLabel = document.querySelector(".card-modal-label");
+    if (modalLabel) modalLabel.style.display = "none";
+
+    // Altera o texto do botão inferior para ficar contextualizado
+    const modalCta = document.querySelector(".card-modal-cta");
+    if (modalCta) modalCta.innerHTML = "✕ Voltar para o Quarto";
+
+    // Abre o modal de visualização móvel de forma imediata
+    document
+      .getElementById("cardCompartilhadoModal")
+      .classList.remove("hidden");
+    document.body.style.overflow = "hidden"; // trava rolagem de fundo
+  } catch (e) {
+    console.error("Erro ao espelhar card mobile:", e);
+  }
 }
 
 /* 3.6. BUSCA INTELIGENTE (Debounce e Trigger - Versão Blindada) */
