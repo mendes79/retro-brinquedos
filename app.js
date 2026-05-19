@@ -602,7 +602,7 @@ function mostrarMensagemLED(mensagem) {
   }, 850); // 20% mais lento que os 700ms originais do tilt comum
 }
 
-/* 3.5.3. COMPARTILHAMENTO DE MÍDIA NATIVA COM FALLBACK TEXTUAL DESKTOP (Item 6.4) */
+/* 3.5.3. COMPARTILHAMENTO DE MÍDIA NATIVA (MOBILE) OU LINK LIMPO (DESKTOP) */
 async function compartilharWhatsApp(event, id, nome) {
   if (event) event.stopPropagation();
 
@@ -619,8 +619,13 @@ async function compartilharWhatsApp(event, id, nome) {
     `Reviva a nostalgia dos anos 80/90!\n\n` +
     `${urlSPA}`;
 
-  // 📱 DISPOSITIVOS MÓVEIS / APPS NATIVOS: Envia o arquivo binário real da foto
-  if (navigator.canShare && navigator.share && urlImagemFrente) {
+  // 📱 DIRECTIVA ESTRETA MOBILE: Só tenta compartilhar arquivo binário em telas menores que 768px
+  if (
+    window.innerWidth < 768 &&
+    navigator.canShare &&
+    navigator.share &&
+    urlImagemFrente
+  ) {
     try {
       const response = await fetch(urlImagemFrente);
       const blob = await response.blob();
@@ -636,17 +641,17 @@ async function compartilharWhatsApp(event, id, nome) {
           title: "RetroBrinquedos BR",
           text: legendaText,
         });
-        return; // Sucesso mobile! Sai da função.
+        return; // Sucesso absoluto no mobile. Sai da função.
       }
     } catch (err) {
       console.warn(
-        "Uso de fallback textual ativado por restrição de ambiente:",
+        "Ambiente móvel barrou o arquivo, usando fallback textual...",
         err,
       );
     }
   }
 
-  // 💻 DESKTOP / WHATSAPP WEB: Link limpo com referência do item para o WhatsApp gerar o preview do site
+  // 💻 DIRECTIVA ESTRETA DESKTOP / WHATSAPP WEB: Link limpo contextualizado que abre direto na aba
   const mensagemDesktop =
     `*RetroBrinquedos BR* — Você se lembra deste? *${nome}*\n` +
     `Reviva a nostalgia dos anos 80/90!\n\n` +
