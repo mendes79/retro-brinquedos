@@ -602,7 +602,7 @@ function mostrarMensagemLED(mensagem) {
   }, 850); // 20% mais lento que os 700ms originais do tilt comum
 }
 
-/* 3.5.3. COMPARTILHAMENTO DE MÍDIA NATIVA (IMAGEM REAL ANEXADA + TEXTO) */
+/* 3.5.3. COMPARTILHAMENTO DE MÍDIA NATIVA COM FALLBACK TEXTUAL DESKTOP (Item 6.4) */
 async function compartilharWhatsApp(event, id, nome) {
   if (event) event.stopPropagation();
 
@@ -613,54 +613,47 @@ async function compartilharWhatsApp(event, id, nome) {
   const urlImagemFrente = toyData ? toyData.url_frente : "";
   const urlSPA = window.location.origin + window.location.pathname;
 
-  // Texto que vai como legenda da foto real
+  // Legenda rica que vai acoplada à foto real no Mobile
   const legendaText =
     `*RetroBrinquedos BR* — Você se lembra deste? *${nome}*\n` +
     `Reviva a nostalgia dos anos 80/90!\n\n` +
     `${urlSPA}`;
 
-  // 📱 VERIFICA SE O NAVEGADOR SUPORTA COMPARTILHAR ARQUIVOS REAIS
+  // 📱 DISPOSITIVOS MÓVEIS / APPS NATIVOS: Envia o arquivo binário real da foto
   if (navigator.canShare && navigator.share && urlImagemFrente) {
     try {
-      // Baixa a imagem do Cloudinary em binário (Blob)
       const response = await fetch(urlImagemFrente);
-      const blob = (await response.bind)
-        ? await response.blob()
-        : await response.blob();
-
-      // Cria o arquivo real .jpg na memória temporária do dispositivo
+      const blob = await response.blob();
       const arquivoImagem = new File(
         [blob],
         `${String(id).padStart(4, "0")}_frente.jpg`,
         { type: blob.type },
       );
 
-      // Valida se o sistema aceita compartilhar esse arquivo específico
       if (navigator.canShare({ files: [arquivoImagem] })) {
         await navigator.share({
           files: [arquivoImagem],
           title: "RetroBrinquedos BR",
           text: legendaText,
         });
-        return; // Sucesso absoluto! Sai da função.
+        return; // Sucesso mobile! Sai da função.
       }
     } catch (err) {
       console.warn(
-        "Dispositivo bloqueou compartilhamento de arquivo, usando fallback de texto...",
+        "Uso de fallback textual ativado por restrição de ambiente:",
         err,
       );
     }
   }
 
-  // 💻 FALLBACK DE SEGURANÇA (Para Desktops/Navegadores sem suporte a navigator.share)
-  // Envia a mensagem de texto limpa direcionando para o site principal
-  const mensagemFallback =
+  // 💻 DESKTOP / WHATSAPP WEB: Link limpo com referência do item para o WhatsApp gerar o preview do site
+  const mensagemDesktop =
     `*RetroBrinquedos BR* — Você se lembra deste? *${nome}*\n` +
     `Reviva a nostalgia dos anos 80/90!\n\n` +
     `${urlSPA}`;
 
   window.open(
-    `https://wa.me/?text=${encodeURIComponent(mensagemFallback)}`,
+    `https://wa.me/?text=${encodeURIComponent(mensagemDesktop)}`,
     "_blank",
     "noopener,noreferrer",
   );
