@@ -931,30 +931,45 @@ async function abrirModalEspelhoMobile(cardId) {
   }
 }
 
-/* 3.6. BUSCA INTELIGENTE (Debounce e Trigger - Versão Blindada) */
+/* ============================================================
+   3.6. BUSCA INTELIGENTE (Debounce, Trigger e Destravamento de Grid - Item 6.5)
+   ============================================================ */
 let buscaAtiva = "";
 let debounceTimer = null;
 
 document.getElementById("searchInput").addEventListener("input", (e) => {
-  // ✅ Normalização imediata para evitar problemas de Case-Sensitive
+  // Normalização imediata para evitar problemas de Case-Sensitive e espaços extras
   const term = e.target.value.trim().toLowerCase();
 
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
-    // ✅ Bloqueia disparos redundantes se o termo for idêntico ao anterior
+    // Bloqueia disparos redundantes se o termo for idêntico ao anterior
     if (term === buscaAtiva) return;
+
+    // 🛡️ FIX 6.5: Destrava o estado tridimensional do grid acumulado na rolagem profunda
+    // Isso garante que o motor de renderização limpe colunas e zumbis sem barreiras visuais
+    if (typeof resetarEstadoDosCards === "function") {
+      resetarEstadoDosCards();
+    }
 
     // Atualiza o estado global da busca
     buscaAtiva = term;
 
-    // ✅ Forçamos o reset das variáveis de paginação antes de chamar o fetch
+    // Forçamos o reset das variáveis de paginação antes de chamar o fetch
     cursor = 0;
     allToys = [];
     hasMais = true;
 
     // Chama a carga principal com a flag de reset ativada
     fetchBrinquedos(true);
-  }, 600); // 600ms de respiro para estabilizar o processo anterior
+
+    // 🎯 REPOSICIONAMENTO DE TELA: Se o usuário digitou estando lá embaixo no grid,
+    // move a visão suavemente de volta para o início da coleção onde os novos cards aparecem
+    const secaoColecao = document.getElementById("colecao");
+    if (secaoColecao) {
+      secaoColecao.scrollIntoView({ behavior: "smooth" });
+    }
+  }, 600); // 600ms de respiro para estabilizar a digitação reativa em tempo real
 });
 
 /* 3.7. ARCADE LOGIN E SISTEMA DE AVATARES */
