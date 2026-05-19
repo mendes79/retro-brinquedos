@@ -750,21 +750,16 @@ async function carregarComentariosDrawer(id) {
 }
 
 async function enviarComentarioDrawer() {
+  if (!isUserLogged || !drawerIdAtivo) return; // ✅ Ajustado para a variável canônica do seu app.js
+
   const input = document.getElementById("drawerComentarioInput");
   if (!input) return;
   const texto = input.value.trim();
   if (!texto) return;
 
-  const idBrinquedo = currentDrawerToyId;
-  if (!idBrinquedo) return;
-
-  // 🛡️ Filtro Anti-Toxicidade Nativo
-  if (
-    typeof contemPalavraProibida === "function" &&
-    contemPalavraProibida(texto)
-  ) {
-    mostrarMensagemLED("TEXTO REJEITADO PELA MODERAÇÃO!");
-    adicionarStrikeUsuario();
+  // 🛡️ Filtro Anti-Toxicidade Nativo integrado
+  if (contemPalavraProibida(texto)) {
+    dispararTiltBanimento("LINGUAGEM INADEQUADA DETECTADA");
     input.value = "";
     return;
   }
@@ -772,28 +767,26 @@ async function enviarComentarioDrawer() {
   try {
     const session = await supabaseClient.auth.getSession();
     const user = session?.data?.session?.user;
-    if (!user) {
-      mostrarMensagemLED("ACESSO NEGADO: REQUISITO LOGIN!");
-      return;
-    }
+    if (!user) return;
 
-    // Extrai o nome real completo dos metadados do provedor de login (ex: Google/Sessão)
-    const nomeReal = user.user_metadata?.full_name || "Jogador Anonimizado";
+    // Extrai o nome real completo dos metadados da sessão ativa (Google/Provedor)
+    const nomeReal = user.user_metadata?.full_name || "Jogador";
 
     const { error } = await supabaseClient.from("comentarios").insert([
       {
-        brinquedo_id: idBrinquedo,
+        brinquedo_id: drawerIdAtivo, // ✅ Ajustado para persistir como String VARCHAR "0052"
         usuario_id: user.id,
         texto: texto,
-        usuario_nome: nomeReal, // Grava o snapshot do nome no momento do INSERT
-        aprovado: true,
+        usuario_nome: nomeReal, // Snapshot do nome gravado no INSERT (Solução A)
+        aprovado: true, // Aprovação automática pelo filtro de regex
       },
     ]);
 
     if (error) throw error;
 
     input.value = "";
-    await carregarComentariosDrawer(idBrinquedo);
+    await carregarComentariosDrawer(drawerIdAtivo); // ✅ Atualiza a lista usando o ID ativo correto
+    document.getElementById("drawerListaComentarios").scrollTop = 0;
   } catch (err) {
     console.error("Erro ao enviar comentário:", err);
     mostrarMensagemLED("ERRO AO PROCESSAR OPERAÇÃO NO BANCO");
