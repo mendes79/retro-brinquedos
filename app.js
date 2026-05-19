@@ -998,16 +998,37 @@ function closeModal() {
   );
 }
 
+/* 3.7.2. MOTOR DE INSERÇÃO DE FICHA E LOGIN OAUTH (Item 1 — Correção Mobile Facebook) */
 function handleCoinSelect(btn, provider) {
   sf2CoinSound.currentTime = 0;
   sf2CoinSound.play().catch(() => {});
   btn.classList.add("coin-inserted");
+
   setTimeout(async () => {
-    await supabaseClient.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: window.location.origin },
-    });
-  }, 1500);
+    try {
+      // Executa a chamada do Supabase Auth com diretivas explícitas de redirecionamento de aba
+      const { data, error } = await supabaseClient.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          // Garante retorno seguro para a raiz exata da SPA, seja em localhost ou na Vercel
+          redirectTo: window.location.origin + window.location.pathname,
+          skipBrowserRedirect: false,
+        },
+      });
+
+      if (error) throw error;
+    } catch (err) {
+      console.error(`Erro na autenticação via moeda (${provider}):`, err);
+
+      // Se der erro no boot assíncrono, exibe o alerta em vermelho no painel de LED Matrix
+      if (typeof mostrarMensagemLED === "function") {
+        mostrarMensagemLED(`ERRO NO SLOT ${provider.toUpperCase()}`);
+      }
+
+      // Remove a classe de animação para resetar visualmente a ficha e permitir nova tentativa
+      btn.classList.remove("coin-inserted");
+    }
+  }, 1500); // Mantido o tempo de 1.5s para a imersão da animação da ficha caindo
 }
 
 function renderAvatarGrid() {
