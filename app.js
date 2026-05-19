@@ -539,11 +539,69 @@ function resetarEstadoDosCards() {
     .forEach((card) => card.classList.remove("is-flipped"));
 }
 
-/* Exibe animação LED vermelha piscante nos botões locked —
-   reutiliza exatamente o mesmo dispararTilt já usado por "Eu Tive"/"Queria Ter" */
+/* Letras Vermelhas Piscantes de Alerta (Locked) — Bloqueado contra concorrência */
+let ledLocked = false;
+
 function mostrarMensagemLED(mensagem) {
-  dispararTilt(mensagem);
+  if (ledLocked) return; // Guarda de estado: impede que cliques múltiplos quebrem o ciclo
+  ledLocked = true;
+
+  const estavaDesligado = !ledPainelAtivo;
+  ledTiltAtivo = true;
+
+  const el = document.getElementById("ledContent");
+  const painel = document.getElementById("ledPanel");
+  if (!el || !painel) {
+    ledLocked = false;
+    return;
+  }
+
+  if (estavaDesligado) {
+    painel.classList.remove("is-off");
+    animarLigar();
+  }
+
+  el.style.animation = "none";
+  el.offsetHeight; // Reflow forçado
+
+  el.textContent = `⚡ ${mensagem} ⚡`;
+  el.classList.add("tilt-mode");
+  painel.style.borderColor = "rgba(255,32,32,0.6)";
+  painel.style.boxShadow =
+    "0 0 16px rgba(255,32,32,0.3) inset, 0 2px 8px rgba(0,0,0,0.4)";
+
+  // Sequência fixa e síncrona: 6 passos (3 piscadas) com velocidade 20% mais lenta (850ms)
+  let passo = 0;
+  const totalPassos = 6;
+
+  const piscadoLocked = setInterval(() => {
+    el.style.opacity = el.style.opacity === "0" ? "1" : "0";
+    passo++;
+
+    if (passo >= totalPassos) {
+      clearInterval(piscadoLocked);
+      el.style.opacity = "1";
+      ledTiltAtivo = false;
+      ledLocked = false; // Libera o motor do LED
+
+      painel.style.borderColor = "";
+      painel.style.boxShadow = "";
+
+      if (estavaDesligado) {
+        animarDesligar(() => {
+          painel.classList.add("is-off");
+          el.classList.remove("tilt-mode");
+          el.textContent = "";
+        });
+      } else {
+        el.classList.remove("tilt-mode");
+        el.textContent = "";
+        iniciarCicloLED(); // Devolve para o fluxo normal do banco
+      }
+    }
+  }, 850); // 20% mais lento que os 700ms originais do tilt comum
 }
+
 function compartilharWhatsApp(event, id, nome) {
   if (event) event.stopPropagation();
   const url = `${window.location.origin}${window.location.pathname}?card=${id}`;
@@ -597,17 +655,45 @@ function fecharDrawerSeForaDoPanel(event) {
 async function carregarComentariosDrawer(id) {
   const lista = document.getElementById("drawerListaComentarios");
 
-  // Emojis temáticos — alternados por índice do comentário
+  // Roda estrita de 30 Emojis Temáticos Retro-Arcade
   const emojisRetro = [
-    "🕹","👾","🖖","👹","👻","🎮","🛸","☄️","🤖","😊",
-    "🔭","💩","📡","🔫","👨‍🚀","🌌","🚀","🐙","🪅","🧸",
-    "🧠","🎯","🏆","💾","📺","📻","🎲","🃏","🪀","🪁",
+    "🕹️",
+    "👾",
+    "🖖",
+    "👹",
+    "👻",
+    "🎮",
+    "🛸",
+    "☄️",
+    "🤖",
+    "😊",
+    "🔭",
+    "💩",
+    "📡",
+    "🔫",
+    "👨‍🚀",
+    "🌌",
+    "🚀",
+    "🐙",
+    "🪅",
+    "🧸",
+    "🧠",
+    "🎯",
+    "🏆",
+    "💾",
+    "📺",
+    "📻",
+    "🎲",
+    "🃏",
+    "🪀",
+    "🪁",
   ];
 
   try {
+    // Adicionado o campo 'usuario_nome' na projeção do SELECT
     const { data, error } = await supabaseClient
       .from("comentarios")
-      .select("id, texto, created_at, usuario_id")
+      .select("id, texto, created_at, usuario_id, usuario_nome")
       .eq("brinquedo_id", id)
       .eq("aprovado", true)
       .order("created_at", { ascending: false })
@@ -617,74 +703,100 @@ async function carregarComentariosDrawer(id) {
 
     if (!data || data.length === 0) {
       lista.innerHTML =
-        '<p class="drawer-empty">Gostou da lembrança? Deixe seu comentário aqui! 🕹</p>';
+        '<p class="drawer-empty">Gostou da lembrança? Deixe seu comentário aqui! 🕹️</p>';
       return;
     }
 
-    // Pega nome e ID do usuário logado para destacar os próprios comentários
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    const meuId   = session?.user?.id;
-    const meuNome = session?.user?.user_metadata?.full_name || "Você";
+    // Resgata dados da sessão para pintar o próprio nome em dourado retro
+    const session = await supabaseClient.auth.getSession();
+    const meuUser = session?.data?.session?.user;
+    const meuId = meuUser?.id;
 
     const formatarData = (iso) => {
       const d = new Date(iso);
       return d.toLocaleDateString("pt-BR", {
-        day: "2-digit", month: "2-digit", year: "2-digit",
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
       });
     };
 
-    lista.innerHTML = data.map((c, i) => {
-      const emoji = emojisRetro[i % emojisRetro.length];
-      const eMeu  = meuId && c.usuario_id === meuId;
-      const nome  = eMeu ? meuNome : "Player";
-      return `
+    lista.innerHTML = data
+      .map((c, i) => {
+        const emoji = emojisRetro[i % emojisRetro.length]; // Garante a rotação exata entre os 30 itens
+        const eMeu = meuId && c.usuario_id === meuId;
+
+        // Resgata o nome gravado na tabela. Fallback para 'Jogador' se for nulo por segurança
+        const nomeExibicao = c.usuario_nome || "Jogador";
+
+        return `
         <div class="drawer-comentario">
           <div class="drawer-avatar-placeholder">${emoji}</div>
           <div class="drawer-comentario-body">
             <div class="drawer-meta">
-              <span class="drawer-user${eMeu ? " drawer-user-me" : ""}">${nome}</span>
+              <span class="drawer-user${eMeu ? " drawer-user-me" : ""}">${nomeExibicao}</span>
               <span class="drawer-data">${formatarData(c.created_at)}</span>
             </div>
             <span class="drawer-texto">${c.texto}</span>
           </div>
         </div>`;
-    }).join("");
+      })
+      .join("");
   } catch (e) {
     lista.innerHTML =
-      '<p class="drawer-empty">Erro ao carregar comentários.</p>';
+      '<p class="drawer-empty">Gostou da lembrança? Deixe seu comentário aqui! 🕹️</p>';
     console.error("Erro comentários:", e);
   }
 }
 
 async function enviarComentarioDrawer() {
-  if (!isUserLogged || !drawerIdAtivo) return;
   const input = document.getElementById("drawerComentarioInput");
+  if (!input) return;
   const texto = input.value.trim();
   if (!texto) return;
 
-  // Filtro anti-toxicidade
-  if (contemPalavraProibida(texto)) {
-    dispararTiltBanimento("LINGUAGEM INADEQUADA DETECTADA");
+  const idBrinquedo = currentDrawerToyId;
+  if (!idBrinquedo) return;
+
+  // 🛡️ Filtro Anti-Toxicidade Nativo
+  if (
+    typeof contemPalavraProibida === "function" &&
+    contemPalavraProibida(texto)
+  ) {
+    mostrarMensagemLED("TEXTO REJEITADO PELA MODERAÇÃO!");
+    adicionarStrikeUsuario();
+    input.value = "";
     return;
   }
 
-  const session = await supabaseClient.auth.getSession();
-  const user = session?.data?.session?.user;
-  if (!user) return;
+  try {
+    const session = await supabaseClient.auth.getSession();
+    const user = session?.data?.session?.user;
+    if (!user) {
+      mostrarMensagemLED("ACESSO NEGADO: REQUISITO LOGIN!");
+      return;
+    }
 
-  const { error } = await supabaseClient.from("comentarios").insert({
-    brinquedo_id: drawerIdAtivo, // text, não int
-    usuario_id: user.id,
-    texto,
-    aprovado: true, // aprovação automática pelo filtro
-  });
+    // Extrai o nome real completo dos metadados do provedor de login (ex: Google/Sessão)
+    const nomeReal = user.user_metadata?.full_name || "Jogador Anonimizado";
 
-  if (!error) {
+    const { error } = await supabaseClient.from("comentarios").insert([
+      {
+        brinquedo_id: idBrinquedo,
+        usuario_id: user.id,
+        texto: texto,
+        usuario_nome: nomeReal, // Grava o snapshot do nome no momento do INSERT
+        aprovado: true,
+      },
+    ]);
+
+    if (error) throw error;
+
     input.value = "";
-    await carregarComentariosDrawer(drawerIdAtivo);
-    document.getElementById("drawerListaComentarios").scrollTop = 0;
-  } else {
-    console.error("Erro ao enviar comentário:", error);
+    await carregarComentariosDrawer(idBrinquedo);
+  } catch (err) {
+    console.error("Erro ao enviar comentário:", err);
+    mostrarMensagemLED("ERRO AO PROCESSAR OPERAÇÃO NO BANCO");
   }
 }
 

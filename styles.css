@@ -2028,3 +2028,9 @@ body {
   background: #fff;
   transform: scale(1.04);
 }
+/* Cor especial dourada para o nome do autor do comentário logado */
+.drawer-user-me {
+  color: var(--trunfo-gold) !important;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(240, 192, 64, 0.3);
+}
