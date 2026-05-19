@@ -602,13 +602,29 @@ function mostrarMensagemLED(mensagem) {
   }, 850); // 20% mais lento que os 700ms originais do tilt comum
 }
 
+/* 3.5.3. COMPARTILHAMENTO WHATSAPP (OPÇÃO A — PREVIEW NATIVO VIA CLOUDINARY) */
 function compartilharWhatsApp(event, id, nome) {
   if (event) event.stopPropagation();
-  const url = `${window.location.origin}${window.location.pathname}?card=${id}`;
-  // Emojis substituídos por versões de maior compatibilidade cross-platform
-  const texto = `*RetroBrinquedos BR* - Voce se lembra deste? *${nome}* - Reviva a nostalgia dos anos 80/90!\n${url}`;
+
+  // Localiza o brinquedo na memória RAM da aplicação (allToys)
+  const toyData = allToys.find(
+    (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0"),
+  );
+
+  // Resgata a URL da imagem frontal do Cloudinary. Se falhar, usa a URL do site como fallback.
+  const urlImagemFrente = toyData ? toyData.url_frente : "";
+  const urlSPA = window.location.origin + window.location.pathname;
+
+  // Montagem da mensagem estruturada para disparar o preview de mídia nativo do WhatsApp
+  const mensagem =
+    `*RetroBrinquedos BR* — Você se lembra deste? *${nome}*\n\n` +
+    `Reviva a magia da infância dos anos 80/90 no museu digital!\n\n` +
+    `📷 Foto do Item: ${urlImagemFrente}\n\n` +
+    `🕹️ Acesse o Quarto: ${urlSPA}`;
+
+  // Abre o gateway do WhatsApp Web / App de forma síncrona e limpa
   window.open(
-    `https://wa.me/?text=${encodeURIComponent(texto)}`,
+    `https://wa.me/?text=${encodeURIComponent(mensagem)}`,
     "_blank",
     "noopener,noreferrer",
   );
