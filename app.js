@@ -602,32 +602,40 @@ function mostrarMensagemLED(mensagem) {
   }, 850); // 20% mais lento que os 700ms originais do tilt comum
 }
 
-/* 3.5.3. COMPARTILHAMENTO WHATSAPP (OPÇÃO A — PREVIEW NATIVO VIA CLOUDINARY) */
+/* 3.5.3. COMPARTILHAMENTO WHATSAPP (OPÇÃO A — PREVIEW NATIVO VIA IMAGEM CLOUDINARY) */
 function compartilharWhatsApp(event, id, nome) {
   if (event) event.stopPropagation();
 
-  // Localiza o brinquedo na memória RAM da aplicação (allToys)
+  // Localiza o brinquedo direto na memória RAM da aplicação (allToys)
   const toyData = allToys.find(
     (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0"),
   );
 
-  // Resgata a URL da imagem frontal do Cloudinary. Se falhar, usa a URL do site como fallback.
+  // Resgata a URL da imagem frontal hospedada no Cloudinary
   const urlImagemFrente = toyData ? toyData.url_frente : "";
   const urlSPA = window.location.origin + window.location.pathname;
 
-  // Montagem da mensagem estruturada para disparar o preview de mídia nativo do WhatsApp
+  // Montagem da mensagem estruturada para o WhatsApp ler a imagem e gerar o preview nativo automático
   const mensagem =
-    `*RetroBrinquedos BR* — Você se lembra deste? *${nome}*\n\n` +
-    `Reviva a magia da infância dos anos 80/90 no museu digital!\n\n` +
-    `📷 Foto do Item: ${urlImagemFrente}\n\n` +
-    `🕹️ Acesse o Quarto: ${urlSPA}`;
+    `*RetroBrinquedos BR* — Você se lembra deste? *${nome}*\n` +
+    `Reviva a nostalgia dos anos 80/90!\n\n` +
+    `${urlImagemFrente}\n\n` +
+    `${urlSPA}`;
 
-  // Abre o gateway do WhatsApp Web / App de forma síncrona e limpa
+  // Abre o gateway do WhatsApp de forma síncrona, limpa e cross-platform
   window.open(
     `https://wa.me/?text=${encodeURIComponent(mensagem)}`,
     "_blank",
     "noopener,noreferrer",
   );
+}
+
+/* 3.5.5. MODAL DE CARD COMPARTILHADO (Abolido e removido por decisão arquitetural) */
+function fecharCardModal() {
+  // Mantida apenas como casca de segurança caso algum clique zumbi a chame
+  const modal = document.getElementById("cardCompartilhadoModal");
+  if (modal) modal.classList.add("hidden");
+  document.body.style.overflow = "";
 }
 
 /* ============================================================
@@ -811,86 +819,6 @@ async function enviarComentarioDrawer() {
 
 function handleDrawerEnter(event) {
   if (event.key === "Enter") enviarComentarioDrawer();
-}
-
-/* ============================================================
-   3.5.5. MODAL DE CARD COMPARTILHADO via ?card=XXXX (Item 5.2)
-   ============================================================ */
-async function verificarCardCompartilhado() {
-  const params = new URLSearchParams(window.location.search);
-  const cardId = params.get("card");
-  if (!cardId) return;
-
-  // Limpa a URL para evitar re-abertura no reload
-  history.replaceState({}, "", window.location.pathname);
-
-  try {
-    const { data, error } = await supabaseClient
-      .from("brinquedos")
-      .select("*")
-      .eq("id", cardId)
-      .single();
-
-    if (error || !data) return;
-
-    const idNormalizado = String(data.id).padStart(4, "0");
-    const urlVersoOtimizada = otimizarUrlCloudinary(data.url_verso, 500);
-    const trunfoCode = data.codigo_trunfo || gerarIdSuperTrunfo(data.id);
-    const ledHTML = buildLedDisplay(data.raridade);
-
-    document.getElementById("cardCompartilhadoContainer").innerHTML = `
-      <div class="card-modal-trunfo">
-        <div class="trunfo-header">
-          <div class="trunfo-top-bar">
-            <span>Super Trunfo • RetroBrinquedos</span>
-            <span class="trunfo-code-badge">${trunfoCode}</span>
-          </div>
-          <div class="trunfo-title-area">
-            <div class="trunfo-star"></div>
-            <span class="trunfo-title-text">${data.nome}</span>
-          </div>
-        </div>
-        <div class="trunfo-photo-wrapper">
-          <div class="trunfo-photo-frame">
-            <img src="${urlVersoOtimizada}" alt="${data.nome}" class="trunfo-photo">
-            <span class="trunfo-photo-year">${data.ano}</span>
-          </div>
-        </div>
-        <div class="trunfo-stats-area">
-          <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${data.fabricante}</span></div>
-          <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
-          <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
-          <div class="trunfo-raridade-area">
-            <div class="trunfo-raridade-header">
-              <span class="trunfo-raridade-label">⬡ Raridade</span>
-              <span class="trunfo-raridade-value">${data.raridade}/10</span>
-            </div>
-            ${ledHTML}
-          </div>
-          <div class="trunfo-curiosidade">"${data.curiosidade}"</div>
-        </div>
-        <div class="trunfo-footer">
-          <div class="footer-icons-container">
-            <span class="footer-icon-btn icon-locked" title="Faça login para curtir">
-              <svg class="heart-svg" viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
-              <span class="footer-icon-count">${data.curtidas_count || 0}</span>
-            </span>
-          </div>
-        </div>
-      </div>`;
-
-    // Abre o modal
-    document
-      .getElementById("cardCompartilhadoModal")
-      .classList.remove("hidden");
-  } catch (e) {
-    console.error("Erro ao abrir card compartilhado:", e);
-  }
-}
-
-function fecharCardModal() {
-  document.getElementById("cardCompartilhadoModal").classList.add("hidden");
-  document.body.style.overflow = ""; // Libera o scroll do celular de volta
 }
 
 /* 3.5.6. MOTOR DO MODAL ESPELHO PARA SELEÇÃO MOBILE */
@@ -1961,8 +1889,6 @@ async function init() {
   await fetchBrinquedos(true);
   ajustarPainelLED();
   iniciarPainelLED();
-  // 5.2 — Abre modal se a URL contiver ?card=XXXX
-  verificarCardCompartilhado();
 }
 
 function ajustarPainelLED() {
