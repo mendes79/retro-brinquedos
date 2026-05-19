@@ -102,10 +102,10 @@
             type="text"
             id="searchInput"
             placeholder="Busque 'Estrela', etc..."
-            class="w-full bg-slate-800 border border-slate-700 rounded-full py-2 px-9 md:px-10 text-sm md:text-base focus:ring-2 focus:ring-pink-500 outline-none text-slate-200 transition-all"
+            class="w-full bg-slate-800 border border-slate-700 rounded-full py-2 pl-9 pr-10 text-sm md:text-base focus:ring-2 focus:ring-pink-500 outline-none text-slate-200 transition-all"
           />
           <svg
-            class="w-4 h-4 md:w-5 md:h-5 absolute left-3 top-2.5 md:top-2.5 text-slate-500"
+            class="w-4 h-4 md:w-5 md:h-5 absolute left-3 top-2.5 md:top-2.5 text-slate-500 pointer-events-none"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -117,6 +117,15 @@
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             ></path>
           </svg>
+          <button
+            type="button"
+            id="clearSearchBtn"
+            onclick="limparBuscaRapida()"
+            class="hidden absolute right-3 top-1.5 md:top-2 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full text-slate-400 hover:text-pink-500 hover:bg-slate-700/50 transition-all font-sans font-bold text-xs md:text-sm focus:outline-none"
+            title="Limpar busca"
+          >
+            ✕
+          </button>
         </div>
       </div>
       <div

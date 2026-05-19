@@ -939,19 +939,30 @@ async function abrirModalEspelhoMobile(cardId) {
 }
 
 /* ============================================================
-   3.6. BUSCA INTELIGENTE (Debounce, Trigger e Disjuntor Síncrono - Item 6.5)
+   3.6. BUSCA INTELIGENTE (Debounce, Trigger, Disjuntor e Reset Rápido - Item 2)
    ============================================================ */
 let buscaAtiva = "";
 let debounceTimer = null;
 
+// Escuta a digitação reativa do usuário
 document.getElementById("searchInput").addEventListener("input", (e) => {
   const term = e.target.value.trim().toLowerCase();
+  const clearBtn = document.getElementById("clearSearchBtn");
+
+  // Controla a visibilidade do botão '✕' de forma reativa instantânea (fora do debounce)
+  if (clearBtn) {
+    if (e.target.value.length > 0) {
+      clearBtn.classList.remove("hidden");
+    } else {
+      clearBtn.classList.add("hidden");
+    }
+  }
 
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(async () => {
     if (term === buscaAtiva) return;
 
-    // 🛡️ LIGA O DISJUNTOR: Congela o IntersectionObserver para evitar requisições fantasmas
+    // 🛡️ DISJUNTOR SÍNCRONO FIX 6.5: Congela o IntersectionObserver para evitar quebras
     isSearching = true;
 
     if (typeof resetarEstadoDosCards === "function") {
@@ -963,16 +974,57 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
     allToys = [];
     hasMais = true;
 
-    // Aguarda o processamento completo e renderização dos novos cards filtrados
+    // Processa a carga dos dados filtrados do Supabase
     await fetchBrinquedos(true);
 
-    // Move a visão suavemente para a seção da coleção onde o novo grid foi montado
+    // Reposiciona a tela elasticamente na seção da coleção
     const secaoColecao = document.getElementById("colecao");
     if (secaoColecao) {
       secaoColecao.scrollIntoView({ behavior: "smooth" });
     }
   }, 600);
 });
+
+/* 3.6.2. BOTÃO GATILHO DE RESET DA BUSCA COM APENAS UM CLIQUE (Item 2) */
+async function limparBuscaRapida() {
+  const input = document.getElementById("searchInput");
+  const clearBtn = document.getElementById("clearSearchBtn");
+
+  if (!input) return;
+
+  // Limpa o valor físico do input e esconde o botão '✕' síncronamente
+  input.value = "";
+  if (clearBtn) clearBtn.classList.add("hidden");
+
+  // Cancela qualquer timer de debounce que estivesse correndo em plano de fundo
+  clearTimeout(debounceTimer);
+
+  // Se a busca já estava vazia, não há necessidade de re-consultar o banco
+  if (buscaAtiva === "") return;
+
+  // 🛡️ DISJUNTOR SÍNCRONO: Neutraliza o sentinel enquanto o grid é esvaziado
+  isSearching = true;
+
+  // Destrava o estado tridimensional de foco do grid Masonry
+  if (typeof resetarEstadoDosCards === "function") {
+    resetarEstadoDosCards();
+  }
+
+  // Reseta completamente o estado global para a carga inicial
+  buscaAtiva = "";
+  cursor = 0;
+  allToys = [];
+  hasMais = true;
+
+  // Dispara a carga para restaurar a grade de brinquedos original ('todos')
+  await fetchBrinquedos(true);
+
+  // Devolve o foco de tela de forma suave para o início da coleção
+  const secaoColecao = document.getElementById("colecao");
+  if (secaoColecao) {
+    secaoColecao.scrollIntoView({ behavior: "smooth" });
+  }
+}
 
 /* 3.7. ARCADE LOGIN E SISTEMA DE AVATARES */
 const arcadeModal = document.getElementById("arcadeModal");
