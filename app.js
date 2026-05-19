@@ -22,6 +22,7 @@ let queriaDoUsuario = new Set();
 let currentCols = 0;
 let columnElements = [];
 let filtroAtivo = "todos"; // 'todos', 'tive', 'queria', 'curtidas'
+let isSearching = false; // 🛡️ DISJUNTOR FIX 6.5: Trava o scroll infinito automático durante o reset da busca
 
 const sentinel = document.createElement("div");
 sentinel.id = "scrollSentinel";
@@ -48,8 +49,9 @@ function verificarSentinela() {
 function setupObserver() {
   const observer = new IntersectionObserver(
     (entries) => {
-      // isIntersecting garante que só dispara quando realmente visível
-      if (entries[0].isIntersecting && !isLoading && hasMais) {
+      // 🛡️ VALIDAÇÃO COMPLEMENTAR: Só dispara se o sentinel estiver visível,
+      // se não estiver carregando E se NÃO estiver no meio de um reset de busca (isSearching)
+      if (entries[0].isIntersecting && !isLoading && hasMais && !isSearching) {
         fetchBrinquedos();
       }
     },
@@ -219,13 +221,18 @@ async function fetchBrinquedos(reset = false) {
     }
   } catch (error) {
     console.error("Erro na carga:", error);
-    // Limpeza de emergência em caso de falha na rede
     if (reset)
       grid.innerHTML =
         "<p class='text-center col-span-full text-pink-500 font-retro'>ERRO DE CONEXÃO COM O ARQUIVO</p>";
     document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
   } finally {
     isLoading = false;
+
+    // 🛡️ DESLIGA O DISJUNTOR: Libera o scroll infinito de volta após o layout se assentar na tela
+    setTimeout(() => {
+      isSearching = false;
+    }, 400); // 400ms de margem de segurança para o Masonry calcular os offsets
+
     // Delay para garantir que o DOM se estabilizou
     setTimeout(verificarSentinela, 300);
   }
@@ -932,44 +939,39 @@ async function abrirModalEspelhoMobile(cardId) {
 }
 
 /* ============================================================
-   3.6. BUSCA INTELIGENTE (Debounce, Trigger e Destravamento de Grid - Item 6.5)
+   3.6. BUSCA INTELIGENTE (Debounce, Trigger e Disjuntor Síncrono - Item 6.5)
    ============================================================ */
 let buscaAtiva = "";
 let debounceTimer = null;
 
 document.getElementById("searchInput").addEventListener("input", (e) => {
-  // Normalização imediata para evitar problemas de Case-Sensitive e espaços extras
   const term = e.target.value.trim().toLowerCase();
 
   clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
-    // Bloqueia disparos redundantes se o termo for idêntico ao anterior
+  debounceTimer = setTimeout(async () => {
     if (term === buscaAtiva) return;
 
-    // 🛡️ FIX 6.5: Destrava o estado tridimensional do grid acumulado na rolagem profunda
-    // Isso garante que o motor de renderização limpe colunas e zumbis sem barreiras visuais
+    // 🛡️ LIGA O DISJUNTOR: Congela o IntersectionObserver para evitar requisições fantasmas
+    isSearching = true;
+
     if (typeof resetarEstadoDosCards === "function") {
       resetarEstadoDosCards();
     }
 
-    // Atualiza o estado global da busca
     buscaAtiva = term;
-
-    // Forçamos o reset das variáveis de paginação antes de chamar o fetch
     cursor = 0;
     allToys = [];
     hasMais = true;
 
-    // Chama a carga principal com a flag de reset ativada
-    fetchBrinquedos(true);
+    // Aguarda o processamento completo e renderização dos novos cards filtrados
+    await fetchBrinquedos(true);
 
-    // 🎯 REPOSICIONAMENTO DE TELA: Se o usuário digitou estando lá embaixo no grid,
-    // move a visão suavemente de volta para o início da coleção onde os novos cards aparecem
+    // Move a visão suavemente para a seção da coleção onde o novo grid foi montado
     const secaoColecao = document.getElementById("colecao");
     if (secaoColecao) {
       secaoColecao.scrollIntoView({ behavior: "smooth" });
     }
-  }, 600); // 600ms de respiro para estabilizar a digitação reativa em tempo real
+  }, 600);
 });
 
 /* 3.7. ARCADE LOGIN E SISTEMA DE AVATARES */
