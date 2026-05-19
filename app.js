@@ -602,29 +602,65 @@ function mostrarMensagemLED(mensagem) {
   }, 850); // 20% mais lento que os 700ms originais do tilt comum
 }
 
-/* 3.5.3. COMPARTILHAMENTO WHATSAPP (OPÇÃO A — PREVIEW NATIVO VIA IMAGEM CLOUDINARY) */
-function compartilharWhatsApp(event, id, nome) {
+/* 3.5.3. COMPARTILHAMENTO DE MÍDIA NATIVA (IMAGEM REAL ANEXADA + TEXTO) */
+async function compartilharWhatsApp(event, id, nome) {
   if (event) event.stopPropagation();
 
-  // Localiza o brinquedo direto na memória RAM da aplicação (allToys)
+  // Localiza o brinquedo na memória RAM da aplicação (allToys)
   const toyData = allToys.find(
     (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0"),
   );
-
-  // Resgata a URL da imagem frontal hospedada no Cloudinary
   const urlImagemFrente = toyData ? toyData.url_frente : "";
   const urlSPA = window.location.origin + window.location.pathname;
 
-  // Montagem da mensagem estruturada para o WhatsApp ler a imagem e gerar o preview nativo automático
-  const mensagem =
+  // Texto que vai como legenda da foto real
+  const legendaText =
     `*RetroBrinquedos BR* — Você se lembra deste? *${nome}*\n` +
     `Reviva a nostalgia dos anos 80/90!\n\n` +
-    `${urlImagemFrente}\n\n` +
     `${urlSPA}`;
 
-  // Abre o gateway do WhatsApp de forma síncrona, limpa e cross-platform
+  // 📱 VERIFICA SE O NAVEGADOR SUPORTA COMPARTILHAR ARQUIVOS REAIS
+  if (navigator.canShare && navigator.share && urlImagemFrente) {
+    try {
+      // Baixa a imagem do Cloudinary em binário (Blob)
+      const response = await fetch(urlImagemFrente);
+      const blob = (await response.bind)
+        ? await response.blob()
+        : await response.blob();
+
+      // Cria o arquivo real .jpg na memória temporária do dispositivo
+      const arquivoImagem = new File(
+        [blob],
+        `${String(id).padStart(4, "0")}_frente.jpg`,
+        { type: blob.type },
+      );
+
+      // Valida se o sistema aceita compartilhar esse arquivo específico
+      if (navigator.canShare({ files: [arquivoImagem] })) {
+        await navigator.share({
+          files: [arquivoImagem],
+          title: "RetroBrinquedos BR",
+          text: legendaText,
+        });
+        return; // Sucesso absoluto! Sai da função.
+      }
+    } catch (err) {
+      console.warn(
+        "Dispositivo bloqueou compartilhamento de arquivo, usando fallback de texto...",
+        err,
+      );
+    }
+  }
+
+  // 💻 FALLBACK DE SEGURANÇA (Para Desktops/Navegadores sem suporte a navigator.share)
+  // Envia a mensagem de texto limpa direcionando para o site principal
+  const mensagemFallback =
+    `*RetroBrinquedos BR* — Você se lembra deste? *${nome}*\n` +
+    `Reviva a nostalgia dos anos 80/90!\n\n` +
+    `${urlSPA}`;
+
   window.open(
-    `https://wa.me/?text=${encodeURIComponent(mensagem)}`,
+    `https://wa.me/?text=${encodeURIComponent(mensagemFallback)}`,
     "_blank",
     "noopener,noreferrer",
   );
