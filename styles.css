@@ -345,6 +345,12 @@ body {
   transform: rotateY(180deg);
 }
 
+/* Card virado deve ficar acima de todos os outros cards — desktop e mobile */
+.masonry-item.is-flipped {
+  z-index: 150 !important;
+  position: relative;
+}
+
 .is-flipped .card-back {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
