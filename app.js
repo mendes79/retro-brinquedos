@@ -1179,6 +1179,9 @@ function toggleAvatarMenu(event) {
   const dropdown = document.getElementById("avatarDropdown");
   if (!dropdown) return;
   dropdown.classList.toggle("hidden");
+  // Item 6 — sincroniza .is-open no wrapper para pausar a animação neon via CSS
+  const wrapper = document.getElementById("avatarMenuWrapper");
+  if (wrapper) wrapper.classList.toggle("is-open", !dropdown.classList.contains("hidden"));
 }
 
 /* Fecha o dropdown ao clicar fora dele */
@@ -1186,6 +1189,7 @@ document.addEventListener("click", (e) => {
   const wrapper = document.getElementById("avatarMenuWrapper");
   if (wrapper && !wrapper.contains(e.target)) {
     document.getElementById("avatarDropdown")?.classList.add("hidden");
+    wrapper.classList.remove("is-open"); // Item 6 — remove is-open ao fechar por clique externo
   }
 });
 
