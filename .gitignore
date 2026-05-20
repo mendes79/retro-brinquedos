@@ -24,6 +24,8 @@ bkp/
 node_modules/
 _admin/
 tests/
+img/old/
+img/Fabricantes/
 
 # Arquivos do Sistema Operacional
 .DS_Store
