@@ -210,10 +210,18 @@ async function fetchBrinquedos(reset = false) {
         cursor += itens.length;
       }
     } else if (reset) {
+      // Item 11 — centralizado + botão de sugestão contextual
+      const termoAtual = buscaAtiva || "";
       grid.innerHTML = `
-        <div class="col-span-full text-center py-20">
+        <div class="col-span-full flex flex-col items-center justify-center text-center py-20 gap-4">
           <p class="text-pink-500 font-retro text-xl">NENHUM ITEM ENCONTRADO</p>
-          <p class="text-slate-500 font-orbitron text-xs mt-2">VERIFIQUE O TERMO OU SUA COLEÇÃO</p>
+          <p class="text-slate-500 font-orbitron text-xs">VERIFIQUE O TERMO OU SUA COLEÇÃO</p>
+          <button
+            onclick="abrirSugestaoModal('${termoAtual}')"
+            class="sugestao-trigger-btn mt-2"
+          >
+            ▶ SUGERIR ESTE ITEM
+          </button>
         </div>`;
       hasMais = false;
     } else {
@@ -2051,21 +2059,165 @@ function ajustarPainelLED() {
 window.addEventListener("resize", ajustarPainelLED);
 
 // ============================================================
-// Item 12 — MODAL DISCLAIMER / DIREITOS AUTORAIS
+// Item 11 — FORMULÁRIO ARCADE DE SUGESTÃO DE BRINQUEDO
+// EmailJS: service_v7nw2eu / template_o5kwy8p / public key: 03eueUb3Hz_PxWXj2
 // ============================================================
-function abrirDisclaimerModal() {
-  const modal = document.getElementById("disclaimerModal");
-  if (modal) modal.classList.remove("hidden");
+
+// Inicializa EmailJS uma única vez após o DOM carregar
+window.addEventListener("load", () => {
+  if (typeof emailjs !== "undefined") {
+    emailjs.init("03eueUb3Hz_PxWXj2");
+  }
+});
+
+async function abrirSugestaoModal(termoPreenchido = "") {
+  // Verifica sessão ativa via Supabase (padrão do projeto — não há currentUser global)
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const userLogado = sessionData?.session?.user;
+
+  if (!userLogado) {
+    // Visitante deslogado — feedback no painel LED, consistente com o fluxo de comentários
+    dispararTiltBanimento("⚠ FAÇA LOGIN PARA SUGERIR UM ITEM", 3000);
+    return;
+  }
+
+  const modal = document.getElementById("sugestaoModal");
+  if (!modal) return;
+
+  // Pré-preenche o nome com o termo buscado (remove espaços extras do RPC)
+  const inputNome = document.getElementById("sug_nome");
+  if (inputNome && termoPreenchido) {
+    inputNome.value = termoPreenchido.trim();
+  }
+
+  _sugestaoResetUI();
+  modal.classList.remove("hidden");
+  if (inputNome) setTimeout(() => inputNome.focus(), 80);
 }
 
-function fecharDisclaimerModal() {
-  const modal = document.getElementById("disclaimerModal");
+function fecharSugestaoModal() {
+  const modal = document.getElementById("sugestaoModal");
   if (modal) modal.classList.add("hidden");
+  _sugestaoResetUI();
 }
 
-// Fecha com Escape (consistente com os demais modais do site)
+function _sugestaoResetUI() {
+  const feedback = document.getElementById("sugestaoFeedback");
+  if (feedback) {
+    feedback.textContent = "";
+    feedback.className = "hidden sugestao-feedback mb-4";
+  }
+  const btn   = document.getElementById("sugestaoEnviarBtn");
+  const label = document.getElementById("sugestaoEnviarLabel");
+  if (btn)   btn.disabled = false;
+  if (label) label.textContent = "▶ ENVIAR SUGESTÃO";
+}
+
+async function enviarSugestao() {
+  // Revalida sessão no momento do envio
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const userLogado = sessionData?.session?.user;
+  if (!userLogado) {
+    fecharSugestaoModal();
+    dispararTiltBanimento("⚠ SESSÃO EXPIRADA. FAÇA LOGIN NOVAMENTE.", 3000);
+    return;
+  }
+
+  const nome       = (document.getElementById("sug_nome")?.value       || "").trim();
+  const fabricante = (document.getElementById("sug_fabricante")?.value || "").trim();
+  const ano        = (document.getElementById("sug_ano")?.value        || "").trim();
+  const categoria  = (document.getElementById("sug_categoria")?.value  || "").trim();
+  const tema       = (document.getElementById("sug_tema")?.value       || "").trim();
+  const link       = (document.getElementById("sug_link")?.value       || "").trim();
+  const obs        = (document.getElementById("sug_obs")?.value        || "").trim();
+
+  const btn   = document.getElementById("sugestaoEnviarBtn");
+  const label = document.getElementById("sugestaoEnviarLabel");
+
+  // Validação: nome obrigatório
+  if (!nome) {
+    _sugestaoMostrarFeedback("⚠ O nome do brinquedo é obrigatório.", "erro");
+    document.getElementById("sug_nome")?.focus();
+    return;
+  }
+
+  // Filtro anti-toxicidade — reutiliza contemPalavraProibida() já existente
+  const camposTexto = [nome, fabricante, categoria, tema, obs];
+  for (const campo of camposTexto) {
+    if (campo && contemPalavraProibida(campo)) {
+      fecharSugestaoModal();
+      dispararTiltBanimento("⚠ CONTEÚDO INAPROPRIADO DETECTADO", 4000);
+      return;
+    }
+  }
+
+  btn.disabled = true;
+  label.textContent = "⏳ ENVIANDO...";
+
+  const usuarioNome = userLogado.user_metadata?.full_name || userLogado.email || "Usuário";
+
+  try {
+    // 1. Persistir no Supabase (tabela sugestoes)
+    const { error: dbError } = await supabaseClient
+      .from("sugestoes")
+      .insert({
+        usuario_id:      userLogado.id,
+        usuario_nome:    usuarioNome,
+        nome_brinquedo:  nome,
+        fabricante:      fabricante || null,
+        ano:             ano        || null,
+        categoria:       categoria  || null,
+        tema:            tema       || null,
+        link_referencia: link       || null,
+        observacao:      obs        || null,
+        status:          "pendente",
+      });
+
+    if (dbError) throw dbError;
+
+    // 2. Disparar e-mail via EmailJS
+    await emailjs.send("service_v7nw2eu", "template_o5kwy8p", {
+      usuario_nome:    usuarioNome,
+      nome_brinquedo:  nome,
+      fabricante:      fabricante  || "—",
+      ano:             ano         || "—",
+      categoria:       categoria   || "—",
+      tema:            tema        || "—",
+      link_referencia: link        || "—",
+      observacao:      obs         || "—",
+    });
+
+    _sugestaoMostrarFeedback(
+      "✔ SUGESTÃO ENVIADA! Obrigado, " + usuarioNome.split(" ")[0] + "!",
+      "sucesso"
+    );
+    label.textContent = "✔ ENVIADO";
+
+    // Limpa campos após sucesso
+    ["sug_nome","sug_fabricante","sug_ano","sug_categoria","sug_tema","sug_link","sug_obs"]
+      .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+
+    setTimeout(() => fecharSugestaoModal(), 2800);
+
+  } catch (err) {
+    console.error("Erro ao enviar sugestão:", err);
+    _sugestaoMostrarFeedback("✖ ERRO AO ENVIAR. Tente novamente.", "erro");
+    btn.disabled = false;
+    label.textContent = "▶ ENVIAR SUGESTÃO";
+  }
+}
+
+function _sugestaoMostrarFeedback(mensagem, tipo) {
+  const feedback = document.getElementById("sugestaoFeedback");
+  if (!feedback) return;
+  feedback.textContent = mensagem;
+  feedback.className = `sugestao-feedback mb-4 ${tipo === "sucesso" ? "sugestao-feedback--ok" : "sugestao-feedback--erro"}`;
+  feedback.classList.remove("hidden");
+}
+
+// Escape fecha o modal de sugestão (junto com o de disclaimer já existente)
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") fecharDisclaimerModal();
+  if (e.key === "Escape") fecharSugestaoModal();
 });
 
 

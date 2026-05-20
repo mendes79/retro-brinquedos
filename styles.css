@@ -2169,17 +2169,46 @@ body {
 }
 
 /* ============================================================
-   2.14. MODAL DISCLAIMER / DIREITOS AUTORAIS (Item 12)
+   2.15. FORMULÁRIO ARCADE DE SUGESTÃO (Item 11)
    ============================================================ */
-.disclaimer-modal-box {
+
+/* Botão "SUGERIR ESTE ITEM" na tela de resultado vazio */
+.sugestao-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Orbitron", monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #39ff14;
+  background: transparent;
+  border: 2px solid rgba(57, 255, 20, 0.5);
+  border-radius: 6px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.15);
+}
+.sugestao-trigger-btn:hover {
+  background: rgba(57, 255, 20, 0.08);
+  border-color: #39ff14;
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.4);
+  color: #fff;
+}
+
+/* Box do modal — mesma estética do disclaimer */
+.sugestao-modal-box {
   background: #050505;
   border: 2px solid rgba(57, 255, 20, 0.5);
   border-radius: 10px;
   padding: 1.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow:
     0 0 24px rgba(57, 255, 20, 0.2),
     inset 0 0 20px rgba(57, 255, 20, 0.04);
-  /* Mesma textura scanline do arcade-box */
   background-image: repeating-linear-gradient(
     0deg,
     transparent,
@@ -2189,19 +2218,85 @@ body {
   );
 }
 
-.disclaimer-contact-box {
-  background: rgba(0, 255, 255, 0.04);
-  border: 1px solid rgba(0, 255, 255, 0.2);
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
+/* Labels dos campos */
+.sugestao-label {
+  display: block;
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.8);
+  margin-bottom: 4px;
 }
 
-/* Entrada com fade + leve escala — sem JS de animação,
-   apenas CSS transition acionada pela remoção de .hidden */
-#disclaimerModal:not(.hidden) {
-  animation: disclaimerFadeIn 0.2s ease forwards;
+/* Inputs e textarea */
+.sugestao-input {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(57, 255, 20, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #e2e8f0;
+  font-size: 0.82rem;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
 }
-@keyframes disclaimerFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+.sugestao-input:focus {
+  border-color: rgba(57, 255, 20, 0.6);
+  box-shadow: 0 0 8px rgba(57, 255, 20, 0.15);
+}
+.sugestao-input::placeholder {
+  color: rgba(100, 116, 139, 0.7);
+  font-size: 0.78rem;
+}
+
+/* Botão de envio */
+.sugestao-btn-enviar {
+  font-family: "Orbitron", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #050505;
+  background: #39ff14;
+  border: none;
+  border-radius: 6px;
+  padding: 11px 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 14px rgba(57, 255, 20, 0.4);
+}
+.sugestao-btn-enviar:hover:not(:disabled) {
+  background: #5fff3a;
+  box-shadow: 0 0 22px rgba(57, 255, 20, 0.7);
+}
+.sugestao-btn-enviar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Feedback de resultado */
+.sugestao-feedback {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-family: "Orbitron", monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.sugestao-feedback--ok {
+  background: rgba(57, 255, 20, 0.08);
+  border: 1px solid rgba(57, 255, 20, 0.4);
+  color: #39ff14;
+}
+.sugestao-feedback--erro {
+  background: rgba(255, 0, 80, 0.08);
+  border: 1px solid rgba(255, 0, 80, 0.4);
+  color: #ff0050;
+}
+
+/* Entrada suave do modal */
+#sugestaoModal:not(.hidden) {
+  animation: disclaimerFadeIn 0.2s ease forwards;
 }
