@@ -183,7 +183,15 @@ body {
 }
 
 .hero-subtitle {
-  color: rgba(255, 255, 255, 0.6);
+  /* ✏️ ITEM 5 — COR DO SUBTÍTULO HERO
+     Troque o valor abaixo para ajustar a cor da frase de chamada.
+     Sugestões testadas:
+       Dourado retrô:   var(--trunfo-gold)          → #f0c040
+       Amarelo neon:    var(--neon-yellow)           → #ffe600
+       Cinza original:  rgba(255, 255, 255, 0.6)
+       Branco suave:    rgba(255, 255, 255, 0.85)
+       Cyan neon:       var(--neon-blue)             → #00ffff  */
+  color: var(--trunfo-gold);
   font-size: clamp(0.85rem, 1.8vw, 1.05rem);
   max-width: 520px;
   margin: 0 auto 2rem;
@@ -1693,6 +1701,27 @@ body {
     font-size: 14px;
     line-height: 36px; /* acompanha a nova altura */
   }
+}
+
+/* ============================================================
+   2.10.1. BOTÃO LIMPAR BUSCA — #clearSearchBtn (Item 2)
+   Centralização vertical absoluta independente da altura do input.
+   As classes Tailwind top-1.5/top-2 foram neutralizadas aqui
+   via override por ID para não alterar o HTML estrutural.
+   ============================================================ */
+#clearSearchBtn {
+  top: 50% !important;
+  transform: translateY(-50%);
+  /* Garante display flex ao ser revelado pelo JS (classList.remove("hidden"))
+     — sem isso o elemento volta como inline-block e perde o alinhamento interno */
+  display: none;
+}
+#clearSearchBtn.hidden {
+  display: none !important;
+}
+/* Quando o JS remove .hidden, o elemento fica flex e centralizado */
+#clearSearchBtn:not(.hidden) {
+  display: flex !important;
 }
 
 /* ============================================================
