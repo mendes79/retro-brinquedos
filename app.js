@@ -1092,7 +1092,7 @@ function renderAvatarGrid() {
     ...getRandomFromRange(131, 150, 2),
   ];
   selecionados.forEach((num) => {
-    const path = `/img/avatares/a${num.toString().padStart(2, "0")}.png`;
+    const path = `/img/avatares/a${num.toString().padStart(2, "0")}.webp`; // <-- Alterei para webp para otimização, arquivos mais leves 2026-05-20
     const item = document.createElement("div");
     item.className = "avatar-item rounded-md";
     item.innerHTML = `<img src="${path}" class="avatar-img">`;
@@ -1181,7 +1181,8 @@ function toggleAvatarMenu(event) {
   dropdown.classList.toggle("hidden");
   // Item 6 — sincroniza .is-open no wrapper para pausar a animação neon via CSS
   const wrapper = document.getElementById("avatarMenuWrapper");
-  if (wrapper) wrapper.classList.toggle("is-open", !dropdown.classList.contains("hidden"));
+  if (wrapper)
+    wrapper.classList.toggle("is-open", !dropdown.classList.contains("hidden"));
 }
 
 /* Fecha o dropdown ao clicar fora dele */

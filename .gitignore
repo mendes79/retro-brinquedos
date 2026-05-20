@@ -26,6 +26,7 @@ _admin/
 tests/
 img/old/
 img/Fabricantes/
+img/avatares_png/
 
 # Arquivos do Sistema Operacional
 .DS_Store
