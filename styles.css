@@ -266,7 +266,7 @@ body {
   gap: 1.5rem;
   margin-top: 2.5rem;
   width: 100%;
-  flex-wrap: nowrap;          /* desktop: linha única */
+  flex-wrap: nowrap; /* desktop: linha única */
 }
 
 .hero-brands-group {
@@ -278,17 +278,21 @@ body {
 }
 
 .hero-brand-logo {
-  width: 48px;
-  height: 48px;
+  width: 128px;
+  height: 128px;
   object-fit: contain;
   /* Filtro base: dessatura e suaviza para não poluir o hero */
-  filter: grayscale(40%) brightness(0.85) drop-shadow(0 0 4px rgba(0,255,255,0.15));
+  filter: grayscale(40%) brightness(0.85)
+    drop-shadow(0 0 4px rgba(0, 255, 255, 0.15));
   border-radius: 6px;
-  transition: filter 0.3s ease, transform 0.3s ease;
+  transition:
+    filter 0.3s ease,
+    transform 0.3s ease;
   cursor: default;
 }
 .hero-brand-logo:hover {
-  filter: grayscale(0%) brightness(1.1) drop-shadow(0 0 8px rgba(0,255,255,0.5));
+  filter: grayscale(0%) brightness(1.1)
+    drop-shadow(0 0 8px rgba(0, 255, 255, 0.5));
   transform: scale(1.12);
 }
 
@@ -300,13 +304,19 @@ body {
     margin-top: 2rem;
   }
   /* Garante que os stats fiquem primeiro no mobile via order */
-  .hero-brands-wrapper .hero-stats  { order: 1; }
-  .hero-brands-wrapper .hero-brands-group:first-child { order: 2; }
-  .hero-brands-wrapper .hero-brands-group:last-child  { order: 3; }
+  .hero-brands-wrapper .hero-stats {
+    order: 1;
+  }
+  .hero-brands-wrapper .hero-brands-group:first-child {
+    order: 2;
+  }
+  .hero-brands-wrapper .hero-brands-group:last-child {
+    order: 3;
+  }
 
   .hero-brand-logo {
-    width: 40px;
-    height: 40px;
+    width: 80px;
+    height: 80px;
   }
 }
 .hero-stat-item {
@@ -1638,10 +1648,26 @@ body {
    existente no Tailwind assume o controle visual).
    ============================================================ */
 @keyframes avatarNeonPulse {
-  0%   { box-shadow: 0 0 6px 2px rgba(34,211,238,0.55),  0 0 14px 4px rgba(34,211,238,0.25); }
-  40%  { box-shadow: 0 0 10px 4px rgba(34,211,238,0.85), 0 0 22px 8px rgba(34,211,238,0.35); }
-  60%  { box-shadow: 0 0 10px 4px rgba(255,0,255,0.75),  0 0 22px 8px rgba(255,0,255,0.30); }
-  100% { box-shadow: 0 0 6px 2px rgba(34,211,238,0.55),  0 0 14px 4px rgba(34,211,238,0.25); }
+  0% {
+    box-shadow:
+      0 0 6px 2px rgba(34, 211, 238, 0.55),
+      0 0 14px 4px rgba(34, 211, 238, 0.25);
+  }
+  40% {
+    box-shadow:
+      0 0 10px 4px rgba(34, 211, 238, 0.85),
+      0 0 22px 8px rgba(34, 211, 238, 0.35);
+  }
+  60% {
+    box-shadow:
+      0 0 10px 4px rgba(255, 0, 255, 0.75),
+      0 0 22px 8px rgba(255, 0, 255, 0.3);
+  }
+  100% {
+    box-shadow:
+      0 0 6px 2px rgba(34, 211, 238, 0.55),
+      0 0 14px 4px rgba(34, 211, 238, 0.25);
+  }
 }
 
 #avatarMenuBtn {
