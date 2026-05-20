@@ -2050,4 +2050,23 @@ function ajustarPainelLED() {
 // Recalcula se a navbar mudar de tamanho (ex: wrap no mobile)
 window.addEventListener("resize", ajustarPainelLED);
 
+// ============================================================
+// Item 12 — MODAL DISCLAIMER / DIREITOS AUTORAIS
+// ============================================================
+function abrirDisclaimerModal() {
+  const modal = document.getElementById("disclaimerModal");
+  if (modal) modal.classList.remove("hidden");
+}
+
+function fecharDisclaimerModal() {
+  const modal = document.getElementById("disclaimerModal");
+  if (modal) modal.classList.add("hidden");
+}
+
+// Fecha com Escape (consistente com os demais modais do site)
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") fecharDisclaimerModal();
+});
+
+
 init();

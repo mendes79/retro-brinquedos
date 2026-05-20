@@ -312,7 +312,14 @@
         <p
           class="text-[14.5px] md:text-[11px] text-slate-400 text-center truncate px-16 md:px-24"
         >
-          © 2026 RetroBrinquedos BR
+          <!-- Item 12 - link de disclaimer -->
+          <button
+            onclick="abrirDisclaimerModal()"
+            class="hover:text-cyan-400 transition-colors underline underline-offset-2 decoration-dotted cursor-pointer bg-transparent border-none p-0 font-inherit text-inherit"
+            title="Direitos autorais e contato para removção de conteúdo"
+          >
+            © 2026 RetroBrinquedos BR
+          </button>
           <span class="hidden sm:inline"
             >- Revivendo memórias em alta resolução.</span
           >
@@ -544,5 +551,92 @@
     </div>
 
     <script src="app.js"></script>
+
+    <!-- ============================================================
+         Item 12 — MODAL DISCLAIMER / DIREITOS AUTORAIS
+         Aberto pelo link © no footer via abrirDisclaimerModal()
+         ============================================================ -->
+    <div
+      id="disclaimerModal"
+      class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="disclaimerModalTitle"
+    >
+      <!-- Overlay -->
+      <div
+        class="absolute inset-0 bg-black/90 backdrop-blur-sm"
+        onclick="fecharDisclaimerModal()"
+      ></div>
+
+      <!-- Box no tema arcade -->
+      <div class="disclaimer-modal-box relative w-full max-w-lg">
+        <!-- Cabeçalho -->
+        <div class="flex items-center justify-between mb-4">
+          <h2
+            id="disclaimerModalTitle"
+            class="font-orbitron text-xs tracking-widest uppercase text-green-400"
+          >
+            // DIREITOS AUTORAIS &amp; CONTATO
+          </h2>
+          <button
+            onclick="fecharDisclaimerModal()"
+            class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none"
+            aria-label="Fechar"
+          >
+            &times;
+          </button>
+        </div>
+
+        <!-- Conteúdo -->
+        <div
+          class="disclaimer-modal-body space-y-3 text-slate-300 text-sm leading-relaxed"
+        >
+          <p>
+            O <strong class="text-cyan-400">RetroBrinquedos BR</strong> é um
+            projeto independente, sem fins lucrativos, dedicado à preservação da
+            memória cultural dos brinquedos brasileiros dos anos 80 e 90.
+          </p>
+
+          <p>
+            As imagens, logotipos e demais mídias exibidas neste site foram
+            <strong class="text-yellow-400"
+              >garimpadas em fontes públicas da internet</strong
+            >
+            com finalidade exclusivamente documental e educativa. Não há uso
+            comercial, venda ou monetização de qualquer conteúdo de terceiros.
+          </p>
+
+          <p>
+            Caso você seja titular de direitos sobre algum conteúdo aqui exibido
+            e deseje solicitar sua
+            <strong class="text-pink-400">remoção ou citação de crédito</strong
+            >, entre em contato pelo e-mail abaixo. A solicitação será atendida
+            em até <strong>72 horas</strong>.
+          </p>
+
+          <!-- E-mail de contato -->
+          <div class="disclaimer-contact-box">
+            <span
+              class="font-orbitron text-[10px] tracking-widest text-slate-500 uppercase block mb-1"
+              >Contato para remoção</span
+            >
+            <a
+              href="mailto:mendes79@gmail.com"
+              class="text-cyan-400 hover:text-cyan-300 transition-colors text-sm font-mono break-all"
+              >mendes79@gmail.com</a
+            >
+          </div>
+
+          <p class="text-[11px] text-slate-500 pt-1">
+            © 2026 RetroBrinquedos BR &mdash; Todos os direitos das marcas,
+            produtos e imagens pertencem aos seus respectivos detentores.
+          </p>
+        </div>
+        <!-- /body -->
+      </div>
+      <!-- /box -->
+    </div>
+    <!-- /Item 12 -->
   </body>
 </html>
