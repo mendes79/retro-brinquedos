@@ -1104,7 +1104,7 @@ function renderAvatarGrid() {
     item.innerHTML = `<img src="${pathWebp}" onerror="this.onerror=null;this.src='${pathPng}'" class="avatar-img" loading="${loadStrategy}" decoding="async" width="80" height="80" alt="Avatar ${num}">`;
     // Preserva o path PNG no localStorage para compatibilidade total
     item.onclick = () => {
-      localStorage.setItem("retro_avatar", pathPng);
+      localStorage.setItem("retro_avatar", pathWebp);
       location.reload();
     };
     grid.appendChild(item);
@@ -1139,7 +1139,10 @@ function updateNavWithAvatar(avatarPath, name) {
         class="w-[40px] h-[40px] md:w-11 md:h-11 rounded-full border-2 border-cyan-400 overflow-hidden bg-slate-900 shadow-[0_0_10px_rgba(34,211,238,0.4)] shrink-0 focus:outline-none hover:border-pink-500 transition-colors"
         aria-label="Menu do usuário"
       >
-        <img src="${avatarPath}" class="w-full h-full object-contain" alt="avatar">
+        <img src="${avatarPath}" 
+          onerror="this.onerror=null;this.src=this.src.endsWith('.webp')?this.src.replace('.webp','.png'):this.src.replace('.png','.webp')" 
+          class="w-full h-full object-contain" 
+          alt="avatar">
       </button>
 
       <!-- Dropdown retrô -->
