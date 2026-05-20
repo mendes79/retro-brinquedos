@@ -251,9 +251,63 @@ body {
   display: flex;
   gap: 2.5rem;
   justify-content: center;
-  margin-top: 2.5rem;
   padding-bottom: 0.5rem;
   flex-wrap: wrap;
+}
+/* ============================================================
+   ITEM 7 — GRID DE FABRICANTES (.hero-brands-wrapper)
+   Desktop : [4 logos] [stats] [4 logos] — linha única
+   Mobile  : [stats] / [4 logos] / [4 logos] — empilhado
+   ============================================================ */
+.hero-brands-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  width: 100%;
+  flex-wrap: nowrap;          /* desktop: linha única */
+}
+
+.hero-brands-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.hero-brand-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  /* Filtro base: dessatura e suaviza para não poluir o hero */
+  filter: grayscale(40%) brightness(0.85) drop-shadow(0 0 4px rgba(0,255,255,0.15));
+  border-radius: 6px;
+  transition: filter 0.3s ease, transform 0.3s ease;
+  cursor: default;
+}
+.hero-brand-logo:hover {
+  filter: grayscale(0%) brightness(1.1) drop-shadow(0 0 8px rgba(0,255,255,0.5));
+  transform: scale(1.12);
+}
+
+/* Mobile ≤767px: empilha stats no topo, dois grupos de 4 abaixo */
+@media (max-width: 767px) {
+  .hero-brands-wrapper {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  /* Garante que os stats fiquem primeiro no mobile via order */
+  .hero-brands-wrapper .hero-stats  { order: 1; }
+  .hero-brands-wrapper .hero-brands-group:first-child { order: 2; }
+  .hero-brands-wrapper .hero-brands-group:last-child  { order: 3; }
+
+  .hero-brand-logo {
+    width: 40px;
+    height: 40px;
+  }
 }
 .hero-stat-item {
   text-align: center;

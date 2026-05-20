@@ -42,6 +42,13 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <!-- Item 4 — preconnect ao próprio origin para que o browser abra o
+         canal TCP/TLS com antecedência antes de requisitar os avatares -->
+    <link
+      rel="preconnect"
+      href="https://retro-brinquedos.vercel.app"
+      crossorigin
+    />
   </head>
 
   <body class="antialiased app-unlogged">
@@ -200,18 +207,78 @@
           <span>▶</span> Explorar a Coleção
         </button>
 
-        <div class="hero-stats">
-          <div class="hero-stat-item">
-            <span class="hero-stat-number" id="heroCount">—</span
-            ><span class="hero-stat-label">Itens catalogados</span>
+        <!-- Item 7 — Wrapper de flanqueamento: logos | stats | logos -->
+        <div class="hero-brands-wrapper">
+          <!-- Grupo esquerdo: marcas 01–04 -->
+          <div class="hero-brands-group">
+            <img
+              src="img/marca-01.webp"
+              alt="Atma"
+              class="hero-brand-logo"
+              title="Atma"
+            />
+            <img
+              src="img/marca-02.webp"
+              alt="Trol"
+              class="hero-brand-logo"
+              title="Trol"
+            />
+            <img
+              src="img/marca-03.webp"
+              alt="Grow"
+              class="hero-brand-logo"
+              title="Grow"
+            />
+            <img
+              src="img/marca-04.webp"
+              alt="Estrela"
+              class="hero-brand-logo"
+              title="Estrela"
+            />
           </div>
-          <div class="hero-stat-item">
-            <span class="hero-stat-number">2</span
-            ><span class="hero-stat-label">Décadas</span>
+
+          <!-- Stats centrais (inalterados) -->
+          <div class="hero-stats">
+            <div class="hero-stat-item">
+              <span class="hero-stat-number" id="heroCount">—</span
+              ><span class="hero-stat-label">Itens catalogados</span>
+            </div>
+            <div class="hero-stat-item">
+              <span class="hero-stat-number">2</span
+              ><span class="hero-stat-label">Décadas</span>
+            </div>
+            <div class="hero-stat-item">
+              <span class="hero-stat-number">5+</span
+              ><span class="hero-stat-label">Fabricantes</span>
+            </div>
           </div>
-          <div class="hero-stat-item">
-            <span class="hero-stat-number">5+</span
-            ><span class="hero-stat-label">Fabricantes</span>
+
+          <!-- Grupo direito: marcas 05–08 -->
+          <div class="hero-brands-group">
+            <img
+              src="img/marca-05.webp"
+              alt="Glasslite"
+              class="hero-brand-logo"
+              title="Glasslite"
+            />
+            <img
+              src="img/marca-06.webp"
+              alt="Gulliver"
+              class="hero-brand-logo"
+              title="Gulliver"
+            />
+            <img
+              src="img/marca-07.webp"
+              alt="Tec Toy"
+              class="hero-brand-logo"
+              title="Tec Toy"
+            />
+            <img
+              src="img/marca-08.webp"
+              alt="Bandeirante"
+              class="hero-brand-logo"
+              title="Bandeirante"
+            />
           </div>
         </div>
       </div>
@@ -386,6 +453,7 @@
           <div
             id="avatarGrid"
             class="grid grid-cols-3 gap-3 md:gap-4 p-2 bg-black/40 border border-cyan-900/50 rounded-lg"
+            fetchpriority="high"
           ></div>
           <p
             class="font-orbitron text-[0.6rem] text-cyan-500/60 uppercase animate-pulse"

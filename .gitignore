@@ -19,6 +19,7 @@ app_old2.js
 
 # Pasta local de imagens (já estão no Cloudinary)
 images/
+images/fabricantes/
 bkp/
 node_modules/
 _admin/
