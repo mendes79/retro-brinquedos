@@ -1095,7 +1095,7 @@ function renderAvatarGrid() {
   selecionados.forEach((num, idx) => {
     // Item 4 — tenta WebP primeiro; onerror cai no PNG original sem quebrar nada
     const pathWebp = `/img/avatares/a${num.toString().padStart(2, "0")}.webp`;
-    const pathPng  = `/img/avatares/a${num.toString().padStart(2, "0")}.png`;
+    const pathPng = `/img/avatares/a${num.toString().padStart(2, "0")}.png`;
     // Os 3 primeiros ficam eager (aparecem imediatamente no modal);
     // os demais lazy para não bloquear o parser
     const loadStrategy = idx < 3 ? "eager" : "lazy";
@@ -1109,7 +1109,6 @@ function renderAvatarGrid() {
     };
     grid.appendChild(item);
   });
-}
 }
 
 function getRandomFromRange(min, max, count) {
@@ -1189,7 +1188,8 @@ function toggleAvatarMenu(event) {
   dropdown.classList.toggle("hidden");
   // Item 6 — sincroniza .is-open no wrapper para pausar a animação neon via CSS
   const wrapper = document.getElementById("avatarMenuWrapper");
-  if (wrapper) wrapper.classList.toggle("is-open", !dropdown.classList.contains("hidden"));
+  if (wrapper)
+    wrapper.classList.toggle("is-open", !dropdown.classList.contains("hidden"));
 }
 
 /* Fecha o dropdown ao clicar fora dele */
