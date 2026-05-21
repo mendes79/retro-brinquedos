@@ -2302,109 +2302,55 @@ body {
 }
 
 /* ============================================================
-   H4 — MODAL DISCLAIMER / DIREITOS AUTORAIS
+   BLOCO F — MODO ESPIA: BANNER DE LOGIN NO DRAWER
+   Exibido no rodapé do drawer quando o visitante não está logado.
+   Substitui o .drawer-input-area que fica oculto.
    ============================================================ */
-.disclaimer-modal-box {
-  background: #050505;
-  border: 2px solid rgba(57, 255, 20, 0.5);
-  border-radius: 10px;
-  padding: 1.5rem;
-  box-shadow:
-    0 0 24px rgba(57, 255, 20, 0.2),
-    inset 0 0 20px rgba(57, 255, 20, 0.04);
-  background-image: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(57, 255, 20, 0.03) 2px,
-    rgba(57, 255, 20, 0.03) 4px
-  );
-}
-.disclaimer-contact-box {
-  background: rgba(0, 255, 255, 0.04);
-  border: 1px solid rgba(0, 255, 255, 0.2);
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-}
-.disclaimer-modal-body {
-  color: #cbd5e1;
-}
-#disclaimerModal:not(.hidden),
-.fabricanteModal-open {
-  animation: disclaimerFadeIn 0.2s ease forwards;
-}
-@keyframes disclaimerFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+.drawer-login-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid rgba(57, 255, 20, 0.12);
+  background: rgba(57, 255, 20, 0.03);
+  text-align: center;
 }
 
-/* Aplica fade em todos os modais de fabricante */
-[id^="fabricanteModal"]:not(.hidden) {
-  animation: disclaimerFadeIn 0.2s ease forwards;
+.drawer-login-banner-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(57, 255, 20, 0.4));
 }
 
-/* ============================================================
-   H5 — LOGO E BOTÃO NOS MODAIS DE FABRICANTE
-   ============================================================ */
-.fabricante-modal-logo {
-  width: 96px;
-  height: 96px;
-  object-fit: contain;
-  border-radius: 8px;
-  filter: brightness(0.95);
+.drawer-login-banner-texto {
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.8);
+  margin: 0;
 }
 
-/* Wrapper botão dos logos no hero — remove aparência de botão */
-.hero-brand-btn {
+.drawer-login-banner-btn {
+  font-family: "Orbitron", monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #39ff14;
   background: transparent;
-  border: none;
-  padding: 0;
+  border: 1px solid rgba(57, 255, 20, 0.5);
+  border-radius: 4px;
+  padding: 6px 18px;
   cursor: pointer;
-  border-radius: 6px;
-  display: inline-flex;
-  transition: transform 0.25s ease;
+  transition: all 0.2s ease;
+  animation: blinkNeon 1.8s infinite;
 }
-.hero-brand-btn:hover .hero-brand-logo {
-  filter: grayscale(0%) brightness(1.15) drop-shadow(0 0 10px rgba(0,255,255,0.6));
-  transform: scale(1.14);
-}
-.hero-brand-btn:focus-visible {
-  outline: 2px solid rgba(0,255,255,0.6);
-  outline-offset: 3px;
-}
-
-/* ============================================================
-   H6 — BORDA LATERAL ESPELHADA NOS ITENS DO DROPDOWN
-   Borda esquerda + direita simétricas, cor por item
-   ============================================================ */
-#avatarDropdown .dropdown-filter-item,
-#avatarDropdown .dropdown-logout-item {
-  border-left:  3px solid transparent !important;
-  border-right: 3px solid transparent !important;
-  transition: background 0.3s 0.1s, border-color 0.2s ease !important;
-}
-/* Cyan */
-#avatarDropdown .dropdown-filter-item:nth-child(1) {
-  border-left-color:  var(--neon-blue) !important;
-  border-right-color: var(--neon-blue) !important;
-}
-/* Pink */
-#avatarDropdown .dropdown-filter-item:nth-child(2) {
-  border-left-color:  var(--neon-pink) !important;
-  border-right-color: var(--neon-pink) !important;
-}
-/* Gold */
-#avatarDropdown .dropdown-filter-item:nth-child(3) {
-  border-left-color:  var(--trunfo-gold) !important;
-  border-right-color: var(--trunfo-gold) !important;
-}
-/* Yellow */
-#avatarDropdown .dropdown-filter-item:nth-child(4) {
-  border-left-color:  var(--neon-yellow) !important;
-  border-right-color: var(--neon-yellow) !important;
-}
-/* Vermelho — logout */
-#avatarDropdown .dropdown-logout-item {
-  border-left-color:  var(--trunfo-red) !important;
-  border-right-color: var(--trunfo-red) !important;
+.drawer-login-banner-btn:hover {
+  background: rgba(57, 255, 20, 0.08);
+  border-color: #39ff14;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.35);
+  animation: none;
 }

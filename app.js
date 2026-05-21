@@ -392,15 +392,11 @@ async function render(items, append = false) {
           <div class="trunfo-footer">
             <div class="footer-icons-container">
 
-              <!-- 💬 Comentários -->
+              <!-- 💬 Comentários — Bloco F: deslogado abre drawer em modo espia -->
               <button
-                class="footer-tab-btn comment-tab-btn ${!isUserLogged ? "tab-locked" : ""}"
-                onclick="${
-                  isUserLogged
-                    ? `abrirDrawerComentarios(event, '${idNormalizado}', '${toy.nome.replace(/'/g, "\\'")}'); event.stopPropagation();`
-                    : `event.stopPropagation(); mostrarMensagemLED('Faça login para comentar!');`
-                }"
-                title="${isUserLogged ? "Comentar" : "Faça login para comentar"}"
+                class="footer-tab-btn comment-tab-btn"
+                onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${toy.nome.replace(/'/g, "\\'")}'); event.stopPropagation();"
+                title="${isUserLogged ? "Comentar" : "Ver comentários"}"
               >
                 <svg class="tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/>
@@ -695,7 +691,7 @@ let drawerNomeAtivo = null;
 
 async function abrirDrawerComentarios(event, id, nome) {
   if (event) event.stopPropagation();
-  if (!isUserLogged) return;
+  // Bloco F — Modo Espia: drawer abre para todos; input só aparece para logados
 
   drawerIdAtivo = id;
   drawerNomeAtivo = nome;
@@ -703,7 +699,18 @@ async function abrirDrawerComentarios(event, id, nome) {
   document.getElementById("drawerNomeBrinquedo").textContent = nome;
   document.getElementById("drawerListaComentarios").innerHTML =
     '<p class="drawer-loading">Carregando...</p>';
-  document.getElementById("drawerComentarioInput").value = "";
+
+  // Bloco F — controla visibilidade do input vs banner de login
+  const inputArea  = document.getElementById("drawerInputArea");
+  const loginBanner = document.getElementById("drawerLoginBanner");
+  if (isUserLogged) {
+    if (inputArea)   inputArea.classList.remove("hidden");
+    if (loginBanner) loginBanner.classList.add("hidden");
+    document.getElementById("drawerComentarioInput").value = "";
+  } else {
+    if (inputArea)   inputArea.classList.add("hidden");
+    if (loginBanner) loginBanner.classList.remove("hidden");
+  }
 
   const drawer = document.getElementById("comentariosDrawer");
   drawer.classList.add("open");
@@ -2059,34 +2066,6 @@ function ajustarPainelLED() {
 window.addEventListener("resize", ajustarPainelLED);
 
 // ============================================================
-// H4 — MODAL DISCLAIMER / DIREITOS AUTORAIS
-// ============================================================
-function abrirDisclaimerModal() {
-  const modal = document.getElementById("disclaimerModal");
-  if (modal) modal.classList.remove("hidden");
-}
-function fecharDisclaimerModal() {
-  const modal = document.getElementById("disclaimerModal");
-  if (modal) modal.classList.add("hidden");
-}
-
-// ============================================================
-// H5 — MODAIS DE FABRICANTES
-// ============================================================
-function abrirFabricanteModal(num) {
-  fecharFabricanteModal(); // fecha qualquer um aberto
-  const modal = document.getElementById("fabricanteModal" + num);
-  if (modal) modal.classList.remove("hidden");
-}
-function fecharFabricanteModal() {
-  for (let i = 1; i <= 8; i++) {
-    const m = document.getElementById("fabricanteModal" + i);
-    if (m) m.classList.add("hidden");
-  }
-}
-
-
-// ============================================================
 // Item 11 — FORMULÁRIO ARCADE DE SUGESTÃO DE BRINQUEDO
 // EmailJS: service_v7nw2eu / template_o5kwy8p / public key: 03eueUb3Hz_PxWXj2
 // ============================================================
@@ -2243,13 +2222,9 @@ function _sugestaoMostrarFeedback(mensagem, tipo) {
   feedback.classList.remove("hidden");
 }
 
-// Escape fecha todos os modais do site
+// Escape fecha o modal de sugestão (junto com o de disclaimer já existente)
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    fecharSugestaoModal();
-    fecharDisclaimerModal();
-    fecharFabricanteModal();
-  }
+  if (e.key === "Escape") fecharSugestaoModal();
 });
 
 
