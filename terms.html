@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Termos de Serviço — RetroBrinquedos BR</title>
+  <meta name="description" content="Termos de Serviço do RetroBrinquedos BR — regras de uso, direitos e responsabilidades dos usuários da plataforma." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --neon-green:  #39ff14;
+      --neon-cyan:   #00ffff;
+      --neon-pink:   #ff00ff;
+      --neon-yellow: #ffe600;
+      --gold:        #f0c040;
+      --bg:          #050505;
+      --surface:     #0a0f1a;
+      --border:      rgba(57, 255, 20, 0.25);
+      --text:        #cbd5e1;
+      --text-dim:    rgba(148, 163, 184, 0.65);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.75;
+      min-height: 100vh;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 2px,
+          rgba(57,255,20,0.025) 2px, rgba(57,255,20,0.025) 4px);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5,5,5,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .header-logo {
+      font-family: "Orbitron", monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px rgba(57,255,20,0.5);
+      text-decoration: none;
+    }
+    .header-back {
+      font-family: "Orbitron", monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      border: 1px solid rgba(148,163,184,0.2);
+      padding: 5px 14px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    .header-back:hover {
+      color: var(--neon-cyan);
+      border-color: var(--neon-cyan);
+      text-shadow: 0 0 8px rgba(0,255,255,0.4);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+
+    .page-tag {
+      display: inline-block;
+      font-family: "Orbitron", monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--neon-pink);
+      border: 1px solid rgba(255,0,255,0.3);
+      background: rgba(255,0,255,0.05);
+      padding: 4px 14px;
+      border-radius: 2px;
+      margin-bottom: 1.2rem;
+    }
+
+    h1 {
+      font-family: "Orbitron", monospace;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 700;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    h1 span { color: var(--neon-pink); text-shadow: 0 0 14px rgba(255,0,255,0.4); }
+
+    .page-meta {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 3rem;
+      font-family: "Orbitron", monospace;
+      letter-spacing: 0.08em;
+    }
+
+    .section {
+      margin-bottom: 2.5rem;
+      border-left: 2px solid rgba(255,0,255,0.2);
+      padding-left: 1.25rem;
+    }
+    .section-title {
+      font-family: "Orbitron", monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--neon-pink);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .section-title::before { content: "//"; color: rgba(255,0,255,0.35); }
+
+    p { margin-bottom: 0.75rem; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: #e2e8f0; font-weight: 600; }
+
+    .highlight       { color: var(--neon-cyan); font-weight: 600; }
+    .highlight-gold  { color: var(--gold); }
+    .highlight-pink  { color: #ff6b9d; }
+    .highlight-green { color: var(--neon-green); }
+
+    ul { list-style: none; padding: 0; margin: 0.5rem 0; }
+    ul li { padding: 0.3rem 0 0.3rem 1.2rem; position: relative; }
+    ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: var(--neon-pink);
+      font-size: 0.75rem;
+      top: 0.4rem;
+    }
+
+    .contact-box {
+      background: rgba(0,255,255,0.04);
+      border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-top: 0.75rem;
+    }
+    .contact-box-label {
+      font-family: "Orbitron", monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .contact-box a {
+      color: var(--neon-cyan);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .contact-box a:hover { color: #7dd3fc; text-decoration: underline; }
+
+    .warning-box {
+      background: rgba(255,0,255,0.05);
+      border: 1px solid rgba(255,0,255,0.25);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin: 0.75rem 0;
+    }
+    .warning-box p { color: #f9a8d4; margin: 0; font-size: 0.88rem; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2.5rem 0;
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-family: "Orbitron", monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    @media (max-width: 600px) {
+      main { padding: 2rem 1rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="https://retro-brinquedos.vercel.app" class="header-logo">
+      RetroBrinquedos BR
+    </a>
+    <a href="https://retro-brinquedos.vercel.app" class="header-back">
+      ◀ Voltar ao site
+    </a>
+  </header>
+
+  <main>
+
+    <div class="page-tag">Documento Legal</div>
+    <h1>Termos de <span>Serviço</span></h1>
+    <p class="page-meta">
+      Última atualização: Janeiro de 2026 &nbsp;·&nbsp; Versão 1.0
+    </p>
+
+    <!-- 1. ACEITAÇÃO -->
+    <div class="section">
+      <div class="section-title">01 · Aceitação dos Termos</div>
+      <p>
+        Ao acessar ou utilizar o <strong>RetroBrinquedos BR</strong>
+        (<a href="https://retro-brinquedos.vercel.app" class="highlight">retro-brinquedos.vercel.app</a>),
+        você concorda com estes Termos de Serviço e com nossa
+        <a href="https://retro-brinquedos.vercel.app/privacy.html" class="highlight">
+          Política de Privacidade</a>.
+      </p>
+      <p>
+        Se você não concordar com alguma parte destes termos,
+        não utilize o site. O uso continuado após alterações nos termos
+        implica aceitação das mudanças.
+      </p>
+    </div>
+
+    <!-- 2. SOBRE O SERVIÇO -->
+    <div class="section">
+      <div class="section-title">02 · Sobre o Serviço</div>
+      <p>
+        O <strong>RetroBrinquedos BR</strong> é uma plataforma de preservação da
+        memória cultural, sem fins lucrativos, que cataloga brinquedos brasileiros
+        das décadas de 1980 e 1990. O serviço é oferecido
+        <span class="highlight-green">gratuitamente</span> e pode ser encerrado
+        ou modificado a qualquer momento pelo mantenedor, sem aviso prévio.
+      </p>
+      <p>
+        O site não oferece produtos à venda, intermediação de compras ou qualquer
+        serviço remunerado. Todo o conteúdo é de caráter documental e educativo.
+      </p>
+    </div>
+
+    <!-- 3. CADASTRO E LOGIN -->
+    <div class="section">
+      <div class="section-title">03 · Cadastro e Autenticação</div>
+      <p>
+        O acesso às funcionalidades interativas (comentários, listas pessoais,
+        sugestões) requer autenticação via login social — Google, Facebook ou X (Twitter).
+        Ao realizar o login, você:
+      </p>
+      <ul>
+        <li>Declara ter pelo menos <strong>13 anos de idade</strong></li>
+        <li>Autoriza o compartilhamento do seu nome e e-mail do provedor escolhido com o site</li>
+        <li>Responsabiliza-se por toda atividade realizada com sua conta</li>
+        <li>Concorda com o tratamento dos dados conforme nossa Política de Privacidade</li>
+      </ul>
+      <p>
+        Cada usuário pode manter apenas uma conta ativa. Contas criadas com
+        finalidade de abuso, spam ou contorno de moderação serão suspensas.
+      </p>
+    </div>
+
+    <!-- 4. REGRAS DE CONDUTA -->
+    <div class="section">
+      <div class="section-title">04 · Regras de Conduta da Comunidade</div>
+      <p>
+        O RetroBrinquedos BR é um espaço de nostalgia e respeito mútuo.
+        Ao interagir no site — seja por comentários, sugestões ou qualquer
+        outro meio — você concorda em <span class="highlight-pink">não</span>:
+      </p>
+      <ul>
+        <li>Publicar conteúdo ofensivo, discriminatório, racista, homofóbico ou de ódio</li>
+        <li>Usar linguagem obscena, palavrões ou conteúdo sexualmente explícito</li>
+        <li>Realizar spam, flood ou publicações repetitivas sem conteúdo relevante</li>
+        <li>Publicar conteúdo político, partidário ou religioso</li>
+        <li>Assediar, ameaçar ou intimidar outros usuários</li>
+        <li>Compartilhar dados pessoais de terceiros sem consentimento</li>
+        <li>Utilizar bots, scripts ou meios automatizados para interagir com o site</li>
+        <li>Tentar invadir, sobrecarregar ou comprometer a infraestrutura do site</li>
+      </ul>
+      <div class="warning-box">
+        <p>
+          ⚠ O site possui sistema automático de moderação de conteúdo.
+          Comentários e sugestões com conteúdo inapropriado são bloqueados
+          automaticamente antes da publicação.
+        </p>
+      </div>
+    </div>
+
+    <!-- 5. MODERAÇÃO E BANIMENTO -->
+    <div class="section">
+      <div class="section-title">05 · Moderação e Suspensão de Conta</div>
+      <p>
+        O mantenedor reserva-se o direito de, a qualquer momento e sem aviso prévio:
+      </p>
+      <ul>
+        <li>Remover comentários ou sugestões que violem estas regras</li>
+        <li>Suspender temporariamente ou banir permanentemente contas infratoras</li>
+        <li>Bloquear o acesso de usuários que tentem prejudicar o site ou a comunidade</li>
+      </ul>
+      <p>
+        Decisões de moderação são definitivas. Não há processo formal de apelação,
+        dado o caráter voluntário e gratuito do serviço.
+      </p>
+    </div>
+
+    <!-- 6. CONTEÚDO DO USUÁRIO -->
+    <div class="section">
+      <div class="section-title">06 · Conteúdo Publicado pelo Usuário</div>
+      <p>
+        Ao publicar um comentário ou sugestão, você:
+      </p>
+      <ul>
+        <li>
+          Declara que o conteúdo é de sua autoria ou que você tem direito de publicá-lo
+        </li>
+        <li>
+          Concede ao RetroBrinquedos BR uma licença não exclusiva, gratuita e mundial
+          para exibir o conteúdo no site enquanto sua conta estiver ativa
+        </li>
+        <li>
+          Entende que comentários aprovados são visíveis publicamente para todos os
+          visitantes, incluindo não cadastrados
+        </li>
+      </ul>
+      <p>
+        Você pode solicitar a exclusão dos seus comentários a qualquer momento
+        pelo e-mail de contato.
+      </p>
+    </div>
+
+    <!-- 7. PROPRIEDADE INTELECTUAL -->
+    <div class="section">
+      <div class="section-title">07 · Propriedade Intelectual</div>
+      <p>
+        O código-fonte, design, layout e textos originais do RetroBrinquedos BR
+        são de propriedade do mantenedor do projeto.
+      </p>
+      <p>
+        As imagens de brinquedos, logotipos de fabricantes e demais mídias
+        de terceiros exibidas no site são propriedade de seus respectivos detentores.
+        Sua exibição tem caráter exclusivamente documental e educativo, sem fins
+        comerciais, fundamentada no direito de preservação cultural.
+      </p>
+      <p>
+        Caso você seja titular de direitos sobre algum conteúdo e deseje solicitar
+        sua remoção, entre em contato pelo e-mail abaixo — atendimento em até
+        <span class="highlight-gold">72 horas</span>.
+      </p>
+      <div class="contact-box">
+        <span class="contact-box-label">Solicitações de direitos autorais</span>
+        <a href="mailto:mendes79@gmail.com">mendes79@gmail.com</a>
+      </div>
+    </div>
+
+    <!-- 8. ISENÇÃO DE RESPONSABILIDADE -->
+    <div class="section">
+      <div class="section-title">08 · Isenção de Responsabilidade</div>
+      <p>
+        O RetroBrinquedos BR é oferecido <strong>"no estado em que se encontra"</strong>,
+        sem garantias de disponibilidade contínua, precisão das informações ou
+        adequação a qualquer finalidade específica.
+      </p>
+      <p>O mantenedor não se responsabiliza por:</p>
+      <ul>
+        <li>Interrupções temporárias do serviço por manutenção ou falhas técnicas</li>
+        <li>Imprecisões nas informações sobre brinquedos (datas, fabricantes, características)</li>
+        <li>Conteúdo publicado por usuários antes da moderação automática</li>
+        <li>Danos diretos ou indiretos decorrentes do uso do site</li>
+        <li>Indisponibilidade de provedores terceiros (Supabase, Vercel, Cloudinary)</li>
+      </ul>
+    </div>
+
+    <!-- 9. LINKS EXTERNOS -->
+    <div class="section">
+      <div class="section-title">09 · Links e Referências Externas</div>
+      <p>
+        O site pode conter links para recursos externos (YouTube, Mercado Livre,
+        blogs de colecionadores) submetidos por usuários como referência de sugestões.
+        O RetroBrinquedos BR não controla nem se responsabiliza pelo conteúdo
+        de sites de terceiros.
+      </p>
+    </div>
+
+    <!-- 10. ALTERAÇÕES -->
+    <div class="section">
+      <div class="section-title">10 · Alterações nos Termos</div>
+      <p>
+        Estes termos podem ser atualizados a qualquer momento. A data de
+        "última atualização" no topo do documento será revisada a cada alteração.
+        O uso continuado do site após a publicação de novos termos implica
+        aceitação das mudanças.
+      </p>
+    </div>
+
+    <!-- 11. LEI APLICÁVEL -->
+    <div class="section">
+      <div class="section-title">11 · Lei Aplicável e Foro</div>
+      <p>
+        Estes Termos de Serviço são regidos pelas leis brasileiras,
+        em especial pelo Código de Defesa do Consumidor (Lei 8.078/1990),
+        pelo Marco Civil da Internet (Lei 12.965/2014) e pela
+        Lei Geral de Proteção de Dados (Lei 13.709/2018).
+      </p>
+      <p>
+        Fica eleito o foro da comarca de domicílio do mantenedor para
+        dirimir eventuais controvérsias, com renúncia a qualquer outro,
+        por mais privilegiado que seja.
+      </p>
+    </div>
+
+    <!-- 12. CONTATO -->
+    <div class="section">
+      <div class="section-title">12 · Contato</div>
+      <p>
+        Para dúvidas, solicitações ou notificações relacionadas a estes termos:
+      </p>
+      <div class="contact-box">
+        <span class="contact-box-label">E-mail de contato</span>
+        <a href="mailto:mendes79@gmail.com">mendes79@gmail.com</a>
+      </div>
+      <p style="margin-top: 0.75rem;">
+        Para questões relacionadas à privacidade e proteção de dados, consulte
+        também nossa
+        <a href="https://retro-brinquedos.vercel.app/privacy.html" class="highlight">
+          Política de Privacidade</a>.
+      </p>
+    </div>
+
+    <hr class="divider" />
+
+    <p style="font-size: 0.8rem; color: var(--text-dim); text-align: center;">
+      © 2026 RetroBrinquedos BR — Todos os direitos das marcas, produtos e imagens
+      pertencem aos seus respectivos detentores.<br>
+      Regido pela legislação brasileira — LGPD, Marco Civil da Internet e CDC.
+    </p>
+
+  </main>
+
+  <footer>
+    RetroBrinquedos BR &nbsp;·&nbsp; Termos de Serviço &nbsp;·&nbsp; v1.0 / 2026
+  </footer>
+
+</body>
+</html>
