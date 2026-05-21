@@ -1074,26 +1074,40 @@ function handleCoinSelect(btn, provider) {
 
   setTimeout(async () => {
     try {
-      // Executa a chamada do Supabase Auth com diretivas explícitas de redirecionamento de aba
+      // Bloco C — Mobile: browsers bloqueiam popups fora de gesto direto do usuário
+      // e o setTimeout de 1.5s já quebra essa janela de confiança.
+      // Solução: no mobile, usar skipBrowserRedirect:true e redirecionar manualmente
+      // via window.location.href (mesmo tab, sem popup). Afeta todos os providers
+      // pois o Facebook é o mais restritivo mas o problema pode ocorrer nos demais.
+      const isMobile = window.innerWidth < 768;
+
       const { data, error } = await supabaseClient.auth.signInWithOAuth({
         provider: provider,
         options: {
-          // Garante retorno seguro para a raiz exata da SPA, seja em localhost ou na Vercel
           redirectTo: window.location.origin + window.location.pathname,
-          skipBrowserRedirect: false,
+          // Mobile: skipBrowserRedirect=true devolve a URL sem abrir popup —
+          // fazemos o redirect manual abaixo.
+          // Desktop: skipBrowserRedirect=false mantém o comportamento original.
+          skipBrowserRedirect: isMobile,
+          // Facebook no mobile: força fluxo de página inteira (não dialog popup)
+          ...(provider === "facebook" ? { queryParams: { display: "page" } } : {}),
         },
       });
 
       if (error) throw error;
+
+      // Bloco C — redirect manual para mobile (data.url só existe quando skipBrowserRedirect=true)
+      if (isMobile && data?.url) {
+        window.location.href = data.url;
+      }
+
     } catch (err) {
       console.error(`Erro na autenticação via moeda (${provider}):`, err);
 
-      // Se der erro no boot assíncrono, exibe o alerta em vermelho no painel de LED Matrix
       if (typeof mostrarMensagemLED === "function") {
         mostrarMensagemLED(`ERRO NO SLOT ${provider.toUpperCase()}`);
       }
 
-      // Remove a classe de animação para resetar visualmente a ficha e permitir nova tentativa
       btn.classList.remove("coin-inserted");
     }
   }, 1500); // Mantido o tempo de 1.5s para a imersão da animação da ficha caindo
