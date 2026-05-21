@@ -2449,3 +2449,53 @@ body {
   border-left-color:  var(--trunfo-red) !important;
   border-right-color: var(--trunfo-red) !important;
 }
+
+/* ============================================================
+   LGPD — CONSENTIMENTO PASSIVO NA TELA INSERT COIN (Opção A)
+   ============================================================ */
+.lgpd-consent-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0.5rem;
+  padding: 0.65rem 1rem;
+  border-top: 1px solid rgba(57, 255, 20, 0.1);
+  width: 100%;
+}
+
+.lgpd-consent-text {
+  font-family: "Orbitron", monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.04em;
+  color: rgba(148, 163, 184, 0.55);
+  text-align: center;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.lgpd-consent-link {
+  color: rgba(0, 255, 255, 0.7);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-style: dotted;
+  transition: color 0.2s ease;
+}
+.lgpd-consent-link:hover {
+  color: var(--neon-blue);
+}
+
+.lgpd-consent-badges {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 0;
+}
+.lgpd-consent-badges span {
+  font-family: "Orbitron", monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(57, 255, 20, 0.35);
+}
