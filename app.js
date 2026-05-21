@@ -1072,45 +1072,59 @@ function handleCoinSelect(btn, provider) {
   sf2CoinSound.play().catch(() => {});
   btn.classList.add("coin-inserted");
 
+  const isMobile = window.innerWidth < 768;
+
+  // Bloco C — Facebook no mobile: o setTimeout quebra a janela de confiança do
+  // gesto do usuário e o browser bloqueia silenciosamente o redirect.
+  // Solução: Facebook mobile dispara imediatamente (sem setTimeout), preservando
+  // o vínculo direto com o gesto de clique exigido pelo Safari/Chrome mobile.
+  // Google e X continuam no setTimeout (popup funciona neles).
+  if (provider === "facebook" && isMobile) {
+    supabaseClient.auth.signInWithOAuth({
+      provider: "facebook",
+      options: {
+        redirectTo: window.location.origin + window.location.pathname,
+        skipBrowserRedirect: true,
+        queryParams: { display: "page" },
+      },
+    }).then(({ data, error }) => {
+      if (error) {
+        console.error("Erro Facebook mobile:", error);
+        mostrarMensagemLED("ERRO NO SLOT FACEBOOK");
+        btn.classList.remove("coin-inserted");
+        return;
+      }
+      if (data?.url) window.location.href = data.url;
+    });
+    return; // sai da função — não entra no setTimeout abaixo
+  }
+
+  // Google, X e Facebook desktop: fluxo original com animação de 1.5s
   setTimeout(async () => {
     try {
-      // Bloco C — Mobile: browsers bloqueiam popups fora de gesto direto do usuário
-      // e o setTimeout de 1.5s já quebra essa janela de confiança.
-      // Solução: no mobile, usar skipBrowserRedirect:true e redirecionar manualmente
-      // via window.location.href (mesmo tab, sem popup). Afeta todos os providers
-      // pois o Facebook é o mais restritivo mas o problema pode ocorrer nos demais.
-      const isMobile = window.innerWidth < 768;
-
       const { data, error } = await supabaseClient.auth.signInWithOAuth({
         provider: provider,
         options: {
           redirectTo: window.location.origin + window.location.pathname,
-          // Mobile: skipBrowserRedirect=true devolve a URL sem abrir popup —
-          // fazemos o redirect manual abaixo.
-          // Desktop: skipBrowserRedirect=false mantém o comportamento original.
           skipBrowserRedirect: isMobile,
-          // Facebook no mobile: força fluxo de página inteira (não dialog popup)
-          ...(provider === "facebook" ? { queryParams: { display: "page" } } : {}),
         },
       });
 
       if (error) throw error;
 
-      // Bloco C — redirect manual para mobile (data.url só existe quando skipBrowserRedirect=true)
+      // Outros providers no mobile: redirect manual
       if (isMobile && data?.url) {
         window.location.href = data.url;
       }
 
     } catch (err) {
       console.error(`Erro na autenticação via moeda (${provider}):`, err);
-
       if (typeof mostrarMensagemLED === "function") {
         mostrarMensagemLED(`ERRO NO SLOT ${provider.toUpperCase()}`);
       }
-
       btn.classList.remove("coin-inserted");
     }
-  }, 1500); // Mantido o tempo de 1.5s para a imersão da animação da ficha caindo
+  }, 1500); // 1.5s preservado para a imersão da animação da ficha
 }
 
 function renderAvatarGrid() {
