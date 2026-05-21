@@ -218,65 +218,25 @@
               class="hero-brand-btn"
               title="Conheça a história da Atma"
               aria-label="Saiba mais sobre a Atma"
-            >
-              <img
-                src="img/marca-01.png"
-                alt="Atma"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
+            ><img src="img/marca-01.png" alt="Atma" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128"></button>
             <button
               onclick="abrirFabricanteModal(2)"
               class="hero-brand-btn"
               title="Conheça a história da Trol"
               aria-label="Saiba mais sobre a Trol"
-            >
-              <img
-                src="img/marca-02.png"
-                alt="Trol"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
+            ><img src="img/marca-02.png" alt="Trol" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128"></button>
             <button
               onclick="abrirFabricanteModal(3)"
               class="hero-brand-btn"
               title="Conheça a história da Estrela"
               aria-label="Saiba mais sobre a Estrela"
-            >
-              <img
-                src="img/marca-03.png"
-                alt="Estrela"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
+            ><img src="img/marca-03.png" alt="Estrela" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128"></button>
             <button
               onclick="abrirFabricanteModal(4)"
               class="hero-brand-btn"
               title="Conheça a história da Glasslite"
               aria-label="Saiba mais sobre a Glasslite"
-            >
-              <img
-                src="img/marca-04.png"
-                alt="Glasslite"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
+            ><img src="img/marca-04.png" alt="Glasslite" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128"></button>
           </div>
 
           <!-- Stats centrais (inalterados) -->
@@ -302,65 +262,25 @@
               class="hero-brand-btn"
               title="Conheça a história da Gulliver"
               aria-label="Saiba mais sobre a Gulliver"
-            >
-              <img
-                src="img/marca-05.png"
-                alt="Gulliver"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
+            ><img src="img/marca-05.png" alt="Gulliver" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128"></button>
             <button
               onclick="abrirFabricanteModal(6)"
               class="hero-brand-btn"
               title="Conheça a história da Grow"
               aria-label="Saiba mais sobre a Grow"
-            >
-              <img
-                src="img/marca-06.png"
-                alt="Grow"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
+            ><img src="img/marca-06.png" alt="Grow" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128"></button>
             <button
               onclick="abrirFabricanteModal(7)"
               class="hero-brand-btn"
               title="Conheça a história da Tec Toy"
               aria-label="Saiba mais sobre a Tec Toy"
-            >
-              <img
-                src="img/marca-07.png"
-                alt="Tec Toy"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
+            ><img src="img/marca-07.png" alt="Tec Toy" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128"></button>
             <button
               onclick="abrirFabricanteModal(8)"
               class="hero-brand-btn"
               title="Conheça a história da Bandeirante"
               aria-label="Saiba mais sobre a Bandeirante"
-            >
-              <img
-                src="img/marca-08.png"
-                alt="Bandeirante"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
+            ><img src="img/marca-08.png" alt="Bandeirante" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128"></button>
           </div>
         </div>
       </div>
@@ -394,7 +314,6 @@
         <p
           class="text-[14.5px] md:text-[11px] text-slate-400 text-center truncate px-16 md:px-24"
         >
-          <!-- H4 — © restaurado como link para o modal de disclaimer -->
           <button
             onclick="abrirDisclaimerModal()"
             class="hover:text-cyan-400 transition-colors underline underline-offset-2 decoration-dotted cursor-pointer bg-transparent border-none p-0 font-inherit text-inherit"
@@ -707,14 +626,32 @@
     <!-- /Item 11 -->
 
     <!-- ============================================================
-         H5 — MODAIS DE FABRICANTES (8 modais, padrão disclaimer)
+         H4 — MODAL DISCLAIMER / DIREITOS AUTORAIS
          ============================================================ -->
-    <div
-      id="fabricanteModal1"
-      class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-    >
+    <div id="disclaimerModal" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="disclaimerModalTitle">
+      <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="fecharDisclaimerModal()"></div>
+      <div class="disclaimer-modal-box relative w-full max-w-lg">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="disclaimerModalTitle" class="font-orbitron text-xs tracking-widest uppercase text-green-400">// DIREITOS AUTORAIS &amp; CONTATO</h2>
+          <button onclick="fecharDisclaimerModal()" class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none" aria-label="Fechar">&times;</button>
+        </div>
+        <div class="disclaimer-modal-body space-y-3 text-slate-300 text-sm leading-relaxed">
+          <p>O <strong class="text-cyan-400">RetroBrinquedos BR</strong> é um projeto independente, sem fins lucrativos, dedicado à preservação da memória cultural dos brinquedos brasileiros dos anos 80 e 90.</p>
+          <p>As imagens, logotipos e demais mídias exibidas neste site foram <strong class="text-yellow-400">garimpadas em fontes públicas da internet</strong> com finalidade exclusivamente documental e educativa. Não há uso comercial, venda ou monetização de qualquer conteúdo de terceiros.</p>
+          <p>Caso você seja titular de direitos sobre algum conteúdo aqui exibido e deseje solicitar sua <strong class="text-pink-400">remoção ou citação de crédito</strong>, entre em contato pelo e-mail abaixo. A solicitação será atendida em até <strong>72 horas</strong>.</p>
+          <div class="disclaimer-contact-box">
+            <span class="font-orbitron text-[10px] tracking-widest text-slate-500 uppercase block mb-1">Contato para remoção</span>
+            <a href="mailto:mendes79@gmail.com" class="text-cyan-400 hover:text-cyan-300 transition-colors text-sm font-mono break-all">mendes79@gmail.com</a>
+          </div>
+          <p class="text-[11px] text-slate-500 pt-1">© 2026 RetroBrinquedos BR — Todos os direitos das marcas, produtos e imagens pertencem aos seus respectivos detentores.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         H5 — MODAIS DE FABRICANTES (8 modais)
+         ============================================================ -->
+    <div id="fabricanteModal1" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="fecharFabricanteModal()"></div>
       <div class="disclaimer-modal-box relative w-full max-w-md">
         <div class="flex items-center justify-between mb-4">
@@ -724,17 +661,12 @@
         <div class="flex flex-col items-center gap-4">
           <img src="img/marca-01.png" alt="Logo Atma" class="fabricante-modal-logo" loading="lazy" decoding="async">
           <div class="disclaimer-modal-body text-slate-300 text-sm leading-relaxed">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Atma foi uma das pioneiras no mercado de brinquedos eletrônicos no Brasil, levando tecnologia e diversão às crianças dos anos 80 e 90. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, marcando gerações com seus produtos inovadores.</p>
+            <p>A Atma foi uma das pioneiras no mercado de brinquedos eletrônicos no Brasil, levando tecnologia e diversão às crianças dos anos 80 e 90. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Marcou gerações com seus produtos inovadores e acessíveis.</p>
           </div>
         </div>
       </div>
     </div>
-    <div
-      id="fabricanteModal2"
-      class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-    >
+    <div id="fabricanteModal2" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="fecharFabricanteModal()"></div>
       <div class="disclaimer-modal-box relative w-full max-w-md">
         <div class="flex items-center justify-between mb-4">
@@ -744,17 +676,12 @@
         <div class="flex flex-col items-center gap-4">
           <img src="img/marca-02.png" alt="Logo Trol" class="fabricante-modal-logo" loading="lazy" decoding="async">
           <div class="disclaimer-modal-body text-slate-300 text-sm leading-relaxed">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. A Trol encantou gerações com seus famosos carrinhos e jogos de tabuleiro. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.</p>
+            <p>A Trol encantou gerações com seus famosos carrinhos e jogos de tabuleiro. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Um clássico da infância brasileira.</p>
           </div>
         </div>
       </div>
     </div>
-    <div
-      id="fabricanteModal3"
-      class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-    >
+    <div id="fabricanteModal3" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="fecharFabricanteModal()"></div>
       <div class="disclaimer-modal-box relative w-full max-w-md">
         <div class="flex items-center justify-between mb-4">
@@ -764,17 +691,12 @@
         <div class="flex flex-col items-center gap-4">
           <img src="img/marca-03.png" alt="Logo Estrela" class="fabricante-modal-logo" loading="lazy" decoding="async">
           <div class="disclaimer-modal-body text-slate-300 text-sm leading-relaxed">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fundada no coração de São Paulo, a Estrela é sinônimo de infância brasileira. Ut enim ad minim veniam, quis nostrud exercitation ullamco. Seus brinquedos atravessaram décadas e ainda habitam a memória afetiva de milhões de brasileiros.</p>
+            <p>Fundada no coração de São Paulo, a Estrela é sinônimo de infância brasileira. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation. Seus brinquedos atravessaram décadas e ainda habitam a memória afetiva de milhões de brasileiros.</p>
           </div>
         </div>
       </div>
     </div>
-    <div
-      id="fabricanteModal4"
-      class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-    >
+    <div id="fabricanteModal4" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="fecharFabricanteModal()"></div>
       <div class="disclaimer-modal-box relative w-full max-w-md">
         <div class="flex items-center justify-between mb-4">
@@ -784,17 +706,12 @@
         <div class="flex flex-col items-center gap-4">
           <img src="img/marca-04.png" alt="Logo Glasslite" class="fabricante-modal-logo" loading="lazy" decoding="async">
           <div class="disclaimer-modal-body text-slate-300 text-sm leading-relaxed">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. A Glasslite trouxe ao Brasil licenças icônicas de brinquedos internacionais, incluindo os famosos He-Man e Masters of the Universe. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
+            <p>A Glasslite trouxe ao Brasil licenças icônicas de brinquedos internacionais, incluindo os famosos He-Man e Masters of the Universe. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
           </div>
         </div>
       </div>
     </div>
-    <div
-      id="fabricanteModal5"
-      class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-    >
+    <div id="fabricanteModal5" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="fecharFabricanteModal()"></div>
       <div class="disclaimer-modal-box relative w-full max-w-md">
         <div class="flex items-center justify-between mb-4">
@@ -804,17 +721,12 @@
         <div class="flex flex-col items-center gap-4">
           <img src="img/marca-05.png" alt="Logo Gulliver" class="fabricante-modal-logo" loading="lazy" decoding="async">
           <div class="disclaimer-modal-body text-slate-300 text-sm leading-relaxed">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. A Gulliver ficou conhecida por seus jogos de tabuleiro e brinquedos educativos que divertiram famílias inteiras. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>A Gulliver ficou conhecida por seus jogos de tabuleiro e brinquedos educativos que divertiram famílias inteiras. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
           </div>
         </div>
       </div>
     </div>
-    <div
-      id="fabricanteModal6"
-      class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-    >
+    <div id="fabricanteModal6" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="fecharFabricanteModal()"></div>
       <div class="disclaimer-modal-box relative w-full max-w-md">
         <div class="flex items-center justify-between mb-4">
@@ -824,17 +736,12 @@
         <div class="flex flex-col items-center gap-4">
           <img src="img/marca-06.png" alt="Logo Grow" class="fabricante-modal-logo" loading="lazy" decoding="async">
           <div class="disclaimer-modal-body text-slate-300 text-sm leading-relaxed">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. A Grow consolidou-se como referência em jogos de tabuleiro e quebra-cabeças no Brasil. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Seus produtos são presença garantida nas festas e reuniões familiares até hoje.</p>
+            <p>A Grow consolidou-se como referência em jogos de tabuleiro e quebra-cabeças no Brasil. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation. Seus produtos são presença garantida nas festas e reuniões familiares até hoje.</p>
           </div>
         </div>
       </div>
     </div>
-    <div
-      id="fabricanteModal7"
-      class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-    >
+    <div id="fabricanteModal7" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="fecharFabricanteModal()"></div>
       <div class="disclaimer-modal-box relative w-full max-w-md">
         <div class="flex items-center justify-between mb-4">
@@ -844,17 +751,12 @@
         <div class="flex flex-col items-center gap-4">
           <img src="img/marca-07.png" alt="Logo Tec Toy" class="fabricante-modal-logo" loading="lazy" decoding="async">
           <div class="disclaimer-modal-body text-slate-300 text-sm leading-relaxed">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. A Tec Toy marcou a história dos videogames no Brasil, trazendo o Master System e o Mega Drive ao país de forma oficial. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.</p>
+            <p>A Tec Toy marcou a história dos videogames no Brasil, trazendo o Master System e o Mega Drive ao país de forma oficial. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.</p>
           </div>
         </div>
       </div>
     </div>
-    <div
-      id="fabricanteModal8"
-      class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-    >
+    <div id="fabricanteModal8" class="hidden fixed inset-0 z-[500] flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" onclick="fecharFabricanteModal()"></div>
       <div class="disclaimer-modal-box relative w-full max-w-md">
         <div class="flex items-center justify-between mb-4">
@@ -864,11 +766,11 @@
         <div class="flex flex-col items-center gap-4">
           <img src="img/marca-08.png" alt="Logo Bandeirante" class="fabricante-modal-logo" loading="lazy" decoding="async">
           <div class="disclaimer-modal-body text-slate-300 text-sm leading-relaxed">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. A Bandeirante foi pioneira na fabricação de brinquedos plásticos no Brasil, produzindo carrinhos e caminhões que se tornaram clássicos absolutos. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.</p>
+            <p>A Bandeirante foi pioneira na fabricação de brinquedos plásticos no Brasil, produzindo carrinhos e caminhões que se tornaram clássicos absolutos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.</p>
           </div>
         </div>
       </div>
     </div>
-    <!-- /H5 -->
+    <!-- /H4 H5 -->
 </body>
 </html>
