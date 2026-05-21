@@ -2300,3 +2300,73 @@ body {
 #sugestaoModal:not(.hidden) {
   animation: disclaimerFadeIn 0.2s ease forwards;
 }
+
+/* ============================================================
+   H5 — BOTÕES E MODAIS DE FABRICANTES
+   ============================================================ */
+
+/* Wrapper botão — remove aparência de botão, mantém clicável */
+.hero-brand-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: transform 0.25s ease;
+  display: inline-flex;
+}
+.hero-brand-btn:hover .hero-brand-logo {
+  filter: grayscale(0%) brightness(1.15) drop-shadow(0 0 10px rgba(0,255,255,0.6));
+  transform: scale(1.14);
+}
+.hero-brand-btn:focus-visible {
+  outline: 2px solid rgba(0,255,255,0.6);
+  outline-offset: 3px;
+}
+
+/* Logo dentro do modal de fabricante */
+.fabricante-modal-logo {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  border-radius: 8px;
+  filter: brightness(0.95);
+}
+
+/* ============================================================
+   H6 — BORDA COLORIDA NOS ITENS DO DROPDOWN DO AVATAR
+   Borda fina neon lateral esquerda, cor alterna por item
+   para dar destaque arcade sem quebrar a animação 3D existente
+   ============================================================ */
+#avatarDropdown .dropdown-filter-item,
+#avatarDropdown .dropdown-logout-item {
+  border-left: 3px solid transparent !important;
+  transition: background 0.3s 0.1s, border-color 0.2s ease !important;
+}
+
+/* Primeiro item — cyan */
+#avatarDropdown .dropdown-filter-item:nth-child(1) {
+  border-left-color: var(--neon-blue) !important;
+}
+/* Segundo item — pink */
+#avatarDropdown .dropdown-filter-item:nth-child(2) {
+  border-left-color: var(--neon-pink) !important;
+}
+/* Terceiro item — gold */
+#avatarDropdown .dropdown-filter-item:nth-child(3) {
+  border-left-color: var(--trunfo-gold) !important;
+}
+/* Quarto item — yellow */
+#avatarDropdown .dropdown-filter-item:nth-child(4) {
+  border-left-color: var(--neon-yellow) !important;
+}
+/* Logout — vermelho trunfo */
+#avatarDropdown .dropdown-logout-item {
+  border-left-color: var(--trunfo-red) !important;
+}
+
+/* No hover, borda fica mais luminosa */
+#avatarDropdown .dropdown-filter-item:hover,
+#avatarDropdown .dropdown-logout-item:hover {
+  box-shadow: inset 3px 0 8px rgba(0,0,0,0.3);
+}
