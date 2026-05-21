@@ -2354,3 +2354,98 @@ body {
   box-shadow: 0 0 10px rgba(57, 255, 20, 0.35);
   animation: none;
 }
+
+/* ============================================================
+   H4 — MODAL DISCLAIMER / DIREITOS AUTORAIS
+   ============================================================ */
+.disclaimer-modal-box {
+  background: #050505;
+  border: 2px solid rgba(57, 255, 20, 0.5);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow:
+    0 0 24px rgba(57, 255, 20, 0.2),
+    inset 0 0 20px rgba(57, 255, 20, 0.04);
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(57, 255, 20, 0.03) 2px,
+    rgba(57, 255, 20, 0.03) 4px
+  );
+}
+.disclaimer-contact-box {
+  background: rgba(0, 255, 255, 0.04);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+.disclaimer-modal-body {
+  color: #cbd5e1;
+}
+#disclaimerModal:not(.hidden),
+[id^="fabricanteModal"]:not(.hidden) {
+  animation: disclaimerFadeIn 0.2s ease forwards;
+}
+@keyframes disclaimerFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ============================================================
+   H5 — BOTÃO E LOGO NOS MODAIS DE FABRICANTE
+   ============================================================ */
+.fabricante-modal-logo {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  border-radius: 8px;
+  filter: brightness(0.95);
+}
+.hero-brand-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 6px;
+  display: inline-flex;
+  transition: transform 0.25s ease;
+}
+.hero-brand-btn:hover .hero-brand-logo {
+  filter: grayscale(0%) brightness(1.15) drop-shadow(0 0 10px rgba(0,255,255,0.6));
+  transform: scale(1.14);
+}
+.hero-brand-btn:focus-visible {
+  outline: 2px solid rgba(0,255,255,0.6);
+  outline-offset: 3px;
+}
+
+/* ============================================================
+   H6 — BORDA LATERAL ESPELHADA NOS ITENS DO DROPDOWN
+   ============================================================ */
+#avatarDropdown .dropdown-filter-item,
+#avatarDropdown .dropdown-logout-item {
+  border-left:  3px solid transparent !important;
+  border-right: 3px solid transparent !important;
+  transition: background 0.3s 0.1s, border-color 0.2s ease !important;
+}
+#avatarDropdown .dropdown-filter-item:nth-child(1) {
+  border-left-color:  var(--neon-blue) !important;
+  border-right-color: var(--neon-blue) !important;
+}
+#avatarDropdown .dropdown-filter-item:nth-child(2) {
+  border-left-color:  var(--neon-pink) !important;
+  border-right-color: var(--neon-pink) !important;
+}
+#avatarDropdown .dropdown-filter-item:nth-child(3) {
+  border-left-color:  var(--trunfo-gold) !important;
+  border-right-color: var(--trunfo-gold) !important;
+}
+#avatarDropdown .dropdown-filter-item:nth-child(4) {
+  border-left-color:  var(--neon-yellow) !important;
+  border-right-color: var(--neon-yellow) !important;
+}
+#avatarDropdown .dropdown-logout-item {
+  border-left-color:  var(--trunfo-red) !important;
+  border-right-color: var(--trunfo-red) !important;
+}

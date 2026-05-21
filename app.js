@@ -210,17 +210,18 @@ async function fetchBrinquedos(reset = false) {
         cursor += itens.length;
       }
     } else if (reset) {
-      // Item 11 — centralizado + botão de sugestão contextual
+      // H2/H3 — w-full centraliza no masonry (display:flex, não CSS grid)
       const termoAtual = buscaAtiva || "";
       grid.innerHTML = `
-        <div class="col-span-full flex flex-col items-center justify-center text-center py-20 gap-4">
-          <p class="text-pink-500 font-retro text-xl">NENHUM ITEM ENCONTRADO</p>
-          <p class="text-slate-500 font-orbitron text-xs">VERIFIQUE O TERMO OU SUA COLEÇÃO</p>
+        <div style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 1rem;gap:1rem;">
+          <p class="text-pink-500 font-retro text-xl">ITEM NÃO ENCONTRADO</p>
+          <p class="text-slate-500 font-orbitron text-xs">VERIFIQUE O TERMO</p>
           <button
             onclick="abrirSugestaoModal('${termoAtual}')"
             class="sugestao-trigger-btn mt-2"
+            title="Você pode sugerir o item para que ele entre para a coleção do RetroBrinquedos"
           >
-            ▶ SUGERIR ESTE ITEM
+            ▶ SUGERIR ITEM
           </button>
         </div>`;
       hasMais = false;
@@ -2066,6 +2067,34 @@ function ajustarPainelLED() {
 window.addEventListener("resize", ajustarPainelLED);
 
 // ============================================================
+// H4 — MODAL DISCLAIMER / DIREITOS AUTORAIS
+// ============================================================
+function abrirDisclaimerModal() {
+  const modal = document.getElementById("disclaimerModal");
+  if (modal) modal.classList.remove("hidden");
+}
+function fecharDisclaimerModal() {
+  const modal = document.getElementById("disclaimerModal");
+  if (modal) modal.classList.add("hidden");
+}
+
+// ============================================================
+// H5 — MODAIS DE FABRICANTES
+// ============================================================
+function abrirFabricanteModal(num) {
+  fecharFabricanteModal();
+  const modal = document.getElementById("fabricanteModal" + num);
+  if (modal) modal.classList.remove("hidden");
+}
+function fecharFabricanteModal() {
+  for (let i = 1; i <= 8; i++) {
+    const m = document.getElementById("fabricanteModal" + i);
+    if (m) m.classList.add("hidden");
+  }
+}
+
+
+// ============================================================
 // Item 11 — FORMULÁRIO ARCADE DE SUGESTÃO DE BRINQUEDO
 // EmailJS: service_v7nw2eu / template_o5kwy8p / public key: 03eueUb3Hz_PxWXj2
 // ============================================================
@@ -2204,7 +2233,18 @@ async function enviarSugestao() {
     ["sug_nome","sug_fabricante","sug_ano","sug_categoria","sug_tema","sug_link","sug_obs"]
       .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
 
-    setTimeout(() => fecharSugestaoModal(), 2800);
+    setTimeout(() => {
+      fecharSugestaoModal();
+      // H1 — limpa busca e recarrega grid após envio bem-sucedido
+      const searchInput = document.getElementById("searchInput");
+      const clearBtn    = document.getElementById("clearSearchBtn");
+      if (searchInput) {
+        searchInput.value = "";
+        buscaAtiva = "";
+        if (clearBtn) clearBtn.classList.add("hidden");
+      }
+      fetchBrinquedos(true);
+    }, 2800);
 
   } catch (err) {
     console.error("Erro ao enviar sugestão:", err);
@@ -2222,9 +2262,13 @@ function _sugestaoMostrarFeedback(mensagem, tipo) {
   feedback.classList.remove("hidden");
 }
 
-// Escape fecha o modal de sugestão (junto com o de disclaimer já existente)
+// Escape fecha todos os modais do site
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") fecharSugestaoModal();
+  if (e.key === "Escape") {
+    fecharSugestaoModal();
+    fecharDisclaimerModal();
+    fecharFabricanteModal();
+  }
 });
 
 
