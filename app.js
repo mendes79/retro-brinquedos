@@ -34,12 +34,13 @@ sentinel.className =
 /* 3.3.2. Verifica se o sentinel ainda está visível após um fetch terminar
    e dispara mais um lote se necessário — cobre o gap do desktop (6 colunas) */
 function verificarSentinela() {
-  if (!hasMais) return;
+  // H7/C3 — protege contra disparo parasita durante reset de busca
+  if (!hasMais || isSearching) return;
   // Aguarda o browser pintar os novos cards antes de medir
   requestAnimationFrame(() => {
     const rect = sentinel.getBoundingClientRect();
     // ✅ Margem generosa: cobre mesmo telas 4K com 6 colunas
-    if (rect.top < window.innerHeight + 1200 && !isLoading) {
+    if (rect.top < window.innerHeight + 1200 && !isLoading && !isSearching) {
       fetchBrinquedos();
     }
   });
@@ -81,6 +82,12 @@ async function fetchBrinquedos(reset = false) {
     cursor = 0;
     allToys = [];
     hasMais = true;
+
+    // H7/C2 — remove fisicamente o sentinel do DOM antes de esvaziar o grid.
+    // Isso impede que o IntersectionObserver detecte o sentinel "fantasma"
+    // quando a página encolhe após grid.innerHTML = "".
+    // O sentinel é reconectado no finally após o Masonry estabilizar.
+    if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
 
     // Calcula colunas e preenche com skeletons antes da carga
     const targetCols = getColumnCount();
@@ -237,13 +244,19 @@ async function fetchBrinquedos(reset = false) {
   } finally {
     isLoading = false;
 
-    // 🛡️ DESLIGA O DISJUNTOR: Libera o scroll infinito de volta após o layout se assentar na tela
+    // H7/C4 — reconecta o sentinel ao DOM (foi removido no início do reset pelo C2)
+    // e só então desliga o disjuntor, garantindo que o observer não dispara
+    // antes do Masonry ter estabilizado completamente.
+    // Timer estendido de 400→600ms: margem maior para mobile com muitos cards.
     setTimeout(() => {
+      const mainElement = document.querySelector("main");
+      if (mainElement && !sentinel.parentNode) {
+        mainElement.appendChild(sentinel);
+      }
       isSearching = false;
-    }, 400); // 400ms de margem de segurança para o Masonry calcular os offsets
-
-    // Delay para garantir que o DOM se estabilizou
-    setTimeout(verificarSentinela, 300);
+      // verificarSentinela só roda após isSearching=false — C3 garante proteção adicional
+      verificarSentinela();
+    }, 600);
   }
 }
 
@@ -978,8 +991,16 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
   debounceTimer = setTimeout(async () => {
     if (term === buscaAtiva) return;
 
-    // 🛡️ DISJUNTOR SÍNCRONO FIX 6.5: Congela o IntersectionObserver para evitar quebras
+    // H7/C1 — isSearching=true ANTES de qualquer outra operação
     isSearching = true;
+
+    // H7/C1 — scroll síncrono ANTES de limpar o grid.
+    // Garante que o sentinel sai da viewport ANTES de grid.innerHTML=""
+    // encolher a página — elimina o disparo fantasma do IntersectionObserver.
+    const secaoColecao = document.getElementById("colecao");
+    if (secaoColecao) {
+      secaoColecao.scrollIntoView({ behavior: "smooth" });
+    }
 
     if (typeof resetarEstadoDosCards === "function") {
       resetarEstadoDosCards();
@@ -990,14 +1011,11 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
     allToys = [];
     hasMais = true;
 
+    // Pequena pausa para o scroll ter tempo de iniciar antes do grid esvaziar
+    await new Promise(resolve => setTimeout(resolve, 80));
+
     // Processa a carga dos dados filtrados do Supabase
     await fetchBrinquedos(true);
-
-    // Reposiciona a tela elasticamente na seção da coleção
-    const secaoColecao = document.getElementById("colecao");
-    if (secaoColecao) {
-      secaoColecao.scrollIntoView({ behavior: "smooth" });
-    }
   }, 600);
 });
 
