@@ -2463,3 +2463,121 @@ body {
 .search-btn-icon:hover {
   opacity: 1;
 }
+
+/* ============================================================
+   BLOCO 1 — REFINAMENTOS DE DESIGN
+   ============================================================ */
+
+/* A2 — Tag hero: evita quebra de linha no mobile */
+@media (max-width: 767px) {
+  .hero-tag {
+    letter-spacing: 0.12em;
+    font-size: 0.52rem;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+}
+
+/* A4 — Botão × unificado para todos os modais
+   Quadrado com borda verde arredondada, × vermelho,
+   área de toque 44×44px (padrão Apple/Google HIG) */
+.modal-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  min-width: 44px;   /* área de toque mobile */
+  min-height: 44px;
+  background: transparent;
+  border: 1.5px solid rgba(57, 255, 20, 0.6);
+  border-radius: 6px;
+  color: #ef4444;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  margin: -6px -6px 0 0; /* compensa o espaço extra da área de toque */
+}
+.modal-close-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+}
+
+/* A5 — Fonte menor no modal disclaimer (desktop apenas) */
+@media (min-width: 768px) {
+  .disclaimer-modal-body {
+    font-size: 0.82rem;
+    line-height: 1.65;
+  }
+  .disclaimer-modal-body p {
+    margin-bottom: 0.6rem;
+  }
+}
+
+/* A6 — Dropdown avatar: backdrop semitransparente no mobile */
+@media (max-width: 767px) {
+  #avatarMenuWrapper.is-open::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(3px);
+    z-index: -1;
+  }
+  #avatarDropdown {
+    position: fixed !important;
+    top: 70px !important;
+    right: 8px !important;
+    left: auto !important;
+    z-index: 200 !important;
+  }
+}
+
+/* LGPD — consent bar (B5 reintegrada) */
+.lgpd-consent-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0.5rem;
+  padding: 0.65rem 1rem;
+  border-top: 1px solid rgba(57, 255, 20, 0.1);
+  width: 100%;
+}
+.lgpd-consent-text {
+  font-family: "Orbitron", monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.04em;
+  color: rgba(148, 163, 184, 0.55);
+  text-align: center;
+  line-height: 1.7;
+  margin: 0;
+}
+.lgpd-consent-link {
+  color: rgba(0, 255, 255, 0.7);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-style: dotted;
+  transition: color 0.2s ease;
+}
+.lgpd-consent-link:hover {
+  color: var(--neon-blue);
+}
+.lgpd-consent-badges {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 0;
+}
+.lgpd-consent-badges span {
+  font-family: "Orbitron", monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(57, 255, 20, 0.35);
+}

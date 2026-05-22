@@ -94,7 +94,7 @@
         class="flex items-center gap-3 md:gap-5 flex-grow md:flex-1 order-4 md:order-2 shrink-0 md:shrink"
       >
         <div class="led-toggle-wrapper shrink-0" title="Painel LED on/off">
-          <span class="led-toggle-label text-[0.45rem] md:text-[0.5rem]"
+          <span class="led-toggle-label text-[0.45rem] md:text-[0.5rem] text-white/90"
             >DISPLAY</span
           >
           <label class="switch scale-90 md:scale-100 origin-bottom">
@@ -539,10 +539,28 @@
             </button>
           </div>
           <p
-            class="font-orbitron text-[0.65rem] tracking-widest text-green-500/70 uppercase mt-4"
+            class="font-orbitron text-[0.65rem] tracking-widest uppercase mt-4"
+            style="color: #f0c040;"
           >
             Insira a ficha para fazer login
           </p>
+
+          <!-- B5 — LGPD: consentimento passivo (reintegrado) -->
+          <div class="lgpd-consent-bar">
+            <p class="lgpd-consent-text">
+              Ao fazer login, você concorda com os
+              <a href="/terms.html" target="_blank" rel="noopener" class="lgpd-consent-link">Termos de Serviço</a>
+              e a
+              <a href="/privacy.html" target="_blank" rel="noopener" class="lgpd-consent-link">Política de Privacidade</a>
+            </p>
+            <p class="lgpd-consent-badges">
+              <span>✓ sem anúncios</span>
+              <span>✓ sem venda de dados</span>
+              <span>✓ LGPD</span>
+            </p>
+          </div>
+          <!-- /B5 -->
+
         </div>
 
         <div
@@ -560,7 +578,8 @@
             fetchpriority="high"
           ></div>
           <p
-            class="font-orbitron text-[0.6rem] text-cyan-500/60 uppercase animate-pulse"
+            class="font-orbitron text-[0.6rem] uppercase animate-pulse"
+            style="color: #f0c040;"
           >
             Aguardando seleção do Player 1 ...
           </p>
@@ -692,11 +711,9 @@
           </h2>
           <button
             onclick="fecharSugestaoModal()"
-            class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none"
+            class="modal-close-btn"
             aria-label="Fechar"
-          >
-            &times;
-          </button>
+          >&times;</button>
         </div>
 
         <p
@@ -831,11 +848,9 @@
           </h2>
           <button
             onclick="fecharDisclaimerModal()"
-            class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none"
+            class="modal-close-btn"
             aria-label="Fechar"
-          >
-            &times;
-          </button>
+          >&times;</button>
         </div>
         <div
           class="disclaimer-modal-body space-y-3 text-slate-300 text-sm leading-relaxed"
@@ -901,11 +916,9 @@
           </h2>
           <button
             onclick="fecharFabricanteModal()"
-            class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none"
+            class="modal-close-btn"
             aria-label="Fechar"
-          >
-            &times;
-          </button>
+          >&times;</button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -948,11 +961,9 @@
           </h2>
           <button
             onclick="fecharFabricanteModal()"
-            class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none"
+            class="modal-close-btn"
             aria-label="Fechar"
-          >
-            &times;
-          </button>
+          >&times;</button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -995,11 +1006,9 @@
           </h2>
           <button
             onclick="fecharFabricanteModal()"
-            class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none"
+            class="modal-close-btn"
             aria-label="Fechar"
-          >
-            &times;
-          </button>
+          >&times;</button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -1042,11 +1051,9 @@
           </h2>
           <button
             onclick="fecharFabricanteModal()"
-            class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none"
+            class="modal-close-btn"
             aria-label="Fechar"
-          >
-            &times;
-          </button>
+          >&times;</button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -1089,11 +1096,9 @@
           </h2>
           <button
             onclick="fecharFabricanteModal()"
-            class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none"
+            class="modal-close-btn"
             aria-label="Fechar"
-          >
-            &times;
-          </button>
+          >&times;</button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -1136,11 +1141,9 @@
           </h2>
           <button
             onclick="fecharFabricanteModal()"
-            class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none"
+            class="modal-close-btn"
             aria-label="Fechar"
-          >
-            &times;
-          </button>
+          >&times;</button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -1183,11 +1186,9 @@
           </h2>
           <button
             onclick="fecharFabricanteModal()"
-            class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none"
+            class="modal-close-btn"
             aria-label="Fechar"
-          >
-            &times;
-          </button>
+          >&times;</button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -1230,11 +1231,9 @@
           </h2>
           <button
             onclick="fecharFabricanteModal()"
-            class="text-slate-500 hover:text-pink-500 transition-colors font-bold text-lg leading-none"
+            class="modal-close-btn"
             aria-label="Fechar"
-          >
-            &times;
-          </button>
+          >&times;</button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
