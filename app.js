@@ -14,6 +14,7 @@ let cursor = 0;
 const LIMITE = 24;
 let isLoading = false;
 let hasMais = true;
+let cardHintCount = 0; // C1 — conta quantos cards receberam o hint de flip
 const sessionSeed = Math.random();
 let isUserLogged = false;
 let curtidasDoUsuario = new Set();
@@ -82,6 +83,7 @@ async function fetchBrinquedos(reset = false) {
     cursor = 0;
     allToys = [];
     hasMais = true;
+    cardHintCount = 0; // C1 — reseta o contador de hint a cada nova busca/carregamento
 
     // H7/C2 — remove fisicamente o sentinel do DOM antes de esvaziar o grid.
     // Isso impede que o IntersectionObserver detecte o sentinel "fantasma"
@@ -353,8 +355,12 @@ async function render(items, append = false) {
     const urlFrenteOtimizada = otimizarUrlCloudinary(toy.url_frente, 600);
     const urlVersoOtimizada = otimizarUrlCloudinary(toy.url_verso, 500);
 
+    // C1 — primeiros 3 cards do carregamento inicial recebem hint de flip
+    const hintClass = (!append && cardHintCount < 3) ? " card-hint" : "";
+    if (!append && cardHintCount < 3) cardHintCount++;
+
     const cardHTML = `
-    <div class="masonry-item card-enter" id="card-${idNormalizado}">
+    <div class="masonry-item card-enter${hintClass}" id="card-${idNormalizado}">`
       <div class="card-inner" onclick="handleFlip('${idNormalizado}')">
         <div class="card-front">
           <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
@@ -2370,8 +2376,15 @@ document.addEventListener("keydown", (e) => {
 
 init();
 
-// C2 — remove hint após animação
+// C2 — remove hint dos logos após animação
 setTimeout(() => {
   const firstLogo = document.querySelector(".hero-brand-btn:first-child");
   if (firstLogo) firstLogo.classList.add("hint-done");
 }, 6200);
+
+// C1 — remove hint dos cards após animação (0.8s delay + 1.8s duração + margem)
+setTimeout(() => {
+  document.querySelectorAll(".card-hint").forEach(card => {
+    card.classList.add("hint-done");
+  });
+}, 3500);
