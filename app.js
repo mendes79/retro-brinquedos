@@ -246,6 +246,26 @@ async function fetchBrinquedos(reset = false) {
   } finally {
     isLoading = false;
 
+    // C1 — aplica hint nos 3 primeiros cards APÓS o render completo
+    // Usar setTimeout garante que o Masonry já mediu todos os offsetHeights
+    if (reset) {
+      setTimeout(() => {
+        const cards = document.querySelectorAll(".masonry-item");
+        let count = 0;
+        for (const card of cards) {
+          if (count >= 3) break;
+          card.classList.add("card-hint");
+          count++;
+        }
+        // Remove hint após animação completar (0.8s delay + 1.8s duração)
+        setTimeout(() => {
+          document.querySelectorAll(".card-hint").forEach(c => {
+            c.classList.remove("card-hint");
+          });
+        }, 3000);
+      }, 200); // 200ms após render para não interferir com offsetHeight
+    }
+
     // H7/C4 — reconecta o sentinel ao DOM (foi removido no início do reset pelo C2)
     // e só então desliga o disjuntor, garantindo que o observer não dispara
     // antes do Masonry ter estabilizado completamente.
@@ -355,12 +375,8 @@ async function render(items, append = false) {
     const urlFrenteOtimizada = otimizarUrlCloudinary(toy.url_frente, 600);
     const urlVersoOtimizada = otimizarUrlCloudinary(toy.url_verso, 500);
 
-    // C1 — primeiros 3 cards do carregamento inicial recebem hint de flip
-    const hintClass = (!append && cardHintCount < 3) ? " card-hint" : "";
-    if (!append && cardHintCount < 3) cardHintCount++;
-
     const cardHTML = `
-    <div class="masonry-item card-enter${hintClass}" id="card-${idNormalizado}">
+    <div class="masonry-item card-enter" id="card-${idNormalizado}">
       <div class="card-inner" onclick="handleFlip('${idNormalizado}')">
         <div class="card-front">
           <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
