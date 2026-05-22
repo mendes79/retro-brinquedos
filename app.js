@@ -360,7 +360,7 @@ async function render(items, append = false) {
     if (!append && cardHintCount < 3) cardHintCount++;
 
     const cardHTML = `
-    <div class="masonry-item card-enter${hintClass}" id="card-${idNormalizado}">`
+    <div class="masonry-item card-enter${hintClass}" id="card-${idNormalizado}">
       <div class="card-inner" onclick="handleFlip('${idNormalizado}')">
         <div class="card-front">
           <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
