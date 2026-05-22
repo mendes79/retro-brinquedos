@@ -2768,37 +2768,39 @@ body {
 }
 
 /* ============================================================
-   BLOCO 6 — HINT DE FLIP NOS PRIMEIROS CARDS (C1)
-   Animação única (não repetitiva) nos 3 primeiros cards ao
-   carregar — borda neon pulsando 2× para sinalizar que o card
-   é clicável/flipável.
+   BLOCO 6 — HINT DE FLIP NO PRIMEIRO CARD (C1)
+   Linha neon cyan na borda inferior do primeiro card do grid,
+   pulsando 2× após carregar. Só CSS — zero interferência com
+   o motor Masonry ou com o render.
    ============================================================ */
-@keyframes cardHintPulse {
-  0%   { box-shadow: none; }
-  20%  {
-    box-shadow:
-      0 0 0 2px rgba(0, 255, 255, 0.9),
-      0 0 16px 4px rgba(0, 255, 255, 0.5),
-      0 0 32px 8px rgba(0, 255, 255, 0.2);
-  }
-  40%  { box-shadow: none; }
-  60%  {
-    box-shadow:
-      0 0 0 2px rgba(0, 255, 255, 0.7),
-      0 0 12px 3px rgba(0, 255, 255, 0.35),
-      0 0 24px 6px rgba(0, 255, 255, 0.15);
-  }
-  100% { box-shadow: none; }
+@keyframes cardHintLine {
+  0%   { opacity: 0; transform: scaleX(0.3); }
+  25%  { opacity: 1; transform: scaleX(1); }
+  50%  { opacity: 0; transform: scaleX(0.8); }
+  75%  { opacity: 0.8; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(0.3); }
 }
 
-.card-hint {
-  /* Delay escalonado por nth-of-type não funciona em JS-rendered,
-     então usamos um delay fixo de 0.8s após o card aparecer */
-  animation: cardHintPulse 1.8s ease-out 0.8s 1 forwards;
-  border-radius: inherit;
+.masonry-column:first-child .masonry-item:first-child {
+  position: relative;
 }
 
-/* Remove a animação após completar para não interferir com hover/flip */
-.card-hint.hint-done {
-  animation: none;
+.masonry-column:first-child .masonry-item:first-child::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0, 255, 255, 0.9) 30%,
+    rgba(0, 255, 255, 1) 50%,
+    rgba(0, 255, 255, 0.9) 70%,
+    transparent 100%
+  );
+  border-radius: 2px;
+  box-shadow: 0 0 8px 2px rgba(0, 255, 255, 0.5);
+  animation: cardHintLine 1.6s ease-in-out 1.2s 2 forwards;
+  pointer-events: none;
 }

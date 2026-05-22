@@ -14,7 +14,6 @@ let cursor = 0;
 const LIMITE = 24;
 let isLoading = false;
 let hasMais = true;
-let cardHintCount = 0; // C1 — conta quantos cards receberam o hint de flip
 const sessionSeed = Math.random();
 let isUserLogged = false;
 let curtidasDoUsuario = new Set();
@@ -83,7 +82,6 @@ async function fetchBrinquedos(reset = false) {
     cursor = 0;
     allToys = [];
     hasMais = true;
-    cardHintCount = 0; // C1 — reseta o contador de hint a cada nova busca/carregamento
 
     // H7/C2 — remove fisicamente o sentinel do DOM antes de esvaziar o grid.
     // Isso impede que o IntersectionObserver detecte o sentinel "fantasma"
@@ -245,26 +243,6 @@ async function fetchBrinquedos(reset = false) {
     document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
   } finally {
     isLoading = false;
-
-    // C1 — aplica hint nos 3 primeiros cards APÓS o render completo
-    // Usar setTimeout garante que o Masonry já mediu todos os offsetHeights
-    if (reset) {
-      setTimeout(() => {
-        const cards = document.querySelectorAll(".masonry-item");
-        let count = 0;
-        for (const card of cards) {
-          if (count >= 3) break;
-          card.classList.add("card-hint");
-          count++;
-        }
-        // Remove hint após animação completar (0.8s delay + 1.8s duração)
-        setTimeout(() => {
-          document.querySelectorAll(".card-hint").forEach(c => {
-            c.classList.remove("card-hint");
-          });
-        }, 3000);
-      }, 200); // 200ms após render para não interferir com offsetHeight
-    }
 
     // H7/C4 — reconecta o sentinel ao DOM (foi removido no início do reset pelo C2)
     // e só então desliga o disjuntor, garantindo que o observer não dispara
@@ -2397,10 +2375,3 @@ setTimeout(() => {
   const firstLogo = document.querySelector(".hero-brand-btn:first-child");
   if (firstLogo) firstLogo.classList.add("hint-done");
 }, 6200);
-
-// C1 — remove hint dos cards após animação (0.8s delay + 1.8s duração + margem)
-setTimeout(() => {
-  document.querySelectorAll(".card-hint").forEach(card => {
-    card.classList.add("hint-done");
-  });
-}, 3500);
