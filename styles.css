@@ -281,18 +281,18 @@ body {
   width: 128px;
   height: 128px;
   object-fit: contain;
-  /* Filtro base: dessatura e suaviza para não poluir o hero */
-  filter: grayscale(40%) brightness(0.85)
-    drop-shadow(0 0 4px rgba(0, 255, 255, 0.15));
+  /* A3 — grayscale total: uniformiza logos heterogêneos sobre o hero escuro.
+     No hover, cores originais reveladas com glow cyan — mecânica de descoberta */
+  filter: grayscale(100%) brightness(1.4) contrast(0.9);
   border-radius: 6px;
   transition:
-    filter 0.3s ease,
+    filter 0.4s ease,
     transform 0.3s ease;
-  cursor: default;
+  cursor: pointer;
 }
 .hero-brand-logo:hover {
-  filter: grayscale(0%) brightness(1.1)
-    drop-shadow(0 0 8px rgba(0, 255, 255, 0.5));
+  filter: grayscale(0%) brightness(1.15)
+    drop-shadow(0 0 10px rgba(0, 255, 255, 0.6));
   transform: scale(1.12);
 }
 
@@ -2412,6 +2412,7 @@ body {
   transition: transform 0.25s ease;
 }
 .hero-brand-btn:hover .hero-brand-logo {
+  /* A3 — revela as cores ao hover via botão */
   filter: grayscale(0%) brightness(1.15) drop-shadow(0 0 10px rgba(0,255,255,0.6));
   transform: scale(1.14);
 }
@@ -2580,4 +2581,35 @@ body {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(57, 255, 20, 0.35);
+}
+
+/* ============================================================
+   BLOCO 2 — GRAYSCALE LOGOS + HINT DE INTERATIVIDADE (C2)
+   ============================================================ */
+
+/* C2 — Hint: neon branco brilhando no canto do primeiro logo
+   Animação dispara 2 vezes ao carregar, depois para.
+   Usa animation-iteration-count: 2 + animation-fill-mode: forwards
+   para não repetir indefinidamente. */
+@keyframes logoHintPulse {
+  0%   { box-shadow: none; opacity: 1; }
+  30%  { box-shadow: 0 0 0 2px rgba(255,255,255,0.9),
+                     0 0 12px 4px rgba(255,255,255,0.6),
+                     0 0 24px 8px rgba(0,255,255,0.4); }
+  60%  { box-shadow: none; }
+  80%  { box-shadow: 0 0 0 2px rgba(255,255,255,0.7),
+                     0 0 10px 3px rgba(255,255,255,0.4),
+                     0 0 20px 6px rgba(0,255,255,0.3); }
+  100% { box-shadow: none; opacity: 1; }
+}
+
+/* Aplica no primeiro hero-brand-btn da página */
+.hero-brand-btn:first-child {
+  animation: logoHintPulse 2.2s ease-out 1.5s 2 forwards;
+  border-radius: 6px;
+}
+
+/* Garante que após a animação o botão fica sem efeito residual */
+.hero-brand-btn:first-child.hint-done {
+  animation: none;
 }

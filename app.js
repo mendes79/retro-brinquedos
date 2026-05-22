@@ -2369,3 +2369,9 @@ document.addEventListener("keydown", (e) => {
 
 
 init();
+
+// C2 — remove hint após animação
+setTimeout(() => {
+  const firstLogo = document.querySelector(".hero-brand-btn:first-child");
+  if (firstLogo) firstLogo.classList.add("hint-done");
+}, 6200);
