@@ -1032,8 +1032,33 @@ body {
   );
 }
 .insert-coin-text {
-  animation: blinkNeon 1.5s infinite;
-  filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.6));
+  /* B1 — melting text: derreter suave em loop verde → cyan */
+  animation: meltingText 3s ease-in-out infinite;
+  position: relative;
+  display: inline-block;
+}
+.insert-coin-text::before,
+.insert-coin-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  z-index: -1;
+}
+.insert-coin-text::before {
+  animation: meltDrip 3s ease-in-out infinite;
+  opacity: 0.55;
+}
+.insert-coin-text::after {
+  filter: blur(8px);
+  animation: meltDrip 3s ease-in-out infinite 0.15s;
+  opacity: 0.3;
 }
 .coins-wrapper {
   position: relative;
@@ -1157,8 +1182,8 @@ body {
   }
 }
 .select-player-text {
-  text-shadow: 0 0 10px #22d3ee;
-  animation: blinkNeon 1s infinite;
+  /* B2 — neon glow alternando cyan → pink */
+  animation: neonGlow 1.8s ease-in-out infinite alternate;
 }
 /* 2.7. TOGGLE SWITCH LED (CONTROLE DO PAINEL) */
 .led-toggle-wrapper {
@@ -2612,4 +2637,90 @@ body {
 /* Garante que após a animação o botão fica sem efeito residual */
 .hero-brand-btn:first-child.hint-done {
   animation: none;
+}
+
+/* ============================================================
+   BLOCO 3 — ANIMAÇÕES INSERT COIN (B1) + SELECT YOUR PLAYER (B2)
+   ============================================================ */
+
+/* B1 — MELTING TEXT: "INSERT COIN" derrete suavemente
+   Gradiente verde escuro → verde neon → cyan, com oscilação vertical */
+@keyframes meltingText {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+    background: linear-gradient(180deg,
+      #39ff14 0%,
+      #00ffcc 50%,
+      #128a02 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.7));
+  }
+  25% {
+    transform: translateY(3px) scaleY(1.02);
+    background: linear-gradient(180deg,
+      #00ffff 0%,
+      #39ff14 40%,
+      #00cc88 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 14px rgba(0, 255, 255, 0.6));
+  }
+  50% {
+    transform: translateY(6px) scaleY(1.04);
+    background: linear-gradient(180deg,
+      #39ff14 0%,
+      #00ffff 60%,
+      #006644 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 20px rgba(57, 255, 20, 0.9))
+            drop-shadow(0 8px 12px rgba(0, 255, 200, 0.4));
+  }
+  75% {
+    transform: translateY(3px) scaleY(1.02);
+    background: linear-gradient(180deg,
+      #00ffff 0%,
+      #39ff14 50%,
+      #128a02 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 14px rgba(0, 255, 255, 0.5));
+  }
+}
+
+/* Pseudo-elementos: gotejamento abaixo do texto */
+@keyframes meltDrip {
+  0%, 100% {
+    transform: scaleY(1) translateY(0);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scaleY(1.6) translateY(4px);
+    opacity: 0.65;
+  }
+}
+
+/* B2 — NEON GLOW: "SELECT YOUR PLAYER" alterna cyan → pink */
+@keyframes neonGlow {
+  0% {
+    color: #00ffff;
+    text-shadow:
+      0 0 5px  #00ffff,
+      0 0 12px #00ffff,
+      0 0 25px #00ffff,
+      0 0 50px rgba(0, 255, 255, 0.5);
+  }
+  100% {
+    color: #ff00ff;
+    text-shadow:
+      0 0 5px  #ff00ff,
+      0 0 12px #ff00ff,
+      0 0 25px #ff00ff,
+      0 0 50px rgba(255, 0, 255, 0.5);
+  }
 }
