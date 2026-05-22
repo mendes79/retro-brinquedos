@@ -971,14 +971,90 @@ async function abrirModalEspelhoMobile(cardId) {
    3.6. BUSCA INTELIGENTE (Debounce, Trigger, Disjuntor e Reset Rápido - Item 2)
    ============================================================ */
 let buscaAtiva = "";
+let fetchAbortController = null; // H7+ — cancela fetch anterior se novo for disparado
 let debounceTimer = null;
 
 // Escuta a digitação reativa do usuário
+// ── Sanitização XSS: remove tags HTML e caracteres perigosos do termo de busca
+function sanitizarBusca(valor) {
+  return valor
+    .replace(/[<>"'`]/g, "")   // remove caracteres de injeção HTML/JS
+    .replace(/\s+/g, " ")       // colapsa espaços múltiplos
+    .trim()
+    .toLowerCase()
+    .slice(0, 60);              // limita tamanho máximo
+}
+
+// ── Núcleo da busca — compartilhado entre debounce e botão de busca forçada
+async function _executarBusca(term) {
+  if (term === buscaAtiva) return;
+
+  // Trava busca vazia — orienta o usuário via LED
+  if (term.length === 0 && buscaAtiva === "") {
+    mostrarMensagemLED("DIGITE O TERMO QUE DESEJA BUSCAR");
+    return;
+  }
+
+  // Cancela qualquer fetch anterior que ainda esteja em andamento
+  if (fetchAbortController) {
+    fetchAbortController.abort();
+  }
+  fetchAbortController = new AbortController();
+
+  // H7/C1 — isSearching=true ANTES de qualquer outra operação
+  isSearching = true;
+
+  // H7/C1 — scroll síncrono ANTES de limpar o grid
+  const secaoColecao = document.getElementById("colecao");
+  if (secaoColecao) {
+    secaoColecao.scrollIntoView({ behavior: "smooth" });
+  }
+
+  if (typeof resetarEstadoDosCards === "function") {
+    resetarEstadoDosCards();
+  }
+
+  buscaAtiva = term;
+  cursor = 0;
+  allToys = [];
+  hasMais = true;
+
+  // Pausa para o scroll iniciar antes do grid esvaziar
+  await new Promise(resolve => setTimeout(resolve, 80));
+
+  await fetchBrinquedos(true);
+}
+
+// ── Busca forçada — disparada pelo botão de lupa ou Enter
+// Cancela o debounce em andamento e executa imediatamente
+function executarBuscaForçada() {
+  const input = document.getElementById("searchInput");
+  if (!input) return;
+  const term = sanitizarBusca(input.value);
+
+  if (term.length === 0) {
+    mostrarMensagemLED("DIGITE O TERMO QUE DESEJA BUSCAR");
+    input.focus();
+    return;
+  }
+
+  clearTimeout(debounceTimer);
+  _executarBusca(term);
+}
+
+// ── Listener do input: debounce 600ms + sanitização + Enter
+document.getElementById("searchInput").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    executarBuscaForçada();
+  }
+});
+
 document.getElementById("searchInput").addEventListener("input", (e) => {
-  const term = e.target.value.trim().toLowerCase();
+  const term = sanitizarBusca(e.target.value);
   const clearBtn = document.getElementById("clearSearchBtn");
 
-  // Controla a visibilidade do botão '✕' de forma reativa instantânea (fora do debounce)
+  // Controla visibilidade do botão ✕ de forma reativa
   if (clearBtn) {
     if (e.target.value.length > 0) {
       clearBtn.classList.remove("hidden");
@@ -988,34 +1064,8 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
   }
 
   clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(async () => {
-    if (term === buscaAtiva) return;
-
-    // H7/C1 — isSearching=true ANTES de qualquer outra operação
-    isSearching = true;
-
-    // H7/C1 — scroll síncrono ANTES de limpar o grid.
-    // Garante que o sentinel sai da viewport ANTES de grid.innerHTML=""
-    // encolher a página — elimina o disparo fantasma do IntersectionObserver.
-    const secaoColecao = document.getElementById("colecao");
-    if (secaoColecao) {
-      secaoColecao.scrollIntoView({ behavior: "smooth" });
-    }
-
-    if (typeof resetarEstadoDosCards === "function") {
-      resetarEstadoDosCards();
-    }
-
-    buscaAtiva = term;
-    cursor = 0;
-    allToys = [];
-    hasMais = true;
-
-    // Pequena pausa para o scroll ter tempo de iniciar antes do grid esvaziar
-    await new Promise(resolve => setTimeout(resolve, 80));
-
-    // Processa a carga dos dados filtrados do Supabase
-    await fetchBrinquedos(true);
+  debounceTimer = setTimeout(() => {
+    _executarBusca(term);
   }, 600);
 });
 

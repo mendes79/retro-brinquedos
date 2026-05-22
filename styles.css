@@ -1242,7 +1242,7 @@ body {
   box-shadow:
     0 0 12px rgba(57, 255, 20, 0.06) inset,
     0 2px 8px rgba(0, 0, 0, 0.4);
-  z-index: 99;
+  z-index: 159; /* Bug 1 fix — acima do card flipado (150), abaixo da navbar (160) */
   transition:
     height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.35s ease;
@@ -2451,51 +2451,15 @@ body {
 }
 
 /* ============================================================
-   LGPD — CONSENTIMENTO PASSIVO NA TELA INSERT COIN (Opção A)
+   BOTÃO DE BUSCA FORÇADA — #searchBtn
+   Posicionado no canto direito do input, visível sempre.
+   O botão ✕ (clearSearchBtn) foi deslocado para right-10
+   para não sobrepor o novo botão de busca.
    ============================================================ */
-.lgpd-consent-bar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  margin-top: 0.5rem;
-  padding: 0.65rem 1rem;
-  border-top: 1px solid rgba(57, 255, 20, 0.1);
-  width: 100%;
+.search-btn-icon {
+  opacity: 0.5;
+  transition: opacity 0.2s ease, color 0.2s ease;
 }
-
-.lgpd-consent-text {
-  font-family: "Orbitron", monospace;
-  font-size: 0.55rem;
-  letter-spacing: 0.04em;
-  color: rgba(148, 163, 184, 0.55);
-  text-align: center;
-  line-height: 1.7;
-  margin: 0;
-}
-
-.lgpd-consent-link {
-  color: rgba(0, 255, 255, 0.7);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-style: dotted;
-  transition: color 0.2s ease;
-}
-.lgpd-consent-link:hover {
-  color: var(--neon-blue);
-}
-
-.lgpd-consent-badges {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin: 0;
-}
-.lgpd-consent-badges span {
-  font-family: "Orbitron", monospace;
-  font-size: 0.5rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(57, 255, 20, 0.35);
+.search-btn-icon:hover {
+  opacity: 1;
 }

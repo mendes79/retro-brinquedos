@@ -55,7 +55,7 @@
 
   <body class="antialiased app-unlogged">
     <nav
-      class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-[100] px-3 md:px-6 py-2.5 md:py-3 flex flex-wrap items-center gap-y-3 gap-x-2 md:gap-x-6 transition-all"
+      class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-[160] px-3 md:px-6 py-2.5 md:py-3 flex flex-wrap items-center gap-y-3 gap-x-2 md:gap-x-6 transition-all"
     >
       <!-- 1. LOGO E TÍTULO -->
       <div class="flex items-center gap-2 md:gap-3 shrink-0 order-1">
@@ -130,10 +130,23 @@
             type="button"
             id="clearSearchBtn"
             onclick="limparBuscaRapida()"
-            class="hidden absolute right-3 top-1.5 md:top-2 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full text-slate-400 hover:text-pink-500 hover:bg-slate-700/50 transition-all font-sans font-bold text-xs md:text-sm focus:outline-none"
+            class="hidden absolute right-10 top-1.5 md:top-2 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full text-slate-400 hover:text-pink-500 hover:bg-slate-700/50 transition-all font-sans font-bold text-xs md:text-sm focus:outline-none"
             title="Limpar busca"
           >
             ✕
+          </button>
+          <!-- Botão de busca forçada — dispara mesmo com debounce em andamento -->
+          <button
+            type="button"
+            id="searchBtn"
+            onclick="executarBuscaForçada()"
+            class="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full text-slate-400 hover:text-cyan-400 hover:bg-slate-700/50 transition-all focus:outline-none search-btn-icon"
+            title="Buscar"
+            aria-label="Buscar"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
           </button>
         </div>
       </div>
@@ -502,6 +515,8 @@
                 loading="lazy"
               />
             </button>
+            <!-- Moeda Facebook desabilitada no mobile (burocracia Meta)
+                 Para reativar: remover os comentários abaixo
             <button
               class="coin-btn"
               onclick="handleCoinSelect(this, 'facebook')"
@@ -513,6 +528,7 @@
                 loading="lazy"
               />
             </button>
+            -->
             <button class="coin-btn" onclick="handleCoinSelect(this, 'x')">
               <img
                 src="/img/x_coin.png"
@@ -527,23 +543,6 @@
           >
             Insira a ficha para fazer login
           </p>
-
-          <!-- LGPD Opção A — consentimento passivo informativo -->
-          <div class="lgpd-consent-bar">
-            <p class="lgpd-consent-text">
-              Ao fazer login, você concorda com os
-              <a href="/terms.html" target="_blank" rel="noopener" class="lgpd-consent-link">Termos de Serviço</a>
-              e a
-              <a href="/privacy.html" target="_blank" rel="noopener" class="lgpd-consent-link">Política de Privacidade</a>
-            </p>
-            <p class="lgpd-consent-badges">
-              <span>✓ sem anúncios</span>
-              <span>✓ sem venda de dados</span>
-              <span>✓ LGPD</span>
-            </p>
-          </div>
-          <!-- /LGPD -->
-
         </div>
 
         <div
