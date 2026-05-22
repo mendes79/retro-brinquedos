@@ -508,36 +508,48 @@
           <div
             class="coins-wrapper flex gap-4 md:gap-6 justify-center w-full mt-2"
           >
-            <button class="coin-btn" onclick="handleCoinSelect(this, 'google')">
-              <img
-                src="/img/google_coin.png"
-                alt="Google Login"
-                class="coin-img"
-                loading="lazy"
-              />
-            </button>
+            <!-- B3 — cada moeda tem wrapper com label identificador -->
+            <div class="coin-slot">
+              <button class="coin-btn" onclick="handleCoinSelect(this, 'google')">
+                <img
+                  src="/img/google_coin.png"
+                  alt="Google Login"
+                  class="coin-img"
+                  loading="lazy"
+                />
+              </button>
+              <span class="coin-label">GOOGLE</span>
+            </div>
+
             <!-- Moeda Facebook desabilitada no mobile (burocracia Meta)
                  Para reativar: remover os comentários abaixo
-            <button
-              class="coin-btn"
-              onclick="handleCoinSelect(this, 'facebook')"
-            >
-              <img
-                src="/img/facebook_coin.png"
-                alt="Facebook Login"
-                class="coin-img"
-                loading="lazy"
-              />
-            </button>
+            <div class="coin-slot">
+              <button
+                class="coin-btn"
+                onclick="handleCoinSelect(this, 'facebook')"
+              >
+                <img
+                  src="/img/facebook_coin.png"
+                  alt="Facebook Login"
+                  class="coin-img"
+                  loading="lazy"
+                />
+              </button>
+              <span class="coin-label">FACEBOOK</span>
+            </div>
             -->
-            <button class="coin-btn" onclick="handleCoinSelect(this, 'x')">
-              <img
-                src="/img/x_coin.png"
-                alt="X Login"
-                class="coin-img"
-                loading="lazy"
-              />
-            </button>
+
+            <div class="coin-slot">
+              <button class="coin-btn" onclick="handleCoinSelect(this, 'x')">
+                <img
+                  src="/img/x_coin.png"
+                  alt="X Login"
+                  class="coin-img"
+                  loading="lazy"
+                />
+              </button>
+              <span class="coin-label">X</span>
+            </div>
           </div>
           <p
             class="font-orbitron text-[0.65rem] tracking-widest uppercase mt-4"
