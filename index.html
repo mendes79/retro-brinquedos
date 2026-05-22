@@ -222,77 +222,10 @@
           <span>▶</span> Explorar a Coleção
         </button>
 
-        <!-- Item 7 — Wrapper de flanqueamento: logos | stats | logos -->
+        <!-- B4 — Novo layout: stats acima, 8 logos em linha única abaixo -->
         <div class="hero-brands-wrapper">
-          <!-- Grupo esquerdo: marcas 01–04 -->
-          <div class="hero-brands-group">
-            <button
-              onclick="abrirFabricanteModal(1)"
-              class="hero-brand-btn"
-              title="Conheça a história da Atma"
-              aria-label="Saiba mais sobre a Atma"
-            >
-              <img
-                src="img/marca-01.png"
-                alt="Atma"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
-            <button
-              onclick="abrirFabricanteModal(2)"
-              class="hero-brand-btn"
-              title="Conheça a história da Trol"
-              aria-label="Saiba mais sobre a Trol"
-            >
-              <img
-                src="img/marca-02.png"
-                alt="Trol"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
-            <button
-              onclick="abrirFabricanteModal(3)"
-              class="hero-brand-btn"
-              title="Conheça a história da Estrela"
-              aria-label="Saiba mais sobre a Estrela"
-            >
-              <img
-                src="img/marca-03.png"
-                alt="Estrela"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
-            <button
-              onclick="abrirFabricanteModal(4)"
-              class="hero-brand-btn"
-              title="Conheça a história da Glasslite"
-              aria-label="Saiba mais sobre a Glasslite"
-            >
-              <img
-                src="img/marca-04.png"
-                alt="Glasslite"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
-            </button>
-          </div>
 
-          <!-- Stats centrais (inalterados) -->
+          <!-- Stats — linha única acima dos logos -->
           <div class="hero-stats">
             <div class="hero-stat-item">
               <span class="hero-stat-number" id="heroCount">—</span
@@ -303,78 +236,39 @@
               ><span class="hero-stat-label">Décadas</span>
             </div>
             <div class="hero-stat-item">
-              <span class="hero-stat-number">5+</span
+              <span class="hero-stat-number">8+</span
               ><span class="hero-stat-label">Fabricantes</span>
             </div>
           </div>
 
-          <!-- Grupo direito: marcas 05–08 -->
+          <!-- Grupo único: 8 logos em linha abaixo dos stats -->
           <div class="hero-brands-group">
-            <button
-              onclick="abrirFabricanteModal(5)"
-              class="hero-brand-btn"
-              title="Conheça a história da Gulliver"
-              aria-label="Saiba mais sobre a Gulliver"
-            >
-              <img
-                src="img/marca-05.png"
-                alt="Gulliver"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
+            <button onclick="abrirFabricanteModal(1)" class="hero-brand-btn" title="Conheça a história da Atma" aria-label="Saiba mais sobre a Atma">
+              <img src="img/marca-01.png" alt="Atma" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
             </button>
-            <button
-              onclick="abrirFabricanteModal(6)"
-              class="hero-brand-btn"
-              title="Conheça a história da Grow"
-              aria-label="Saiba mais sobre a Grow"
-            >
-              <img
-                src="img/marca-06.png"
-                alt="Grow"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
+            <button onclick="abrirFabricanteModal(2)" class="hero-brand-btn" title="Conheça a história da Trol" aria-label="Saiba mais sobre a Trol">
+              <img src="img/marca-02.png" alt="Trol" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
             </button>
-            <button
-              onclick="abrirFabricanteModal(7)"
-              class="hero-brand-btn"
-              title="Conheça a história da Tec Toy"
-              aria-label="Saiba mais sobre a Tec Toy"
-            >
-              <img
-                src="img/marca-07.png"
-                alt="Tec Toy"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
+            <button onclick="abrirFabricanteModal(3)" class="hero-brand-btn" title="Conheça a história da Estrela" aria-label="Saiba mais sobre a Estrela">
+              <img src="img/marca-03.png" alt="Estrela" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
             </button>
-            <button
-              onclick="abrirFabricanteModal(8)"
-              class="hero-brand-btn"
-              title="Conheça a história da Bandeirante"
-              aria-label="Saiba mais sobre a Bandeirante"
-            >
-              <img
-                src="img/marca-08.png"
-                alt="Bandeirante"
-                class="hero-brand-logo"
-                loading="lazy"
-                decoding="async"
-                width="128"
-                height="128"
-              />
+            <button onclick="abrirFabricanteModal(4)" class="hero-brand-btn" title="Conheça a história da Glasslite" aria-label="Saiba mais sobre a Glasslite">
+              <img src="img/marca-04.png" alt="Glasslite" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            </button>
+            <button onclick="abrirFabricanteModal(5)" class="hero-brand-btn" title="Conheça a história da Gulliver" aria-label="Saiba mais sobre a Gulliver">
+              <img src="img/marca-05.png" alt="Gulliver" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            </button>
+            <button onclick="abrirFabricanteModal(6)" class="hero-brand-btn" title="Conheça a história da Grow" aria-label="Saiba mais sobre a Grow">
+              <img src="img/marca-06.png" alt="Grow" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            </button>
+            <button onclick="abrirFabricanteModal(7)" class="hero-brand-btn" title="Conheça a história da Tec Toy" aria-label="Saiba mais sobre a Tec Toy">
+              <img src="img/marca-07.png" alt="Tec Toy" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            </button>
+            <button onclick="abrirFabricanteModal(8)" class="hero-brand-btn" title="Conheça a história da Bandeirante" aria-label="Saiba mais sobre a Bandeirante">
+              <img src="img/marca-08.png" alt="Bandeirante" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
             </button>
           </div>
+
         </div>
       </div>
 
