@@ -1465,6 +1465,7 @@ document.addEventListener("click", (e) => {
 async function logOut() {
   await supabaseClient.auth.signOut();
   localStorage.removeItem("retro_avatar");
+  localStorage.setItem("retro_led_boot", "logout");
   window.location.href = window.location.origin;
 }
 
@@ -1755,7 +1756,7 @@ const LED_SPRITES = [
 ];
 
 /* 3.9.5. INICIALIZAÇÃO DO PAINEL */
-function iniciarPainelLED() {
+function iniciarPainelLED(mensagemImediata) {
   const toggle = document.getElementById("ledToggleInput");
   if (toggle) toggle.checked = ledPainelAtivo;
 
@@ -1765,7 +1766,23 @@ function iniciarPainelLED() {
   if (ledPainelAtivo) {
     painel.classList.remove("is-off");
     animarLigar();
-    setTimeout(() => iniciarCicloLED(), 800);
+
+    // Exibe mensagem local imediata (zero latência) enquanto o fetch
+    // do banco aquece — elimina o painel vazio nos cold starts.
+    if (mensagemImediata) {
+      const el = document.getElementById("ledContent");
+      if (el) {
+        el.classList.remove("tilt-mode");
+        el.textContent = mensagemImediata;
+        const duracao = Math.max(10, (mensagemImediata.length * 10 + window.innerWidth) / 80);
+        el.style.animation = "none";
+        el.offsetHeight; // reflow forçado
+        el.style.animation = `ledScroll ${duracao}s linear 1`;
+        el.addEventListener("animationend", () => iniciarCicloLED(), { once: true });
+      }
+    } else {
+      setTimeout(() => iniciarCicloLED(), 800);
+    }
   } else {
     painel.classList.add("is-off");
   }
@@ -2236,6 +2253,8 @@ async function init() {
     data: { session },
   } = await supabaseClient.auth.getSession();
 
+  let _nomeUsuarioBoot = ""; // içado para o escopo do init — usado na mensagem LED
+
   if (session) {
     // 🔴 CHECAGEM DE BANIMENTO NO BOOT
     const { data: banData } = await supabaseClient
@@ -2262,6 +2281,7 @@ async function init() {
       isUserLogged = true;
       document.body.classList.remove("app-unlogged");
       const userName = session.user.user_metadata.full_name || "Player 1";
+      _nomeUsuarioBoot = userName.split(" ")[0]; // primeiro nome para o LED
 
       // 🛡️ AWAIT GARANTIDO: Os Sets de interações DEVEM estar populados
       // antes de fetchBrinquedos(true) ser chamado, caso contrário os filtros
@@ -2292,7 +2312,23 @@ async function init() {
   setupObserver();
   await fetchBrinquedos(true);
   ajustarPainelLED();
-  iniciarPainelLED();
+
+  // 🎬 Detecta o contexto de boot para exibir mensagem imediata no LED
+  // (elimina painel vazio durante cold start do Supabase)
+  const bootFlag = localStorage.getItem("retro_led_boot");
+  localStorage.removeItem("retro_led_boot"); // consome a flag — uso único
+
+  let mensagemBoot;
+  if (bootFlag === "logout") {
+    mensagemBoot = "Até logo — Volte sempre para reviver a magia da infância ✦ RetroBrinquedos BR";
+  } else if (isUserLogged) {
+    const saudacao = _nomeUsuarioBoot ? "Bem-vindo de volta, " + _nomeUsuarioBoot + "!" : "Bem-vindo de volta!";
+    mensagemBoot = saudacao + " ✦ Curta as cartas, marque seus brinquedos e deixe um comentário";
+  } else {
+    mensagemBoot = "Bem-vindo ao RetroBrinquedos BR — O museu dos brinquedos inesquecíveis ✦ Clique em qualquer carta para revelar a ficha Super Trunfo";
+  }
+
+  iniciarPainelLED(mensagemBoot);
 }
 
 function ajustarPainelLED() {
