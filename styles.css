@@ -310,6 +310,8 @@ body {
   .hero-brand-logo {
     width: 56px;
     height: 56px;
+    /* Mobile: sem mouse/hover, logos ficam coloridos permanentemente */
+    filter: grayscale(0%) brightness(1.05);
   }
 }
 .hero-stat-item {
@@ -2830,13 +2832,18 @@ body {
 }
 .trunfo-brand-v2 {
   font-family: "Orbitron", monospace;
-  font-size: 0.42rem;
-  color: rgba(255, 255, 255, 0.45);
-  letter-spacing: 0.12em;
+  font-size: 0.52rem;
+  color: #39ff14;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+/* Desktop: botão ✕ oculto — fechar clicando fora do card */
+.card-back .trunfo-close-v2 {
+  display: none;
 }
 .trunfo-close-v2 {
   background: #8b0000;
@@ -2857,37 +2864,54 @@ body {
   color: #fff;
 }
 
-/* Foto mais alta na v2 — recupera espaço do rodapé compactado */
-.trunfo-stats-area .trunfo-photo-wrapper,
-.trunfo-photo-wrapper {
-  /* mantém regras existentes */
-}
+/* Foto desktop v2 */
 .card-back .trunfo-photo {
-  height: 130px; /* aumentado de 115px */
+  height: 130px;
 }
 
-/* Curiosidade v2 — itálico, sem borda lateral */
+/* stats-area desktop: flex coluna — curiosidade variável, atributos+botões na base */
+.card-back .trunfo-stats-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Curiosidade v2 — área variável desktop */
 .trunfo-curiosidade-v2 {
+  flex: 1;
+  overflow-y: auto;
   padding: 5px 10px;
   font-size: 0.55rem;
-  line-height: 1.5;
+  line-height: 1.55;
   color: rgba(255, 255, 255, 0.5);
   font-style: italic;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  scrollbar-width: thin;
+  scrollbar-color: var(--trunfo-gold) transparent;
 }
+.trunfo-curiosidade-v2::-webkit-scrollbar { width: 3px; }
+.trunfo-curiosidade-v2::-webkit-scrollbar-thumb {
+  background: var(--trunfo-gold);
+  border-radius: 2px;
+}
+
+/* Atributos: flex-shrink:0 — ancorados acima dos botões */
+.card-back .trunfo-stat-row { flex-shrink: 0; }
 
 /* Última linha de atributos — borda dourada separando de EU TIVE */
 .trunfo-stat-last {
   border-bottom: 2px solid var(--trunfo-gold) !important;
 }
 
-/* Linha 15 — EU TIVE | QUERIA TER */
+/* Linha 15 — EU TIVE | QUERIA TER ancorado acima do footer */
 .trunfo-actions-v2 {
   display: flex;
   gap: 6px;
   padding: 5px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   background: #0f0e1e;
+  flex-shrink: 0;
 }
 .action-btn-v2 {
   flex: 1;
