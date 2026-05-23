@@ -360,11 +360,15 @@ async function render(items, append = false) {
           <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
         </div>
         <div class="card-back flex flex-col">
+          <!-- NOVO CARD VERSO v2 — layout Super Trunfo real -->
           <div class="trunfo-header">
-            <div class="trunfo-top-bar">
-              <span>Super Trunfo • RetroBrinquedos</span>
-              <span class="trunfo-code-badge">${trunfoCode}</span>
+            <!-- Linha 1: grid 3 colunas [código | título central | ✕] -->
+            <div class="trunfo-top-bar-v2">
+              <span class="trunfo-code-v2">${trunfoCode}</span>
+              <span class="trunfo-brand-v2">RETROBRINQUEDOS</span>
+              <button class="trunfo-close-v2" onclick="handleFlip('${idNormalizado}'); event.stopPropagation();" title="Fechar">✕</button>
             </div>
+            <!-- Linha 2: estrela + nome do brinquedo -->
             <div class="trunfo-title-area">
               <div class="trunfo-star"></div>
               <span class="trunfo-title-text">${toy.nome}</span>
@@ -376,28 +380,22 @@ async function render(items, append = false) {
               <span class="trunfo-photo-year">${toy.ano}</span>
             </div>
           </div>
-          
+
           <div class="trunfo-stats-area">
+            <!-- Curiosidade em itálico -->
+            <div class="trunfo-curiosidade-v2">"${toy.curiosidade}"</div>
+            <!-- Atributos: label dourado | valor branco -->
             <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${toy.fabricante}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${toy.categoria}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${toy.tema}</span></div>
-            <div class="trunfo-raridade-area">
-              <div class="trunfo-raridade-header">
-                <span class="trunfo-raridade-label">⬡ Raridade</span>
-                <span class="trunfo-raridade-value">${toy.raridade}/10</span>
-              </div>
-              ${ledHTML}
-            </div>
-            <div class="trunfo-curiosidade">"${toy.curiosidade}"</div>
-            
-            <div class="trunfo-actions-area">
-              <button id="btn-tive-${idNormalizado}" class="action-btn ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
-                <span class="action-label">Eu Tive</span>
-                <span class="action-count" id="count-tive-${idNormalizado}">${toy.tive_count || 0}</span>
+            <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${toy.raridade}/10</span></div>
+            <!-- Linha 15: EU TIVE | QUERIA TER -->
+            <div class="trunfo-actions-v2">
+              <button id="btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
+                EU TIVE <span class="action-count-v2" id="count-tive-${idNormalizado}">${toy.tive_count || 0}</span>
               </button>
-              <button id="btn-queria-${idNormalizado}" class="action-btn ${isQueria ? "active-queria" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
-                <span class="action-label">Queria Ter</span>
-                <span class="action-count" id="count-queria-${idNormalizado}">${toy.queria_count || 0}</span>
+              <button id="btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
+                QUERIA TER <span class="action-count-v2" id="count-queria-${idNormalizado}">${toy.queria_count || 0}</span>
               </button>
             </div>
           </div>
@@ -512,13 +510,13 @@ function handleFlip(id) {
     }
   }
 
-  // C3 — Mobile: abre modal centralizado sem flip
+  // C3 — Mobile: abre modal centralizado com proporção de carta real
   if (window.innerWidth < 768) {
     abrirCardVersoMobile(id);
     return;
   }
 
-  // Desktop: flip CSS original preservado
+  // Desktop: flip CSS original preservado integralmente
   const grid = document.getElementById("toyGrid");
   const card = document.getElementById(`card-${id}`);
   const isFlipped = card.classList.contains("is-flipped");
@@ -551,62 +549,29 @@ function handleFlip(id) {
   }
 }
 
-/* ============================================================
-   C3 — MODAL VERSO MOBILE
-   ============================================================ */
-
-let _toastTimer = null;
-
-function mostrarToastModal(mensagem) {
-  const toast = document.getElementById("cardVersoToast");
-  if (!toast) return;
-  clearTimeout(_toastTimer);
-  toast.textContent = "⚡ " + mensagem;
-  toast.classList.remove("hidden");
-  toast.classList.add("card-verso-toast--visible");
-  _toastTimer = setTimeout(() => {
-    toast.classList.remove("card-verso-toast--visible");
-    setTimeout(() => toast.classList.add("hidden"), 300);
-  }, 2500);
-}
-
-// Intercepta dispararTilt quando modal mobile está aberto
-const _dispararTiltOriginal = dispararTilt;
-function dispararTilt(mensagem) {
-  const modal = document.getElementById("cardVersoMobileModal");
-  if (modal && !modal.classList.contains("hidden")) {
-    mostrarToastModal(mensagem);
-    return;
-  }
-  _dispararTiltOriginal(mensagem);
-}
-
+// C3 — Abre o verso do card num modal centralizado no mobile
 function abrirCardVersoMobile(id) {
   const data = allToys.find(
-    (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0")
+    (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0"),
   );
   if (!data) return;
 
   const idNormalizado = String(data.id).padStart(4, "0");
   const urlVersoOtimizada = otimizarUrlCloudinary(data.url_verso, 500);
   const trunfoCode = data.codigo_trunfo || gerarIdSuperTrunfo(data.id);
-  const isTive   = tiveDoUsuario.has(idNormalizado);
+  const isTive = tiveDoUsuario.has(idNormalizado);
   const isQueria = queriaDoUsuario.has(idNormalizado);
-  const isLiked  = curtidasDoUsuario.has(idNormalizado);
+  const isLiked = curtidasDoUsuario.has(idNormalizado);
 
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
 
-  // NOTA: onclick chama diretamente toggleInteracao/toggleCurtida/dispararTilt
-  // As próprias funções verificam a sessão internamente via getSession()
-  // Isso garante que o comportamento é correto independente do estado de login
-  // quando o modal foi aberto.
   box.innerHTML = `
     <div class="trunfo-header">
       <div class="trunfo-top-bar-v2">
         <span class="trunfo-code-v2">${trunfoCode}</span>
         <span class="trunfo-brand-v2">RETROBRINQUEDOS</span>
-        <button class="trunfo-close-v2" onclick="fecharCardVersoMobile()" title="Fechar">&#x2715;</button>
+        <button class="trunfo-close-v2" onclick="fecharCardVersoMobile()" title="Fechar">✕</button>
       </div>
       <div class="trunfo-title-area">
         <div class="trunfo-star"></div>
@@ -620,27 +585,20 @@ function abrirCardVersoMobile(id) {
       </div>
     </div>
     <div class="trunfo-stats-area">
+      <!-- Curiosidade: área variável flex:1 com scroll se necessário -->
       <div class="trunfo-curiosidade-v2">"${data.curiosidade}"</div>
+      <!-- Atributos ancorados na base -->
       <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${data.fabricante}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
       <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
+      <!-- EU TIVE / QUERIA TER ancorados logo acima do footer -->
       <div class="trunfo-actions-v2">
-        <button
-          id="m-btn-tive-${idNormalizado}"
-          class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}"
-          onclick="toggleInteracao(event, '${idNormalizado}', 'tive')"
-        >
-          <span class="action-label-v2">EU TIVE</span>
-          <span class="action-count-v2" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
+        <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
+          EU TIVE <span class="action-count-v2" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
         </button>
-        <button
-          id="m-btn-queria-${idNormalizado}"
-          class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}"
-          onclick="toggleInteracao(event, '${idNormalizado}', 'queria')"
-        >
-          <span class="action-label-v2">QUERIA TER</span>
-          <span class="action-count-v2" id="m-count-queria-${idNormalizado}">${data.queria_count || 0}</span>
+        <button id="m-btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
+          QUERIA TER <span class="action-count-v2" id="m-count-queria-${idNormalizado}">${data.queria_count || 0}</span>
         </button>
       </div>
     </div>
@@ -651,49 +609,52 @@ function abrirCardVersoMobile(id) {
           onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'")}'); fecharCardVersoMobile();"
           title="${isUserLogged ? "Comentar" : "Ver comentários"}"
         >
-          <svg class="tab-icon-svg" viewBox="0 0 24 24"><path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
+          <svg class="tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
         </button>
         <button
           class="footer-tab-btn whatsapp-tab-btn"
           onclick="compartilharWhatsApp(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;")}'); fecharCardVersoMobile();"
           title="Compartilhar no WhatsApp"
         >
-          <svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </button>
         <button
           id="m-heart-btn-${idNormalizado}"
-          class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""}"
-          onclick="toggleCurtida(event, '${idNormalizado}')"
+          class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}"
+          onclick="${isUserLogged ? `toggleCurtida(event, '${idNormalizado}')` : `mostrarMensagemLED('Faça login para curtir!');`}"
           title="${isUserLogged ? "Curtir" : "Faça login para curtir"}"
         >
-          <svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+          <svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
           <span class="tab-count" id="m-count-${idNormalizado}">${data.curtidas_count || 0}</span>
         </button>
       </div>
     </div>`;
 
-  // Efeito sutil no card frente
-  const cardEl = document.getElementById(`card-${String(id).padStart(4, "0")}`);
-  if (cardEl) {
-    cardEl.style.transition = "opacity 0.15s ease, transform 0.15s ease";
-    cardEl.style.opacity = "0.4";
-    cardEl.style.transform = "scale(0.97)";
-    setTimeout(() => {
-      cardEl.style.opacity = "";
-      cardEl.style.transform = "";
-      cardEl.style.transition = "";
-    }, 320);
-  }
-
   const modal = document.getElementById("cardVersoMobileModal");
   if (modal) {
+    // 2 — Efeito de saída no card frente: leve fade+scale antes do modal abrir
+    const cardEl = document.getElementById(
+      `card-${String(id).padStart(4, "0")}`,
+    );
+    if (cardEl) {
+      cardEl.style.transition = "opacity 0.15s ease, transform 0.15s ease";
+      cardEl.style.opacity = "0.4";
+      cardEl.style.transform = "scale(0.97)";
+      setTimeout(() => {
+        cardEl.style.opacity = "";
+        cardEl.style.transform = "";
+        cardEl.style.transition = "";
+      }, 320);
+    }
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
   }
 }
 
 function fecharCardVersoMobile(event) {
-  if (event && event.target !== document.getElementById("cardVersoMobileModal")) return;
+  // Se clicou no box interno, não fecha
+  if (event && event.target !== document.getElementById("cardVersoMobileModal"))
+    return;
   const modal = document.getElementById("cardVersoMobileModal");
   if (modal) modal.classList.add("hidden");
   document.body.style.overflow = "";
@@ -869,14 +830,14 @@ async function abrirDrawerComentarios(event, id, nome) {
     '<p class="drawer-loading">Carregando...</p>';
 
   // Bloco F — controla visibilidade do input vs banner de login
-  const inputArea  = document.getElementById("drawerInputArea");
+  const inputArea = document.getElementById("drawerInputArea");
   const loginBanner = document.getElementById("drawerLoginBanner");
   if (isUserLogged) {
-    if (inputArea)   inputArea.classList.remove("hidden");
+    if (inputArea) inputArea.classList.remove("hidden");
     if (loginBanner) loginBanner.classList.add("hidden");
     document.getElementById("drawerComentarioInput").value = "";
   } else {
-    if (inputArea)   inputArea.classList.add("hidden");
+    if (inputArea) inputArea.classList.add("hidden");
     if (loginBanner) loginBanner.classList.remove("hidden");
   }
 
@@ -1132,11 +1093,11 @@ let debounceTimer = null;
 // ── Sanitização XSS: remove tags HTML e caracteres perigosos do termo de busca
 function sanitizarBusca(valor) {
   return valor
-    .replace(/[<>"'`]/g, "")   // remove caracteres de injeção HTML/JS
-    .replace(/\s+/g, " ")       // colapsa espaços múltiplos
+    .replace(/[<>"'`]/g, "") // remove caracteres de injeção HTML/JS
+    .replace(/\s+/g, " ") // colapsa espaços múltiplos
     .trim()
     .toLowerCase()
-    .slice(0, 60);              // limita tamanho máximo
+    .slice(0, 60); // limita tamanho máximo
 }
 
 // ── Núcleo da busca — compartilhado entre debounce e botão de busca forçada
@@ -1174,7 +1135,7 @@ async function _executarBusca(term) {
   hasMais = true;
 
   // Pausa para o scroll iniciar antes do grid esvaziar
-  await new Promise(resolve => setTimeout(resolve, 80));
+  await new Promise((resolve) => setTimeout(resolve, 80));
 
   await fetchBrinquedos(true);
 }
@@ -1302,22 +1263,24 @@ function handleCoinSelect(btn, provider) {
   // o vínculo direto com o gesto de clique exigido pelo Safari/Chrome mobile.
   // Google e X continuam no setTimeout (popup funciona neles).
   if (provider === "facebook" && isMobile) {
-    supabaseClient.auth.signInWithOAuth({
-      provider: "facebook",
-      options: {
-        redirectTo: window.location.origin + window.location.pathname,
-        skipBrowserRedirect: true,
-        queryParams: { display: "page" },
-      },
-    }).then(({ data, error }) => {
-      if (error) {
-        console.error("Erro Facebook mobile:", error);
-        mostrarMensagemLED("ERRO NO SLOT FACEBOOK");
-        btn.classList.remove("coin-inserted");
-        return;
-      }
-      if (data?.url) window.location.href = data.url;
-    });
+    supabaseClient.auth
+      .signInWithOAuth({
+        provider: "facebook",
+        options: {
+          redirectTo: window.location.origin + window.location.pathname,
+          skipBrowserRedirect: true,
+          queryParams: { display: "page" },
+        },
+      })
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Erro Facebook mobile:", error);
+          mostrarMensagemLED("ERRO NO SLOT FACEBOOK");
+          btn.classList.remove("coin-inserted");
+          return;
+        }
+        if (data?.url) window.location.href = data.url;
+      });
     return; // sai da função — não entra no setTimeout abaixo
   }
 
@@ -1338,7 +1301,6 @@ function handleCoinSelect(btn, provider) {
       if (isMobile && data?.url) {
         window.location.href = data.url;
       }
-
     } catch (err) {
       console.error(`Erro na autenticação via moeda (${provider}):`, err);
       if (typeof mostrarMensagemLED === "function") {
@@ -1983,7 +1945,7 @@ function dispararTilt(mensagem) {
   }, intervalo);
 }
 
-/* 3.9.11. EFEITO GLITCH */
+/* 3.9.11. EFEITO GLITCH! */
 function dispararGlitch(duracao = 4000) {
   const painel = document.getElementById("ledPanel");
   if (!painel) return;
@@ -2343,7 +2305,6 @@ function fecharFabricanteModal() {
   }
 }
 
-
 // ============================================================
 // Item 11 — FORMULÁRIO ARCADE DE SUGESTÃO DE BRINQUEDO
 // EmailJS: service_v7nw2eu / template_o5kwy8p / public key: 03eueUb3Hz_PxWXj2
@@ -2393,9 +2354,9 @@ function _sugestaoResetUI() {
     feedback.textContent = "";
     feedback.className = "hidden sugestao-feedback mb-4";
   }
-  const btn   = document.getElementById("sugestaoEnviarBtn");
+  const btn = document.getElementById("sugestaoEnviarBtn");
   const label = document.getElementById("sugestaoEnviarLabel");
-  if (btn)   btn.disabled = false;
+  if (btn) btn.disabled = false;
   if (label) label.textContent = "▶ ENVIAR SUGESTÃO";
 }
 
@@ -2409,15 +2370,19 @@ async function enviarSugestao() {
     return;
   }
 
-  const nome       = (document.getElementById("sug_nome")?.value       || "").trim();
-  const fabricante = (document.getElementById("sug_fabricante")?.value || "").trim();
-  const ano        = (document.getElementById("sug_ano")?.value        || "").trim();
-  const categoria  = (document.getElementById("sug_categoria")?.value  || "").trim();
-  const tema       = (document.getElementById("sug_tema")?.value       || "").trim();
-  const link       = (document.getElementById("sug_link")?.value       || "").trim();
-  const obs        = (document.getElementById("sug_obs")?.value        || "").trim();
+  const nome = (document.getElementById("sug_nome")?.value || "").trim();
+  const fabricante = (
+    document.getElementById("sug_fabricante")?.value || ""
+  ).trim();
+  const ano = (document.getElementById("sug_ano")?.value || "").trim();
+  const categoria = (
+    document.getElementById("sug_categoria")?.value || ""
+  ).trim();
+  const tema = (document.getElementById("sug_tema")?.value || "").trim();
+  const link = (document.getElementById("sug_link")?.value || "").trim();
+  const obs = (document.getElementById("sug_obs")?.value || "").trim();
 
-  const btn   = document.getElementById("sugestaoEnviarBtn");
+  const btn = document.getElementById("sugestaoEnviarBtn");
   const label = document.getElementById("sugestaoEnviarLabel");
 
   // Validação: nome obrigatório
@@ -2440,54 +2405,63 @@ async function enviarSugestao() {
   btn.disabled = true;
   label.textContent = "⏳ ENVIANDO...";
 
-  const usuarioNome = userLogado.user_metadata?.full_name || userLogado.email || "Usuário";
+  const usuarioNome =
+    userLogado.user_metadata?.full_name || userLogado.email || "Usuário";
 
   try {
     // 1. Persistir no Supabase (tabela sugestoes)
-    const { error: dbError } = await supabaseClient
-      .from("sugestoes")
-      .insert({
-        usuario_id:      userLogado.id,
-        usuario_nome:    usuarioNome,
-        nome_brinquedo:  nome,
-        fabricante:      fabricante || null,
-        ano:             ano        || null,
-        categoria:       categoria  || null,
-        tema:            tema       || null,
-        link_referencia: link       || null,
-        observacao:      obs        || null,
-        status:          "pendente",
-      });
+    const { error: dbError } = await supabaseClient.from("sugestoes").insert({
+      usuario_id: userLogado.id,
+      usuario_nome: usuarioNome,
+      nome_brinquedo: nome,
+      fabricante: fabricante || null,
+      ano: ano || null,
+      categoria: categoria || null,
+      tema: tema || null,
+      link_referencia: link || null,
+      observacao: obs || null,
+      status: "pendente",
+    });
 
     if (dbError) throw dbError;
 
     // 2. Disparar e-mail via EmailJS
     await emailjs.send("service_v7nw2eu", "template_o5kwy8p", {
-      usuario_nome:    usuarioNome,
-      nome_brinquedo:  nome,
-      fabricante:      fabricante  || "—",
-      ano:             ano         || "—",
-      categoria:       categoria   || "—",
-      tema:            tema        || "—",
-      link_referencia: link        || "—",
-      observacao:      obs         || "—",
+      usuario_nome: usuarioNome,
+      nome_brinquedo: nome,
+      fabricante: fabricante || "—",
+      ano: ano || "—",
+      categoria: categoria || "—",
+      tema: tema || "—",
+      link_referencia: link || "—",
+      observacao: obs || "—",
     });
 
     _sugestaoMostrarFeedback(
       "✔ SUGESTÃO ENVIADA! Obrigado, " + usuarioNome.split(" ")[0] + "!",
-      "sucesso"
+      "sucesso",
     );
     label.textContent = "✔ ENVIADO";
 
     // Limpa campos após sucesso
-    ["sug_nome","sug_fabricante","sug_ano","sug_categoria","sug_tema","sug_link","sug_obs"]
-      .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+    [
+      "sug_nome",
+      "sug_fabricante",
+      "sug_ano",
+      "sug_categoria",
+      "sug_tema",
+      "sug_link",
+      "sug_obs",
+    ].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
 
     setTimeout(() => {
       fecharSugestaoModal();
       // H1 — limpa busca e recarrega grid após envio bem-sucedido
       const searchInput = document.getElementById("searchInput");
-      const clearBtn    = document.getElementById("clearSearchBtn");
+      const clearBtn = document.getElementById("clearSearchBtn");
       if (searchInput) {
         searchInput.value = "";
         buscaAtiva = "";
@@ -2495,7 +2469,6 @@ async function enviarSugestao() {
       }
       fetchBrinquedos(true);
     }, 2800);
-
   } catch (err) {
     console.error("Erro ao enviar sugestão:", err);
     _sugestaoMostrarFeedback("✖ ERRO AO ENVIAR. Tente novamente.", "erro");
@@ -2520,7 +2493,6 @@ document.addEventListener("keydown", (e) => {
     fecharFabricanteModal();
   }
 });
-
 
 init();
 

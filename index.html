@@ -43,7 +43,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
     <!-- Item 4 — preconnect ao próprio origin para que o browser abra o
-         canal TCP/TLS com antecedência antes de requisitar os avatares -->
+         canal TCP/TLS com antecedência antes de requisitar os avatares. -->
     <link
       rel="preconnect"
       href="https://retro-brinquedos.vercel.app"
@@ -94,7 +94,8 @@
         class="flex items-center gap-3 md:gap-5 flex-grow md:flex-1 order-4 md:order-2 shrink-0 md:shrink"
       >
         <div class="led-toggle-wrapper shrink-0" title="Painel LED on/off">
-          <span class="led-toggle-label text-[0.45rem] md:text-[0.5rem] text-white/90"
+          <span
+            class="led-toggle-label text-[0.45rem] md:text-[0.5rem] text-white/90"
             >DISPLAY</span
           >
           <label class="switch scale-90 md:scale-100 origin-bottom">
@@ -144,8 +145,18 @@
             title="Buscar"
             aria-label="Buscar"
           >
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
           </button>
         </div>
@@ -224,7 +235,6 @@
 
         <!-- B4 — Novo layout: stats acima, 8 logos em linha única abaixo -->
         <div class="hero-brands-wrapper">
-
           <!-- Stats — linha única acima dos logos -->
           <div class="hero-stats">
             <div class="hero-stat-item">
@@ -243,32 +253,135 @@
 
           <!-- Grupo único: 8 logos em linha abaixo dos stats -->
           <div class="hero-brands-group">
-            <button onclick="abrirFabricanteModal(1)" class="hero-brand-btn" title="Conheça a história da Atma" aria-label="Saiba mais sobre a Atma">
-              <img src="img/marca-01.png" alt="Atma" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            <button
+              onclick="abrirFabricanteModal(1)"
+              class="hero-brand-btn"
+              title="Conheça a história da Atma"
+              aria-label="Saiba mais sobre a Atma"
+            >
+              <img
+                src="img/marca-01.png"
+                alt="Atma"
+                class="hero-brand-logo"
+                loading="lazy"
+                decoding="async"
+                width="128"
+                height="128"
+              />
             </button>
-            <button onclick="abrirFabricanteModal(2)" class="hero-brand-btn" title="Conheça a história da Trol" aria-label="Saiba mais sobre a Trol">
-              <img src="img/marca-02.png" alt="Trol" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            <button
+              onclick="abrirFabricanteModal(2)"
+              class="hero-brand-btn"
+              title="Conheça a história da Trol"
+              aria-label="Saiba mais sobre a Trol"
+            >
+              <img
+                src="img/marca-02.png"
+                alt="Trol"
+                class="hero-brand-logo"
+                loading="lazy"
+                decoding="async"
+                width="128"
+                height="128"
+              />
             </button>
-            <button onclick="abrirFabricanteModal(3)" class="hero-brand-btn" title="Conheça a história da Estrela" aria-label="Saiba mais sobre a Estrela">
-              <img src="img/marca-03.png" alt="Estrela" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            <button
+              onclick="abrirFabricanteModal(3)"
+              class="hero-brand-btn"
+              title="Conheça a história da Estrela"
+              aria-label="Saiba mais sobre a Estrela"
+            >
+              <img
+                src="img/marca-03.png"
+                alt="Estrela"
+                class="hero-brand-logo"
+                loading="lazy"
+                decoding="async"
+                width="128"
+                height="128"
+              />
             </button>
-            <button onclick="abrirFabricanteModal(4)" class="hero-brand-btn" title="Conheça a história da Glasslite" aria-label="Saiba mais sobre a Glasslite">
-              <img src="img/marca-04.png" alt="Glasslite" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            <button
+              onclick="abrirFabricanteModal(4)"
+              class="hero-brand-btn"
+              title="Conheça a história da Glasslite"
+              aria-label="Saiba mais sobre a Glasslite"
+            >
+              <img
+                src="img/marca-04.png"
+                alt="Glasslite"
+                class="hero-brand-logo"
+                loading="lazy"
+                decoding="async"
+                width="128"
+                height="128"
+              />
             </button>
-            <button onclick="abrirFabricanteModal(5)" class="hero-brand-btn" title="Conheça a história da Gulliver" aria-label="Saiba mais sobre a Gulliver">
-              <img src="img/marca-05.png" alt="Gulliver" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            <button
+              onclick="abrirFabricanteModal(5)"
+              class="hero-brand-btn"
+              title="Conheça a história da Gulliver"
+              aria-label="Saiba mais sobre a Gulliver"
+            >
+              <img
+                src="img/marca-05.png"
+                alt="Gulliver"
+                class="hero-brand-logo"
+                loading="lazy"
+                decoding="async"
+                width="128"
+                height="128"
+              />
             </button>
-            <button onclick="abrirFabricanteModal(6)" class="hero-brand-btn" title="Conheça a história da Grow" aria-label="Saiba mais sobre a Grow">
-              <img src="img/marca-06.png" alt="Grow" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            <button
+              onclick="abrirFabricanteModal(6)"
+              class="hero-brand-btn"
+              title="Conheça a história da Grow"
+              aria-label="Saiba mais sobre a Grow"
+            >
+              <img
+                src="img/marca-06.png"
+                alt="Grow"
+                class="hero-brand-logo"
+                loading="lazy"
+                decoding="async"
+                width="128"
+                height="128"
+              />
             </button>
-            <button onclick="abrirFabricanteModal(7)" class="hero-brand-btn" title="Conheça a história da Tec Toy" aria-label="Saiba mais sobre a Tec Toy">
-              <img src="img/marca-07.png" alt="Tec Toy" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            <button
+              onclick="abrirFabricanteModal(7)"
+              class="hero-brand-btn"
+              title="Conheça a história da Tec Toy"
+              aria-label="Saiba mais sobre a Tec Toy"
+            >
+              <img
+                src="img/marca-07.png"
+                alt="Tec Toy"
+                class="hero-brand-logo"
+                loading="lazy"
+                decoding="async"
+                width="128"
+                height="128"
+              />
             </button>
-            <button onclick="abrirFabricanteModal(8)" class="hero-brand-btn" title="Conheça a história da Bandeirante" aria-label="Saiba mais sobre a Bandeirante">
-              <img src="img/marca-08.png" alt="Bandeirante" class="hero-brand-logo" loading="lazy" decoding="async" width="128" height="128" />
+            <button
+              onclick="abrirFabricanteModal(8)"
+              class="hero-brand-btn"
+              title="Conheça a história da Bandeirante"
+              aria-label="Saiba mais sobre a Bandeirante"
+            >
+              <img
+                src="img/marca-08.png"
+                alt="Bandeirante"
+                class="hero-brand-logo"
+                loading="lazy"
+                decoding="async"
+                width="128"
+                height="128"
+              />
             </button>
           </div>
-
         </div>
       </div>
 
@@ -404,7 +517,10 @@
           >
             <!-- B3 — cada moeda tem wrapper com label identificador -->
             <div class="coin-slot">
-              <button class="coin-btn" onclick="handleCoinSelect(this, 'google')">
+              <button
+                class="coin-btn"
+                onclick="handleCoinSelect(this, 'google')"
+              >
                 <img
                   src="/img/google_coin.png"
                   alt="Google Login"
@@ -447,7 +563,7 @@
           </div>
           <p
             class="font-orbitron text-[0.65rem] tracking-widest uppercase mt-4"
-            style="color: #f0c040;"
+            style="color: #f0c040"
           >
             Insira a ficha para fazer login
           </p>
@@ -456,9 +572,21 @@
           <div class="lgpd-consent-bar">
             <p class="lgpd-consent-text">
               Ao fazer login, você concorda com os
-              <a href="/terms.html" target="_blank" rel="noopener" class="lgpd-consent-link">Termos de Serviço</a>
+              <a
+                href="/terms.html"
+                target="_blank"
+                rel="noopener"
+                class="lgpd-consent-link"
+                >Termos de Serviço</a
+              >
               e a
-              <a href="/privacy.html" target="_blank" rel="noopener" class="lgpd-consent-link">Política de Privacidade</a>
+              <a
+                href="/privacy.html"
+                target="_blank"
+                rel="noopener"
+                class="lgpd-consent-link"
+                >Política de Privacidade</a
+              >
             </p>
             <p class="lgpd-consent-badges">
               <span>✓ sem anúncios</span>
@@ -467,7 +595,6 @@
             </p>
           </div>
           <!-- /B5 -->
-
         </div>
 
         <div
@@ -486,7 +613,7 @@
           ></div>
           <p
             class="font-orbitron text-[0.6rem] uppercase animate-pulse"
-            style="color: #f0c040;"
+            style="color: #f0c040"
           >
             Aguardando seleção do Player 1 ...
           </p>
@@ -620,7 +747,9 @@
             onclick="fecharSugestaoModal()"
             class="modal-close-btn"
             aria-label="Fechar"
-          >&times;</button>
+          >
+            &times;
+          </button>
         </div>
 
         <p
@@ -757,7 +886,9 @@
             onclick="fecharDisclaimerModal()"
             class="modal-close-btn"
             aria-label="Fechar"
-          >&times;</button>
+          >
+            &times;
+          </button>
         </div>
         <div
           class="disclaimer-modal-body space-y-3 text-slate-300 text-sm leading-relaxed"
@@ -825,7 +956,9 @@
             onclick="fecharFabricanteModal()"
             class="modal-close-btn"
             aria-label="Fechar"
-          >&times;</button>
+          >
+            &times;
+          </button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -870,7 +1003,9 @@
             onclick="fecharFabricanteModal()"
             class="modal-close-btn"
             aria-label="Fechar"
-          >&times;</button>
+          >
+            &times;
+          </button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -915,7 +1050,9 @@
             onclick="fecharFabricanteModal()"
             class="modal-close-btn"
             aria-label="Fechar"
-          >&times;</button>
+          >
+            &times;
+          </button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -960,7 +1097,9 @@
             onclick="fecharFabricanteModal()"
             class="modal-close-btn"
             aria-label="Fechar"
-          >&times;</button>
+          >
+            &times;
+          </button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -1005,7 +1144,9 @@
             onclick="fecharFabricanteModal()"
             class="modal-close-btn"
             aria-label="Fechar"
-          >&times;</button>
+          >
+            &times;
+          </button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -1050,7 +1191,9 @@
             onclick="fecharFabricanteModal()"
             class="modal-close-btn"
             aria-label="Fechar"
-          >&times;</button>
+          >
+            &times;
+          </button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -1095,7 +1238,9 @@
             onclick="fecharFabricanteModal()"
             class="modal-close-btn"
             aria-label="Fechar"
-          >&times;</button>
+          >
+            &times;
+          </button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -1140,7 +1285,9 @@
             onclick="fecharFabricanteModal()"
             class="modal-close-btn"
             aria-label="Fechar"
-          >&times;</button>
+          >
+            &times;
+          </button>
         </div>
         <div class="flex flex-col items-center gap-4">
           <img
@@ -1165,17 +1312,29 @@
       </div>
     </div>
     <!-- /H4 H5 -->
-  
-    <!-- C3 — MODAL VERSO MOBILE -->
+
+    <!-- ============================================================
+         MODAL VERSO MOBILE — card Super Trunfo centralizado
+         Aberto por handleFlip() em viewport < 768px
+         ============================================================ -->
     <div
       id="cardVersoMobileModal"
       class="hidden fixed inset-0 z-[400] flex items-center justify-center p-4"
-      style="background:rgba(0,0,0,0.88);backdrop-filter:blur(4px);touch-action:manipulation;"
+      style="
+        background: rgba(0, 0, 0, 0.88);
+        backdrop-filter: blur(4px);
+        touch-action: manipulation;
+      "
       onclick="fecharCardVersoMobile(event)"
     >
-      <div id="cardVersoMobileBox" class="card-verso-mobile-box" onclick="event.stopPropagation()">
+      <div
+        id="cardVersoMobileBox"
+        class="card-verso-mobile-box"
+        onclick="event.stopPropagation()"
+      >
+        <!-- conteúdo injetado por JS -->
       </div>
-      <div id="cardVersoToast" class="card-verso-toast hidden"></div>
     </div>
-</body>
+    <!-- /modal verso mobile -->
+  </body>
 </html>
