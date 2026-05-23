@@ -434,7 +434,7 @@ body {
     height: 36px;
   }
   .led-content {
-    font-size: 14px;
+    font-size: 28px;
     line-height: 36px;
   }
 }
@@ -1435,8 +1435,7 @@ body {
   }
 }
 
-/* Mobile: painel um pouco menor */
-/* Aumentei o tamanho do painel LED  24 -> 36 e 11 -> 14*/
+/* Mobile: painel LED — override de consistência */
 @media (max-width: 767px) {
   :root {
     --led-height: 36px;
@@ -1445,7 +1444,7 @@ body {
     height: 36px;
   }
   .led-content {
-    font-size: 14px;
+    font-size: 28px;
     font-weight: 400;
     line-height: 36px;
   }
@@ -1801,22 +1800,22 @@ body {
 /* ✏️ PONTO DE TROCA DE FONTE DO LED — edite apenas aqui */
 @font-face {
   font-family: "LEDDisplay";
-  /* 📁 Coloque o arquivo em /fonts/BoldLED.ttf na raiz do projeto */
-  src: url("/fonts/BoldLED.ttf") format("truetype");
+  /* 📁 Arquivo em /fonts/advanced_led_board-7.ttf na raiz do projeto */
+  src: url("/fonts/advanced_led_board-7.ttf") format("truetype");
   font-display: swap;
 }
 
-/* Desktop: fonte LED + tamanho ajustado para preencher a altura sem espaço vazio */
+/* Desktop: fonte LED máxima respeitando 2px acima e abaixo do painel (42px).
+   Espaço útil = 38px. Cap-height ~75% → font-size 34px ≈ 25px de glifo visível */
 .led-content {
-  font-family:
-    "LEDDisplay", "Courier New", monospace; /* ← troque "LEDDisplay" para testar outra fonte */
-  font-size: 20px;
+  font-family: "LEDDisplay", "Courier New", monospace;
+  font-size: 34px;
   font-weight: 400;
   letter-spacing: 0.12em;
   line-height: 42px; /* igual à altura do painel no desktop */
 }
 
-/* Mobile: +50% de altura + fonte maior + line-height proporcional */
+/* Mobile: painel 36px → espaço útil 32px → font-size 28px */
 @media (max-width: 767px) {
   :root {
     --led-height: 36px; /* era 24px → +50% = 36px */
@@ -1825,7 +1824,7 @@ body {
     height: 36px;
   }
   .led-content {
-    font-size: 14px;
+    font-size: 28px;
     line-height: 36px; /* acompanha a nova altura */
   }
 }
