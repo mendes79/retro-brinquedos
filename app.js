@@ -552,16 +552,16 @@ function handleFlip(id) {
 // C3 — Abre o verso do card num modal centralizado no mobile
 function abrirCardVersoMobile(id) {
   const data = allToys.find(
-    (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0"),
+    (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0")
   );
   if (!data) return;
 
   const idNormalizado = String(data.id).padStart(4, "0");
   const urlVersoOtimizada = otimizarUrlCloudinary(data.url_verso, 500);
   const trunfoCode = data.codigo_trunfo || gerarIdSuperTrunfo(data.id);
-  const isTive = tiveDoUsuario.has(idNormalizado);
+  const isTive   = tiveDoUsuario.has(idNormalizado);
   const isQueria = queriaDoUsuario.has(idNormalizado);
-  const isLiked = curtidasDoUsuario.has(idNormalizado);
+  const isLiked  = curtidasDoUsuario.has(idNormalizado);
 
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
@@ -621,7 +621,7 @@ function abrirCardVersoMobile(id) {
         <button
           id="m-heart-btn-${idNormalizado}"
           class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}"
-          onclick="${isUserLogged ? `toggleCurtida(event, '${idNormalizado}')` : `mostrarMensagemLED('Faça login para curtir!');`}"
+          onclick="${isUserLogged ? `toggleCurtida(event, '${idNormalizado}')` : `mostrarToastModal('FAÇA LOGIN PARA CURTIR');`}"
           title="${isUserLogged ? "Curtir" : "Faça login para curtir"}"
         >
           <svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
@@ -633,9 +633,7 @@ function abrirCardVersoMobile(id) {
   const modal = document.getElementById("cardVersoMobileModal");
   if (modal) {
     // 2 — Efeito de saída no card frente: leve fade+scale antes do modal abrir
-    const cardEl = document.getElementById(
-      `card-${String(id).padStart(4, "0")}`,
-    );
+    const cardEl = document.getElementById(`card-${String(id).padStart(4, "0")}`);
     if (cardEl) {
       cardEl.style.transition = "opacity 0.15s ease, transform 0.15s ease";
       cardEl.style.opacity = "0.4";
@@ -651,10 +649,35 @@ function abrirCardVersoMobile(id) {
   }
 }
 
+// Toast de feedback dentro do modal — substitui LED coberto pelo overlay
+let _toastTimer = null;
+function mostrarToastModal(mensagem) {
+  const toast = document.getElementById("cardVersoToast");
+  if (!toast) return;
+  clearTimeout(_toastTimer);
+  toast.textContent = "⚡ " + mensagem;
+  toast.classList.remove("hidden");
+  toast.classList.add("card-verso-toast--visible");
+  _toastTimer = setTimeout(() => {
+    toast.classList.remove("card-verso-toast--visible");
+    setTimeout(() => toast.classList.add("hidden"), 300);
+  }, 2500);
+}
+
+// Intercepta dispararTilt (toggleInteracao/toggleCurtida) quando modal mobile está aberto
+const _dispararTiltOriginal = dispararTilt;
+function dispararTilt(mensagem) {
+  const modal = document.getElementById("cardVersoMobileModal");
+  if (modal && !modal.classList.contains("hidden")) {
+    mostrarToastModal(mensagem);
+    return;
+  }
+  _dispararTiltOriginal(mensagem);
+}
+
 function fecharCardVersoMobile(event) {
   // Se clicou no box interno, não fecha
-  if (event && event.target !== document.getElementById("cardVersoMobileModal"))
-    return;
+  if (event && event.target !== document.getElementById("cardVersoMobileModal")) return;
   const modal = document.getElementById("cardVersoMobileModal");
   if (modal) modal.classList.add("hidden");
   document.body.style.overflow = "";
@@ -830,14 +853,14 @@ async function abrirDrawerComentarios(event, id, nome) {
     '<p class="drawer-loading">Carregando...</p>';
 
   // Bloco F — controla visibilidade do input vs banner de login
-  const inputArea = document.getElementById("drawerInputArea");
+  const inputArea  = document.getElementById("drawerInputArea");
   const loginBanner = document.getElementById("drawerLoginBanner");
   if (isUserLogged) {
-    if (inputArea) inputArea.classList.remove("hidden");
+    if (inputArea)   inputArea.classList.remove("hidden");
     if (loginBanner) loginBanner.classList.add("hidden");
     document.getElementById("drawerComentarioInput").value = "";
   } else {
-    if (inputArea) inputArea.classList.add("hidden");
+    if (inputArea)   inputArea.classList.add("hidden");
     if (loginBanner) loginBanner.classList.remove("hidden");
   }
 
@@ -1093,11 +1116,11 @@ let debounceTimer = null;
 // ── Sanitização XSS: remove tags HTML e caracteres perigosos do termo de busca
 function sanitizarBusca(valor) {
   return valor
-    .replace(/[<>"'`]/g, "") // remove caracteres de injeção HTML/JS
-    .replace(/\s+/g, " ") // colapsa espaços múltiplos
+    .replace(/[<>"'`]/g, "")   // remove caracteres de injeção HTML/JS
+    .replace(/\s+/g, " ")       // colapsa espaços múltiplos
     .trim()
     .toLowerCase()
-    .slice(0, 60); // limita tamanho máximo
+    .slice(0, 60);              // limita tamanho máximo
 }
 
 // ── Núcleo da busca — compartilhado entre debounce e botão de busca forçada
@@ -1135,7 +1158,7 @@ async function _executarBusca(term) {
   hasMais = true;
 
   // Pausa para o scroll iniciar antes do grid esvaziar
-  await new Promise((resolve) => setTimeout(resolve, 80));
+  await new Promise(resolve => setTimeout(resolve, 80));
 
   await fetchBrinquedos(true);
 }
@@ -1263,24 +1286,22 @@ function handleCoinSelect(btn, provider) {
   // o vínculo direto com o gesto de clique exigido pelo Safari/Chrome mobile.
   // Google e X continuam no setTimeout (popup funciona neles).
   if (provider === "facebook" && isMobile) {
-    supabaseClient.auth
-      .signInWithOAuth({
-        provider: "facebook",
-        options: {
-          redirectTo: window.location.origin + window.location.pathname,
-          skipBrowserRedirect: true,
-          queryParams: { display: "page" },
-        },
-      })
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("Erro Facebook mobile:", error);
-          mostrarMensagemLED("ERRO NO SLOT FACEBOOK");
-          btn.classList.remove("coin-inserted");
-          return;
-        }
-        if (data?.url) window.location.href = data.url;
-      });
+    supabaseClient.auth.signInWithOAuth({
+      provider: "facebook",
+      options: {
+        redirectTo: window.location.origin + window.location.pathname,
+        skipBrowserRedirect: true,
+        queryParams: { display: "page" },
+      },
+    }).then(({ data, error }) => {
+      if (error) {
+        console.error("Erro Facebook mobile:", error);
+        mostrarMensagemLED("ERRO NO SLOT FACEBOOK");
+        btn.classList.remove("coin-inserted");
+        return;
+      }
+      if (data?.url) window.location.href = data.url;
+    });
     return; // sai da função — não entra no setTimeout abaixo
   }
 
@@ -1301,6 +1322,7 @@ function handleCoinSelect(btn, provider) {
       if (isMobile && data?.url) {
         window.location.href = data.url;
       }
+
     } catch (err) {
       console.error(`Erro na autenticação via moeda (${provider}):`, err);
       if (typeof mostrarMensagemLED === "function") {
@@ -1945,7 +1967,7 @@ function dispararTilt(mensagem) {
   }, intervalo);
 }
 
-/* 3.9.11. EFEITO GLITCH! */
+/* 3.9.11. EFEITO GLITCH */
 function dispararGlitch(duracao = 4000) {
   const painel = document.getElementById("ledPanel");
   if (!painel) return;
@@ -2305,6 +2327,7 @@ function fecharFabricanteModal() {
   }
 }
 
+
 // ============================================================
 // Item 11 — FORMULÁRIO ARCADE DE SUGESTÃO DE BRINQUEDO
 // EmailJS: service_v7nw2eu / template_o5kwy8p / public key: 03eueUb3Hz_PxWXj2
@@ -2354,9 +2377,9 @@ function _sugestaoResetUI() {
     feedback.textContent = "";
     feedback.className = "hidden sugestao-feedback mb-4";
   }
-  const btn = document.getElementById("sugestaoEnviarBtn");
+  const btn   = document.getElementById("sugestaoEnviarBtn");
   const label = document.getElementById("sugestaoEnviarLabel");
-  if (btn) btn.disabled = false;
+  if (btn)   btn.disabled = false;
   if (label) label.textContent = "▶ ENVIAR SUGESTÃO";
 }
 
@@ -2370,19 +2393,15 @@ async function enviarSugestao() {
     return;
   }
 
-  const nome = (document.getElementById("sug_nome")?.value || "").trim();
-  const fabricante = (
-    document.getElementById("sug_fabricante")?.value || ""
-  ).trim();
-  const ano = (document.getElementById("sug_ano")?.value || "").trim();
-  const categoria = (
-    document.getElementById("sug_categoria")?.value || ""
-  ).trim();
-  const tema = (document.getElementById("sug_tema")?.value || "").trim();
-  const link = (document.getElementById("sug_link")?.value || "").trim();
-  const obs = (document.getElementById("sug_obs")?.value || "").trim();
+  const nome       = (document.getElementById("sug_nome")?.value       || "").trim();
+  const fabricante = (document.getElementById("sug_fabricante")?.value || "").trim();
+  const ano        = (document.getElementById("sug_ano")?.value        || "").trim();
+  const categoria  = (document.getElementById("sug_categoria")?.value  || "").trim();
+  const tema       = (document.getElementById("sug_tema")?.value       || "").trim();
+  const link       = (document.getElementById("sug_link")?.value       || "").trim();
+  const obs        = (document.getElementById("sug_obs")?.value        || "").trim();
 
-  const btn = document.getElementById("sugestaoEnviarBtn");
+  const btn   = document.getElementById("sugestaoEnviarBtn");
   const label = document.getElementById("sugestaoEnviarLabel");
 
   // Validação: nome obrigatório
@@ -2405,63 +2424,54 @@ async function enviarSugestao() {
   btn.disabled = true;
   label.textContent = "⏳ ENVIANDO...";
 
-  const usuarioNome =
-    userLogado.user_metadata?.full_name || userLogado.email || "Usuário";
+  const usuarioNome = userLogado.user_metadata?.full_name || userLogado.email || "Usuário";
 
   try {
     // 1. Persistir no Supabase (tabela sugestoes)
-    const { error: dbError } = await supabaseClient.from("sugestoes").insert({
-      usuario_id: userLogado.id,
-      usuario_nome: usuarioNome,
-      nome_brinquedo: nome,
-      fabricante: fabricante || null,
-      ano: ano || null,
-      categoria: categoria || null,
-      tema: tema || null,
-      link_referencia: link || null,
-      observacao: obs || null,
-      status: "pendente",
-    });
+    const { error: dbError } = await supabaseClient
+      .from("sugestoes")
+      .insert({
+        usuario_id:      userLogado.id,
+        usuario_nome:    usuarioNome,
+        nome_brinquedo:  nome,
+        fabricante:      fabricante || null,
+        ano:             ano        || null,
+        categoria:       categoria  || null,
+        tema:            tema       || null,
+        link_referencia: link       || null,
+        observacao:      obs        || null,
+        status:          "pendente",
+      });
 
     if (dbError) throw dbError;
 
     // 2. Disparar e-mail via EmailJS
     await emailjs.send("service_v7nw2eu", "template_o5kwy8p", {
-      usuario_nome: usuarioNome,
-      nome_brinquedo: nome,
-      fabricante: fabricante || "—",
-      ano: ano || "—",
-      categoria: categoria || "—",
-      tema: tema || "—",
-      link_referencia: link || "—",
-      observacao: obs || "—",
+      usuario_nome:    usuarioNome,
+      nome_brinquedo:  nome,
+      fabricante:      fabricante  || "—",
+      ano:             ano         || "—",
+      categoria:       categoria   || "—",
+      tema:            tema        || "—",
+      link_referencia: link        || "—",
+      observacao:      obs         || "—",
     });
 
     _sugestaoMostrarFeedback(
       "✔ SUGESTÃO ENVIADA! Obrigado, " + usuarioNome.split(" ")[0] + "!",
-      "sucesso",
+      "sucesso"
     );
     label.textContent = "✔ ENVIADO";
 
     // Limpa campos após sucesso
-    [
-      "sug_nome",
-      "sug_fabricante",
-      "sug_ano",
-      "sug_categoria",
-      "sug_tema",
-      "sug_link",
-      "sug_obs",
-    ].forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) el.value = "";
-    });
+    ["sug_nome","sug_fabricante","sug_ano","sug_categoria","sug_tema","sug_link","sug_obs"]
+      .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
 
     setTimeout(() => {
       fecharSugestaoModal();
       // H1 — limpa busca e recarrega grid após envio bem-sucedido
       const searchInput = document.getElementById("searchInput");
-      const clearBtn = document.getElementById("clearSearchBtn");
+      const clearBtn    = document.getElementById("clearSearchBtn");
       if (searchInput) {
         searchInput.value = "";
         buscaAtiva = "";
@@ -2469,6 +2479,7 @@ async function enviarSugestao() {
       }
       fetchBrinquedos(true);
     }, 2800);
+
   } catch (err) {
     console.error("Erro ao enviar sugestão:", err);
     _sugestaoMostrarFeedback("✖ ERRO AO ENVIAR. Tente novamente.", "erro");
@@ -2493,6 +2504,7 @@ document.addEventListener("keydown", (e) => {
     fecharFabricanteModal();
   }
 });
+
 
 init();
 
