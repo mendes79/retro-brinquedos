@@ -2943,27 +2943,30 @@ body {
 
 /* 1 — Card cresce o máximo possível mantendo proporção */
 .card-verso-mobile-box {
-  width: calc(100vw - 20px);
-  max-width: 420px;
-  /* Proporção Super Trunfo real — altura máxima 92vh para caber na tela */
-  max-height: 92vh;
+  /* Proporção exata carta Super Trunfo: 63.5mm × 98.5mm = 0.645:1 */
+  /* Calcula largura máxima que cabe na tela sem ultrapassar 92vh de altura */
+  width: min(calc(100vw - 20px), calc(92vh * 0.645));
+  max-width: 400px;
+  /* Altura calculada automaticamente pela proporção */
+  aspect-ratio: 0.645 / 1;
+  /* overflow-y apenas se o conteúdo ultrapassar — fallback de segurança */
   overflow-y: auto;
+  overflow-x: hidden;
   background: #0f0e1e;
   border: 3px solid var(--trunfo-gold);
   border-radius: 10px;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  /* 2 — Transição: escala horizontal entrada (virar página) */
-  animation: cardVersoEntrada 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  /* 2 — Transição: fade suave de entrada */
+  animation: cardVersoEntrada 0.25s ease-out forwards;
   transform-origin: center;
 }
 
-/* 2 — Keyframe de entrada: achata e expande como virar carta */
+/* 2 — Keyframe de entrada: fade + leve escala uniforme */
 @keyframes cardVersoEntrada {
-  0%   { opacity: 0; transform: scaleX(0.3) scaleY(0.95); }
-  60%  { opacity: 1; transform: scaleX(1.03) scaleY(1); }
-  100% { opacity: 1; transform: scaleX(1) scaleY(1); }
+  0%   { opacity: 0; transform: scale(0.88); }
+  70%  { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 /* Foto maior no modal mobile */
