@@ -1703,26 +1703,26 @@ let ledEasterEggTimer = null;
 
 /* 3.9.2. CONTEÚDO FIXO — MENSAGENS FAKE (fallback) */
 const LED_MENSAGENS_FAKE = [
-  "JOGADOR_77 curtiu He-Man Masters of Universe",
-  "CAROL_BH marcou EU TIVE em Estrela Júpiter",
-  "MARCOS_SP marcou QUERIA TER em Robocop Estrela",
-  "NERD_RETRÔ curtiu Tartarugas Ninja Glasslite",
-  "ALINE_RJ marcou EU TIVE em Boneca Susi Estrela",
-  "RETROGAMER marcou QUERIA TER em Super Nintendo",
-  "PEDRO_MG curtiu Hot Wheels Mattel Anos 90",
-  "TURMA_80s marcou EU TIVE em Falcon Gulliver",
-  "CLASSICO_BR curtiu Transformers Estrela",
-  "RAINHA_90s marcou QUERIA TER em Polly Pocket",
-  "NINTENDISTA curtiu Duck Hunt Nintendo",
-  "PLAYER_DOS_8BITS marcou EU TIVE em Atari 2600",
-  "NOSTALGIA_SP curtiu Lego Fabuland anos 80",
-  "RETROWAVE marcou QUERIA TER em Street Fighter Glasslite",
-  "FELIPPE_BH curtiu Brinquedo da Bandeirante",
-  "COLECIONADOR_RJ marcou EU TIVE em Playmobil",
-  "GEEK_ANOS90 curtiu Action Man Estrela",
-  "CRIANÇA_DE_80 marcou QUERIA TER em Scalextric",
-  "RETRÔ_GAMES curtiu Nintendinho NES",
-  "MEMÓRIA_VIVA marcou EU TIVE em Barbie Estrela anos 80",
+  'JOGADOR_77 sobre He-Man Masters of Universe: "O melhor brinquedo da minha infância"',
+  'CAROL_BH sobre Estrela Júpiter: "Ganhei de aniversário e nunca mais esqueci"',
+  'MARCOS_SP sobre Robocop Estrela: "Tinha um e perdi na mudança, que saudade"',
+  'NERD_RETRÔ sobre Tartarugas Ninja Glasslite: "Colecionei todos os personagens"',
+  'ALINE_RJ sobre Boneca Susi Estrela: "Minha primeira Susi era loira"',
+  'RETROGAMER sobre Super Nintendo: "Passei a infância inteira nesse videogame"',
+  'PEDRO_MG sobre Hot Wheels Mattel: "Tinha uma pista enorme montada no quarto"',
+  'TURMA_80s sobre Falcon Gulliver: "Meu pai jogava comigo todo fim de semana"',
+  'CLASSICO_BR sobre Transformers Estrela: "Demorei anos para descobrir como transformar"',
+  'RAINHA_90s sobre Polly Pocket: "Perdi todas as pecinhas pequenas"',
+  'NINTENDISTA sobre Duck Hunt Nintendo: "Ficava pertinho da TV para não errar"',
+  'PLAYER_DOS_8BITS sobre Atari 2600: "Meu primeiro videogame, nunca vou esquecer"',
+  'NOSTALGIA_SP sobre Lego Fabuland: "Montei e desmontei centenas de vezes"',
+  'RETROWAVE sobre Street Fighter Glasslite: "Hadouken! Aprendi esse golpe com 6 anos"',
+  'FELIPPE_BH sobre Bandeirante: "O caminhão verde era o meu favorito"',
+  'COLECIONADOR_RJ sobre Playmobil: "Ainda tenho alguns guardados na caixa original"',
+  'GEEK_ANOS90 sobre Action Man Estrela: "Fiz uma corda de linha para ele descer"',
+  'CRIANÇA_DE_80 sobre Scalextric: "A pista ficava no chão da sala o fim de semana inteiro"',
+  'RETRÔ_GAMES sobre Nintendinho NES: "Soprava o cartucho e torcia para funcionar"',
+  'MEMÓRIA_VIVA sobre Barbie Estrela: "Cortei o cabelo da minha e chorei depois"',
 ];
 
 /* 3.9.3. FRASES DO SISTEMA */
@@ -1842,7 +1842,7 @@ async function montarFila() {
     if (!error && data) {
       mensagensReais = data.map(
         (m) =>
-          `${m.usuario_nome.toUpperCase()} ${m.acao} ${m.brinquedo_nome}${m.detalhe ? ' — "' + m.detalhe + '"' : ""}`,
+          `${m.usuario_nome.toUpperCase()} sobre ${m.brinquedo_nome}${m.detalhe ? ': "' + m.detalhe + '"' : ""}`,
       );
     }
   } catch (e) {
@@ -2279,6 +2279,13 @@ async function init() {
       }
     }
   }
+
+  // 🔤 Pré-carrega a fonte do painel LED durante o boot (painel ainda oculto),
+  // eliminando o delay de 3–4s no primeiro acionamento do toggle.
+  new FontFace("LEDDisplay", "url(/fonts/advanced_led_board-7.ttf)")
+    .load()
+    .then((f) => document.fonts.add(f))
+    .catch(() => {}); // silencioso — fallback Courier New se o arquivo estiver ausente
 
   // 🛡️ setupObserver() antes do fetch para que o IntersectionObserver
   // já esteja ativo quando os cards forem inseridos no DOM.
