@@ -3001,9 +3001,52 @@ body {
   border-color: var(--trunfo-gold);
 }
 
-/* Fontes levemente maiores no modal mobile para legibilidade sem zoom */
-.card-verso-mobile-box .trunfo-label  { font-size: 0.5rem; }
-.card-verso-mobile-box .trunfo-value  { font-size: 0.68rem; }
-.card-verso-mobile-box .trunfo-title-text { font-size: 0.8rem; }
-.card-verso-mobile-box .trunfo-curiosidade-v2 { font-size: 0.6rem; }
-.card-verso-mobile-box .action-btn-v2 { font-size: 0.5rem; padding: 6px 10px; }
+/* Escala proporcional do conteúdo interno do card mobile
+   Usa vw como referência pois o card ocupa quase toda a largura da tela.
+   Card ≈ 90vw → fontes, foto e botões escalam juntos. */
+
+/* Foto — ocupa espaço proporcional à altura do card */
+.card-verso-mobile-box .trunfo-photo {
+  height: 40vw;
+  max-height: 48vh;
+}
+
+/* Header */
+.card-verso-mobile-box .trunfo-top-bar-v2 {
+  padding: 4px 10px;
+}
+.card-verso-mobile-box .trunfo-code-v2       { font-size: 3vw; }
+.card-verso-mobile-box .trunfo-title-area    { padding: 6px 12px 10px; gap: 10px; }
+.card-verso-mobile-box .trunfo-star          { width: 22px; height: 22px; }
+.card-verso-mobile-box .trunfo-title-text    { font-size: 3.8vw; }
+
+/* Curiosidade */
+.card-verso-mobile-box .trunfo-curiosidade-v2 {
+  font-size: 2.8vw;
+  padding: 6px 12px;
+  line-height: 1.55;
+}
+
+/* Linhas de atributo */
+.card-verso-mobile-box .trunfo-stat-row      { padding: 4px 12px; }
+.card-verso-mobile-box .trunfo-label         { font-size: 2.5vw; letter-spacing: 0.08em; }
+.card-verso-mobile-box .trunfo-value         { font-size: 3.2vw; }
+
+/* EU TIVE / QUERIA TER */
+.card-verso-mobile-box .trunfo-actions-v2    { padding: 7px 10px; gap: 8px; }
+.card-verso-mobile-box .action-btn-v2        {
+  font-size: 2.6vw;
+  padding: 7px 10px;
+  border-radius: 5px;
+}
+.card-verso-mobile-box .action-count-v2      { font-size: 3vw; }
+
+/* Rodapé — ícones maiores */
+.card-verso-mobile-box .trunfo-footer        { height: auto; }
+.card-verso-mobile-box .tab-icon-svg         {
+  width: 6vw !important;
+  height: 6vw !important;
+  max-width: 28px;
+  max-height: 28px;
+}
+.card-verso-mobile-box .tab-count            { font-size: 3vw; }
