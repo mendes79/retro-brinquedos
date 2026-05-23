@@ -2806,7 +2806,7 @@ body {
 }
 
 /* ============================================================
-   C3 — MODAL VERSO MOBILE + TOAST
+   C3 — MODAL VERSO MOBILE
    ============================================================ */
 #cardVersoMobileModal { padding: 10px; }
 
@@ -2827,14 +2827,15 @@ body {
   70%  { opacity: 1; transform: scale(1.02); }
   100% { opacity: 1; transform: scale(1); }
 }
+
+/* stats-area: flex coluna — curiosidade variável, atributos ancorados na base */
 .card-verso-mobile-box .trunfo-stats-area {
   display: flex; flex-direction: column; flex: 1; overflow: hidden;
   border-top: 2px solid var(--trunfo-gold);
 }
 .card-verso-mobile-box .trunfo-curiosidade-v2 {
   flex: 1; overflow-y: auto;
-  font-size: clamp(11px, 2.8vw, 15px);
-  padding: 6px 12px; line-height: 1.6;
+  font-size: clamp(11px, 2.8vw, 15px); padding: 6px 12px; line-height: 1.6;
   scrollbar-width: thin; scrollbar-color: var(--trunfo-gold) transparent;
 }
 .card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar { width: 3px; }
@@ -2843,31 +2844,88 @@ body {
 .card-verso-mobile-box .trunfo-label         { font-size: clamp(10px, 2.5vw, 13px); }
 .card-verso-mobile-box .trunfo-value         { font-size: clamp(11px, 3.2vw, 15px); }
 .card-verso-mobile-box .trunfo-stat-last     { border-bottom: 2px solid var(--trunfo-gold) !important; }
-/* Botões EU TIVE / QUERIA TER — usa classes existentes .action-btn */
-.card-verso-mobile-box .trunfo-actions-area  { flex-shrink: 0; }
-.card-verso-mobile-box .action-btn           { padding: 8px 12px; }
-.card-verso-mobile-box .action-label         { font-size: clamp(10px, 2.6vw, 13px); }
-.card-verso-mobile-box .action-count         { font-size: clamp(11px, 3vw, 14px); }
 .card-verso-mobile-box .trunfo-top-bar-v2    { padding: 5px 10px; }
 .card-verso-mobile-box .trunfo-brand-v2 {
   font-size: clamp(11px, 3.2vw, 16px);
   color: #39ff14; text-shadow: 0 0 8px rgba(57,255,20,0.7); letter-spacing: 0.15em;
 }
-.card-verso-mobile-box .trunfo-code-v2       { font-size: clamp(11px, 3vw, 15px); }
-.card-verso-mobile-box .trunfo-title-area    { padding: 7px 12px 9px; gap: 10px; }
-.card-verso-mobile-box .trunfo-star          { width: 22px; height: 22px; }
-.card-verso-mobile-box .trunfo-title-text    { font-size: clamp(13px, 3.8vw, 18px); }
-.card-verso-mobile-box .trunfo-photo         { height: 38vw; max-height: 45vh; object-fit: cover; }
+.card-verso-mobile-box .trunfo-code-v2    { font-size: clamp(11px, 3vw, 15px); }
+.card-verso-mobile-box .trunfo-title-area { padding: 7px 12px 9px; gap: 10px; }
+.card-verso-mobile-box .trunfo-star       { width: 22px; height: 22px; }
+.card-verso-mobile-box .trunfo-title-text { font-size: clamp(13px, 3.8vw, 18px); }
+.card-verso-mobile-box .trunfo-photo      { height: 38vw; max-height: 45vh; object-fit: cover; }
 .card-verso-mobile-box .trunfo-close-v2 {
   background: #000; border: 1.5px solid var(--trunfo-gold);
   color: #fff; font-size: 0.65rem; font-weight: 700;
   padding: 2px 7px; border-radius: 3px; cursor: pointer; line-height: 1.4;
+  transition: all 0.15s ease;
 }
-.card-verso-mobile-box .trunfo-footer        { padding: 4px 0; flex-shrink: 0; }
-.card-verso-mobile-box .tab-icon-svg         { width: clamp(20px,6vw,28px) !important; height: clamp(20px,6vw,28px) !important; }
-.card-verso-mobile-box .tab-count            { font-size: clamp(11px,3vw,14px); }
+.card-verso-mobile-box .trunfo-close-v2:hover { background: var(--trunfo-gold); color: #000; }
+.card-verso-mobile-box .trunfo-footer { padding: 4px 0; flex-shrink: 0; }
+.card-verso-mobile-box .tab-icon-svg { width: clamp(20px,6vw,28px) !important; height: clamp(20px,6vw,28px) !important; }
+.card-verso-mobile-box .tab-count   { font-size: clamp(11px,3vw,14px); }
 
-/* Toast — fonte maior para leitura confortável no mobile */
+/* ── Botões EU TIVE / QUERIA TER — design v2 com bordas coloridas ── */
+.trunfo-actions-v2 {
+  display: flex;
+  gap: 6px;
+  padding: 5px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0f0e1e;
+  flex-shrink: 0;
+}
+.action-btn-v2 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.2s ease;
+}
+.action-label-v2 {
+  font-family: "Orbitron", monospace;
+  font-size: clamp(9px, 2.5vw, 12px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.action-count-v2 {
+  font-size: clamp(10px, 2.8vw, 13px);
+  font-weight: 700;
+  transition: color 0.2s;
+}
+/* Estado padrão e ativo — EU TIVE (dourado) */
+.action-tive {
+  color: rgba(240, 192, 64, 0.6);
+  border-color: rgba(240, 192, 64, 0.3);
+}
+.action-tive:hover,
+.action-tive.active-tive {
+  color: var(--trunfo-gold);
+  border-color: rgba(240, 192, 64, 0.7);
+  background: rgba(240, 192, 64, 0.08);
+}
+/* Estado padrão e ativo — QUERIA TER (cyan) */
+.action-queria {
+  color: rgba(0, 255, 255, 0.55);
+  border-color: rgba(0, 255, 255, 0.25);
+}
+.action-queria:hover,
+.action-queria.active-queria {
+  color: var(--neon-blue);
+  border-color: rgba(0, 255, 255, 0.6);
+  background: rgba(0, 255, 255, 0.06);
+}
+/* Mobile: escala botões com o card */
+.card-verso-mobile-box .trunfo-actions-v2 { padding: 6px 10px; gap: 8px; }
+.card-verso-mobile-box .action-btn-v2     { padding: 7px 10px; }
+
+/* Toast de feedback dentro do modal mobile */
 .card-verso-toast {
   position: fixed;
   bottom: 20px;
