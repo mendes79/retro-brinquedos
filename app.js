@@ -594,10 +594,10 @@ function abrirCardVersoMobile(id) {
       <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
       <!-- EU TIVE / QUERIA TER ancorados logo acima do footer -->
       <div class="trunfo-actions-v2">
-        <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
+        <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="${isUserLogged ? `toggleInteracao(event, '${idNormalizado}', 'tive')` : `event.stopPropagation(); mostrarToastModal('FAÇA LOGIN PARA INTERAGIR')`}">
           EU TIVE <span class="action-count-v2" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
         </button>
-        <button id="m-btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
+        <button id="m-btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="${isUserLogged ? `toggleInteracao(event, '${idNormalizado}', 'queria')` : `event.stopPropagation(); mostrarToastModal('FAÇA LOGIN PARA INTERAGIR')`}">
           QUERIA TER <span class="action-count-v2" id="m-count-queria-${idNormalizado}">${data.queria_count || 0}</span>
         </button>
       </div>
@@ -662,17 +662,6 @@ function mostrarToastModal(mensagem) {
     toast.classList.remove("card-verso-toast--visible");
     setTimeout(() => toast.classList.add("hidden"), 300);
   }, 2500);
-}
-
-// Intercepta dispararTilt (toggleInteracao/toggleCurtida) quando modal mobile está aberto
-const _dispararTiltOriginal = dispararTilt;
-function dispararTilt(mensagem) {
-  const modal = document.getElementById("cardVersoMobileModal");
-  if (modal && !modal.classList.contains("hidden")) {
-    mostrarToastModal(mensagem);
-    return;
-  }
-  _dispararTiltOriginal(mensagem);
 }
 
 function fecharCardVersoMobile(event) {
