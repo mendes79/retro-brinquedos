@@ -629,6 +629,18 @@ function abrirCardVersoMobile(id) {
 
   const modal = document.getElementById("cardVersoMobileModal");
   if (modal) {
+    // 2 — Efeito de saída no card frente: leve fade+scale antes do modal abrir
+    const cardEl = document.getElementById(`card-${String(id).padStart(4, "0")}`);
+    if (cardEl) {
+      cardEl.style.transition = "opacity 0.15s ease, transform 0.15s ease";
+      cardEl.style.opacity = "0.4";
+      cardEl.style.transform = "scale(0.97)";
+      setTimeout(() => {
+        cardEl.style.opacity = "";
+        cardEl.style.transform = "";
+        cardEl.style.transition = "";
+      }, 320);
+    }
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
   }

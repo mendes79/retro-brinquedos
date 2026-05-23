@@ -2935,10 +2935,18 @@ body {
    C3 — MODAL VERSO MOBILE
    Carta centralizada com proporção real Super Trunfo (1:1.55)
    ============================================================ */
+
+/* 1 — Overlay ocupa tela toda, padding mínimo de 10px cada lado */
+#cardVersoMobileModal {
+  padding: 10px;
+}
+
+/* 1 — Card cresce o máximo possível mantendo proporção */
 .card-verso-mobile-box {
-  width: min(300px, 85vw);
-  /* proporção fiel à carta Super Trunfo real */
-  max-height: 90vh;
+  width: calc(100vw - 20px);
+  max-width: 420px;
+  /* Proporção Super Trunfo real — altura máxima 92vh para caber na tela */
+  max-height: 92vh;
   overflow-y: auto;
   background: #0f0e1e;
   border: 3px solid var(--trunfo-gold);
@@ -2946,13 +2954,53 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  /* fade de entrada */
-  animation: disclaimerFadeIn 0.2s ease forwards;
+  /* 2 — Transição: escala horizontal entrada (virar página) */
+  animation: cardVersoEntrada 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform-origin: center;
 }
 
-/* Foto maior no modal mobile — mais espaço disponível */
+/* 2 — Keyframe de entrada: achata e expande como virar carta */
+@keyframes cardVersoEntrada {
+  0%   { opacity: 0; transform: scaleX(0.3) scaleY(0.95); }
+  60%  { opacity: 1; transform: scaleX(1.03) scaleY(1); }
+  100% { opacity: 1; transform: scaleX(1) scaleY(1); }
+}
+
+/* Foto maior no modal mobile */
 .card-verso-mobile-box .trunfo-photo {
-  height: 160px;
+  height: 180px;
+  object-fit: cover;
 }
 
-/* Escape via teclado fecha o modal */
+/* 4 — RETROBRINQUEDOS maior e neon verde */
+.card-verso-mobile-box .trunfo-brand-v2 {
+  font-size: 0.52rem;
+  color: #39ff14;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.6);
+}
+
+/* 5 — Botão ✕ com fundo preto e borda dourada — contraste sobre header vermelho */
+.card-verso-mobile-box .trunfo-close-v2 {
+  background: #000;
+  border: 1.5px solid var(--trunfo-gold);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 3px;
+  cursor: pointer;
+  line-height: 1.4;
+  transition: all 0.15s ease;
+}
+.card-verso-mobile-box .trunfo-close-v2:hover {
+  background: var(--trunfo-gold);
+  color: #000;
+  border-color: var(--trunfo-gold);
+}
+
+/* Fontes levemente maiores no modal mobile para legibilidade sem zoom */
+.card-verso-mobile-box .trunfo-label  { font-size: 0.5rem; }
+.card-verso-mobile-box .trunfo-value  { font-size: 0.68rem; }
+.card-verso-mobile-box .trunfo-title-text { font-size: 0.8rem; }
+.card-verso-mobile-box .trunfo-curiosidade-v2 { font-size: 0.6rem; }
+.card-verso-mobile-box .action-btn-v2 { font-size: 0.5rem; padding: 6px 10px; }
