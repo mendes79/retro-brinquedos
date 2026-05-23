@@ -594,10 +594,10 @@ function abrirCardVersoMobile(id) {
       <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
       <!-- EU TIVE / QUERIA TER ancorados logo acima do footer -->
       <div class="trunfo-actions-v2">
-        <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="${isUserLogged ? `toggleInteracao(event, '${idNormalizado}', 'tive')` : `event.stopPropagation(); mostrarToastModal('FAÇA LOGIN PARA INTERAGIR')`}">
+        <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'tive')">
           EU TIVE <span class="action-count-v2" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
         </button>
-        <button id="m-btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="${isUserLogged ? `toggleInteracao(event, '${idNormalizado}', 'queria')` : `event.stopPropagation(); mostrarToastModal('FAÇA LOGIN PARA INTERAGIR')`}">
+        <button id="m-btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'queria')">
           QUERIA TER <span class="action-count-v2" id="m-count-queria-${idNormalizado}">${data.queria_count || 0}</span>
         </button>
       </div>
@@ -621,7 +621,7 @@ function abrirCardVersoMobile(id) {
         <button
           id="m-heart-btn-${idNormalizado}"
           class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}"
-          onclick="${isUserLogged ? `toggleCurtida(event, '${idNormalizado}')` : `mostrarToastModal('FAÇA LOGIN PARA CURTIR');`}"
+          onclick="toggleCurtidaModal(event, '${idNormalizado}')"
           title="${isUserLogged ? "Curtir" : "Faça login para curtir"}"
         >
           <svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
@@ -651,6 +651,25 @@ function abrirCardVersoMobile(id) {
 
 // Toast de feedback dentro do modal — substitui LED coberto pelo overlay
 let _toastTimer = null;
+// Wrappers para ações no modal mobile — evita template literals aninhados
+function toggleInteracaoModal(event, id, tipo) {
+  if (!isUserLogged) {
+    event.stopPropagation();
+    mostrarToastModal("FAÇA LOGIN PARA INTERAGIR");
+    return;
+  }
+  toggleInteracao(event, id, tipo);
+}
+
+function toggleCurtidaModal(event, id) {
+  if (!isUserLogged) {
+    event.stopPropagation();
+    mostrarToastModal("FAÇA LOGIN PARA CURTIR");
+    return;
+  }
+  toggleCurtida(event, id);
+}
+
 function mostrarToastModal(mensagem) {
   const toast = document.getElementById("cardVersoToast");
   if (!toast) return;
