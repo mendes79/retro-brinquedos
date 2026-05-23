@@ -310,8 +310,6 @@ body {
   .hero-brand-logo {
     width: 56px;
     height: 56px;
-    /* Mobile: sem mouse/hover, logos ficam coloridos permanentemente */
-    filter: grayscale(0%) brightness(1.05);
   }
 }
 .hero-stat-item {
@@ -2808,172 +2806,14 @@ body {
 }
 
 /* ============================================================
-   CARD VERSO V2 — NOVO LAYOUT SUPER TRUNFO REAL
-   ============================================================ */
-
-/* Linha 1 — grid 3 colunas: código | marca central | ✕ */
-.trunfo-top-bar-v2 {
-  background: #6b0000;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  padding: 3px 8px;
-  gap: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.trunfo-code-v2 {
-  font-family: "Orbitron", monospace;
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: var(--trunfo-gold);
-  letter-spacing: 0.08em;
-  flex-shrink: 0;
-}
-.trunfo-brand-v2 {
-  font-family: "Orbitron", monospace;
-  font-size: 0.52rem;
-  color: #39ff14;
-  text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* Desktop: botão ✕ oculto — fechar clicando fora do card */
-.card-back .trunfo-close-v2 {
-  display: none;
-}
-.trunfo-close-v2 {
-  background: #8b0000;
-  border: 1px solid rgba(255, 80, 80, 0.5);
-  color: #ff6060;
-  font-size: 0.6rem;
-  font-weight: 700;
-  padding: 1px 5px;
-  border-radius: 3px;
-  cursor: pointer;
-  line-height: 1.4;
-  flex-shrink: 0;
-  transition: all 0.15s ease;
-}
-.trunfo-close-v2:hover {
-  background: #c0392b;
-  border-color: #ff4040;
-  color: #fff;
-}
-
-/* Foto desktop v2 */
-.card-back .trunfo-photo {
-  height: 130px;
-}
-
-/* stats-area desktop: flex coluna — curiosidade variável, atributos+botões na base */
-.card-back .trunfo-stats-area {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-}
-
-/* Curiosidade v2 — área variável desktop */
-.trunfo-curiosidade-v2 {
-  flex: 1;
-  overflow-y: auto;
-  padding: 5px 10px;
-  font-size: 0.55rem;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.5);
-  font-style: italic;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  scrollbar-width: thin;
-  scrollbar-color: var(--trunfo-gold) transparent;
-}
-.trunfo-curiosidade-v2::-webkit-scrollbar { width: 3px; }
-.trunfo-curiosidade-v2::-webkit-scrollbar-thumb {
-  background: var(--trunfo-gold);
-  border-radius: 2px;
-}
-
-/* Atributos: flex-shrink:0 — ancorados acima dos botões */
-.card-back .trunfo-stat-row { flex-shrink: 0; }
-
-/* Última linha de atributos — borda dourada separando de EU TIVE */
-.trunfo-stat-last {
-  border-bottom: 2px solid var(--trunfo-gold) !important;
-}
-
-/* Linha 15 — EU TIVE | QUERIA TER ancorado acima do footer */
-.trunfo-actions-v2 {
-  display: flex;
-  gap: 6px;
-  padding: 5px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: #0f0e1e;
-  flex-shrink: 0;
-}
-.action-btn-v2 {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  font-family: "Orbitron", monospace;
-  font-size: 0.42rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
-  background: rgba(255, 255, 255, 0.03);
-}
-.action-count-v2 {
-  font-size: 0.55rem;
-  font-weight: 700;
-}
-.action-tive {
-  color: rgba(240, 192, 64, 0.6);
-  border-color: rgba(240, 192, 64, 0.25);
-}
-.action-tive:hover,
-.action-tive.active-tive {
-  color: var(--trunfo-gold);
-  border-color: rgba(240, 192, 64, 0.6);
-  background: rgba(240, 192, 64, 0.08);
-}
-.action-queria {
-  color: rgba(0, 255, 255, 0.6);
-  border-color: rgba(0, 255, 255, 0.2);
-}
-.action-queria:hover,
-.action-queria.active-queria {
-  color: var(--neon-blue);
-  border-color: rgba(0, 255, 255, 0.5);
-  background: rgba(0, 255, 255, 0.06);
-}
-
-/* ============================================================
    C3 — MODAL VERSO MOBILE
-   Carta centralizada com proporção real Super Trunfo (1:1.55)
    ============================================================ */
+#cardVersoMobileModal { padding: 10px; }
 
-/* 1 — Overlay ocupa tela toda, padding mínimo de 10px cada lado */
-#cardVersoMobileModal {
-  padding: 10px;
-}
-
-/* 1 — Card cresce o máximo possível mantendo proporção */
 .card-verso-mobile-box {
-  /* Proporção exata carta Super Trunfo: 63.5mm × 98.5mm = 0.645:1 */
-  /* Calcula largura máxima que cabe na tela sem ultrapassar 92vh de altura */
   width: min(calc(100vw - 20px), calc(92vh * 0.645));
   max-width: 400px;
-  /* Altura calculada automaticamente pela proporção */
   aspect-ratio: 0.645 / 1;
-  /* overflow-y apenas se o conteúdo ultrapassar — fallback de segurança */
   overflow-y: auto;
   overflow-x: hidden;
   background: #0f0e1e;
@@ -2981,32 +2821,54 @@ body {
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  /* 2 — Transição: fade suave de entrada */
   animation: cardVersoEntrada 0.25s ease-out forwards;
-  transform-origin: center;
 }
-
-/* 2 — Keyframe de entrada: fade + leve escala uniforme */
 @keyframes cardVersoEntrada {
   0%   { opacity: 0; transform: scale(0.88); }
   70%  { opacity: 1; transform: scale(1.02); }
   100% { opacity: 1; transform: scale(1); }
 }
 
-/* Foto maior no modal mobile */
-.card-verso-mobile-box .trunfo-photo {
-  height: 180px;
-  object-fit: cover;
+/* stats-area mobile: flex coluna com curiosidade variável */
+.card-verso-mobile-box .trunfo-stats-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  border-top: 2px solid var(--trunfo-gold);
 }
-
-/* 4 — RETROBRINQUEDOS maior e neon verde */
-.card-verso-mobile-box .trunfo-brand-v2 {
-  font-size: 0.52rem;
+.card-verso-mobile-box .trunfo-curiosidade-v2 {
+  flex: 1;
+  overflow-y: auto;
+  font-size: clamp(11px, 2.8vw, 15px);
+  padding: 6px 12px;
+  line-height: 1.6;
+  scrollbar-width: thin;
+  scrollbar-color: var(--trunfo-gold) transparent;
+}
+.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar { width: 3px; }
+.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar-thumb {
+  background: var(--trunfo-gold); border-radius: 2px;
+}
+.card-verso-mobile-box .trunfo-stat-row      { padding: 3px 12px; flex-shrink: 0; }
+.card-verso-mobile-box .trunfo-label         { font-size: clamp(10px, 2.5vw, 13px); letter-spacing: 0.08em; }
+.card-verso-mobile-box .trunfo-value         { font-size: clamp(11px, 3.2vw, 15px); }
+.card-verso-mobile-box .trunfo-stat-last     { border-bottom: 2px solid var(--trunfo-gold) !important; }
+.card-verso-mobile-box .trunfo-actions-v2    { padding: 6px 10px; gap: 8px; flex-shrink: 0; }
+.card-verso-mobile-box .action-btn-v2        { font-size: clamp(10px, 2.6vw, 13px); padding: 7px 10px; border-radius: 5px; }
+.card-verso-mobile-box .action-count-v2      { font-size: clamp(11px, 3vw, 14px); }
+.card-verso-mobile-box .trunfo-top-bar-v2    { padding: 5px 10px; }
+.card-verso-mobile-box .trunfo-brand-v2      {
+  font-size: clamp(11px, 3.2vw, 16px);
   color: #39ff14;
-  text-shadow: 0 0 6px rgba(57, 255, 20, 0.6);
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.7);
+  letter-spacing: 0.15em;
 }
-
-/* 5 — Botão ✕ com fundo preto e borda dourada — contraste sobre header vermelho */
+.card-verso-mobile-box .trunfo-code-v2       { font-size: clamp(11px, 3vw, 15px); }
+.card-verso-mobile-box .trunfo-title-area    { padding: 7px 12px 9px; gap: 10px; }
+.card-verso-mobile-box .trunfo-star          { width: 22px; height: 22px; }
+.card-verso-mobile-box .trunfo-title-text    { font-size: clamp(13px, 3.8vw, 18px); }
+.card-verso-mobile-box .trunfo-photo         { height: 38vw; max-height: 45vh; object-fit: cover; }
 .card-verso-mobile-box .trunfo-close-v2 {
   background: #000;
   border: 1.5px solid var(--trunfo-gold);
@@ -3022,119 +2884,33 @@ body {
 .card-verso-mobile-box .trunfo-close-v2:hover {
   background: var(--trunfo-gold);
   color: #000;
-  border-color: var(--trunfo-gold);
 }
+.card-verso-mobile-box .trunfo-footer        { height: auto; padding: 4px 0; flex-shrink: 0; }
+.card-verso-mobile-box .tab-icon-svg         { width: clamp(20px, 6vw, 28px) !important; height: clamp(20px, 6vw, 28px) !important; }
+.card-verso-mobile-box .tab-count            { font-size: clamp(11px, 3vw, 14px); }
 
-/* ── Escala proporcional do conteúdo interno do card mobile ──
-   Layout: header fixo → foto fixo → curiosidade FLEX:1 (variável+scroll)
-   → atributos fixos → EU TIVE/QUERIA TER fixos → footer fixo
-   Card ≈ 90vw → tudo em vw para escalar junto */
-
-/* Card não transborda — proporção sempre respeitada */
-.card-verso-mobile-box {
-  overflow: hidden;
+/* Toast de feedback dentro do modal mobile */
+.card-verso-toast {
+  position: fixed;
+  bottom: calc(10px + min(calc(100vw - 20px), calc(92vh * 0.645)) / 2 - 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 10, 20, 0.95);
+  border: 1px solid rgba(255, 32, 32, 0.6);
+  color: #ff4040;
+  font-family: "Orbitron", monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 6px;
+  z-index: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  box-shadow: 0 0 12px rgba(255, 32, 32, 0.3);
 }
-
-/* stats-area vira coluna flex para empurrar atributos para baixo */
-.card-verso-mobile-box .trunfo-stats-area {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-  border-top: 2px solid var(--trunfo-gold);
+.card-verso-toast--visible {
+  opacity: 1;
 }
-
-/* Curiosidade — área variável, cresce e encolhe, scroll se precisar */
-.card-verso-mobile-box .trunfo-curiosidade-v2 {
-  flex: 1;
-  overflow-y: auto;
-  font-size: clamp(11px, 2.8vw, 15px);
-  padding: 6px 12px;
-  line-height: 1.6;
-  /* scroll sutil */
-  scrollbar-width: thin;
-  scrollbar-color: var(--trunfo-gold) transparent;
-}
-.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar {
-  width: 3px;
-}
-.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar-thumb {
-  background: var(--trunfo-gold);
-  border-radius: 2px;
-}
-
-/* Atributos — ancorados na base, acima dos botões */
-.card-verso-mobile-box .trunfo-stat-row {
-  padding: 3px 12px;
-  flex-shrink: 0;
-}
-.card-verso-mobile-box .trunfo-label {
-  font-size: clamp(10px, 2.5vw, 13px);
-  letter-spacing: 0.08em;
-}
-.card-verso-mobile-box .trunfo-value {
-  font-size: clamp(11px, 3.2vw, 15px);
-}
-.card-verso-mobile-box .trunfo-stat-last {
-  border-bottom: 2px solid var(--trunfo-gold) !important;
-}
-
-/* EU TIVE / QUERIA TER — ancorados logo acima do footer */
-.card-verso-mobile-box .trunfo-actions-v2 {
-  padding: 6px 10px;
-  gap: 8px;
-  flex-shrink: 0;
-}
-.card-verso-mobile-box .action-btn-v2 {
-  font-size: clamp(10px, 2.6vw, 13px);
-  padding: 7px 10px;
-  border-radius: 5px;
-}
-.card-verso-mobile-box .action-count-v2 { font-size: clamp(11px, 3vw, 14px); }
-
-/* Header — RETROBRINQUEDOS maior e com mais destaque */
-.card-verso-mobile-box .trunfo-top-bar-v2 {
-  padding: 5px 10px;
-}
-.card-verso-mobile-box .trunfo-brand-v2 {
-  font-size: clamp(11px, 3.2vw, 16px);
-  color: #39ff14;
-  text-shadow: 0 0 8px rgba(57, 255, 20, 0.7);
-  letter-spacing: 0.15em;
-}
-.card-verso-mobile-box .trunfo-code-v2 {
-  font-size: clamp(11px, 3vw, 15px);
-}
-
-/* Título do brinquedo */
-.card-verso-mobile-box .trunfo-title-area {
-  padding: 7px 12px 9px;
-  gap: 10px;
-}
-.card-verso-mobile-box .trunfo-star    { width: 22px; height: 22px; }
-.card-verso-mobile-box .trunfo-title-text { font-size: clamp(13px, 3.8vw, 18px); }
-
-/* Foto */
-.card-verso-mobile-box .trunfo-photo {
-  height: 38vw;
-  max-height: 45vh;
-  object-fit: cover;
-}
-
-/* Footer — ícones com padding interno para não tocar as bordas */
-.card-verso-mobile-box .trunfo-footer {
-  height: auto;
-  padding: 4px 0;
-  flex-shrink: 0;
-}
-.card-verso-mobile-box .footer-icons-container {
-  align-items: center;
-}
-.card-verso-mobile-box .footer-tab-btn {
-  padding: 6px 0;
-}
-.card-verso-mobile-box .tab-icon-svg {
-  width: clamp(20px, 6vw, 28px) !important;
-  height: clamp(20px, 6vw, 28px) !important;
-}
-.card-verso-mobile-box .tab-count { font-size: clamp(11px, 3vw, 14px); }

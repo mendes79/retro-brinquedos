@@ -360,15 +360,11 @@ async function render(items, append = false) {
           <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
         </div>
         <div class="card-back flex flex-col">
-          <!-- NOVO CARD VERSO v2 — layout Super Trunfo real -->
           <div class="trunfo-header">
-            <!-- Linha 1: grid 3 colunas [código | título central | ✕] -->
-            <div class="trunfo-top-bar-v2">
-              <span class="trunfo-code-v2">${trunfoCode}</span>
-              <span class="trunfo-brand-v2">RETROBRINQUEDOS</span>
-              <button class="trunfo-close-v2" onclick="handleFlip('${idNormalizado}'); event.stopPropagation();" title="Fechar">✕</button>
+            <div class="trunfo-top-bar">
+              <span>Super Trunfo • RetroBrinquedos</span>
+              <span class="trunfo-code-badge">${trunfoCode}</span>
             </div>
-            <!-- Linha 2: estrela + nome do brinquedo -->
             <div class="trunfo-title-area">
               <div class="trunfo-star"></div>
               <span class="trunfo-title-text">${toy.nome}</span>
@@ -380,22 +376,28 @@ async function render(items, append = false) {
               <span class="trunfo-photo-year">${toy.ano}</span>
             </div>
           </div>
-
+          
           <div class="trunfo-stats-area">
-            <!-- Curiosidade em itálico -->
-            <div class="trunfo-curiosidade-v2">"${toy.curiosidade}"</div>
-            <!-- Atributos: label dourado | valor branco -->
             <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${toy.fabricante}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${toy.categoria}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${toy.tema}</span></div>
-            <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${toy.raridade}/10</span></div>
-            <!-- Linha 15: EU TIVE | QUERIA TER -->
-            <div class="trunfo-actions-v2">
-              <button id="btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
-                EU TIVE <span class="action-count-v2" id="count-tive-${idNormalizado}">${toy.tive_count || 0}</span>
+            <div class="trunfo-raridade-area">
+              <div class="trunfo-raridade-header">
+                <span class="trunfo-raridade-label">⬡ Raridade</span>
+                <span class="trunfo-raridade-value">${toy.raridade}/10</span>
+              </div>
+              ${ledHTML}
+            </div>
+            <div class="trunfo-curiosidade">"${toy.curiosidade}"</div>
+            
+            <div class="trunfo-actions-area">
+              <button id="btn-tive-${idNormalizado}" class="action-btn ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
+                <span class="action-label">Eu Tive</span>
+                <span class="action-count" id="count-tive-${idNormalizado}">${toy.tive_count || 0}</span>
               </button>
-              <button id="btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
-                QUERIA TER <span class="action-count-v2" id="count-queria-${idNormalizado}">${toy.queria_count || 0}</span>
+              <button id="btn-queria-${idNormalizado}" class="action-btn ${isQueria ? "active-queria" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
+                <span class="action-label">Queria Ter</span>
+                <span class="action-count" id="count-queria-${idNormalizado}">${toy.queria_count || 0}</span>
               </button>
             </div>
           </div>
@@ -549,7 +551,36 @@ function handleFlip(id) {
   }
 }
 
-// C3 — Abre o verso do card num modal centralizado no mobile
+// ============================================================
+// C3 — MODAL VERSO MOBILE
+// ============================================================
+
+// Toast de feedback dentro do modal — substitui o LED externo que fica coberto
+let _toastTimer = null;
+function mostrarToastModal(mensagem) {
+  const toast = document.getElementById("cardVersoToast");
+  if (!toast) return;
+  clearTimeout(_toastTimer);
+  toast.textContent = "⚡ " + mensagem;
+  toast.classList.remove("hidden");
+  toast.classList.add("card-verso-toast--visible");
+  _toastTimer = setTimeout(() => {
+    toast.classList.remove("card-verso-toast--visible");
+    setTimeout(() => toast.classList.add("hidden"), 300);
+  }, 2500);
+}
+
+// Intercepta dispararTilt quando modal mobile está aberto
+const _dispararTiltOriginal = dispararTilt;
+function dispararTilt(mensagem) {
+  const modal = document.getElementById("cardVersoMobileModal");
+  if (modal && !modal.classList.contains("hidden")) {
+    mostrarToastModal(mensagem);
+    return;
+  }
+  _dispararTiltOriginal(mensagem);
+}
+
 function abrirCardVersoMobile(id) {
   const data = allToys.find(
     (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0")
@@ -585,14 +616,11 @@ function abrirCardVersoMobile(id) {
       </div>
     </div>
     <div class="trunfo-stats-area">
-      <!-- Curiosidade: área variável flex:1 com scroll se necessário -->
       <div class="trunfo-curiosidade-v2">"${data.curiosidade}"</div>
-      <!-- Atributos ancorados na base -->
       <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${data.fabricante}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
       <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
-      <!-- EU TIVE / QUERIA TER ancorados logo acima do footer -->
       <div class="trunfo-actions-v2">
         <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
           EU TIVE <span class="action-count-v2" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
@@ -621,7 +649,7 @@ function abrirCardVersoMobile(id) {
         <button
           id="m-heart-btn-${idNormalizado}"
           class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}"
-          onclick="${isUserLogged ? `toggleCurtida(event, '${idNormalizado}')` : `mostrarMensagemLED('Faça login para curtir!');`}"
+          onclick="${isUserLogged ? `toggleCurtida(event, '${idNormalizado}')` : `event.stopPropagation(); mostrarToastModal('FAÇA LOGIN PARA CURTIR');`}"
           title="${isUserLogged ? "Curtir" : "Faça login para curtir"}"
         >
           <svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
@@ -630,27 +658,27 @@ function abrirCardVersoMobile(id) {
       </div>
     </div>`;
 
+  // Efeito de saída no card frente
+  const cardEl = document.getElementById(`card-${String(id).padStart(4, "0")}`);
+  if (cardEl) {
+    cardEl.style.transition = "opacity 0.15s ease, transform 0.15s ease";
+    cardEl.style.opacity = "0.4";
+    cardEl.style.transform = "scale(0.97)";
+    setTimeout(() => {
+      cardEl.style.opacity = "";
+      cardEl.style.transform = "";
+      cardEl.style.transition = "";
+    }, 320);
+  }
+
   const modal = document.getElementById("cardVersoMobileModal");
   if (modal) {
-    // 2 — Efeito de saída no card frente: leve fade+scale antes do modal abrir
-    const cardEl = document.getElementById(`card-${String(id).padStart(4, "0")}`);
-    if (cardEl) {
-      cardEl.style.transition = "opacity 0.15s ease, transform 0.15s ease";
-      cardEl.style.opacity = "0.4";
-      cardEl.style.transform = "scale(0.97)";
-      setTimeout(() => {
-        cardEl.style.opacity = "";
-        cardEl.style.transform = "";
-        cardEl.style.transition = "";
-      }, 320);
-    }
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
   }
 }
 
 function fecharCardVersoMobile(event) {
-  // Se clicou no box interno, não fecha
   if (event && event.target !== document.getElementById("cardVersoMobileModal")) return;
   const modal = document.getElementById("cardVersoMobileModal");
   if (modal) modal.classList.add("hidden");
