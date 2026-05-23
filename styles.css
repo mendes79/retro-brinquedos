@@ -2804,3 +2804,129 @@ body {
   animation: cardHintLine 1.6s ease-in-out 1.2s 2 forwards;
   pointer-events: none;
 }
+
+/* ============================================================
+   CARD VERSO V2 — NOVO LAYOUT SUPER TRUNFO REAL
+   ============================================================ */
+
+/* Linha 1 — grid 3 colunas: código | marca central | ✕ */
+.trunfo-top-bar-v2 {
+  background: #6b0000;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: 3px 8px;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.trunfo-code-v2 {
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--trunfo-gold);
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+.trunfo-brand-v2 {
+  font-family: "Orbitron", monospace;
+  font-size: 0.42rem;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trunfo-close-v2 {
+  background: #8b0000;
+  border: 1px solid rgba(255, 80, 80, 0.5);
+  color: #ff6060;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  line-height: 1.4;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+.trunfo-close-v2:hover {
+  background: #c0392b;
+  border-color: #ff4040;
+  color: #fff;
+}
+
+/* Foto mais alta na v2 — recupera espaço do rodapé compactado */
+.trunfo-stats-area .trunfo-photo-wrapper,
+.trunfo-photo-wrapper {
+  /* mantém regras existentes */
+}
+.card-back .trunfo-photo {
+  height: 130px; /* aumentado de 115px */
+}
+
+/* Curiosidade v2 — itálico, sem borda lateral */
+.trunfo-curiosidade-v2 {
+  padding: 5px 10px;
+  font-size: 0.55rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Última linha de atributos — borda dourada separando de EU TIVE */
+.trunfo-stat-last {
+  border-bottom: 2px solid var(--trunfo-gold) !important;
+}
+
+/* Linha 15 — EU TIVE | QUERIA TER */
+.trunfo-actions-v2 {
+  display: flex;
+  gap: 6px;
+  padding: 5px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0f0e1e;
+}
+.action-btn-v2 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: "Orbitron", monospace;
+  font-size: 0.42rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.03);
+}
+.action-count-v2 {
+  font-size: 0.55rem;
+  font-weight: 700;
+}
+.action-tive {
+  color: rgba(240, 192, 64, 0.6);
+  border-color: rgba(240, 192, 64, 0.25);
+}
+.action-tive:hover,
+.action-tive.active-tive {
+  color: var(--trunfo-gold);
+  border-color: rgba(240, 192, 64, 0.6);
+  background: rgba(240, 192, 64, 0.08);
+}
+.action-queria {
+  color: rgba(0, 255, 255, 0.6);
+  border-color: rgba(0, 255, 255, 0.2);
+}
+.action-queria:hover,
+.action-queria.active-queria {
+  color: var(--neon-blue);
+  border-color: rgba(0, 255, 255, 0.5);
+  background: rgba(0, 255, 255, 0.06);
+}

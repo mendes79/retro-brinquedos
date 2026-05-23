@@ -360,11 +360,15 @@ async function render(items, append = false) {
           <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
         </div>
         <div class="card-back flex flex-col">
+          <!-- NOVO CARD VERSO v2 — layout Super Trunfo real -->
           <div class="trunfo-header">
-            <div class="trunfo-top-bar">
-              <span>Super Trunfo • RetroBrinquedos</span>
-              <span class="trunfo-code-badge">${trunfoCode}</span>
+            <!-- Linha 1: grid 3 colunas [código | título central | ✕] -->
+            <div class="trunfo-top-bar-v2">
+              <span class="trunfo-code-v2">${trunfoCode}</span>
+              <span class="trunfo-brand-v2">RETROBRINQUEDOS</span>
+              <button class="trunfo-close-v2" onclick="handleFlip('${idNormalizado}'); event.stopPropagation();" title="Fechar">✕</button>
             </div>
+            <!-- Linha 2: estrela + nome do brinquedo -->
             <div class="trunfo-title-area">
               <div class="trunfo-star"></div>
               <span class="trunfo-title-text">${toy.nome}</span>
@@ -376,28 +380,22 @@ async function render(items, append = false) {
               <span class="trunfo-photo-year">${toy.ano}</span>
             </div>
           </div>
-          
+
           <div class="trunfo-stats-area">
+            <!-- Curiosidade em itálico -->
+            <div class="trunfo-curiosidade-v2">"${toy.curiosidade}"</div>
+            <!-- Atributos: label dourado | valor branco -->
             <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${toy.fabricante}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${toy.categoria}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${toy.tema}</span></div>
-            <div class="trunfo-raridade-area">
-              <div class="trunfo-raridade-header">
-                <span class="trunfo-raridade-label">⬡ Raridade</span>
-                <span class="trunfo-raridade-value">${toy.raridade}/10</span>
-              </div>
-              ${ledHTML}
-            </div>
-            <div class="trunfo-curiosidade">"${toy.curiosidade}"</div>
-            
-            <div class="trunfo-actions-area">
-              <button id="btn-tive-${idNormalizado}" class="action-btn ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
-                <span class="action-label">Eu Tive</span>
-                <span class="action-count" id="count-tive-${idNormalizado}">${toy.tive_count || 0}</span>
+            <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${toy.raridade}/10</span></div>
+            <!-- Linha 15: EU TIVE | QUERIA TER -->
+            <div class="trunfo-actions-v2">
+              <button id="btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
+                EU TIVE <span class="action-count-v2" id="count-tive-${idNormalizado}">${toy.tive_count || 0}</span>
               </button>
-              <button id="btn-queria-${idNormalizado}" class="action-btn ${isQueria ? "active-queria" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
-                <span class="action-label">Queria Ter</span>
-                <span class="action-count" id="count-queria-${idNormalizado}">${toy.queria_count || 0}</span>
+              <button id="btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
+                QUERIA TER <span class="action-count-v2" id="count-queria-${idNormalizado}">${toy.queria_count || 0}</span>
               </button>
             </div>
           </div>
