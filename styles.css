@@ -1530,9 +1530,12 @@ body {
    ============================================================ */
 
 #avatarDropdown {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+  background: rgba(10, 12, 28, 0.97) !important;
+  border: 1px solid rgba(34, 211, 238, 0.18) !important;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(34, 211, 238, 0.06) !important;
+  border-radius: 10px !important;
   padding: 8px 0 !important;
   min-width: 200px !important;
   perspective: 500px;
@@ -2547,14 +2550,14 @@ body {
     inset: 0;
     background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(3px);
-    z-index: -1;
+    z-index: 159; /* abaixo da navbar (160), acima de tudo — cobre hero e cards */
   }
   #avatarDropdown {
     position: fixed !important;
     top: 70px !important;
     right: 8px !important;
     left: auto !important;
-    z-index: 200 !important;
+    z-index: 200 !important; /* acima do backdrop e dos cards em qualquer scroll */
   }
 }
 
