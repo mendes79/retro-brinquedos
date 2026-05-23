@@ -3139,29 +3139,25 @@ body {
 }
 .card-verso-mobile-box .tab-count { font-size: clamp(11px, 3vw, 14px); }
 
-/* Toast de feedback no modal verso mobile
-   Substitui o painel LED que fica coberto pelo overlay */
-.card-verso-toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(10, 10, 20, 0.96);
-  border: 1.5px solid rgba(255, 32, 32, 0.7);
-  color: #ff5555;
-  font-family: "Orbitron", monospace;
-  font-size: clamp(12px, 3.5vw, 16px);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 10px 20px;
-  border-radius: 8px;
-  z-index: 600;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-  pointer-events: none;
-  box-shadow: 0 0 16px rgba(255, 32, 32, 0.35);
+/* ── Botões EU TIVE / QUERIA TER desabilitados para usuário deslogado ──
+   .app-unlogged é adicionado ao body quando não há sessão ativa.
+   Desktop (.action-btn) e Mobile (.action-btn-v2) tratados juntos. */
+.app-unlogged .action-btn,
+.app-unlogged .action-btn-v2 {
+  filter: grayscale(100%) opacity(0.45);
+  cursor: not-allowed;
 }
-.card-verso-toast--visible {
-  opacity: 1;
+/* Sem reveal de cor no hover quando deslogado */
+.app-unlogged .action-btn:hover,
+.app-unlogged .action-btn-v2:hover {
+  filter: grayscale(100%) opacity(0.45);
+  background: rgba(255, 255, 255, 0.02);
+  border-color: transparent;
+}
+/* Garante que os estados active-tive / active-queria também ficam cinza */
+.app-unlogged .action-btn.active-tive,
+.app-unlogged .action-btn.active-queria,
+.app-unlogged .action-btn-v2.active-tive,
+.app-unlogged .action-btn-v2.active-queria {
+  filter: grayscale(100%) opacity(0.45);
 }
