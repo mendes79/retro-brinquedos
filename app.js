@@ -512,13 +512,13 @@ function handleFlip(id) {
     }
   }
 
-  // C3 — Mobile: abre modal centralizado com proporção de carta real
+  // C3 — Mobile: abre modal centralizado
   if (window.innerWidth < 768) {
     abrirCardVersoMobile(id);
     return;
   }
 
-  // Desktop: flip CSS original preservado integralmente
+  // Desktop: flip CSS original preservado
   const grid = document.getElementById("toyGrid");
   const card = document.getElementById(`card-${id}`);
   const isFlipped = card.classList.contains("is-flipped");
@@ -555,8 +555,8 @@ function handleFlip(id) {
 // C3 — MODAL VERSO MOBILE
 // ============================================================
 
-// Toast de feedback dentro do modal — substitui o LED externo que fica coberto
 let _toastTimer = null;
+
 function mostrarToastModal(mensagem) {
   const toast = document.getElementById("cardVersoToast");
   if (!toast) return;
@@ -597,6 +597,7 @@ function abrirCardVersoMobile(id) {
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
 
+  // Usa as classes existentes do projeto: .action-btn, .action-label, .action-count
   box.innerHTML = `
     <div class="trunfo-header">
       <div class="trunfo-top-bar-v2">
@@ -621,12 +622,26 @@ function abrirCardVersoMobile(id) {
       <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
       <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
-      <div class="trunfo-actions-v2">
-        <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
-          EU TIVE <span class="action-count-v2" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
+      <div class="trunfo-actions-area">
+        <button
+          id="m-btn-tive-${idNormalizado}"
+          class="action-btn ${isTive ? "active-tive" : ""}"
+          onclick="${isUserLogged
+            ? `toggleInteracao(event, '${idNormalizado}', 'tive')`
+            : `event.stopPropagation(); mostrarToastModal('FAÇA LOGIN PARA INTERAGIR');`}"
+        >
+          <span class="action-label">EU TIVE</span>
+          <span class="action-count" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
         </button>
-        <button id="m-btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'queria')">
-          QUERIA TER <span class="action-count-v2" id="m-count-queria-${idNormalizado}">${data.queria_count || 0}</span>
+        <button
+          id="m-btn-queria-${idNormalizado}"
+          class="action-btn ${isQueria ? "active-queria" : ""}"
+          onclick="${isUserLogged
+            ? `toggleInteracao(event, '${idNormalizado}', 'queria')`
+            : `event.stopPropagation(); mostrarToastModal('FAÇA LOGIN PARA INTERAGIR');`}"
+        >
+          <span class="action-label">QUERIA TER</span>
+          <span class="action-count" id="m-count-queria-${idNormalizado}">${data.queria_count || 0}</span>
         </button>
       </div>
     </div>
@@ -648,8 +663,10 @@ function abrirCardVersoMobile(id) {
         </button>
         <button
           id="m-heart-btn-${idNormalizado}"
-          class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}"
-          onclick="${isUserLogged ? `toggleCurtida(event, '${idNormalizado}')` : `event.stopPropagation(); mostrarToastModal('FAÇA LOGIN PARA CURTIR');`}"
+          class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""}"
+          onclick="${isUserLogged
+            ? `toggleCurtida(event, '${idNormalizado}')`
+            : `event.stopPropagation(); mostrarToastModal('FAÇA LOGIN PARA CURTIR');`}"
           title="${isUserLogged ? "Curtir" : "Faça login para curtir"}"
         >
           <svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
@@ -658,7 +675,6 @@ function abrirCardVersoMobile(id) {
       </div>
     </div>`;
 
-  // Efeito de saída no card frente
   const cardEl = document.getElementById(`card-${String(id).padStart(4, "0")}`);
   if (cardEl) {
     cardEl.style.transition = "opacity 0.15s ease, transform 0.15s ease";

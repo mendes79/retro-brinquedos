@@ -2806,7 +2806,7 @@ body {
 }
 
 /* ============================================================
-   C3 — MODAL VERSO MOBILE
+   C3 — MODAL VERSO MOBILE + TOAST
    ============================================================ */
 #cardVersoMobileModal { padding: 10px; }
 
@@ -2814,8 +2814,7 @@ body {
   width: min(calc(100vw - 20px), calc(92vh * 0.645));
   max-width: 400px;
   aspect-ratio: 0.645 / 1;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   background: #0f0e1e;
   border: 3px solid var(--trunfo-gold);
   border-radius: 10px;
@@ -2828,41 +2827,31 @@ body {
   70%  { opacity: 1; transform: scale(1.02); }
   100% { opacity: 1; transform: scale(1); }
 }
-
-/* stats-area mobile: flex coluna com curiosidade variável */
 .card-verso-mobile-box .trunfo-stats-area {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
+  display: flex; flex-direction: column; flex: 1; overflow: hidden;
   border-top: 2px solid var(--trunfo-gold);
 }
 .card-verso-mobile-box .trunfo-curiosidade-v2 {
-  flex: 1;
-  overflow-y: auto;
+  flex: 1; overflow-y: auto;
   font-size: clamp(11px, 2.8vw, 15px);
-  padding: 6px 12px;
-  line-height: 1.6;
-  scrollbar-width: thin;
-  scrollbar-color: var(--trunfo-gold) transparent;
+  padding: 6px 12px; line-height: 1.6;
+  scrollbar-width: thin; scrollbar-color: var(--trunfo-gold) transparent;
 }
 .card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar { width: 3px; }
-.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar-thumb {
-  background: var(--trunfo-gold); border-radius: 2px;
-}
+.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar-thumb { background: var(--trunfo-gold); border-radius: 2px; }
 .card-verso-mobile-box .trunfo-stat-row      { padding: 3px 12px; flex-shrink: 0; }
-.card-verso-mobile-box .trunfo-label         { font-size: clamp(10px, 2.5vw, 13px); letter-spacing: 0.08em; }
+.card-verso-mobile-box .trunfo-label         { font-size: clamp(10px, 2.5vw, 13px); }
 .card-verso-mobile-box .trunfo-value         { font-size: clamp(11px, 3.2vw, 15px); }
 .card-verso-mobile-box .trunfo-stat-last     { border-bottom: 2px solid var(--trunfo-gold) !important; }
-.card-verso-mobile-box .trunfo-actions-v2    { padding: 6px 10px; gap: 8px; flex-shrink: 0; }
-.card-verso-mobile-box .action-btn-v2        { font-size: clamp(10px, 2.6vw, 13px); padding: 7px 10px; border-radius: 5px; }
-.card-verso-mobile-box .action-count-v2      { font-size: clamp(11px, 3vw, 14px); }
+/* Botões EU TIVE / QUERIA TER — usa classes existentes .action-btn */
+.card-verso-mobile-box .trunfo-actions-area  { flex-shrink: 0; }
+.card-verso-mobile-box .action-btn           { padding: 8px 12px; }
+.card-verso-mobile-box .action-label         { font-size: clamp(10px, 2.6vw, 13px); }
+.card-verso-mobile-box .action-count         { font-size: clamp(11px, 3vw, 14px); }
 .card-verso-mobile-box .trunfo-top-bar-v2    { padding: 5px 10px; }
-.card-verso-mobile-box .trunfo-brand-v2      {
+.card-verso-mobile-box .trunfo-brand-v2 {
   font-size: clamp(11px, 3.2vw, 16px);
-  color: #39ff14;
-  text-shadow: 0 0 8px rgba(57, 255, 20, 0.7);
-  letter-spacing: 0.15em;
+  color: #39ff14; text-shadow: 0 0 8px rgba(57,255,20,0.7); letter-spacing: 0.15em;
 }
 .card-verso-mobile-box .trunfo-code-v2       { font-size: clamp(11px, 3vw, 15px); }
 .card-verso-mobile-box .trunfo-title-area    { padding: 7px 12px 9px; gap: 10px; }
@@ -2870,47 +2859,34 @@ body {
 .card-verso-mobile-box .trunfo-title-text    { font-size: clamp(13px, 3.8vw, 18px); }
 .card-verso-mobile-box .trunfo-photo         { height: 38vw; max-height: 45vh; object-fit: cover; }
 .card-verso-mobile-box .trunfo-close-v2 {
-  background: #000;
-  border: 1.5px solid var(--trunfo-gold);
-  color: #fff;
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 3px;
-  cursor: pointer;
-  line-height: 1.4;
-  transition: all 0.15s ease;
+  background: #000; border: 1.5px solid var(--trunfo-gold);
+  color: #fff; font-size: 0.65rem; font-weight: 700;
+  padding: 2px 7px; border-radius: 3px; cursor: pointer; line-height: 1.4;
 }
-.card-verso-mobile-box .trunfo-close-v2:hover {
-  background: var(--trunfo-gold);
-  color: #000;
-}
-.card-verso-mobile-box .trunfo-footer        { height: auto; padding: 4px 0; flex-shrink: 0; }
-.card-verso-mobile-box .tab-icon-svg         { width: clamp(20px, 6vw, 28px) !important; height: clamp(20px, 6vw, 28px) !important; }
-.card-verso-mobile-box .tab-count            { font-size: clamp(11px, 3vw, 14px); }
+.card-verso-mobile-box .trunfo-footer        { padding: 4px 0; flex-shrink: 0; }
+.card-verso-mobile-box .tab-icon-svg         { width: clamp(20px,6vw,28px) !important; height: clamp(20px,6vw,28px) !important; }
+.card-verso-mobile-box .tab-count            { font-size: clamp(11px,3vw,14px); }
 
-/* Toast de feedback dentro do modal mobile */
+/* Toast — fonte maior para leitura confortável no mobile */
 .card-verso-toast {
   position: fixed;
-  bottom: calc(10px + min(calc(100vw - 20px), calc(92vh * 0.645)) / 2 - 20px);
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(10, 10, 20, 0.95);
-  border: 1px solid rgba(255, 32, 32, 0.6);
-  color: #ff4040;
+  background: rgba(10, 10, 20, 0.96);
+  border: 1.5px solid rgba(255, 32, 32, 0.7);
+  color: #ff5555;
   font-family: "Orbitron", monospace;
-  font-size: 0.55rem;
-  letter-spacing: 0.1em;
+  font-size: clamp(12px, 3.5vw, 16px);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 10px 20px;
+  border-radius: 8px;
   z-index: 600;
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.25s ease;
   pointer-events: none;
-  box-shadow: 0 0 12px rgba(255, 32, 32, 0.3);
+  box-shadow: 0 0 16px rgba(255, 32, 32, 0.35);
 }
-.card-verso-toast--visible {
-  opacity: 1;
-}
+.card-verso-toast--visible { opacity: 1; }

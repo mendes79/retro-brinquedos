@@ -1166,26 +1166,17 @@
     </div>
     <!-- /H4 H5 -->
   
-    <!-- ============================================================
-         MODAL VERSO MOBILE — card Super Trunfo centralizado
-         Aberto por handleFlip() em viewport < 768px
-         ============================================================ -->
+    <!-- C3 — MODAL VERSO MOBILE -->
     <div
       id="cardVersoMobileModal"
       class="hidden fixed inset-0 z-[400] flex items-center justify-center p-4"
-      style="background: rgba(0,0,0,0.88); backdrop-filter: blur(4px); touch-action: manipulation;"
+      style="background:rgba(0,0,0,0.88);backdrop-filter:blur(4px);touch-action:manipulation;"
       onclick="fecharCardVersoMobile(event)"
     >
-      <div
-        id="cardVersoMobileBox"
-        class="card-verso-mobile-box"
-        onclick="event.stopPropagation()"
-      >
+      <div id="cardVersoMobileBox" class="card-verso-mobile-box" onclick="event.stopPropagation()">
         <!-- conteúdo injetado por JS -->
       </div>
-      <!-- Toast de feedback dentro do modal mobile -->
       <div id="cardVersoToast" class="card-verso-toast hidden"></div>
     </div>
-    <!-- /modal verso mobile -->
 </body>
 </html>
