@@ -2930,3 +2930,29 @@ body {
   border-color: rgba(0, 255, 255, 0.5);
   background: rgba(0, 255, 255, 0.06);
 }
+
+/* ============================================================
+   C3 — MODAL VERSO MOBILE
+   Carta centralizada com proporção real Super Trunfo (1:1.55)
+   ============================================================ */
+.card-verso-mobile-box {
+  width: min(300px, 85vw);
+  /* proporção fiel à carta Super Trunfo real */
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #0f0e1e;
+  border: 3px solid var(--trunfo-gold);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* fade de entrada */
+  animation: disclaimerFadeIn 0.2s ease forwards;
+}
+
+/* Foto maior no modal mobile — mais espaço disponível */
+.card-verso-mobile-box .trunfo-photo {
+  height: 160px;
+}
+
+/* Escape via teclado fecha o modal */
