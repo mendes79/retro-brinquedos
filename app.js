@@ -644,6 +644,10 @@ function abrirCardVersoMobile(id) {
         cardEl.style.transition = "";
       }, 320);
     }
+    // 3 — Reinicia a animação do box (necessário se o mesmo card for aberto 2x)
+    box.style.animation = "none";
+    box.offsetHeight; // reflow forçado — descarta o frame anterior
+    box.style.animation = "";
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
   }

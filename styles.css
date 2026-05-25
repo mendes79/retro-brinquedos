@@ -2965,6 +2965,12 @@ body {
 /* 1 — Overlay ocupa tela toda, padding mínimo de 10px cada lado */
 #cardVersoMobileModal {
   padding: 10px;
+  animation: cardVersoOverlayFade 0.2s ease-out forwards;
+}
+
+@keyframes cardVersoOverlayFade {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 /* 1 — Card cresce o máximo possível mantendo proporção */
@@ -2983,16 +2989,45 @@ body {
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  /* 2 — Transição: fade suave de entrada */
-  animation: cardVersoEntrada 0.25s ease-out forwards;
-  transform-origin: center;
+  /* Animação de entrada: scanline CRT → overshoot elástico */
+  animation: cardVersoEntrada 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
 }
 
-/* 2 — Keyframe de entrada: fade + leve escala uniforme */
+/*
+  Entrada combinada:
+  Fase 1 (0–55%)  — scanline CRT: card "liga" como monitor, cresce verticalmente
+                    com flash neon no pico (brightness 2.2)
+  Fase 2 (55–80%) — overshoot: escala ultrapassa 1 levemente (encaixe físico)
+  Fase 3 (80–100%)— recuo suave para escala e brilho normais
+*/
 @keyframes cardVersoEntrada {
-  0%   { opacity: 0; transform: scale(0.88); }
-  70%  { opacity: 1; transform: scale(1.02); }
-  100% { opacity: 1; transform: scale(1); }
+  0%   {
+    opacity: 0;
+    transform: scaleY(0.04) scaleX(0.92);
+    filter: brightness(3) blur(1px);
+  }
+  28%  {
+    opacity: 1;
+    transform: scaleY(0.72) scaleX(0.97);
+    filter: brightness(2.2) blur(0px);
+  }
+  55%  {
+    opacity: 1;
+    transform: scaleY(1.0) scaleX(1.0);
+    filter: brightness(1.5);
+  }
+  78%  {
+    opacity: 1;
+    transform: scale(1.055);
+    filter: brightness(1.0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.0);
+    filter: brightness(1.0);
+  }
 }
 
 /* Foto maior no modal mobile */
