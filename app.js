@@ -388,8 +388,8 @@ async function render(items, append = false) {
             <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${toy.fabricante}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${toy.categoria}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${toy.tema}</span></div>
-            <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${toy.raridade}/10</span></div>
-            <div class="trunfo-stat-row"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="views-${idNormalizado}">👁 ${toy.visualizacoes || 0}</span></div>
+            <div class="trunfo-stat-row"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${toy.raridade}/10</span></div>
+            <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="views-${idNormalizado}">👁 ${toy.visualizacoes || 0}</span></div>
             <!-- Linha 15: EU TIVE | QUERIA TER -->
             <div class="trunfo-actions-v2">
               <button id="btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
@@ -603,8 +603,8 @@ function abrirCardVersoMobile(id) {
       <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${data.fabricante}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
-      <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
-      <div class="trunfo-stat-row"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="m-views-${idNormalizado}">👁 ${data.visualizacoes || 0}</span></div>
+      <div class="trunfo-stat-row"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
+      <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="m-views-${idNormalizado}">👁 ${data.visualizacoes || 0}</span></div>
       <!-- EU TIVE / QUERIA TER ancorados logo acima do footer -->
       <div class="trunfo-actions-v2">
         <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'tive')">
