@@ -389,6 +389,7 @@ async function render(items, append = false) {
             <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${toy.categoria}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${toy.tema}</span></div>
             <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${toy.raridade}/10</span></div>
+            <div class="trunfo-stat-row"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="views-${idNormalizado}">👁 ${toy.visualizacoes || 0}</span></div>
             <!-- Linha 15: EU TIVE | QUERIA TER -->
             <div class="trunfo-actions-v2">
               <button id="btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
@@ -494,6 +495,14 @@ async function render(items, append = false) {
 /* 3.5. MECÂNICA DE INTERAÇÃO (Flip e Desfocar) */
 
 /* 3.5.1. Vira o card com cálculo de scroll dinâmico (Idêntico em Todas as Telas) */
+// Registra visualização de forma assíncrona e silenciosa (fire-and-forget)
+// Conta logados e deslogados — RPC com SECURITY DEFINER
+async function registrarVisualizacao(id) {
+  try {
+    await supabaseClient.rpc("increment_visualizacoes", { card_id: id });
+  } catch (_) {} // silencioso — não bloqueia o flip em caso de falha
+}
+
 function handleFlip(id) {
   // 🛡️ ESCUDO DE FOCO MOBILE (Anti-Bubbling Nativo)
   const evento = window.event;
@@ -530,6 +539,7 @@ function handleFlip(id) {
     .forEach((c) => c.classList.remove("is-flipped"));
 
   if (!isFlipped) {
+    registrarVisualizacao(id); // fire-and-forget — não bloqueia o flip
     card.classList.add("is-flipped");
     grid.classList.add("grid-focused");
 
@@ -555,6 +565,8 @@ function abrirCardVersoMobile(id) {
     (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0")
   );
   if (!data) return;
+
+  registrarVisualizacao(String(data.id).padStart(4, "0")); // fire-and-forget
 
   const idNormalizado = String(data.id).padStart(4, "0");
   const urlVersoOtimizada = otimizarUrlCloudinary(data.url_verso, 500);
@@ -592,6 +604,7 @@ function abrirCardVersoMobile(id) {
       <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
       <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
+      <div class="trunfo-stat-row"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="m-views-${idNormalizado}">👁 ${data.visualizacoes || 0}</span></div>
       <!-- EU TIVE / QUERIA TER ancorados logo acima do footer -->
       <div class="trunfo-actions-v2">
         <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'tive')">
