@@ -2411,6 +2411,8 @@ body {
   color: #cbd5e1;
   overflow-y: auto;
   overscroll-behavior: contain;
+  flex: 1;        /* ocupa todo o espaço restante após o header */
+  min-height: 0;  /* sem isso o flex ignora o overflow-y em alguns browsers */
   /* Scrollbar discreta nas cores do projeto */
   scrollbar-width: thin;
   scrollbar-color: rgba(57, 255, 20, 0.4) transparent;
