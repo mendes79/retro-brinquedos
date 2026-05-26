@@ -94,9 +94,9 @@ function _prepararDadosRanking() {
 }
 
 function _imagemRankingURL(url) {
-  // Solicita versão 80×80 crop quadrado ao Cloudinary — mais leve no modal
-  if (!url) return "";
-  return url.replace(/\/upload\//, "/upload/w_80,h_80,c_fill,g_auto/");
+  // Solicita versão 80×80 crop quadrado ao Cloudinary — miniatura leve para o modal
+  if (!url || !url.includes("cloudinary.com")) return url || "";
+  return url.replace("/upload/", "/upload/f_auto,q_auto,w_80,h_80,c_fill,g_auto/");
 }
 
 function _renderizarListaRanking(modo) {
@@ -110,7 +110,7 @@ function _renderizarListaRanking(modo) {
   const itens = _rankingDados[modo];
   lista.innerHTML = itens.map((toy, i) => {
     const pos = i + 1;
-    const imgURL = _imagemRankingURL(toy.imagem_url || toy.imagem || "");
+    const imgURL = _imagemRankingURL(toy.url_frente || "");
     const valor = isCurtidas ? (toy.curtidas_count || 0) : (toy.visualizacoes || 0);
     const icone = isCurtidas ? "❤" : "👁";
     const corValor = isCurtidas
