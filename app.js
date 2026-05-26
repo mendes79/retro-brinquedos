@@ -14,7 +14,7 @@ let cursor = 0;
 const LIMITE = 24;
 let isLoading = false;
 let hasMais = true;
-const sessionSeed = Math.random();
+let sessionSeed = Math.random();
 let isUserLogged = false;
 let curtidasDoUsuario = new Set();
 let tiveDoUsuario = new Set();
@@ -35,7 +35,16 @@ sentinel.className =
    e dispara mais um lote se necessário — cobre o gap do desktop (6 colunas) */
 function verificarSentinela() {
   // H7/C3 — protege contra disparo parasita durante reset de busca
-  if (!hasMais || isSearching) return;
+  if (isSearching) return;
+
+  // Masonry infinito: ao chegar no fim em modo normal, reinicia com novo seed
+  if (!hasMais) {
+    if (!buscaAtiva && !filtroPessoalAtivo) {
+      _reiniciarCicloInfinito();
+    }
+    return;
+  }
+
   // Aguarda o browser pintar os novos cards antes de medir
   requestAnimationFrame(() => {
     const rect = sentinel.getBoundingClientRect();
@@ -46,14 +55,22 @@ function verificarSentinela() {
   });
 }
 
+// Reinicia o ciclo infinito com novo seed — grid preservado (append mode)
+function _reiniciarCicloInfinito() {
+  sessionSeed = Math.random(); // novo embaralhamento — ordem diferente da rodada anterior
+  cursor = 0;
+  hasMais = true;
+  fetchBrinquedos(false); // append — cards novos abaixo dos existentes
+}
+
 /* 3.11.1. Monta o vigia de scroll dinâmico (único ponto de disparo) */
 function setupObserver() {
   const observer = new IntersectionObserver(
     (entries) => {
       // 🛡️ VALIDAÇÃO COMPLEMENTAR: Só dispara se o sentinel estiver visível,
       // se não estiver carregando E se NÃO estiver no meio de um reset de busca (isSearching)
-      if (entries[0].isIntersecting && !isLoading && hasMais && !isSearching) {
-        fetchBrinquedos();
+      if (entries[0].isIntersecting && !isLoading && !isSearching) {
+        verificarSentinela();
       }
     },
     // rootMargin aumentado: pré-carrega antes do usuário chegar ao fim
@@ -77,38 +94,45 @@ function setupObserver() {
 let _rankingDados = null;
 let _rankingModoAtivo = "curtidas"; // "curtidas" | "visualizacoes"
 
-function _prepararDadosRanking() {
-  if (_rankingDados || !allToys.length) return;
-  _rankingDados = {
-    curtidas: [...allToys]
-      .sort((a, b) => (b.curtidas_count || 0) - (a.curtidas_count || 0))
-      .slice(0, 3),
-    visualizacoes: [...allToys]
-      .sort((a, b) => (b.visualizacoes || 0) - (a.visualizacoes || 0))
-      .slice(0, 3),
-    timestamp: new Date().toLocaleString("pt-BR", {
-      day: "2-digit", month: "2-digit", year: "numeric",
-      hour: "2-digit", minute: "2-digit",
-    }),
-  };
+async function _prepararDadosRanking() {
+  if (_rankingDados) return; // já calculado nessa sessão — no-op
 
-  // Prefetch silencioso das 6 imagens (top3 curtidos + top3 visualizados)
-  // O browser as cacheia antes do usuário abrir o modal — abre instantâneo.
-  const todasImagens = [
-    ..._rankingDados.curtidas,
-    ..._rankingDados.visualizacoes,
-  ];
-  // Deduplica por id — um mesmo card pode aparecer nos dois rankings
-  const vistas = new Set();
-  for (const toy of todasImagens) {
-    if (vistas.has(toy.id)) continue;
-    vistas.add(toy.id);
-    const url = _imagemRankingURL(toy.url_frente || "");
-    if (url) {
-      const img = new Image();
-      img.src = url; // disparo em background — sem append ao DOM
+  try {
+    const campos = "id, nome, fabricante, url_frente, curtidas_count, visualizacoes";
+
+    const [resCurtidas, resVisualizacoes] = await Promise.all([
+      supabaseClient
+        .from("brinquedos")
+        .select(campos)
+        .order("curtidas_count", { ascending: false })
+        .limit(3),
+      supabaseClient
+        .from("brinquedos")
+        .select(campos)
+        .order("visualizacoes", { ascending: false })
+        .limit(3),
+    ]);
+
+    if (resCurtidas.error || resVisualizacoes.error) return;
+
+    _rankingDados = {
+      curtidas: resCurtidas.data || [],
+      visualizacoes: resVisualizacoes.data || [],
+      timestamp: new Date().toLocaleString("pt-BR", {
+        day: "2-digit", month: "2-digit", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+      }),
+    };
+
+    // Prefetch silencioso das imagens — máx 6, deduplicadas por id
+    const vistas = new Set();
+    for (const toy of [..._rankingDados.curtidas, ..._rankingDados.visualizacoes]) {
+      if (vistas.has(toy.id)) continue;
+      vistas.add(toy.id);
+      const url = _imagemRankingURL(toy.url_frente || "");
+      if (url) { const img = new Image(); img.src = url; }
     }
-  }
+  } catch (_) {} // silencioso — ranking simplesmente não aparece se falhar
 }
 
 function _imagemRankingURL(url) {
@@ -304,8 +328,8 @@ async function fetchBrinquedos(reset = false) {
 
       if (reset && data.total) {
         document.getElementById("heroCount").textContent = data.total;
-        // Pré-computa os dados do ranking em background após o primeiro fetch
-        requestAnimationFrame(() => _prepararDadosRanking());
+        // Pré-computa o ranking via query dedicada ao Supabase em background
+        requestAnimationFrame(() => { _prepararDadosRanking(); });
       }
 
       itens = data.itens || [];
