@@ -311,17 +311,6 @@ async function fetchBrinquedos(reset = false) {
       itens = data.itens || [];
       cursor = data.cursor;
       hasMais = data.temMais;
-
-      // 🎮 Log de progresso — apenas no console, invisível para o usuário
-      if (data.cursorGlobal !== undefined) {
-        const pct = ((data.cursorGlobal / data.limiteGlobal) * 100).toFixed(1);
-        console.log(`[MASONRY] cards=${data.cursorGlobal}/${data.limiteGlobal} (${pct}%) temMais=${data.temMais}`);
-      }
-
-      // 🏆 Game Over — chegou ao limite global de 9999
-      if (!data.temMais && filtroAtivo === "todos" && !buscaAtiva) {
-        exibirGameOver();
-      }
     }
 
     // --- 3. LIMPEZA DOS SKELETONS ---
@@ -2402,35 +2391,6 @@ window.addEventListener("resize", () => {
 
 /* 3.10.2. Chama Auth, recupera tokens e desenha primeira página */
 /* 3.10.2. Chama Auth, recupera tokens e desenha primeira página */
-// ============================================================
-// 🏆 GAME OVER — exibida ao chegar no card 9999
-// ============================================================
-function exibirGameOver() {
-  const main = document.querySelector("main");
-  if (!main || document.getElementById("gameOverFaixa")) return;
-
-  const faixa = document.createElement("div");
-  faixa.id = "gameOverFaixa";
-  faixa.innerHTML = `
-    <div class="game-over-inner">
-      <img src="/img/game-over.png" alt="Game Over" class="game-over-img" />
-      <p class="game-over-sub">Você explorou todos os <strong>9.999</strong> cards do museu!</p>
-      <button class="game-over-btn" onclick="reiniciarGameOver()">▶ PLAY AGAIN</button>
-    </div>`;
-  main.appendChild(faixa);
-
-  // Informa no LED
-  dispararTilt("🏆 PARABÉNS! Você zerou o RetroBrinquedos BR! ▶ Clique em PLAY AGAIN para recomeçar");
-  console.log("[GAME OVER] 9999 cards exibidos — exibindo faixa de encerramento");
-}
-
-function reiniciarGameOver() {
-  const faixa = document.getElementById("gameOverFaixa");
-  if (faixa) faixa.remove();
-  // Reinicia do zero — novo seed, cursor 0, grid limpo
-  fetchBrinquedos(true);
-}
-
 async function init() {
   const {
     data: { session },

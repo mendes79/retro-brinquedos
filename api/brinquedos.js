@@ -55,7 +55,20 @@ export default async function handler(req, res) {
     const cursorNum = Math.max(0, parseInt(cursor) || 0);
     const limiteNum = Math.min(50, Math.max(1, parseInt(limite) || 30));
 
-    // Busca o total antecipadamente para calcular o cursor local
+    // Busca os itens via RPC
+    const { data, error } = await db.rpc("buscar_brinquedos", {
+      seed_val: seedNum,
+      cursor_val: cursorNum,
+      limite_val: limiteNum,
+      fabricante_val: fabricante ?? null,
+      categoria_val: categoria ?? null,
+      decada_val: decada ? decada.replace(/[^0-9s]/g, "") : null,
+      busca_val: busca ? busca.slice(0, 100) : null,
+    });
+
+    if (error) throw error;
+
+    // Busca o Total de forma blindada (não derruba a API se falhar)
     let totalItens = 0;
     try {
       const { count } = await db
@@ -66,53 +79,16 @@ export default async function handler(req, res) {
       console.warn("Aviso (Contagem):", errCount.message);
     }
 
-    // Mapeia cursor global → cursor local (cicla quando passa do total)
-    // A cada volta completa, deriva um novo seed do original para variar a ordem
-    let cursorLocal = cursorNum;
-    let seedEfetivo = seedNum;
-    if (totalItens > 0 && cursorNum > 0) {
-      const volta = Math.floor(cursorNum / totalItens);
-      cursorLocal = cursorNum % totalItens;
-      // Deriva seed diferente a cada volta usando o seed original como base
-      if (volta > 0) {
-        seedEfetivo = ((seedNum * 9301 + volta * 49297) % 233280) / 233280;
-      }
-    }
-
-    // Busca os itens via RPC usando cursor e seed mapeados
-    const { data, error } = await db.rpc("buscar_brinquedos", {
-      seed_val: seedEfetivo,
-      cursor_val: cursorLocal,
-      limite_val: limiteNum,
-      fabricante_val: fabricante ?? null,
-      categoria_val: categoria ?? null,
-      decada_val: decada ? decada.replace(/[^0-9s]/g, "") : null,
-      busca_val: busca ? busca.slice(0, 100) : null,
-    });
-
-    if (error) throw error;
-
-    const LIMITE_GLOBAL = 9999; // capacidade declarada do masonry — "Game Over" ao chegar aqui
-    const itens = data ?? [];
-
-    // cursorGlobal avança de 0 até 9999 independente do tamanho real do catálogo
-    const cursorGlobal = cursorNum + itens.length;
-    const zerou = cursorGlobal >= LIMITE_GLOBAL;
-
-    console.log(`[API] cursorLocal=${cursorNum} cursorGlobal=${cursorGlobal}/${LIMITE_GLOBAL} total=${totalItens} rodada=${totalItens > 0 ? Math.floor(cursorNum / totalItens) + 1 : 1}`);
-
     res.setHeader(
       "Cache-Control",
       "public, s-maxage=10, stale-while-revalidate=60",
     );
 
     return res.status(200).json({
-      itens,
-      cursor: zerou ? LIMITE_GLOBAL : cursorGlobal,
-      temMais: !zerou,
+      itens: data ?? [],
+      cursor: cursorNum + limiteNum,
+      temMais: (data?.length ?? 0) === limiteNum,
       total: totalItens,
-      cursorGlobal,          // frontend usa para monitorar progresso no console
-      limiteGlobal: LIMITE_GLOBAL,
     });
   } catch (err) {
     console.error("Erro Fatal na API:", err.message);
