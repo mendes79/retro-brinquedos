@@ -39,7 +39,7 @@ function verificarSentinela() {
 
   // Masonry infinito: ao chegar no fim em modo normal, reinicia com novo seed
   if (!hasMais) {
-    if (!buscaAtiva && !filtroPessoalAtivo) {
+    if (!buscaAtiva && filtroAtivo === "todos") {
       _reiniciarCicloInfinito();
     }
     return;
