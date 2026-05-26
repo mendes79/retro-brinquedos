@@ -3406,3 +3406,75 @@ body {
 .app-unlogged .action-btn-v2.active-queria {
   filter: grayscale(100%) opacity(0.45);
 }
+
+/* ============================================================
+   GAME OVER — faixa widescreen ao chegar no card 9999
+   ============================================================ */
+#gameOverFaixa {
+  width: 100%;
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%);
+  border-top: 3px solid var(--trunfo-gold);
+  border-bottom: 3px solid var(--trunfo-gold);
+  padding: 3rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.game-over-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 600px;
+  text-align: center;
+}
+
+.game-over-img {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  object-fit: contain;
+  /* Glow dourado ao redor da imagem */
+  filter: drop-shadow(0 0 24px rgba(240, 192, 64, 0.6));
+  animation: gameOverPulse 2s ease-in-out infinite;
+}
+
+@keyframes gameOverPulse {
+  0%, 100% { filter: drop-shadow(0 0 24px rgba(240, 192, 64, 0.6)); }
+  50%       { filter: drop-shadow(0 0 40px rgba(240, 192, 64, 0.9)); }
+}
+
+.game-over-sub {
+  font-family: "Orbitron", monospace;
+  font-size: clamp(0.65rem, 2vw, 0.85rem);
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.1em;
+  line-height: 1.6;
+}
+
+.game-over-sub strong {
+  color: var(--trunfo-gold);
+}
+
+.game-over-btn {
+  font-family: "Orbitron", monospace;
+  font-size: clamp(0.75rem, 2.5vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  padding: 0.75rem 2.5rem;
+  background: transparent;
+  border: 2px solid var(--trunfo-gold);
+  color: var(--trunfo-gold);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+}
+
+.game-over-btn:hover {
+  background: var(--trunfo-gold);
+  color: #000;
+  box-shadow: 0 0 20px rgba(240, 192, 64, 0.5);
+}

@@ -14,7 +14,7 @@ let cursor = 0;
 const LIMITE = 24;
 let isLoading = false;
 let hasMais = true;
-let sessionSeed = Math.random();
+const sessionSeed = Math.random();
 let isUserLogged = false;
 let curtidasDoUsuario = new Set();
 let tiveDoUsuario = new Set();
@@ -34,13 +34,13 @@ sentinel.className =
 /* 3.3.2. Verifica se o sentinel ainda está visível após um fetch terminar
    e dispara mais um lote se necessário — cobre o gap do desktop (6 colunas) */
 function verificarSentinela() {
+  // H7/C3 — protege contra disparo parasita durante reset de busca
   if (!hasMais || isSearching) return;
+  // Aguarda o browser pintar os novos cards antes de medir
   requestAnimationFrame(() => {
     const rect = sentinel.getBoundingClientRect();
-    const visivel = rect.top < window.innerHeight + 1200;
-    console.log(`[SENTINEL] top=${Math.round(rect.top)} vh=${window.innerHeight} visivel=${visivel} hasMais=${hasMais} isLoading=${isLoading} isSearching=${isSearching}`);
-    if (visivel && !isLoading && !isSearching) {
-      console.log("[SENTINEL] → disparando fetchBrinquedos()");
+    // ✅ Margem generosa: cobre mesmo telas 4K com 6 colunas
+    if (rect.top < window.innerHeight + 1200 && !isLoading && !isSearching) {
       fetchBrinquedos();
     }
   });
@@ -50,13 +50,13 @@ function verificarSentinela() {
 function setupObserver() {
   const observer = new IntersectionObserver(
     (entries) => {
-      const e = entries[0];
-      console.log(`[OBSERVER] isIntersecting=${e.isIntersecting} isLoading=${isLoading} hasMais=${hasMais} isSearching=${isSearching}`);
-      if (e.isIntersecting && !isLoading && hasMais && !isSearching) {
-        console.log("[OBSERVER] → disparando fetchBrinquedos()");
+      // 🛡️ VALIDAÇÃO COMPLEMENTAR: Só dispara se o sentinel estiver visível,
+      // se não estiver carregando E se NÃO estiver no meio de um reset de busca (isSearching)
+      if (entries[0].isIntersecting && !isLoading && hasMais && !isSearching) {
         fetchBrinquedos();
       }
     },
+    // rootMargin aumentado: pré-carrega antes do usuário chegar ao fim
     { rootMargin: "1200px" },
   );
 
@@ -194,8 +194,7 @@ function _sincronizarBotoesRanking(modo) {
 }
 
 async function fetchBrinquedos(reset = false) {
-  console.log(`[FETCH] reset=${reset} isLoading=${isLoading} hasMais=${hasMais} cursor=${cursor} allToys=${allToys.length}`);
-  if (isLoading || (!hasMais && !reset)) { console.log("[FETCH] BLOQUEADO"); return; }
+  if (isLoading || (!hasMais && !reset)) return;
   isLoading = true;
 
   const grid = document.getElementById("toyGrid");
@@ -311,16 +310,17 @@ async function fetchBrinquedos(reset = false) {
 
       itens = data.itens || [];
       cursor = data.cursor;
-      console.log(`[FETCH] Vercel: itens=${itens.length} cursor=${cursor} temMais=${data.temMais} seed=${sessionSeed.toFixed(4)}`);
-      // Scroll infinito silencioso: ao chegar no fim em modo normal,
-      // sorteia nova ordem e recomeça — o sentinel nunca para.
+      hasMais = data.temMais;
+
+      // 🎮 Log de progresso — apenas no console, invisível para o usuário
+      if (data.cursorGlobal !== undefined) {
+        const pct = ((data.cursorGlobal / data.limiteGlobal) * 100).toFixed(1);
+        console.log(`[MASONRY] cards=${data.cursorGlobal}/${data.limiteGlobal} (${pct}%) temMais=${data.temMais}`);
+      }
+
+      // 🏆 Game Over — chegou ao limite global de 9999
       if (!data.temMais && filtroAtivo === "todos" && !buscaAtiva) {
-        cursor = 0;
-        sessionSeed = Math.random();
-        hasMais = true;
-        console.log(`[FETCH] fim do catálogo → novo seed=${sessionSeed.toFixed(4)} cursor=0 hasMais=true`);
-      } else {
-        hasMais = data.temMais;
+        exibirGameOver();
       }
     }
 
@@ -341,7 +341,6 @@ async function fetchBrinquedos(reset = false) {
       const idStr = String(toy.id).padStart(4, "0");
       return !idsEmMemoria.has(idStr);
     });
-    console.log(`[FETCH] dedup: recebidos=${itens.length} novos=${itensNovos.length} allToys=${allToys.length} hasMais=${hasMais}`);
 
     // --- 5. RENDERIZAÇÃO DOS CARDS REAIS ---
     if (itensNovos.length > 0) {
@@ -368,25 +367,6 @@ async function fetchBrinquedos(reset = false) {
           </button>
         </div>`;
       hasMais = false;
-    } else if (filtroAtivo === "todos" && !buscaAtiva) {
-      // Modo normal: todos os cards deste batch já estão no DOM (deduplicação total).
-      // Limpa allToys E o DOM — recomeça o ciclo do início com nova ordem.
-      console.log(`[FETCH] novos=0 → limpando allToys + DOM para reiniciar ciclo`);
-      allToys = [];
-      hasMais = true;
-      // Remove o sentinel antes de limpar o grid (padrão C2)
-      if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
-      // Reconstrói o grid vazio com as colunas
-      const targetCols = getColumnCount();
-      grid.innerHTML = "";
-      columnElements = [];
-      currentCols = targetCols;
-      for (let i = 0; i < targetCols; i++) {
-        const colDiv = document.createElement("div");
-        colDiv.className = "masonry-column";
-        grid.appendChild(colDiv);
-        columnElements.push(colDiv);
-      }
     } else {
       hasMais = false;
     }
@@ -407,10 +387,9 @@ async function fetchBrinquedos(reset = false) {
       const mainElement = document.querySelector("main");
       if (mainElement && !sentinel.parentNode) {
         mainElement.appendChild(sentinel);
-        console.log("[FINALLY] sentinel reconectado");
       }
       isSearching = false;
-      console.log(`[FINALLY] isLoading=${isLoading} hasMais=${hasMais} cursor=${cursor} allToys=${allToys.length} → verificarSentinela()`);
+      // verificarSentinela só roda após isSearching=false — C3 garante proteção adicional
       verificarSentinela();
     }, 600);
   }
@@ -477,7 +456,6 @@ function otimizarUrlCloudinary(url, largura = 600) {
 async function render(items, append = false) {
   const grid = document.getElementById("toyGrid");
   const targetCols = getColumnCount();
-  console.log(`[RENDER] append=${append} items=${items.length} cards_no_DOM=${document.querySelectorAll(".masonry-item").length} allToys=${allToys.length}`);
 
   if (!append || currentCols !== targetCols) {
     grid.innerHTML = "";
@@ -2424,6 +2402,35 @@ window.addEventListener("resize", () => {
 
 /* 3.10.2. Chama Auth, recupera tokens e desenha primeira página */
 /* 3.10.2. Chama Auth, recupera tokens e desenha primeira página */
+// ============================================================
+// 🏆 GAME OVER — exibida ao chegar no card 9999
+// ============================================================
+function exibirGameOver() {
+  const main = document.querySelector("main");
+  if (!main || document.getElementById("gameOverFaixa")) return;
+
+  const faixa = document.createElement("div");
+  faixa.id = "gameOverFaixa";
+  faixa.innerHTML = `
+    <div class="game-over-inner">
+      <img src="/img/game-over.png" alt="Game Over" class="game-over-img" />
+      <p class="game-over-sub">Você explorou todos os <strong>9.999</strong> cards do museu!</p>
+      <button class="game-over-btn" onclick="reiniciarGameOver()">▶ PLAY AGAIN</button>
+    </div>`;
+  main.appendChild(faixa);
+
+  // Informa no LED
+  dispararTilt("🏆 PARABÉNS! Você zerou o RetroBrinquedos BR! ▶ Clique em PLAY AGAIN para recomeçar");
+  console.log("[GAME OVER] 9999 cards exibidos — exibindo faixa de encerramento");
+}
+
+function reiniciarGameOver() {
+  const faixa = document.getElementById("gameOverFaixa");
+  if (faixa) faixa.remove();
+  // Reinicia do zero — novo seed, cursor 0, grid limpo
+  fetchBrinquedos(true);
+}
+
 async function init() {
   const {
     data: { session },
