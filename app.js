@@ -57,7 +57,7 @@ function verificarSentinela() {
   });
 }
 
-// Reinicia o ciclo infinito com novo seed — grid preservado (append mode)
+// Reinicia o ciclo infinito com novo seed — preserva posição de scroll
 function _reiniciarCicloInfinito() {
   console.log(`[REINICIO] INÍCIO — allToys=${allToys.length} cursor=${cursor} hasMais=${hasMais}`);
   sessionSeed = Math.random();
@@ -65,10 +65,16 @@ function _reiniciarCicloInfinito() {
   hasMais = true;
   allToys = [];
   _cicloInfinitoAtivo = true;
+  currentCols = 0; // força reconstrução das colunas no próximo render
+
+  // Limpa o grid mas preserva a posição de scroll da página
+  const grid = document.getElementById("toyGrid");
+  if (grid) grid.innerHTML = "";
+
+  // Remove o sentinel do DOM (padrão C2)
   if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
-  const colsNoDOM = document.querySelectorAll(".masonry-column");
-  if (colsNoDOM.length > 0) columnElements = Array.from(colsNoDOM);
-  console.log(`[REINICIO] seed=${sessionSeed.toFixed(4)} _cicloInfinitoAtivo=${_cicloInfinitoAtivo} sentinel_no_DOM=${!!sentinel.parentNode} cols=${columnElements.length}`);
+
+  console.log(`[REINICIO] seed=${sessionSeed.toFixed(4)} _cicloInfinitoAtivo=${_cicloInfinitoAtivo} cols resetadas`);
   fetchBrinquedos("infinito");
 }
 
@@ -93,7 +99,7 @@ function setupObserver() {
 
   const mainElement = document.querySelector("main");
   if (mainElement) {
-    document.getElementById("toyGrid").appendChild(sentinel);
+    document.getElementById("sentinelContainer").appendChild(sentinel);
     observer.observe(sentinel);
   }
 }
@@ -243,29 +249,25 @@ async function fetchBrinquedos(reset = false) {
   const grid = document.getElementById("toyGrid");
 
   // --- 1. FASE DE PREPARAÇÃO (EXIBIÇÃO DOS SKELETONS) ---
-  if (resetReal) {
-    cursor = 0;
-    allToys = [];
-    hasMais = true;
-    _cicloInfinitoAtivo = false; // reset manual cancela qualquer ciclo infinito ativo
-
-    // H7/C2 — remove fisicamente o sentinel do DOM antes de esvaziar o grid.
-    // Isso impede que o IntersectionObserver detecte o sentinel "fantasma"
-    // quando a página encolhe após grid.innerHTML = "".
-    // O sentinel é reconectado no finally após o Masonry estabilizar.
+  if (resetReal || modoInfinito) {
+    if (resetReal) {
+      cursor = 0;
+      allToys = [];
+      hasMais = true;
+      _cicloInfinitoAtivo = false;
+    }
+    // Ambos resetam as colunas — mas modoInfinito não limpa o grid (já foi limpo em _reiniciarCicloInfinito)
     if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
-
-    // Calcula colunas e preenche com skeletons antes da carga
     const targetCols = getColumnCount();
-    grid.innerHTML = "";
+    if (resetReal) grid.innerHTML = "";
+    columnElements = [];
+    currentCols = targetCols;
     for (let i = 0; i < targetCols; i++) {
       const colDiv = document.createElement("div");
       colDiv.className = "masonry-column";
-      // 2 skeletons por coluna para preencher a dobra inicial da tela
-      colDiv.innerHTML = Array(2)
-        .fill('<div class="skeleton-card"></div>')
-        .join("");
+      colDiv.innerHTML = Array(2).fill('<div class="skeleton-card"></div>').join("");
       grid.appendChild(colDiv);
+      columnElements.push(colDiv);
     }
   } else {
     // Scroll Infinito: adiciona um skeleton no final de cada coluna existente
@@ -359,14 +361,21 @@ async function fetchBrinquedos(reset = false) {
     }
 
     // --- 3. LIMPEZA DOS SKELETONS ---
-    if (resetReal) {
-      grid.innerHTML = ""; // Limpa tudo para o render() reconstruir as colunas
+    if (resetReal || modoInfinito) {
+      grid.innerHTML = "";
+      columnElements = [];
+      currentCols = getColumnCount();
+      for (let i = 0; i < currentCols; i++) {
+        const colDiv = document.createElement("div");
+        colDiv.className = "masonry-column";
+        grid.appendChild(colDiv);
+        columnElements.push(colDiv);
+      }
     } else {
-      // Remove apenas os skeletons temporários do scroll
       document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
     }
 
-    // --- 4. DEDUPLICAÇÃO: Garante unicidade antes de tocar no DOM ---
+    // --- 4. DEDUPLICAÇÃO ---
     // ✅ Filtra itens cujo ID já existe em allToys (memória) OU no DOM (zumbi)
     const idsEmMemoria = new Set(
       allToys.map((t) => String(t.id).padStart(4, "0")),
@@ -379,14 +388,14 @@ async function fetchBrinquedos(reset = false) {
 
     // --- 5. RENDERIZAÇÃO DOS CARDS REAIS ---
     if (itensNovos.length > 0) {
-      allToys = resetReal ? itensNovos : [...allToys, ...itensNovos];
-      await render(itensNovos, !resetReal);
+      allToys = (resetReal || modoInfinito) ? itensNovos : [...allToys, ...itensNovos];
+      await render(itensNovos, !(resetReal || modoInfinito));
 
       // Ajuste de cursor manual para busca RPC
       if (buscaAtiva.length >= 2 && !resetReal) {
         cursor += itens.length;
       }
-    } else if (resetReal) {
+    } else if (resetReal || modoInfinito) {
       // H2/H3 — w-full centraliza no masonry (display:flex, não CSS grid)
       const termoAtual = buscaAtiva || "";
       grid.innerHTML = `
@@ -407,9 +416,8 @@ async function fetchBrinquedos(reset = false) {
     }
   } catch (error) {
     console.error("Erro na carga:", error);
-    if (resetReal)
-      grid.innerHTML =
-        "<p class='text-center col-span-full text-pink-500 font-retro'>ERRO DE CONEXÃO COM O ARQUIVO</p>";
+    if (resetReal || modoInfinito)
+      grid.innerHTML = "<p class='text-center col-span-full text-pink-500 font-retro'>ERRO DE CONEXÃO COM O ARQUIVO</p>";
     document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
   } finally {
     isLoading = false;
@@ -421,7 +429,7 @@ async function fetchBrinquedos(reset = false) {
     setTimeout(() => {
       const mainElement = document.querySelector("main");
       if (mainElement && !sentinel.parentNode) {
-        document.getElementById("toyGrid").appendChild(sentinel);
+        document.getElementById("sentinelContainer").appendChild(sentinel);
         console.log("[FINALLY] sentinel reconectado ao DOM");
       }
       isSearching = false;
