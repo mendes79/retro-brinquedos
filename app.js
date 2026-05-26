@@ -370,10 +370,23 @@ async function fetchBrinquedos(reset = false) {
       hasMais = false;
     } else if (filtroAtivo === "todos" && !buscaAtiva) {
       // Modo normal: todos os cards deste batch já estão no DOM (deduplicação total).
-      // Limpa allToys para zerar a memória de deduplicação e continua o scroll.
-      console.log(`[FETCH] novos=0 em modo normal → limpando allToys para continuar scroll`);
+      // Limpa allToys E o DOM — recomeça o ciclo do início com nova ordem.
+      console.log(`[FETCH] novos=0 → limpando allToys + DOM para reiniciar ciclo`);
       allToys = [];
       hasMais = true;
+      // Remove o sentinel antes de limpar o grid (padrão C2)
+      if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
+      // Reconstrói o grid vazio com as colunas
+      const targetCols = getColumnCount();
+      grid.innerHTML = "";
+      columnElements = [];
+      currentCols = targetCols;
+      for (let i = 0; i < targetCols; i++) {
+        const colDiv = document.createElement("div");
+        colDiv.className = "masonry-column";
+        grid.appendChild(colDiv);
+        columnElements.push(colDiv);
+      }
     } else {
       hasMais = false;
     }
