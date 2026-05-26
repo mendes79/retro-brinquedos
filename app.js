@@ -35,24 +35,24 @@ sentinel.className =
 /* 3.3.2. Verifica se o sentinel ainda está visível após um fetch terminar
    e dispara mais um lote se necessário — cobre o gap do desktop (6 colunas) */
 function verificarSentinela() {
-  // H7/C3 — protege contra disparo parasita durante reset de busca
-  if (isSearching) return;
-  // Protege contra fetches automáticos durante o ciclo infinito
-  // Só libera quando o usuário rolar manualmente até o sentinel
-  if (_cicloInfinitoAtivo) return;
+  console.log(`[SENTINEL] isSearching=${isSearching} _cicloInfinitoAtivo=${_cicloInfinitoAtivo} hasMais=${hasMais} isLoading=${isLoading}`);
+  if (isSearching) { console.log("[SENTINEL] BLOQUEADO — isSearching"); return; }
+  if (_cicloInfinitoAtivo) { console.log("[SENTINEL] BLOQUEADO — _cicloInfinitoAtivo"); return; }
 
-  // Masonry infinito: ao chegar no fim em modo normal, reinicia com novo seed
   if (!hasMais) {
     if (!buscaAtiva && filtroAtivo === "todos") {
+      console.log("[SENTINEL] fim do catálogo → _reiniciarCicloInfinito()");
       _reiniciarCicloInfinito();
     }
     return;
   }
 
-  // Aguarda o browser pintar os novos cards antes de medir
   requestAnimationFrame(() => {
     const rect = sentinel.getBoundingClientRect();
-    if (rect.top < window.innerHeight + 1200 && !isLoading && !isSearching) {
+    const visivel = rect.top < window.innerHeight + 1200;
+    console.log(`[SENTINEL] sentinel.top=${Math.round(rect.top)} vh=${window.innerHeight} visivel=${visivel} isLoading=${isLoading}`);
+    if (visivel && !isLoading && !isSearching) {
+      console.log("[SENTINEL] → fetchBrinquedos()");
       fetchBrinquedos();
     }
   });
@@ -60,24 +60,16 @@ function verificarSentinela() {
 
 // Reinicia o ciclo infinito com novo seed — grid preservado (append mode)
 function _reiniciarCicloInfinito() {
+  console.log(`[REINICIO] INÍCIO — allToys=${allToys.length} cursor=${cursor} hasMais=${hasMais}`);
   sessionSeed = Math.random();
   cursor = 0;
   hasMais = true;
   allToys = [];
-
-  // Ativa a trava do ciclo infinito — impede fetches automáticos pelo observer.
-  // Desligada pelo IntersectionObserver apenas quando o usuário rolar até o sentinel.
   _cicloInfinitoAtivo = true;
-
-  // Remove o sentinel do DOM (padrão C2)
   if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
-
-  // Resincroniza columnElements com as colunas reais do DOM
   const colsNoDOM = document.querySelectorAll(".masonry-column");
-  if (colsNoDOM.length > 0) {
-    columnElements = Array.from(colsNoDOM);
-  }
-
+  if (colsNoDOM.length > 0) columnElements = Array.from(colsNoDOM);
+  console.log(`[REINICIO] seed=${sessionSeed.toFixed(4)} _cicloInfinitoAtivo=${_cicloInfinitoAtivo} sentinel_no_DOM=${!!sentinel.parentNode} cols=${columnElements.length}`);
   fetchBrinquedos("infinito");
 }
 
@@ -85,13 +77,14 @@ function _reiniciarCicloInfinito() {
 function setupObserver() {
   const observer = new IntersectionObserver(
     (entries) => {
-      if (!entries[0].isIntersecting) return;
+      const intersecting = entries[0].isIntersecting;
+      console.log(`[OBSERVER] isIntersecting=${intersecting} isLoading=${isLoading} isSearching=${isSearching} _cicloInfinitoAtivo=${_cicloInfinitoAtivo}`);
+      if (!intersecting) return;
       if (isLoading || isSearching) return;
 
-      // Se o ciclo infinito está ativo, o scroll manual do usuário até o
-      // sentinel é o único gatilho válido para liberar o próximo fetch.
       if (_cicloInfinitoAtivo) {
-        _cicloInfinitoAtivo = false; // libera o próximo batch
+        console.log("[OBSERVER] _cicloInfinitoAtivo=true → desligando, usuário rolou até o sentinel");
+        _cicloInfinitoAtivo = false;
       }
 
       verificarSentinela();
@@ -240,12 +233,12 @@ function _sincronizarBotoesRanking(modo) {
 }
 
 async function fetchBrinquedos(reset = false) {
-  // "infinito" é o modo de reinício do masonry — passa pela guard mas não limpa o grid
   const modoInfinito = reset === "infinito";
   const resetReal = reset === true;
 
-  if (isLoading) return;
-  if (!modoInfinito && !resetReal && !hasMais) return;
+  console.log(`[FETCH] reset='${reset}' isLoading=${isLoading} hasMais=${hasMais} cursor=${cursor} allToys=${allToys.length} _cicloInfinitoAtivo=${_cicloInfinitoAtivo}`);
+  if (isLoading) { console.log("[FETCH] BLOQUEADO — isLoading"); return; }
+  if (!modoInfinito && !resetReal && !hasMais) { console.log("[FETCH] BLOQUEADO — hasMais=false"); return; }
   isLoading = true;
 
   const grid = document.getElementById("toyGrid");
@@ -363,6 +356,7 @@ async function fetchBrinquedos(reset = false) {
       itens = data.itens || [];
       cursor = data.cursor;
       hasMais = data.temMais;
+      console.log(`[FETCH] Vercel respondeu: itens=${itens.length} cursor=${cursor} temMais=${hasMais} seed=${sessionSeed.toFixed(4)}`);
     }
 
     // --- 3. LIMPEZA DOS SKELETONS ---
@@ -382,6 +376,7 @@ async function fetchBrinquedos(reset = false) {
       const idStr = String(toy.id).padStart(4, "0");
       return !idsEmMemoria.has(idStr);
     });
+    console.log(`[FETCH] dedup: recebidos=${itens.length} novos=${itensNovos.length} allToys_antes=${allToys.length}`);
 
     // --- 5. RENDERIZAÇÃO DOS CARDS REAIS ---
     if (itensNovos.length > 0) {
@@ -428,9 +423,10 @@ async function fetchBrinquedos(reset = false) {
       const mainElement = document.querySelector("main");
       if (mainElement && !sentinel.parentNode) {
         mainElement.appendChild(sentinel);
+        console.log("[FINALLY] sentinel reconectado ao DOM");
       }
       isSearching = false;
-      // verificarSentinela só roda após isSearching=false — C3 garante proteção adicional
+      console.log(`[FINALLY] isLoading=${isLoading} hasMais=${hasMais} cursor=${cursor} allToys=${allToys.length} _cicloInfinitoAtivo=${_cicloInfinitoAtivo} → verificarSentinela()`);
       verificarSentinela();
     }, 600);
   }
@@ -497,6 +493,8 @@ function otimizarUrlCloudinary(url, largura = 600) {
 async function render(items, append = false) {
   const grid = document.getElementById("toyGrid");
   const targetCols = getColumnCount();
+  const cardsNoDOM = document.querySelectorAll(".masonry-item").length;
+  console.log(`[RENDER] append=${append} items=${items.length} cards_no_DOM=${cardsNoDOM} allToys=${allToys.length}`);
 
   if (!append || currentCols !== targetCols) {
     grid.innerHTML = "";
