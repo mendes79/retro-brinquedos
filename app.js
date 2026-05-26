@@ -27,8 +27,7 @@ let _cicloInfinitoAtivo = false; // 🛡️ Trava fetches automáticos após rei
 
 const sentinel = document.createElement("div");
 sentinel.id = "scrollSentinel";
-sentinel.className =
-  "w-full h-10 col-span-full mt-4 opacity-0 pointer-events-none";
+sentinel.className = "w-full h-0 overflow-hidden opacity-0 pointer-events-none";
 
 /* 3.3. INFINITE SCROLL E CHAMADAS DE API */
 
@@ -94,7 +93,7 @@ function setupObserver() {
 
   const mainElement = document.querySelector("main");
   if (mainElement) {
-    mainElement.appendChild(sentinel);
+    document.getElementById("toyGrid").appendChild(sentinel);
     observer.observe(sentinel);
   }
 }
@@ -422,7 +421,7 @@ async function fetchBrinquedos(reset = false) {
     setTimeout(() => {
       const mainElement = document.querySelector("main");
       if (mainElement && !sentinel.parentNode) {
-        mainElement.appendChild(sentinel);
+        document.getElementById("toyGrid").appendChild(sentinel);
         console.log("[FINALLY] sentinel reconectado ao DOM");
       }
       isSearching = false;
