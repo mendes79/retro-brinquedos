@@ -91,6 +91,24 @@ function _prepararDadosRanking() {
       hour: "2-digit", minute: "2-digit",
     }),
   };
+
+  // Prefetch silencioso das 6 imagens (top3 curtidos + top3 visualizados)
+  // O browser as cacheia antes do usuário abrir o modal — abre instantâneo.
+  const todasImagens = [
+    ..._rankingDados.curtidas,
+    ..._rankingDados.visualizacoes,
+  ];
+  // Deduplica por id — um mesmo card pode aparecer nos dois rankings
+  const vistas = new Set();
+  for (const toy of todasImagens) {
+    if (vistas.has(toy.id)) continue;
+    vistas.add(toy.id);
+    const url = _imagemRankingURL(toy.url_frente || "");
+    if (url) {
+      const img = new Image();
+      img.src = url; // disparo em background — sem append ao DOM
+    }
+  }
 }
 
 function _imagemRankingURL(url) {
