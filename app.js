@@ -71,6 +71,46 @@ function setupObserver() {
    3.3. INFINITE SCROLL OTIMIZADO
    ============================================================ */
 
+/* 3.3.1. Ranking Top 3 — calculado uma vez no boot sobre allToys já populado */
+function renderizarRanking() {
+  const container = document.getElementById("heroRanking");
+  if (!container || !allToys.length) return;
+
+  // Ordena por curtidas_count desc → top 3
+  const topCurtidos = [...allToys]
+    .sort((a, b) => (b.curtidas_count || 0) - (a.curtidas_count || 0))
+    .slice(0, 3);
+
+  // Ordena por visualizacoes desc → top 3
+  const topVisitados = [...allToys]
+    .sort((a, b) => (b.visualizacoes || 0) - (a.visualizacoes || 0))
+    .slice(0, 3);
+
+  const medalhas = ["🥇", "🥈", "🥉"];
+
+  function blocoHTML(titulo, icone, lista, campo) {
+    const itens = lista
+      .map(
+        (toy, i) =>
+          `<li class="ranking-item">
+            <span class="ranking-pos">${medalhas[i]}</span>
+            <span class="ranking-nome">${toy.nome}</span>
+            <span class="ranking-valor">${icone} ${toy[campo] || 0}</span>
+          </li>`,
+      )
+      .join("");
+    return `
+      <div class="ranking-bloco">
+        <div class="ranking-titulo">${titulo}</div>
+        <ul class="ranking-lista">${itens}</ul>
+      </div>`;
+  }
+
+  container.innerHTML =
+    blocoHTML("Top 3 Curtidos", "❤", topCurtidos, "curtidas_count") +
+    blocoHTML("Top 3 Visitados", "👁", topVisitados, "visualizacoes");
+}
+
 async function fetchBrinquedos(reset = false) {
   if (isLoading || (!hasMais && !reset)) return;
   isLoading = true;
@@ -182,6 +222,8 @@ async function fetchBrinquedos(reset = false) {
 
       if (reset && data.total) {
         document.getElementById("heroCount").textContent = data.total;
+        // Ranking calculado uma vez no boot, após allToys estar populado
+        requestAnimationFrame(() => renderizarRanking());
       }
 
       itens = data.itens || [];

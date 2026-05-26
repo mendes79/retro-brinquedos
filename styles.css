@@ -314,6 +314,90 @@ body {
     filter: grayscale(0%) brightness(1.05);
   }
 }
+/* ============================================================
+   HERO RANKING — Top 3 curtidos / Top 3 visitados
+   ============================================================ */
+.hero-ranking-wrapper {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  max-width: 560px;
+  margin-top: 0.5rem;
+}
+
+.ranking-bloco {
+  flex: 1;
+  border: 1px solid rgba(240, 192, 64, 0.35);
+  border-radius: 8px;
+  background: rgba(10, 12, 28, 0.82);
+  backdrop-filter: blur(6px);
+  overflow: hidden;
+}
+
+.ranking-titulo {
+  font-family: "Orbitron", monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--trunfo-gold);
+  text-align: center;
+  padding: 6px 8px 5px;
+  border-bottom: 1px solid rgba(240, 192, 64, 0.25);
+  background: rgba(240, 192, 64, 0.06);
+}
+
+.ranking-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-family: "Orbitron", monospace;
+}
+.ranking-item:last-child {
+  border-bottom: none;
+}
+
+.ranking-pos {
+  font-size: 0.48rem;
+  color: var(--trunfo-gold);
+  font-weight: 700;
+  min-width: 14px;
+  text-align: center;
+}
+
+.ranking-nome {
+  font-size: 0.46rem;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.06em;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ranking-valor {
+  font-size: 0.52rem;
+  color: var(--neon-yellow);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Mobile: empilha os dois blocos em coluna */
+@media (max-width: 767px) {
+  .hero-ranking-wrapper {
+    flex-direction: column;
+    max-width: 280px;
+    gap: 0.75rem;
+  }
+}
+
 .hero-stat-item {
   text-align: center;
 }
