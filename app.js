@@ -71,44 +71,108 @@ function setupObserver() {
    3.3. INFINITE SCROLL OTIMIZADO
    ============================================================ */
 
-/* 3.3.1. Ranking Top 3 — calculado uma vez no boot sobre allToys já populado */
-function renderizarRanking() {
-  const container = document.getElementById("heroRanking");
-  if (!container || !allToys.length) return;
+/* 3.3.1. Ranking — dados pré-computados no boot, modal acionado pelo pódio */
 
-  // Ordena por curtidas_count desc → top 3
-  const topCurtidos = [...allToys]
-    .sort((a, b) => (b.curtidas_count || 0) - (a.curtidas_count || 0))
-    .slice(0, 3);
+// Estado do ranking — calculado uma vez, reutilizado a cada abertura do modal
+let _rankingDados = null;
+let _rankingModoAtivo = "curtidas"; // "curtidas" | "visualizacoes"
 
-  // Ordena por visualizacoes desc → top 3
-  const topVisitados = [...allToys]
-    .sort((a, b) => (b.visualizacoes || 0) - (a.visualizacoes || 0))
-    .slice(0, 3);
+function _prepararDadosRanking() {
+  if (_rankingDados || !allToys.length) return;
+  _rankingDados = {
+    curtidas: [...allToys]
+      .sort((a, b) => (b.curtidas_count || 0) - (a.curtidas_count || 0))
+      .slice(0, 3),
+    visualizacoes: [...allToys]
+      .sort((a, b) => (b.visualizacoes || 0) - (a.visualizacoes || 0))
+      .slice(0, 3),
+    timestamp: new Date().toLocaleString("pt-BR", {
+      day: "2-digit", month: "2-digit", year: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    }),
+  };
+}
 
-  const medalhas = ["🥇", "🥈", "🥉"];
+function _imagemRankingURL(url) {
+  // Solicita versão 80×80 crop quadrado ao Cloudinary — mais leve no modal
+  if (!url) return "";
+  return url.replace(/\/upload\//, "/upload/w_80,h_80,c_fill,g_auto/");
+}
 
-  function blocoHTML(titulo, icone, lista, campo) {
-    const itens = lista
-      .map(
-        (toy, i) =>
-          `<li class="ranking-item">
-            <span class="ranking-pos">${medalhas[i]}</span>
-            <span class="ranking-nome">${toy.nome}</span>
-            <span class="ranking-valor">${icone} ${toy[campo] || 0}</span>
-          </li>`,
-      )
-      .join("");
-    return `
-      <div class="ranking-bloco">
-        <div class="ranking-titulo">${titulo}</div>
-        <ul class="ranking-lista">${itens}</ul>
-      </div>`;
+function _renderizarListaRanking(modo) {
+  const lista = document.getElementById("rankingLista");
+  const titulo = document.getElementById("rankingTitulo");
+  if (!lista || !_rankingDados) return;
+
+  const isCurtidas = modo === "curtidas";
+  titulo.textContent = isCurtidas ? "Brinquedos mais Curtidos" : "Brinquedos mais Visualizados";
+
+  const itens = _rankingDados[modo];
+  lista.innerHTML = itens.map((toy, i) => {
+    const pos = i + 1;
+    const imgURL = _imagemRankingURL(toy.imagem_url || toy.imagem || "");
+    const valor = isCurtidas ? (toy.curtidas_count || 0) : (toy.visualizacoes || 0);
+    const icone = isCurtidas ? "❤" : "👁";
+    const corValor = isCurtidas
+      ? "color: var(--trunfo-gold)"
+      : "color: var(--neon-blue)";
+    return `<li class="ranking-modal-item">
+      <span class="ranking-modal-pos">${pos}.</span>
+      <img class="ranking-modal-img" src="${imgURL}" alt="${toy.nome}" loading="lazy" />
+      <div class="ranking-modal-info">
+        <span class="ranking-modal-nome">${toy.nome}</span>
+        <span class="ranking-modal-fabricante">${toy.fabricante || ""}</span>
+      </div>
+      <span class="ranking-modal-valor" style="${corValor}">${icone} ${valor}</span>
+    </li>`;
+  }).join("");
+}
+
+function abrirRankingModal() {
+  _prepararDadosRanking(); // no-op se já calculado
+  const modal = document.getElementById("rankingModal");
+  if (!modal) return;
+
+  // Renderiza o modo atual
+  _renderizarListaRanking(_rankingModoAtivo);
+
+  // Atualiza timestamp
+  const ts = document.getElementById("rankingTimestamp");
+  if (ts && _rankingDados) ts.textContent = "Atualizado em: " + _rankingDados.timestamp;
+
+  // Sincroniza botões com modo ativo
+  _sincronizarBotoesRanking(_rankingModoAtivo);
+
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+
+function fecharRankingModal(event) {
+  const modal = document.getElementById("rankingModal");
+  if (!modal) return;
+  // Fecha apenas se clicar no overlay, não dentro do box
+  if (event && event.target !== modal) return;
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
+}
+
+function trocarRanking(modo) {
+  _rankingModoAtivo = modo;
+  _renderizarListaRanking(modo);
+  _sincronizarBotoesRanking(modo);
+}
+
+function _sincronizarBotoesRanking(modo) {
+  const btnC = document.getElementById("rankingBtnCurtidas");
+  const btnV = document.getElementById("rankingBtnVisualizacoes");
+  if (!btnC || !btnV) return;
+  if (modo === "curtidas") {
+    btnC.className = "ranking-toggle-btn ranking-toggle-ativo";
+    btnV.className = "ranking-toggle-btn ranking-toggle-inativo";
+  } else {
+    btnV.className = "ranking-toggle-btn ranking-toggle-ativo";
+    btnC.className = "ranking-toggle-btn ranking-toggle-inativo";
   }
-
-  container.innerHTML =
-    blocoHTML("Top 3 Curtidos", "❤", topCurtidos, "curtidas_count") +
-    blocoHTML("Top 3 Visitados", "👁", topVisitados, "visualizacoes");
 }
 
 async function fetchBrinquedos(reset = false) {
@@ -222,8 +286,8 @@ async function fetchBrinquedos(reset = false) {
 
       if (reset && data.total) {
         document.getElementById("heroCount").textContent = data.total;
-        // Ranking calculado uma vez no boot, após allToys estar populado
-        requestAnimationFrame(() => renderizarRanking());
+        // Pré-computa os dados do ranking em background após o primeiro fetch
+        requestAnimationFrame(() => _prepararDadosRanking());
       }
 
       itens = data.itens || [];

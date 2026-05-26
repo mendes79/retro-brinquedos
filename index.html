@@ -269,9 +269,6 @@
             </button>
           </div>
 
-          <!-- Ranking top 3 — populado via renderizarRanking() no boot -->
-          <div id="heroRanking" class="hero-ranking-wrapper" aria-label="Ranking de brinquedos"></div>
-
         </div>
       </div>
 
@@ -300,6 +297,22 @@
       <div
         class="relative flex flex-row items-center justify-center w-full px-4 md:px-8 max-w-screen-2xl mx-auto h-full min-h-[24px]"
       >
+        <!-- Ícone Pódio — lado esquerdo -->
+        <button
+          onclick="abrirRankingModal()"
+          class="absolute left-4 md:left-8 footer-podium-btn"
+          title="Ranking de brinquedos"
+          aria-label="Abrir ranking de brinquedos"
+        >
+          <img
+            src="/img/podium.png"
+            alt="Ranking"
+            class="footer-podium-icon"
+            width="28"
+            height="28"
+          />
+        </button>
+
         <!-- Texto Centralizado -->
         <p
           class="text-[14.5px] md:text-[11px] text-slate-400 text-center truncate px-16 md:px-24"
@@ -371,6 +384,61 @@
         </div>
       </div>
     </footer>
+
+    <!-- Modal Ranking — estilo fabricantes (verde/Orbitron) -->
+    <div
+      id="rankingModal"
+      class="fixed inset-0 z-[500] hidden items-center justify-center"
+      style="background: rgba(0,0,0,0.82); backdrop-filter: blur(4px);"
+      onclick="fecharRankingModal(event)"
+    >
+      <div
+        id="rankingBox"
+        class="disclaimer-modal-box relative w-[95%] max-w-md mx-4"
+        style="max-height: calc(100vh - 100px);"
+      >
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-4 flex-shrink-0">
+          <h2 class="font-orbitron text-xs tracking-widest uppercase text-green-400">
+            // Ranking
+          </h2>
+          <button
+            class="modal-close-btn"
+            onclick="fecharRankingModal()"
+            aria-label="Fechar ranking"
+          >✕</button>
+        </div>
+
+        <!-- Título dinâmico -->
+        <h3 id="rankingTitulo" class="font-orbitron text-[11px] tracking-wider uppercase text-white mb-3 flex-shrink-0">
+          Brinquedos mais Curtidos
+        </h3>
+
+        <!-- Lista de itens -->
+        <ul id="rankingLista" class="disclaimer-modal-body ranking-modal-lista">
+          <!-- populado por renderizarRankingModal() -->
+        </ul>
+
+        <!-- Toggle + timestamp -->
+        <div class="flex-shrink-0 mt-4 flex flex-col gap-2">
+          <div class="flex gap-2">
+            <button
+              id="rankingBtnCurtidas"
+              class="ranking-toggle-btn ranking-toggle-ativo"
+              onclick="trocarRanking('curtidas')"
+            >❤ Curtidas</button>
+            <button
+              id="rankingBtnVisualizacoes"
+              class="ranking-toggle-btn ranking-toggle-inativo"
+              onclick="trocarRanking('visualizacoes')"
+            >👁 Visualizações</button>
+          </div>
+          <p id="rankingTimestamp" class="font-orbitron text-[9px] text-slate-500 tracking-wider">
+            Atualizado em: —
+          </p>
+        </div>
+      </div>
+    </div>
 
     <div
       id="arcadeModal"
