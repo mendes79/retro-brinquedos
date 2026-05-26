@@ -14,7 +14,7 @@ let cursor = 0;
 const LIMITE = 24;
 let isLoading = false;
 let hasMais = true;
-let sessionSeed = Math.random();
+const sessionSeed = Math.random();
 let isUserLogged = false;
 let curtidasDoUsuario = new Set();
 let tiveDoUsuario = new Set();
@@ -23,83 +23,46 @@ let currentCols = 0;
 let columnElements = [];
 let filtroAtivo = "todos"; // 'todos', 'tive', 'queria', 'curtidas'
 let isSearching = false; // 🛡️ DISJUNTOR FIX 6.5: Trava o scroll infinito automático durante o reset da busca
-let _cicloInfinitoAtivo = false; // 🛡️ Trava fetches automáticos após reinício do ciclo infinito
 
 const sentinel = document.createElement("div");
 sentinel.id = "scrollSentinel";
-sentinel.className = "w-full h-0 overflow-hidden opacity-0 pointer-events-none";
+sentinel.className =
+  "w-full h-10 col-span-full mt-4 opacity-0 pointer-events-none";
 
 /* 3.3. INFINITE SCROLL E CHAMADAS DE API */
 
 /* 3.3.2. Verifica se o sentinel ainda está visível após um fetch terminar
    e dispara mais um lote se necessário — cobre o gap do desktop (6 colunas) */
 function verificarSentinela() {
-  console.log(`[SENTINEL] isSearching=${isSearching} _cicloInfinitoAtivo=${_cicloInfinitoAtivo} hasMais=${hasMais} isLoading=${isLoading}`);
-  if (isSearching) { console.log("[SENTINEL] BLOQUEADO — isSearching"); return; }
-  if (_cicloInfinitoAtivo) { console.log("[SENTINEL] BLOQUEADO — _cicloInfinitoAtivo"); return; }
-
-  if (!hasMais) {
-    if (!buscaAtiva && filtroAtivo === "todos") {
-      console.log("[SENTINEL] fim do catálogo → _reiniciarCicloInfinito()");
-      _reiniciarCicloInfinito();
-    }
-    return;
-  }
-
+  // H7/C3 — protege contra disparo parasita durante reset de busca
+  if (!hasMais || isSearching) return;
+  // Aguarda o browser pintar os novos cards antes de medir
   requestAnimationFrame(() => {
     const rect = sentinel.getBoundingClientRect();
-    const visivel = rect.top < window.innerHeight + 1200;
-    console.log(`[SENTINEL] sentinel.top=${Math.round(rect.top)} vh=${window.innerHeight} visivel=${visivel} isLoading=${isLoading}`);
-    if (visivel && !isLoading && !isSearching) {
-      console.log("[SENTINEL] → fetchBrinquedos()");
+    // ✅ Margem generosa: cobre mesmo telas 4K com 6 colunas
+    if (rect.top < window.innerHeight + 1200 && !isLoading && !isSearching) {
       fetchBrinquedos();
     }
   });
-}
-
-// Reinicia o ciclo infinito com novo seed — preserva posição de scroll
-function _reiniciarCicloInfinito() {
-  console.log(`[REINICIO] INÍCIO — allToys=${allToys.length} cursor=${cursor} hasMais=${hasMais}`);
-  sessionSeed = Math.random();
-  cursor = 0;
-  hasMais = true;
-  allToys = [];
-  _cicloInfinitoAtivo = true;
-  currentCols = 0; // força reconstrução das colunas no próximo render
-
-  // Limpa o grid mas preserva a posição de scroll da página
-  const grid = document.getElementById("toyGrid");
-  if (grid) grid.innerHTML = "";
-
-  // Remove o sentinel do DOM (padrão C2)
-  if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
-
-  console.log(`[REINICIO] seed=${sessionSeed.toFixed(4)} _cicloInfinitoAtivo=${_cicloInfinitoAtivo} cols resetadas`);
-  fetchBrinquedos("infinito");
 }
 
 /* 3.11.1. Monta o vigia de scroll dinâmico (único ponto de disparo) */
 function setupObserver() {
   const observer = new IntersectionObserver(
     (entries) => {
-      const intersecting = entries[0].isIntersecting;
-      console.log(`[OBSERVER] isIntersecting=${intersecting} isLoading=${isLoading} isSearching=${isSearching} _cicloInfinitoAtivo=${_cicloInfinitoAtivo}`);
-      if (!intersecting) return;
-      if (isLoading || isSearching) return;
-
-      if (_cicloInfinitoAtivo) {
-        console.log("[OBSERVER] _cicloInfinitoAtivo=true → desligando, usuário rolou até o sentinel");
-        _cicloInfinitoAtivo = false;
+      // 🛡️ VALIDAÇÃO COMPLEMENTAR: Só dispara se o sentinel estiver visível,
+      // se não estiver carregando E se NÃO estiver no meio de um reset de busca (isSearching)
+      if (entries[0].isIntersecting && !isLoading && hasMais && !isSearching) {
+        fetchBrinquedos();
       }
-
-      verificarSentinela();
     },
+    // rootMargin aumentado: pré-carrega antes do usuário chegar ao fim
     { rootMargin: "1200px" },
   );
 
   const mainElement = document.querySelector("main");
   if (mainElement) {
-    document.getElementById("sentinelContainer").appendChild(sentinel);
+    mainElement.appendChild(sentinel);
     observer.observe(sentinel);
   }
 }
@@ -114,45 +77,38 @@ function setupObserver() {
 let _rankingDados = null;
 let _rankingModoAtivo = "curtidas"; // "curtidas" | "visualizacoes"
 
-async function _prepararDadosRanking() {
-  if (_rankingDados) return; // já calculado nessa sessão — no-op
+function _prepararDadosRanking() {
+  if (_rankingDados || !allToys.length) return;
+  _rankingDados = {
+    curtidas: [...allToys]
+      .sort((a, b) => (b.curtidas_count || 0) - (a.curtidas_count || 0))
+      .slice(0, 3),
+    visualizacoes: [...allToys]
+      .sort((a, b) => (b.visualizacoes || 0) - (a.visualizacoes || 0))
+      .slice(0, 3),
+    timestamp: new Date().toLocaleString("pt-BR", {
+      day: "2-digit", month: "2-digit", year: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    }),
+  };
 
-  try {
-    const campos = "id, nome, fabricante, url_frente, curtidas_count, visualizacoes";
-
-    const [resCurtidas, resVisualizacoes] = await Promise.all([
-      supabaseClient
-        .from("brinquedos")
-        .select(campos)
-        .order("curtidas_count", { ascending: false })
-        .limit(3),
-      supabaseClient
-        .from("brinquedos")
-        .select(campos)
-        .order("visualizacoes", { ascending: false })
-        .limit(3),
-    ]);
-
-    if (resCurtidas.error || resVisualizacoes.error) return;
-
-    _rankingDados = {
-      curtidas: resCurtidas.data || [],
-      visualizacoes: resVisualizacoes.data || [],
-      timestamp: new Date().toLocaleString("pt-BR", {
-        day: "2-digit", month: "2-digit", year: "numeric",
-        hour: "2-digit", minute: "2-digit",
-      }),
-    };
-
-    // Prefetch silencioso das imagens — máx 6, deduplicadas por id
-    const vistas = new Set();
-    for (const toy of [..._rankingDados.curtidas, ..._rankingDados.visualizacoes]) {
-      if (vistas.has(toy.id)) continue;
-      vistas.add(toy.id);
-      const url = _imagemRankingURL(toy.url_frente || "");
-      if (url) { const img = new Image(); img.src = url; }
+  // Prefetch silencioso das 6 imagens (top3 curtidos + top3 visualizados)
+  // O browser as cacheia antes do usuário abrir o modal — abre instantâneo.
+  const todasImagens = [
+    ..._rankingDados.curtidas,
+    ..._rankingDados.visualizacoes,
+  ];
+  // Deduplica por id — um mesmo card pode aparecer nos dois rankings
+  const vistas = new Set();
+  for (const toy of todasImagens) {
+    if (vistas.has(toy.id)) continue;
+    vistas.add(toy.id);
+    const url = _imagemRankingURL(toy.url_frente || "");
+    if (url) {
+      const img = new Image();
+      img.src = url; // disparo em background — sem append ao DOM
     }
-  } catch (_) {} // silencioso — ranking simplesmente não aparece se falhar
+  }
 }
 
 function _imagemRankingURL(url) {
@@ -238,36 +194,34 @@ function _sincronizarBotoesRanking(modo) {
 }
 
 async function fetchBrinquedos(reset = false) {
-  const modoInfinito = reset === "infinito";
-  const resetReal = reset === true;
-
-  console.log(`[FETCH] reset='${reset}' isLoading=${isLoading} hasMais=${hasMais} cursor=${cursor} allToys=${allToys.length} _cicloInfinitoAtivo=${_cicloInfinitoAtivo}`);
-  if (isLoading) { console.log("[FETCH] BLOQUEADO — isLoading"); return; }
-  if (!modoInfinito && !resetReal && !hasMais) { console.log("[FETCH] BLOQUEADO — hasMais=false"); return; }
+  if (isLoading || (!hasMais && !reset)) return;
   isLoading = true;
 
   const grid = document.getElementById("toyGrid");
 
   // --- 1. FASE DE PREPARAÇÃO (EXIBIÇÃO DOS SKELETONS) ---
-  if (resetReal || modoInfinito) {
-    if (resetReal) {
-      cursor = 0;
-      allToys = [];
-      hasMais = true;
-      _cicloInfinitoAtivo = false;
-    }
-    // Ambos resetam as colunas — mas modoInfinito não limpa o grid (já foi limpo em _reiniciarCicloInfinito)
+  if (reset) {
+    cursor = 0;
+    allToys = [];
+    hasMais = true;
+
+    // H7/C2 — remove fisicamente o sentinel do DOM antes de esvaziar o grid.
+    // Isso impede que o IntersectionObserver detecte o sentinel "fantasma"
+    // quando a página encolhe após grid.innerHTML = "".
+    // O sentinel é reconectado no finally após o Masonry estabilizar.
     if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
+
+    // Calcula colunas e preenche com skeletons antes da carga
     const targetCols = getColumnCount();
-    if (resetReal) grid.innerHTML = "";
-    columnElements = [];
-    currentCols = targetCols;
+    grid.innerHTML = "";
     for (let i = 0; i < targetCols; i++) {
       const colDiv = document.createElement("div");
       colDiv.className = "masonry-column";
-      colDiv.innerHTML = Array(2).fill('<div class="skeleton-card"></div>').join("");
+      // 2 skeletons por coluna para preencher a dobra inicial da tela
+      colDiv.innerHTML = Array(2)
+        .fill('<div class="skeleton-card"></div>')
+        .join("");
       grid.appendChild(colDiv);
-      columnElements.push(colDiv);
     }
   } else {
     // Scroll Infinito: adiciona um skeleton no final de cada coluna existente
@@ -300,7 +254,7 @@ async function fetchBrinquedos(reset = false) {
 
       // Se o Set estiver vazio, não há nada a buscar
       if (idsFiltro.length === 0) {
-        if (resetReal) grid.innerHTML = "";
+        if (reset) grid.innerHTML = "";
         document
           .querySelectorAll(".temp-skeleton")
           .forEach((el) => el.remove());
@@ -348,34 +302,34 @@ async function fetchBrinquedos(reset = false) {
       if (!res.ok) throw new Error("Falha na API");
       const data = await res.json();
 
-      if (resetReal && data.total) {
+      if (reset && data.total) {
         document.getElementById("heroCount").textContent = data.total;
-        // Pré-computa o ranking via query dedicada ao Supabase em background
-        requestAnimationFrame(() => { _prepararDadosRanking(); });
+        // Pré-computa os dados do ranking em background após o primeiro fetch
+        requestAnimationFrame(() => _prepararDadosRanking());
       }
 
       itens = data.itens || [];
       cursor = data.cursor;
-      hasMais = data.temMais;
-      console.log(`[FETCH] Vercel respondeu: itens=${itens.length} cursor=${cursor} temMais=${hasMais} seed=${sessionSeed.toFixed(4)}`);
+      // Scroll infinito silencioso: ao chegar no fim em modo normal,
+      // sorteia nova ordem e recomeça — o sentinel nunca para.
+      if (!data.temMais && filtroAtivo === "todos" && !buscaAtiva) {
+        cursor = 0;
+        sessionSeed = Math.random();
+        hasMais = true;
+      } else {
+        hasMais = data.temMais;
+      }
     }
 
     // --- 3. LIMPEZA DOS SKELETONS ---
-    if (resetReal || modoInfinito) {
-      grid.innerHTML = "";
-      columnElements = [];
-      currentCols = getColumnCount();
-      for (let i = 0; i < currentCols; i++) {
-        const colDiv = document.createElement("div");
-        colDiv.className = "masonry-column";
-        grid.appendChild(colDiv);
-        columnElements.push(colDiv);
-      }
+    if (reset) {
+      grid.innerHTML = ""; // Limpa tudo para o render() reconstruir as colunas
     } else {
+      // Remove apenas os skeletons temporários do scroll
       document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
     }
 
-    // --- 4. DEDUPLICAÇÃO ---
+    // --- 4. DEDUPLICAÇÃO: Garante unicidade antes de tocar no DOM ---
     // ✅ Filtra itens cujo ID já existe em allToys (memória) OU no DOM (zumbi)
     const idsEmMemoria = new Set(
       allToys.map((t) => String(t.id).padStart(4, "0")),
@@ -384,18 +338,17 @@ async function fetchBrinquedos(reset = false) {
       const idStr = String(toy.id).padStart(4, "0");
       return !idsEmMemoria.has(idStr);
     });
-    console.log(`[FETCH] dedup: recebidos=${itens.length} novos=${itensNovos.length} allToys_antes=${allToys.length}`);
 
     // --- 5. RENDERIZAÇÃO DOS CARDS REAIS ---
     if (itensNovos.length > 0) {
-      allToys = (resetReal || modoInfinito) ? itensNovos : [...allToys, ...itensNovos];
-      await render(itensNovos, !(resetReal || modoInfinito));
+      allToys = reset ? itensNovos : [...allToys, ...itensNovos];
+      await render(itensNovos, !reset);
 
       // Ajuste de cursor manual para busca RPC
-      if (buscaAtiva.length >= 2 && !resetReal) {
+      if (buscaAtiva.length >= 2 && !reset) {
         cursor += itens.length;
       }
-    } else if (resetReal || modoInfinito) {
+    } else if (reset) {
       // H2/H3 — w-full centraliza no masonry (display:flex, não CSS grid)
       const termoAtual = buscaAtiva || "";
       grid.innerHTML = `
@@ -416,24 +369,24 @@ async function fetchBrinquedos(reset = false) {
     }
   } catch (error) {
     console.error("Erro na carga:", error);
-    if (resetReal || modoInfinito)
-      grid.innerHTML = "<p class='text-center col-span-full text-pink-500 font-retro'>ERRO DE CONEXÃO COM O ARQUIVO</p>";
+    if (reset)
+      grid.innerHTML =
+        "<p class='text-center col-span-full text-pink-500 font-retro'>ERRO DE CONEXÃO COM O ARQUIVO</p>";
     document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
   } finally {
     isLoading = false;
 
-    // H7/C4 — reconecta o sentinel ao DOM (foi removido no início do resetReal pelo C2)
+    // H7/C4 — reconecta o sentinel ao DOM (foi removido no início do reset pelo C2)
     // e só então desliga o disjuntor, garantindo que o observer não dispara
     // antes do Masonry ter estabilizado completamente.
     // Timer estendido de 400→600ms: margem maior para mobile com muitos cards.
     setTimeout(() => {
       const mainElement = document.querySelector("main");
       if (mainElement && !sentinel.parentNode) {
-        document.getElementById("sentinelContainer").appendChild(sentinel);
-        console.log("[FINALLY] sentinel reconectado ao DOM");
+        mainElement.appendChild(sentinel);
       }
       isSearching = false;
-      console.log(`[FINALLY] isLoading=${isLoading} hasMais=${hasMais} cursor=${cursor} allToys=${allToys.length} _cicloInfinitoAtivo=${_cicloInfinitoAtivo} → verificarSentinela()`);
+      // verificarSentinela só roda após isSearching=false — C3 garante proteção adicional
       verificarSentinela();
     }, 600);
   }
@@ -500,8 +453,6 @@ function otimizarUrlCloudinary(url, largura = 600) {
 async function render(items, append = false) {
   const grid = document.getElementById("toyGrid");
   const targetCols = getColumnCount();
-  const cardsNoDOM = document.querySelectorAll(".masonry-item").length;
-  console.log(`[RENDER] append=${append} items=${items.length} cards_no_DOM=${cardsNoDOM} allToys=${allToys.length}`);
 
   if (!append || currentCols !== targetCols) {
     grid.innerHTML = "";
