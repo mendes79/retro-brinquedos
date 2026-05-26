@@ -314,6 +314,21 @@ body {
     filter: grayscale(0%) brightness(1.05);
   }
 }
+.fabricante-modal-link {
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--neon-blue);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+  padding-bottom: 1px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.fabricante-modal-link:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
 /* ============================================================
    FOOTER PÓDIO + MODAL RANKING
    ============================================================ */
