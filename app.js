@@ -39,12 +39,8 @@ function verificarSentinela() {
 
   // Masonry infinito: ao chegar no fim em modo normal, reinicia com novo seed
   if (!hasMais) {
-    console.log("[SENTINEL] hasMais=false | buscaAtiva='" + buscaAtiva + "' | filtroAtivo='" + filtroAtivo + "' | isLoading=" + isLoading + " | isSearching=" + isSearching);
     if (!buscaAtiva && filtroAtivo === "todos") {
-      console.log("[SENTINEL] → chamando _reiniciarCicloInfinito()");
       _reiniciarCicloInfinito();
-    } else {
-      console.log("[SENTINEL] → reinício bloqueado (busca ou filtro ativo)");
     }
     return;
   }
@@ -62,21 +58,22 @@ function verificarSentinela() {
 // Reinicia o ciclo infinito com novo seed — grid preservado (append mode)
 function _reiniciarCicloInfinito() {
   const novoSeed = Math.random();
-  console.log("[REINICIO] seed anterior=" + sessionSeed + " → novo=" + novoSeed);
   sessionSeed = novoSeed;
   cursor = 0;
   hasMais = true;
   allToys = []; // limpa a memória de deduplicação — o DOM (grid) é preservado
 
-  // Resincroniza columnElements com as colunas reais do DOM.
-  // Sem isso, o render() insere nas colunas erradas após allToys ser zerado
-  // porque as referências antigas têm offsetHeight acumulado dos ciclos anteriores.
+  // Remove o sentinel do DOM — impede que o IntersectionObserver dispare
+  // automaticamente enquanto os novos cards chegam (mesmo padrão C2 do reset).
+  // O finally de fetchBrinquedos reconecta o sentinel após estabilização.
+  if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
+
+  // Resincroniza columnElements com as colunas reais do DOM
   const colsNoDOM = document.querySelectorAll(".masonry-column");
   if (colsNoDOM.length > 0) {
     columnElements = Array.from(colsNoDOM);
   }
 
-  console.log("[REINICIO] cursor=0 hasMais=true allToys=[] columnElements=" + columnElements.length + " → fetchBrinquedos('infinito')");
   fetchBrinquedos("infinito");
 }
 
@@ -239,10 +236,8 @@ async function fetchBrinquedos(reset = false) {
   const modoInfinito = reset === "infinito";
   const resetReal = reset === true;
 
-  console.log("[FETCH] chamado | reset='" + reset + "' modoInfinito=" + modoInfinito + " resetReal=" + resetReal + " | isLoading=" + isLoading + " hasMais=" + hasMais + " cursor=" + cursor);
-
-  if (isLoading) { console.log("[FETCH] BLOQUEADO — isLoading=true"); return; }
-  if (!modoInfinito && !resetReal && !hasMais) { console.log("[FETCH] BLOQUEADO — hasMais=false e não é reinício nem reset"); return; }
+  if (isLoading) return;
+  if (!modoInfinito && !resetReal && !hasMais) return;
   isLoading = true;
 
   const grid = document.getElementById("toyGrid");
@@ -359,7 +354,6 @@ async function fetchBrinquedos(reset = false) {
       itens = data.itens || [];
       cursor = data.cursor;
       hasMais = data.temMais;
-      console.log("[FETCH] resposta Vercel | itens=" + itens.length + " cursor=" + cursor + " temMais=" + hasMais + " seed=" + sessionSeed);
     }
 
     // --- 3. LIMPEZA DOS SKELETONS ---
@@ -379,7 +373,6 @@ async function fetchBrinquedos(reset = false) {
       const idStr = String(toy.id).padStart(4, "0");
       return !idsEmMemoria.has(idStr);
     });
-    console.log("[FETCH] deduplicação | itens recebidos=" + itens.length + " itensNovos=" + itensNovos.length + " allToys=" + allToys.length);
 
     // --- 5. RENDERIZAÇÃO DOS CARDS REAIS ---
     if (itensNovos.length > 0) {
@@ -429,7 +422,6 @@ async function fetchBrinquedos(reset = false) {
       }
       isSearching = false;
       // verificarSentinela só roda após isSearching=false — C3 garante proteção adicional
-      console.log("[FINALLY] isLoading=false hasMais=" + hasMais + " cursor=" + cursor + " → verificarSentinela()");
       verificarSentinela();
     }, 600);
   }
