@@ -23,6 +23,7 @@ let currentCols = 0;
 let columnElements = [];
 let filtroAtivo = "todos"; // 'todos', 'tive', 'queria', 'curtidas'
 let isSearching = false; // 🛡️ DISJUNTOR FIX 6.5: Trava o scroll infinito automático durante o reset da busca
+let _cicloInfinitoAtivo = false; // 🛡️ Trava fetches automáticos após reinício do ciclo infinito
 
 const sentinel = document.createElement("div");
 sentinel.id = "scrollSentinel";
@@ -36,6 +37,9 @@ sentinel.className =
 function verificarSentinela() {
   // H7/C3 — protege contra disparo parasita durante reset de busca
   if (isSearching) return;
+  // Protege contra fetches automáticos durante o ciclo infinito
+  // Só libera quando o usuário rolar manualmente até o sentinel
+  if (_cicloInfinitoAtivo) return;
 
   // Masonry infinito: ao chegar no fim em modo normal, reinicia com novo seed
   if (!hasMais) {
@@ -48,7 +52,6 @@ function verificarSentinela() {
   // Aguarda o browser pintar os novos cards antes de medir
   requestAnimationFrame(() => {
     const rect = sentinel.getBoundingClientRect();
-    // ✅ Margem generosa: cobre mesmo telas 4K com 6 colunas
     if (rect.top < window.innerHeight + 1200 && !isLoading && !isSearching) {
       fetchBrinquedos();
     }
@@ -57,18 +60,16 @@ function verificarSentinela() {
 
 // Reinicia o ciclo infinito com novo seed — grid preservado (append mode)
 function _reiniciarCicloInfinito() {
-  const novoSeed = Math.random();
-  sessionSeed = novoSeed;
+  sessionSeed = Math.random();
   cursor = 0;
   hasMais = true;
-  allToys = []; // limpa a memória de deduplicação — o DOM (grid) é preservado
+  allToys = [];
 
-  // Ativa o disjuntor isSearching — mesmo padrão C3 do reset de busca.
-  // Impede que o IntersectionObserver dispare fetches parasitas enquanto
-  // os cards do novo ciclo chegam. O finally desliga isSearching após 600ms.
-  isSearching = true;
+  // Ativa a trava do ciclo infinito — impede fetches automáticos pelo observer.
+  // Desligada pelo IntersectionObserver apenas quando o usuário rolar até o sentinel.
+  _cicloInfinitoAtivo = true;
 
-  // Remove o sentinel do DOM — proteção C2 adicional contra observer
+  // Remove o sentinel do DOM (padrão C2)
   if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
 
   // Resincroniza columnElements com as colunas reais do DOM
@@ -84,13 +85,17 @@ function _reiniciarCicloInfinito() {
 function setupObserver() {
   const observer = new IntersectionObserver(
     (entries) => {
-      // 🛡️ VALIDAÇÃO COMPLEMENTAR: Só dispara se o sentinel estiver visível,
-      // se não estiver carregando E se NÃO estiver no meio de um reset de busca (isSearching)
-      if (entries[0].isIntersecting && !isLoading && !isSearching) {
-        verificarSentinela();
+      if (!entries[0].isIntersecting) return;
+      if (isLoading || isSearching) return;
+
+      // Se o ciclo infinito está ativo, o scroll manual do usuário até o
+      // sentinel é o único gatilho válido para liberar o próximo fetch.
+      if (_cicloInfinitoAtivo) {
+        _cicloInfinitoAtivo = false; // libera o próximo batch
       }
+
+      verificarSentinela();
     },
-    // rootMargin aumentado: pré-carrega antes do usuário chegar ao fim
     { rootMargin: "1200px" },
   );
 
@@ -250,6 +255,7 @@ async function fetchBrinquedos(reset = false) {
     cursor = 0;
     allToys = [];
     hasMais = true;
+    _cicloInfinitoAtivo = false; // reset manual cancela qualquer ciclo infinito ativo
 
     // H7/C2 — remove fisicamente o sentinel do DOM antes de esvaziar o grid.
     // Isso impede que o IntersectionObserver detecte o sentinel "fantasma"
