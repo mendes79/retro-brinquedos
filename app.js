@@ -619,9 +619,11 @@ async function render(items, append = false) {
 /* 3.5. MECÂNICA DE INTERAÇÃO (Flip e Desfocar) */
 
 /* 3.5.1. Vira o card com cálculo de scroll dinâmico (Idêntico em Todas as Telas) */
-// Registra visualização de forma assíncrona e silenciosa (fire-and-forget)
-// Conta logados e deslogados — RPC com SECURITY DEFINER
+const _cardsVistos = new Set(); // controle de sessão — 1 visualização por card
+
 async function registrarVisualizacao(id) {
+  if (_cardsVistos.has(id)) return; // já contou nessa sessão — ignora
+  _cardsVistos.add(id);
   try {
     await supabaseClient.rpc("increment_visualizacoes", { card_id: id });
   } catch (_) {} // silencioso — não bloqueia o flip em caso de falha
