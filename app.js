@@ -14,7 +14,7 @@ let cursor = 0;
 const LIMITE = 24;
 let isLoading = false;
 let hasMais = true;
-const sessionSeed = Math.random();
+let sessionSeed = Math.random();
 let isUserLogged = false;
 let curtidasDoUsuario = new Set();
 let tiveDoUsuario = new Set();
@@ -34,13 +34,13 @@ sentinel.className =
 /* 3.3.2. Verifica se o sentinel ainda está visível após um fetch terminar
    e dispara mais um lote se necessário — cobre o gap do desktop (6 colunas) */
 function verificarSentinela() {
-  // H7/C3 — protege contra disparo parasita durante reset de busca
   if (!hasMais || isSearching) return;
-  // Aguarda o browser pintar os novos cards antes de medir
   requestAnimationFrame(() => {
     const rect = sentinel.getBoundingClientRect();
-    // ✅ Margem generosa: cobre mesmo telas 4K com 6 colunas
-    if (rect.top < window.innerHeight + 1200 && !isLoading && !isSearching) {
+    const visivel = rect.top < window.innerHeight + 1200;
+    console.log(`[SENTINEL] top=${Math.round(rect.top)} vh=${window.innerHeight} visivel=${visivel} hasMais=${hasMais} isLoading=${isLoading} isSearching=${isSearching}`);
+    if (visivel && !isLoading && !isSearching) {
+      console.log("[SENTINEL] → disparando fetchBrinquedos()");
       fetchBrinquedos();
     }
   });
@@ -50,13 +50,13 @@ function verificarSentinela() {
 function setupObserver() {
   const observer = new IntersectionObserver(
     (entries) => {
-      // 🛡️ VALIDAÇÃO COMPLEMENTAR: Só dispara se o sentinel estiver visível,
-      // se não estiver carregando E se NÃO estiver no meio de um reset de busca (isSearching)
-      if (entries[0].isIntersecting && !isLoading && hasMais && !isSearching) {
+      const e = entries[0];
+      console.log(`[OBSERVER] isIntersecting=${e.isIntersecting} isLoading=${isLoading} hasMais=${hasMais} isSearching=${isSearching}`);
+      if (e.isIntersecting && !isLoading && hasMais && !isSearching) {
+        console.log("[OBSERVER] → disparando fetchBrinquedos()");
         fetchBrinquedos();
       }
     },
-    // rootMargin aumentado: pré-carrega antes do usuário chegar ao fim
     { rootMargin: "1200px" },
   );
 
@@ -194,7 +194,8 @@ function _sincronizarBotoesRanking(modo) {
 }
 
 async function fetchBrinquedos(reset = false) {
-  if (isLoading || (!hasMais && !reset)) return;
+  console.log(`[FETCH] reset=${reset} isLoading=${isLoading} hasMais=${hasMais} cursor=${cursor} allToys=${allToys.length}`);
+  if (isLoading || (!hasMais && !reset)) { console.log("[FETCH] BLOQUEADO"); return; }
   isLoading = true;
 
   const grid = document.getElementById("toyGrid");
@@ -310,12 +311,14 @@ async function fetchBrinquedos(reset = false) {
 
       itens = data.itens || [];
       cursor = data.cursor;
+      console.log(`[FETCH] Vercel: itens=${itens.length} cursor=${cursor} temMais=${data.temMais} seed=${sessionSeed.toFixed(4)}`);
       // Scroll infinito silencioso: ao chegar no fim em modo normal,
       // sorteia nova ordem e recomeça — o sentinel nunca para.
       if (!data.temMais && filtroAtivo === "todos" && !buscaAtiva) {
         cursor = 0;
         sessionSeed = Math.random();
         hasMais = true;
+        console.log(`[FETCH] fim do catálogo → novo seed=${sessionSeed.toFixed(4)} cursor=0 hasMais=true`);
       } else {
         hasMais = data.temMais;
       }
@@ -338,6 +341,7 @@ async function fetchBrinquedos(reset = false) {
       const idStr = String(toy.id).padStart(4, "0");
       return !idsEmMemoria.has(idStr);
     });
+    console.log(`[FETCH] dedup: recebidos=${itens.length} novos=${itensNovos.length} allToys=${allToys.length} hasMais=${hasMais}`);
 
     // --- 5. RENDERIZAÇÃO DOS CARDS REAIS ---
     if (itensNovos.length > 0) {
@@ -384,9 +388,10 @@ async function fetchBrinquedos(reset = false) {
       const mainElement = document.querySelector("main");
       if (mainElement && !sentinel.parentNode) {
         mainElement.appendChild(sentinel);
+        console.log("[FINALLY] sentinel reconectado");
       }
       isSearching = false;
-      // verificarSentinela só roda após isSearching=false — C3 garante proteção adicional
+      console.log(`[FINALLY] isLoading=${isLoading} hasMais=${hasMais} cursor=${cursor} allToys=${allToys.length} → verificarSentinela()`);
       verificarSentinela();
     }, 600);
   }
@@ -453,6 +458,7 @@ function otimizarUrlCloudinary(url, largura = 600) {
 async function render(items, append = false) {
   const grid = document.getElementById("toyGrid");
   const targetCols = getColumnCount();
+  console.log(`[RENDER] append=${append} items=${items.length} cards_no_DOM=${document.querySelectorAll(".masonry-item").length} allToys=${allToys.length}`);
 
   if (!append || currentCols !== targetCols) {
     grid.innerHTML = "";
