@@ -63,9 +63,12 @@ function _reiniciarCicloInfinito() {
   hasMais = true;
   allToys = []; // limpa a memória de deduplicação — o DOM (grid) é preservado
 
-  // Remove o sentinel do DOM — impede que o IntersectionObserver dispare
-  // automaticamente enquanto os novos cards chegam (mesmo padrão C2 do reset).
-  // O finally de fetchBrinquedos reconecta o sentinel após estabilização.
+  // Ativa o disjuntor isSearching — mesmo padrão C3 do reset de busca.
+  // Impede que o IntersectionObserver dispare fetches parasitas enquanto
+  // os cards do novo ciclo chegam. O finally desliga isSearching após 600ms.
+  isSearching = true;
+
+  // Remove o sentinel do DOM — proteção C2 adicional contra observer
   if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
 
   // Resincroniza columnElements com as colunas reais do DOM
