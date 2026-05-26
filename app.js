@@ -67,7 +67,16 @@ function _reiniciarCicloInfinito() {
   cursor = 0;
   hasMais = true;
   allToys = []; // limpa a memória de deduplicação — o DOM (grid) é preservado
-  console.log("[REINICIO] cursor=0 hasMais=true allToys=[] → fetchBrinquedos('infinito')");
+
+  // Resincroniza columnElements com as colunas reais do DOM.
+  // Sem isso, o render() insere nas colunas erradas após allToys ser zerado
+  // porque as referências antigas têm offsetHeight acumulado dos ciclos anteriores.
+  const colsNoDOM = document.querySelectorAll(".masonry-column");
+  if (colsNoDOM.length > 0) {
+    columnElements = Array.from(colsNoDOM);
+  }
+
+  console.log("[REINICIO] cursor=0 hasMais=true allToys=[] columnElements=" + columnElements.length + " → fetchBrinquedos('infinito')");
   fetchBrinquedos("infinito");
 }
 
