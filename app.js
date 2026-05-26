@@ -60,7 +60,7 @@ function _reiniciarCicloInfinito() {
   sessionSeed = Math.random(); // novo embaralhamento — ordem diferente da rodada anterior
   cursor = 0;
   hasMais = true;
-  fetchBrinquedos(false); // append — cards novos abaixo dos existentes
+  fetchBrinquedos("infinito"); // append — cards novos abaixo dos existentes
 }
 
 /* 3.11.1. Monta o vigia de scroll dinâmico (único ponto de disparo) */
@@ -218,13 +218,18 @@ function _sincronizarBotoesRanking(modo) {
 }
 
 async function fetchBrinquedos(reset = false) {
-  if (isLoading || (!hasMais && !reset)) return;
+  // "infinito" é o modo de reinício do masonry — passa pela guard mas não limpa o grid
+  const modoInfinito = reset === "infinito";
+  const resetReal = reset === true;
+
+  if (isLoading) return;
+  if (!modoInfinito && !resetReal && !hasMais) return;
   isLoading = true;
 
   const grid = document.getElementById("toyGrid");
 
   // --- 1. FASE DE PREPARAÇÃO (EXIBIÇÃO DOS SKELETONS) ---
-  if (reset) {
+  if (resetReal) {
     cursor = 0;
     allToys = [];
     hasMais = true;
@@ -278,7 +283,7 @@ async function fetchBrinquedos(reset = false) {
 
       // Se o Set estiver vazio, não há nada a buscar
       if (idsFiltro.length === 0) {
-        if (reset) grid.innerHTML = "";
+        if (resetReal) grid.innerHTML = "";
         document
           .querySelectorAll(".temp-skeleton")
           .forEach((el) => el.remove());
@@ -326,7 +331,7 @@ async function fetchBrinquedos(reset = false) {
       if (!res.ok) throw new Error("Falha na API");
       const data = await res.json();
 
-      if (reset && data.total) {
+      if (resetReal && data.total) {
         document.getElementById("heroCount").textContent = data.total;
         // Pré-computa o ranking via query dedicada ao Supabase em background
         requestAnimationFrame(() => { _prepararDadosRanking(); });
@@ -338,7 +343,7 @@ async function fetchBrinquedos(reset = false) {
     }
 
     // --- 3. LIMPEZA DOS SKELETONS ---
-    if (reset) {
+    if (resetReal) {
       grid.innerHTML = ""; // Limpa tudo para o render() reconstruir as colunas
     } else {
       // Remove apenas os skeletons temporários do scroll
@@ -357,14 +362,14 @@ async function fetchBrinquedos(reset = false) {
 
     // --- 5. RENDERIZAÇÃO DOS CARDS REAIS ---
     if (itensNovos.length > 0) {
-      allToys = reset ? itensNovos : [...allToys, ...itensNovos];
-      await render(itensNovos, !reset);
+      allToys = resetReal ? itensNovos : [...allToys, ...itensNovos];
+      await render(itensNovos, !resetReal);
 
       // Ajuste de cursor manual para busca RPC
-      if (buscaAtiva.length >= 2 && !reset) {
+      if (buscaAtiva.length >= 2 && !resetReal) {
         cursor += itens.length;
       }
-    } else if (reset) {
+    } else if (resetReal) {
       // H2/H3 — w-full centraliza no masonry (display:flex, não CSS grid)
       const termoAtual = buscaAtiva || "";
       grid.innerHTML = `
@@ -385,14 +390,14 @@ async function fetchBrinquedos(reset = false) {
     }
   } catch (error) {
     console.error("Erro na carga:", error);
-    if (reset)
+    if (resetReal)
       grid.innerHTML =
         "<p class='text-center col-span-full text-pink-500 font-retro'>ERRO DE CONEXÃO COM O ARQUIVO</p>";
     document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
   } finally {
     isLoading = false;
 
-    // H7/C4 — reconecta o sentinel ao DOM (foi removido no início do reset pelo C2)
+    // H7/C4 — reconecta o sentinel ao DOM (foi removido no início do resetReal pelo C2)
     // e só então desliga o disjuntor, garantindo que o observer não dispara
     // antes do Masonry ter estabilizado completamente.
     // Timer estendido de 400→600ms: margem maior para mobile com muitos cards.
