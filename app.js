@@ -368,6 +368,12 @@ async function fetchBrinquedos(reset = false) {
           </button>
         </div>`;
       hasMais = false;
+    } else if (filtroAtivo === "todos" && !buscaAtiva) {
+      // Modo normal: todos os cards deste batch já estão no DOM (deduplicação total).
+      // Limpa allToys para zerar a memória de deduplicação e continua o scroll.
+      console.log(`[FETCH] novos=0 em modo normal → limpando allToys para continuar scroll`);
+      allToys = [];
+      hasMais = true;
     } else {
       hasMais = false;
     }
