@@ -66,18 +66,8 @@ function _reiniciarCicloInfinito() {
   sessionSeed = novoSeed;
   cursor = 0;
   hasMais = true;
-
-  // Separador visual temporário de diagnóstico — remover após resolver o bug
-  const grid = document.getElementById("toyGrid");
-  if (grid) {
-    const sep = document.createElement("div");
-    sep.id = "ciclo-infinito-sep";
-    sep.style.cssText = "width:100%;text-align:center;padding:12px;font-family:monospace;font-size:11px;color:#39ff14;border-top:2px dashed #39ff14;border-bottom:2px dashed #39ff14;margin:8px 0;";
-    sep.textContent = "▶▶▶ NOVO CICLO INICIADO — seed: " + novoSeed.toFixed(6) + " ◀◀◀";
-    grid.appendChild(sep);
-  }
-
-  console.log("[REINICIO] cursor=0 hasMais=true → fetchBrinquedos('infinito')");
+  allToys = []; // limpa a memória de deduplicação — o DOM (grid) é preservado
+  console.log("[REINICIO] cursor=0 hasMais=true allToys=[] → fetchBrinquedos('infinito')");
   fetchBrinquedos("infinito");
 }
 
