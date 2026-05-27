@@ -297,108 +297,186 @@ async function fetchBrinquedos(reset = false) {
   if (isLoading || (!hasMais && !reset)) return;
   isLoading = true;
 
-  const grid = document.getElementById("toysGrid");
-  if (!grid) {
-    isLoading = false;
-    return;
-  }
+  const grid = document.getElementById("toyGrid");
 
-  // --- 1. EXIBIÇÃO DOS SKELETONS INICIAIS ---
   if (reset) {
-    grid.innerHTML = "";
     cursor = 0;
+    allToys = [];
     hasMais = true;
-    _mostrarSkeletonsIniciais(grid);
+
+    if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
+
+    const targetCols = getColumnCount();
+    grid.innerHTML = "";
+    for (let i = 0; i < targetCols; i++) {
+      const colDiv = document.createElement("div");
+      colDiv.className = "masonry-column";
+      colDiv.innerHTML = Array(2)
+        .fill('<div class="skeleton-card"></div>')
+        .join("");
+      grid.appendChild(colDiv);
+    }
   } else {
-    _mostrarSkeletonsScroll(grid);
+    const cols = document.querySelectorAll(".masonry-column");
+    cols.forEach((col) => {
+      const skeleton = document.createElement("div");
+      skeleton.className = "skeleton-card temp-skeleton";
+      col.appendChild(skeleton);
+    });
   }
 
   try {
-    // --- 2. DISPARO DA REQUISIÇÃO PARA A API VERCEL ---
-    // 💡 CORREÇÃO: Usando a string de busca global limpa e os estados corretos da SPA
-    const buscaText = typeof currentSearch !== "undefined" ? currentSearch : "";
-    const catText =
-      typeof currentCategory !== "undefined" ? currentCategory : "";
-    const fabText =
-      typeof currentFabricante !== "undefined" ? currentFabricante : "";
+    let itens = [];
 
-    const url = `/api/brinquedos?cursor=${cursor}&limit=24&seed=${sessionSeed}&search=${encodeURIComponent(buscaText)}&category=${encodeURIComponent(catText)}&fabricante=${encodeURIComponent(fabText)}`;
+    if (filtroAtivo !== "todos" && buscaAtiva.length < 2) {
+      const setAtivo =
+        filtroAtivo === "tive"
+          ? tiveDoUsuario
+          : filtroAtivo === "queria"
+            ? queriaDoUsuario
+            : curtidasDoUsuario;
 
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Erro na resposta do servidor");
+      const idsFiltro = [...setAtivo];
 
-    const data = await res.json();
-    let itens = data.itens || [];
-    const totalDisponivelNoBanco = data.total || 0;
+      if (idsFiltro.length === 0) {
+        if (reset) grid.innerHTML = "";
+        document
+          .querySelectorAll(".temp-skeleton")
+          .forEach((el) => el.remove());
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-20">
+            <p class="text-pink-500 font-retro text-xl">NENHUM ITEM AQUI AINDA</p>
+            <p class="text-slate-500 font-orbitron text-xs mt-2">
+              ${
+                filtroAtivo === "tive"
+                  ? "MARQUE OS BRINQUEDOS QUE VOCÊ TEVE"
+                  : filtroAtivo === "queria"
+                    ? "MARQUE OS BRINQUEDOS QUE VOCÊ QUERIA TER"
+                    : "CURTA OS BRINQUEDOS QUE VOCÊ AMOU"
+              }
+            </p>
+          </div>`;
+        hasMais = false;
+        return;
+      }
 
-    // Atualiza o contador do cabeçalho da SPA se for o boot inicial
-    if (reset && totalDisponivelNoBanco) {
-      const heroEl = document.getElementById("heroCount");
-      if (heroEl) heroEl.textContent = totalDisponivelNoBanco;
+      const { data, error: filtroError } = await supabaseClient
+        .from("brinquedos")
+        .select("*")
+        .in("id", idsFiltro);
+
+      if (filtroError) throw filtroError;
+      itens = data || [];
+      hasMais = false;
+    } else if (buscaAtiva.length >= 2) {
+      const { data, error: rpcError } = await supabaseClient.rpc(
+        "buscar_brinquedos_search",
+        { termo_busca: buscaAtiva, cursor_val: cursor, limite_val: LIMITE },
+      );
+      if (rpcError) throw rpcError;
+      itens = data || [];
+    } else {
+      // 🚀 CANAL PADRÃO DO CATÁLOGO: Otimizado para Loop Infinito por Antecipação
+      const limiteRequisitado = typeof LIMITE !== "undefined" ? LIMITE : 24;
+      const res = await fetch(
+        `/api/brinquedos?cursor=${cursor}&limite=${limiteRequisitado}&seed=${sessionSeed}`,
+      );
+      if (!res.ok) throw new Error("Falha na API");
+      const data = await res.json();
+
+      if (reset && data.total) {
+        document.getElementById("heroCount").textContent = data.total;
+      }
+
+      itens = data.itens || [];
+      cursor = data.cursor;
+      hasMais = data.temMais;
+
+      // 🔄 GATILHO DO LOOP INFINITO: Detecta se a semente esgotou (lote menor que o limite)
+      if (itens.length < limiteRequisitado) {
+        const sementeAntiga = sessionSeed;
+        sessionSeed = Math.random(); // Gera novo sorteio global
+
+        cursor = 0; // Reseta ponteiro do banco
+        hasMais = true; // Garante a continuidade do scroll
+
+        console.log(
+          `%c 🔄 [LOOP INFINITO MASONRY] %c Semente antiga (${sementeAntiga.toFixed(4)}) finalizada com lote de ${itens.length} cards. Nova semente gerada: (${sessionSeed.toFixed(4)}). Reiniciando cursor para 0!`,
+          "background: #ec4899; color: #fff; font-weight: bold; padding: 3px 5px; border-radius: 3px;",
+          "color: #06b6d4; font-weight: bold;",
+        );
+
+        // Se houver algum card vindo nessa última leva, emendamos o próximo lote assincronamente
+        if (itens.length > 0) {
+          setTimeout(() => {
+            // Se o usuário não alterou filtros ou buscas nesse meio tempo, continua povoando
+            if (filtroAtivo === "todos" && buscaAtiva.length < 2) {
+              fetchBrinquedos(false);
+            }
+          }, 80);
+        }
+      }
     }
 
-    // --- 3. LIMPEZA DOS SKELETONS ---
     if (reset) {
       grid.innerHTML = "";
     } else {
       document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
     }
 
-    // --- 4. TRATAMENTO DO GATILHO DE LOOP INFINITO (ANTECIPAÇÃO) ---
-    let alcancouFimDaSemente = itens.length < 24;
-    const tamanhoLoteAtual = itens.length;
-
-    // --- 5. DEDUPLICAÇÃO INTELIGENTE POR LOTE ---
+    // --- DEDUPLICAÇÃO ATUALIZADA ---
+    // Protege contra requisições fantasmas paralelas na rede dentro do mesmo lote,
+    // mas permite que os cards reapareçam legitimamente ao virar de semente!
     const idsNoLoteAtual = new Set();
-    const itensNovosFiltrados = itens.filter((toy) => {
+    const itensNovos = itens.filter((toy) => {
       const idStr = String(toy.id).padStart(4, "0");
       if (idsNoLoteAtual.has(idStr)) return false;
       idsNoLoteAtual.add(idStr);
       return true;
     });
 
-    // Alimenta a memória acumuladora local da sessão
-    if (reset) {
-      allToys = [...itensNovosFiltrados];
-    } else {
-      allToys = [...allToys, ...itensNovosFiltrados];
-    }
+    if (itensNovos.length > 0) {
+      allToys = reset ? itensNovos : [...allToys, ...itensNovos];
+      await render(itensNovos, !reset);
 
-    // --- 6. RENDERIZAÇÃO DOS CARDS NO MASONRY ---
-    _renderizarNovosCardsNoGrid(itensNovosFiltrados, grid);
-
-    // --- 7. ATUALIZAÇÃO DOS PONTEIROS DE PAGINAÇÃO ---
-    cursor = data.cursor;
-    hasMais = data.temMais;
-
-    // --- 8. PIPELINE DE EXECUÇÃO DO LOOP INFINITO EM BACKGROUND ---
-    if (alcancouFimDaSemente) {
-      const sementeAntiga = sessionSeed;
-      sessionSeed = Math.random();
-
-      cursor = 0;
-      hasMais = true;
-
-      console.log(
-        `%c 🔄 [LOOP INFINITO MASONRY] %c Semente antiga (${sementeAntiga.toFixed(4)}) finalizada com lote de ${tamanhoLoteAtual} cards. Nova semente gerada: (${sessionSeed.toFixed(4)}). Reiniciando cursor para 0!`,
-        "background: #ec4899; color: #fff; font-weight: bold; padding: 3px 5px; border-radius: 3px;",
-        "color: #06b6d4; font-weight: bold;",
-      );
-
-      // Desbloqueia o estado antes de emendar a chamada para evitar travamentos
-      isLoading = false;
-
-      if (tamanhoLoteAtual > 0) {
-        setTimeout(() => fetchBrinquedos(false), 50);
+      if (buscaAtiva.length >= 2 && !reset) {
+        cursor += itens.length;
       }
-      return;
+    } else if (reset) {
+      const termoAtual = buscaAtiva || "";
+      grid.innerHTML = `
+        <div style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 1rem;gap:1rem;">
+          <p class="text-pink-500 font-retro text-xl">ITEM NÃO ENCONTRADO</p>
+          <p class="text-slate-500 font-orbitron text-xs">VERIFIQUE O TERMO</p>
+          <button
+            onclick="abrirSugestaoModal('${termoAtual}')"
+            class="sugestao-trigger-btn mt-2"
+            title="Você pode sugerir o item para que ele entre para a coleção do RetroBrinquedos"
+          >
+            ▶ SUGERIR ITEM
+          </button>
+        </div>`;
+      hasMais = false;
+    } else {
+      hasMais = false;
     }
   } catch (error) {
-    console.error("Falha crônica no pipeline do catálogo infinito:", error);
+    console.error("Erro na carga:", error);
+    if (reset)
+      grid.innerHTML =
+        "<p class='text-center col-span-full text-pink-500 font-retro'>ERRO DE CONEXÃO COM O ARQUIVO</p>";
     document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
   } finally {
-    // 💡 CORREÇÃO: Garante o destravamento seguro do fluxo de loading em qualquer cenário
     isLoading = false;
+
+    setTimeout(() => {
+      const mainElement = document.querySelector("main");
+      if (mainElement && !sentinel.parentNode) {
+        mainElement.appendChild(sentinel);
+      }
+      isSearching = false;
+      verificarSentinela();
+    }, 600);
   }
 }
 
