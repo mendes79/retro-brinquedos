@@ -294,19 +294,68 @@ function _sincronizarBotoesRanking(modo) {
 }
 
 async function fetchBrinquedos(reset = false) {
-  if (isLoading || (!hasMais && !reset)) return;
+  // 🛰️ TRACE 1: Entrada da função
+  console.log(
+    "%c 🟢 [TRACE 1] Entrou em fetchBrinquedos",
+    "color: #00ff00; font-weight: bold;",
+    { reset, isLoading, hasMais, cursor },
+  );
+
+  if (isLoading || (!hasMais && !reset)) {
+    console.log(
+      "%c ⚠️ [TRACE 1.1] Bloqueado pelos disjuntores iniciais",
+      "color: #yellow;",
+    );
+    return;
+  }
   isLoading = true;
 
+  // 🛰️ TRACE 2: Captura do DOM
   const grid = document.getElementById("toyGrid");
+  console.log(
+    "%c 📦 [TRACE 2] Elemento toyGrid capturado:",
+    "color: #00ffff;",
+    grid,
+  );
+
+  if (!grid) {
+    console.error(
+      "%c ❌ [TRACE 2.1] ERRO CRÍTICO: O elemento #toyGrid NÃO existe no HTML!",
+      "background: red; color: white;",
+    );
+    isLoading = false;
+    return;
+  }
 
   if (reset) {
+    console.log(
+      "%c 🔄 [TRACE 3] Executando bloco RESET (Limpeza do catálogo)",
+      "color: #magenta;",
+    );
     cursor = 0;
     allToys = [];
     hasMais = true;
 
-    if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
+    try {
+      if (sentinel && sentinel.parentNode) {
+        sentinel.parentNode.removeChild(sentinel);
+        console.log(
+          "%c 🚏 [TRACE 3.1] Sentinela removido do DOM temporariamente",
+          "color: #gray;",
+        );
+      }
+    } catch (e) {
+      console.warn("Aviso no gerenciamento do sentinela:", e);
+    }
 
-    const targetCols = getColumnCount();
+    const targetCols =
+      typeof getColumnCount === "function" ? getColumnCount() : 3;
+    console.log(
+      "%c 📊 [TRACE 3.2] Colunas calculadas:",
+      "color: #magenta;",
+      targetCols,
+    );
+
     grid.innerHTML = "";
     for (let i = 0; i < targetCols; i++) {
       const colDiv = document.createElement("div");
@@ -317,6 +366,10 @@ async function fetchBrinquedos(reset = false) {
       grid.appendChild(colDiv);
     }
   } else {
+    console.log(
+      "%c 📥 [TRACE 3] Executando bloco SCROLL (Injetando skeletons temporários)",
+      "color: #cyan;",
+    );
     const cols = document.querySelectorAll(".masonry-column");
     cols.forEach((col) => {
       const skeleton = document.createElement("div");
@@ -328,15 +381,44 @@ async function fetchBrinquedos(reset = false) {
   try {
     let itens = [];
 
-    if (filtroAtivo !== "todos" && buscaAtiva.length < 2) {
+    // 🛰️ TRACE 4: Estados dos Filtros Globais
+    console.log(
+      "%c 🔍 [TRACE 4] Avaliando filtros de busca:",
+      "color: #orange;",
+      {
+        filtroAtivo:
+          typeof filtroAtivo !== "undefined" ? filtroAtivo : "não definido",
+        buscaAtiva:
+          typeof buscaAtiva !== "undefined" ? buscaAtiva : "não definido",
+        LIMITE: typeof LIMITE !== "undefined" ? LIMITE : "não definido",
+      },
+    );
+
+    if (
+      typeof filtroAtivo !== "undefined" &&
+      filtroAtivo !== "todos" &&
+      typeof buscaAtiva !== "undefined" &&
+      buscaAtiva.length < 2
+    ) {
+      console.log(
+        "%c 🗂️ [TRACE 4.1] Entrou no fluxo de Filtros Pessoais (Tive/Queria/Curtidas)",
+        "color: #orange;",
+      );
       const setAtivo =
         filtroAtivo === "tive"
-          ? tiveDoUsuario
+          ? typeof tiveDoUsuario !== "undefined"
+            ? tiveDoUsuario
+            : new Set()
           : filtroAtivo === "queria"
-            ? queriaDoUsuario
-            : curtidasDoUsuario;
+            ? typeof queriaDoUsuario !== "undefined"
+              ? queriaDoUsuario
+              : new Set()
+            : typeof curtidasDoUsuario !== "undefined"
+              ? curtidasDoUsuario
+              : new Set();
 
       const idsFiltro = [...setAtivo];
+      console.log("IDs no set ativo do usuário:", idsFiltro);
 
       if (idsFiltro.length === 0) {
         if (reset) grid.innerHTML = "";
@@ -346,15 +428,6 @@ async function fetchBrinquedos(reset = false) {
         grid.innerHTML = `
           <div class="col-span-full text-center py-20">
             <p class="text-pink-500 font-retro text-xl">NENHUM ITEM AQUI AINDA</p>
-            <p class="text-slate-500 font-orbitron text-xs mt-2">
-              ${
-                filtroAtivo === "tive"
-                  ? "MARQUE OS BRINQUEDOS QUE VOCÊ TEVE"
-                  : filtroAtivo === "queria"
-                    ? "MARQUE OS BRINQUEDOS QUE VOCÊ QUERIA TER"
-                    : "CURTA OS BRINQUEDOS QUE VOCÊ AMOU"
-              }
-            </p>
           </div>`;
         hasMais = false;
         return;
@@ -368,7 +441,11 @@ async function fetchBrinquedos(reset = false) {
       if (filtroError) throw filtroError;
       itens = data || [];
       hasMais = false;
-    } else if (buscaAtiva.length >= 2) {
+    } else if (typeof buscaAtiva !== "undefined" && buscaAtiva.length >= 2) {
+      console.log(
+        "%c 🔤 [TRACE 4.2] Entrou no fluxo de Busca por Texto RPC",
+        "color: #orange;",
+      );
       const { data, error: rpcError } = await supabaseClient.rpc(
         "buscar_brinquedos_search",
         { termo_busca: buscaAtiva, cursor_val: cursor, limite_val: LIMITE },
@@ -376,40 +453,55 @@ async function fetchBrinquedos(reset = false) {
       if (rpcError) throw rpcError;
       itens = data || [];
     } else {
-      // 🚀 CANAL PADRÃO DO CATÁLOGO: Otimizado para Loop Infinito por Antecipação
+      // 🚀 CANAL PADRÃO DO CATÁLOGO
       const limiteRequisitado = typeof LIMITE !== "undefined" ? LIMITE : 24;
-      const res = await fetch(
-        `/api/brinquedos?cursor=${cursor}&limite=${limiteRequisitado}&seed=${sessionSeed}`,
+      const urlCompleta = `/api/brinquedos?cursor=${cursor}&limite=${limiteRequisitado}&seed=${sessionSeed}`;
+
+      console.log(
+        "%c 🌐 [TRACE 4.3] Disparando Fetch para a API Vercel:",
+        "color: #green; font-weight: bold;",
+        urlCompleta,
       );
+
+      const res = await fetch(urlCompleta);
       if (!res.ok) throw new Error("Falha na API");
+
       const data = await res.json();
+      console.log(
+        "%c 📥 [TRACE 4.4] Resposta recebida da API:",
+        "color: #green;",
+        data,
+      );
 
       if (reset && data.total) {
-        document.getElementById("heroCount").textContent = data.total;
+        console.log(
+          "%c 🔢 [TRACE 4.5] Atualizando heroCount para:",
+          "color: #green;",
+          data.total,
+        );
+        const heroCountEl = document.getElementById("heroCount");
+        if (heroCountEl) heroCountEl.textContent = data.total;
       }
 
       itens = data.itens || [];
       cursor = data.cursor;
       hasMais = data.temMais;
 
-      // 🔄 GATILHO DO LOOP INFINITO: Detecta se a semente esgotou (lote menor que o limite)
+      // 🔄 LOOP INFINITO (ANTECIPAÇÃO)
       if (itens.length < limiteRequisitado) {
         const sementeAntiga = sessionSeed;
-        sessionSeed = Math.random(); // Gera novo sorteio global
-
-        cursor = 0; // Reseta ponteiro do banco
-        hasMais = true; // Garante a continuidade do scroll
+        sessionSeed = Math.random();
+        cursor = 0;
+        hasMais = true;
 
         console.log(
-          `%c 🔄 [LOOP INFINITO MASONRY] %c Semente antiga (${sementeAntiga.toFixed(4)}) finalizada com lote de ${itens.length} cards. Nova semente gerada: (${sessionSeed.toFixed(4)}). Reiniciando cursor para 0!`,
-          "background: #ec4899; color: #fff; font-weight: bold; padding: 3px 5px; border-radius: 3px;",
-          "color: #06b6d4; font-weight: bold;",
+          `%c 🔄 [LOOP INFINITO ACTIVATED] %c Virando semente de ${sementeAntiga.toFixed(4)} para ${sessionSeed.toFixed(4)}`,
+          "background: #ec4899; color: #fff; padding: 2px;",
+          "color: #06b6d4;",
         );
 
-        // Se houver algum card vindo nessa última leva, emendamos o próximo lote assincronamente
         if (itens.length > 0) {
           setTimeout(() => {
-            // Se o usuário não alterou filtros ou buscas nesse meio tempo, continua povoando
             if (filtroAtivo === "todos" && buscaAtiva.length < 2) {
               fetchBrinquedos(false);
             }
@@ -418,15 +510,19 @@ async function fetchBrinquedos(reset = false) {
       }
     }
 
+    // 🛰️ TRACE 5: Processamento pós-busca
+    console.log(
+      "%c 🛠️ [TRACE 5] Processando itens para renderização. Qtd recebida:",
+      "color: #blue;",
+      itens.length,
+    );
+
     if (reset) {
       grid.innerHTML = "";
     } else {
       document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
     }
 
-    // --- DEDUPLICAÇÃO ATUALIZADA ---
-    // Protege contra requisições fantasmas paralelas na rede dentro do mesmo lote,
-    // mas permite que os cards reapareçam legitimamente ao virar de semente!
     const idsNoLoteAtual = new Set();
     const itensNovos = itens.filter((toy) => {
       const idStr = String(toy.id).padStart(4, "0");
@@ -435,47 +531,76 @@ async function fetchBrinquedos(reset = false) {
       return true;
     });
 
+    console.log(
+      "%c 🛠️ [TRACE 5.1] Itens filtrados novos:",
+      "color: #blue;",
+      itensNovos.length,
+    );
+
     if (itensNovos.length > 0) {
       allToys = reset ? itensNovos : [...allToys, ...itensNovos];
-      await render(itensNovos, !reset);
 
-      if (buscaAtiva.length >= 2 && !reset) {
+      console.log(
+        "%c 🎨 [TRACE 5.2] Chamando função render()...",
+        "color: #purple;",
+      );
+      await render(itensNovos, !reset);
+      console.log(
+        "%c 🎨 [TRACE 5.3] Função render() finalizada com sucesso.",
+        "color: #purple;",
+      );
+
+      if (
+        typeof buscaAtiva !== "undefined" &&
+        buscaAtiva.length >= 2 &&
+        !reset
+      ) {
         cursor += itens.length;
       }
     } else if (reset) {
-      const termoAtual = buscaAtiva || "";
-      grid.innerHTML = `
-        <div style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 1rem;gap:1rem;">
-          <p class="text-pink-500 font-retro text-xl">ITEM NÃO ENCONTRADO</p>
-          <p class="text-slate-500 font-orbitron text-xs">VERIFIQUE O TERMO</p>
-          <button
-            onclick="abrirSugestaoModal('${termoAtual}')"
-            class="sugestao-trigger-btn mt-2"
-            title="Você pode sugerir o item para que ele entre para a coleção do RetroBrinquedos"
-          >
-            ▶ SUGERIR ITEM
-          </button>
-        </div>`;
+      console.log(
+        "%c 🛑 [TRACE 5.4] Nenhum item encontrado no reset.",
+        "color: #red;",
+      );
+      const termoAtual = typeof buscaAtiva !== "undefined" ? buscaAtiva : "";
+      grid.innerHTML = `<div class="text-center py-20"><p class="text-pink-500 font-retro text-xl">ITEM NÃO ENCONTRADO</p></div>`;
       hasMais = false;
     } else {
       hasMais = false;
     }
   } catch (error) {
-    console.error("Erro na carga:", error);
+    // 🛰️ TRACE ERRO: Captura de quebras internas
+    console.error(
+      "%c 💥 [TRACE ERRO] O pipeline quebrou dentro do bloco try!",
+      "background: red; color: white; font-weight: bold;",
+      error,
+    );
     if (reset)
       grid.innerHTML =
         "<p class='text-center col-span-full text-pink-500 font-retro'>ERRO DE CONEXÃO COM O ARQUIVO</p>";
     document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
   } finally {
     isLoading = false;
+    console.log(
+      "%c 🏁 [TRACE FINALLY] Executando finalizadores de ciclo",
+      "color: #gray;",
+    );
 
     setTimeout(() => {
-      const mainElement = document.querySelector("main");
-      if (mainElement && !sentinel.parentNode) {
-        mainElement.appendChild(sentinel);
+      try {
+        const mainElement = document.querySelector("main");
+        if (mainElement && sentinel && !sentinel.parentNode) {
+          mainElement.appendChild(sentinel);
+          console.log(
+            "%c 🚏 [TRACE FINALLY] Sentinela re-acoplado ao main",
+            "color: #gray;",
+          );
+        }
+        isSearching = false;
+        if (typeof verificarSentinela === "function") verificarSentinela();
+      } catch (e) {
+        console.warn("Aviso no finally do sentinel:", e);
       }
-      isSearching = false;
-      verificarSentinela();
     }, 600);
   }
 }
