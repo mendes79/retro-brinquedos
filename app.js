@@ -499,6 +499,11 @@ async function fetchBrinquedos(reset = false) {
           "background: #ec4899; color: #fff; padding: 3px; font-weight: bold;",
           "color: #06b6d4;",
         );
+
+        // 💡 GATILHO EASTER EGG: Dispara a bandeirada do Enduro na virada de semente
+        if (typeof animarBandeirasEnduro === "function") {
+          animarBandeirasEnduro();
+        }
       }
     }
 
@@ -516,20 +521,17 @@ async function fetchBrinquedos(reset = false) {
     }
 
     // --- DEDUPLICAÇÃO INTELIGENTE POR LOTE ---
-    // Limpa duplicatas acidentais da mesma requisição na rede, mas adiciona o token
-    // da semente corrente para permitir a repetição infinita e legítima de cards no DOM.
     const idsNoLoteAtual = new Set();
     const itensNovos = [];
-
+    
     itens.forEach((toy) => {
       const idStr = String(toy.id).padStart(4, "0");
       if (!idsNoLoteAtual.has(idStr)) {
         idsNoLoteAtual.add(idStr);
-        // Injeta o token de semente para blindar a árvore do DOM contra colisões de nós
         const sToken = sessionSeed.toString().substring(2, 6);
         itensNovos.push({
           ...toy,
-          domUniqueId: `card-${idStr}_s${sToken}`,
+          domUniqueId: `card-${idStr}_s${sToken}`
         });
       }
     });
@@ -549,7 +551,7 @@ async function fetchBrinquedos(reset = false) {
       );
       await render(itensNovos, !reset);
       console.log(
-        "%c 🎨 [TRACE 5.3] Função render() finalizada com sucesso.",
+        %c 🎨 [TRACE 5.3] Função render() finalizada com sucesso.,
         "color: #purple;",
       );
 
@@ -572,7 +574,6 @@ async function fetchBrinquedos(reset = false) {
       hasMais = false;
     }
   } catch (error) {
-    // 🛰️ TRACE ERRO: Captura de quebras internas
     console.error(
       "%c 💥 [TRACE ERRO] O pipeline quebrou dentro do bloco try!",
       "background: red; color: white; font-weight: bold;",
@@ -2874,3 +2875,46 @@ setTimeout(() => {
   const firstLogo = document.querySelector(".hero-brand-btn:first-child");
   if (firstLogo) firstLogo.classList.add("hint-done");
 }, 6200);
+
+/* ============================================================
+   SEÇÃO 3.11. EASTER EGGS & NOSTALGIA
+   ============================================================ */
+
+/* 🏎️ EASTER EGG: Conclusão de Fase estilo Enduro (Atari) */
+function animarBandeirasEnduro() {
+  const flagsImg = document.getElementById("enduroFlags");
+  if (!flagsImg) return;
+
+  console.log(
+    "%c 🏎️ [EASTER EGG] Enduro Stage Clear! Piscando bandeirinhas...",
+    "color: #22c55e; font-weight: bold;",
+  );
+
+  // Remove a trava de fluxo do DOM e força a imagem a começar invisível
+  flagsImg.classList.remove("hidden");
+  flagsImg.classList.remove("opacity-100");
+  flagsImg.classList.add("opacity-0");
+
+  let piscadas = 0;
+  const maxPiscadas = 3;
+
+  // Ciclo de pisca clássico retrô (400ms visível, 400ms invisível)
+  const cicloPisca = setInterval(() => {
+    if (flagsImg.classList.contains("opacity-0")) {
+      flagsImg.classList.remove("opacity-0");
+      flagsImg.classList.add("opacity-100");
+    } else {
+      flagsImg.classList.remove("opacity-100");
+      flagsImg.classList.add("opacity-0");
+      piscadas++;
+
+      // Ao fechar as 3 piscadas completas na tela, desliga o circuito
+      if (piscadas >= maxPiscadas) {
+        clearInterval(cicloPisca);
+        setTimeout(() => {
+          flagsImg.classList.add("hidden"); // Devolve a propriedade oculta ao fluxo
+        }, 300);
+      }
+    }
+  }, 400);
+}

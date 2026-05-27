@@ -403,23 +403,33 @@
       <div
         class="relative flex flex-row items-center justify-center w-full px-4 md:px-8 max-w-screen-2xl mx-auto h-full min-h-[24px]"
       >
-        <!-- Ícone Pódio — lado esquerdo -->
-        <button
-          onclick="abrirRankingModal()"
-          class="absolute left-4 md:left-8 footer-podium-btn"
-          title="Ranking de brinquedos"
-          aria-label="Abrir ranking de brinquedos"
+        <div
+          class="absolute left-4 md:left-8 flex items-center gap-3.5 md:gap-4 footer-podium-wrapper"
         >
-          <img
-            src="/img/podium.png"
-            alt="Ranking"
-            class="footer-podium-icon"
-            width="28"
-            height="28"
-          />
-        </button>
+          <button
+            onclick="abrirRankingModal()"
+            class="footer-podium-btn"
+            title="Ranking de brinquedos"
+            aria-label="Abrir ranking de brinquedos"
+          >
+            <img
+              src="/img/podium.png"
+              alt="Ranking"
+              class="footer-podium-icon"
+              width="28"
+              height="28"
+            />
+          </button>
 
-        <!-- Texto Centralizado -->
+          <img
+            id="enduroFlags"
+            src="/img/flags.jpg"
+            alt="Enduro Stage"
+            class="hidden opacity-0 h-[18px] md:h-[15px] w-auto transition-opacity duration-200 select-none pointer-events-none"
+            title="Fase Concluída!"
+          />
+        </div>
+
         <p
           class="text-[14.5px] md:text-[11px] text-slate-400 text-center truncate px-16 md:px-24"
         >
@@ -435,7 +445,6 @@
           >
         </p>
 
-        <!-- Ícones na Direita (Absolute posicionados) -->
         <div
           class="absolute right-4 md:right-8 flex items-center gap-4 md:gap-5 shrink-0"
         >
