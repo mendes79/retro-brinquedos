@@ -2528,33 +2528,52 @@ let resizeTimer;
 window.addEventListener("resize", () => {
   const larguraAtual = window.innerWidth;
 
+  // Se a largura física real não mudou (ignora bugs de scroll em navegadores móveis), sai de cena
   if (larguraAtual === ultimaLarguraTela) {
     return;
   }
-
   ultimaLarguraTela = larguraAtual;
 
+  // Desliga o foco dos cards para evitar quebras visuais de flip ativo
   resetarEstadoDosCards();
   clearTimeout(resizeTimer);
-
+  
   resizeTimer = setTimeout(() => {
-    if (allToys && allToys.length > 0) {
-      console.log(
-        "%c 📱 [RESIZE] Redimensionando tela. Otimizando grid infinito...",
-        "color: #eab308; font-weight: bold;",
-      );
-
-      // 💡 CORREÇÃO CRÍTICA: Corta a avalanche! Em vez de renderizar centenas de cartas acumuladas,
-      // pegamos apenas o último lote de segurança (24 itens) para recalcular o novo layout de colunas.
-      const tamanhoLoteSeguranca = typeof LIMITE !== "undefined" ? LIMITE : 24;
-      const ultimoLoteAtivo = allToys.slice(-tamanhoLoteSeguranca);
-
-      // Sincroniza a memória global para manter apenas esse lote leve ativo
-      allToys = [...ultimoLoteAtivo];
-
-      // Re-renderiza o grid do zero (append=false) instantaneamente sem travar a thread
-      render(allToys, false);
+    const grid = document.getElementById("toyGrid");
+    const targetCols = getColumnCount();
+    
+    // 🛡️ DISJUNTOR CRÍTICO: Se o número ideal de colunas não mudou, não há motivo para mexer no DOM
+    if (!grid || currentCols === targetCols) return;
+    
+    console.log(`%c 📱 [RESIZE INTELIGENTE] Movendo colunas de ${currentCols} para ${targetCols} sem reconstruir o DOM!`, "color: #eab308; font-weight: bold;");
+    
+    // 1. Captura e isola todos os cartões físicos que já estão renderizados e vivos na tela
+    const cardsVivos = Array.from(grid.querySelectorAll(".masonry-item"));
+    
+    if (cardsVivos.length === 0) return;
+    
+    // 2. Limpa o esqueleto do grid de colunas antigo e prepara os novos contêineres de colunas
+    grid.innerHTML = "";
+    columnElements = [];
+    currentCols = targetCols;
+    
+    for (let i = 0; i < currentCols; i++) {
+      const colDiv = document.createElement("div");
+      colDiv.className = "masonry-column";
+      grid.appendChild(colDiv);
+      columnElements.push(colDiv);
     }
+    
+    // 3. Distribui os mesmos nós do DOM existentes entre as novas colunas com performance instantânea
+    // O appendChild preserva as instâncias, o cache das imagens e evita o reflow pesado do innerHTML!
+    cardsVivos.forEach((card) => {
+      const shortest = columnElements.reduce((min, col) =>
+        col.offsetHeight < min.offsetHeight ? col : min,
+      );
+      shortest.appendChild(card);
+    });
+    
+    console.log("%c 📱 [RESIZE] Grid reorganizado com sucesso em milissegundos!", "color: #22c55e;");
   }, 250);
 });
 
