@@ -2536,14 +2536,24 @@ window.addEventListener("resize", () => {
 
   resetarEstadoDosCards();
   clearTimeout(resizeTimer);
+
   resizeTimer = setTimeout(() => {
     if (allToys && allToys.length > 0) {
-      const unique = [
-        ...new Map(
-          allToys.map((t) => [String(t.id).padStart(4, "0"), t]),
-        ).values(),
-      ];
-      render(unique, false);
+      console.log(
+        "%c 📱 [RESIZE] Redimensionando tela. Otimizando grid infinito...",
+        "color: #eab308; font-weight: bold;",
+      );
+
+      // 💡 CORREÇÃO CRÍTICA: Corta a avalanche! Em vez de renderizar centenas de cartas acumuladas,
+      // pegamos apenas o último lote de segurança (24 itens) para recalcular o novo layout de colunas.
+      const tamanhoLoteSeguranca = typeof LIMITE !== "undefined" ? LIMITE : 24;
+      const ultimoLoteAtivo = allToys.slice(-tamanhoLoteSeguranca);
+
+      // Sincroniza a memória global para manter apenas esse lote leve ativo
+      allToys = [...ultimoLoteAtivo];
+
+      // Re-renderiza o grid do zero (append=false) instantaneamente sem travar a thread
+      render(allToys, false);
     }
   }, 250);
 });
