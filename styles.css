@@ -507,6 +507,52 @@ body {
   }
 }
 
+/* ============================================================
+   Ajustes Responsivos Exclusivos do Ranking Mobile (max-width: 767px)
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Título Principal (+4px) */
+  #rankingTitulo {
+    font-size: 24px !important;
+  }
+
+  /* Botões de Alternância Curtidas/Views (+4px) */
+  .ranking-toggle-btn {
+    font-size: 15px !important;
+  }
+
+  /* Timestamp de atualização (+4px) */
+  #rankingTimestamp {
+    font-size: 14px !important;
+  }
+
+  /* Posição Numérica do Pódio (+4px) */
+  .ranking-modal-pos {
+    font-size: 20px !important;
+  }
+
+  /* Imagem do item inflada em +50% (De 48px para 72px) */
+  .ranking-modal-img {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  /* Nome do Brinquedo (+4px) */
+  .ranking-modal-nome {
+    font-size: 19px !important;
+  }
+
+  /* Nome do Fabricante (+4px) */
+  .ranking-modal-fabricante {
+    font-size: 15px !important;
+  }
+
+  /* Valor da métrica de exibição (+4px) */
+  .ranking-modal-valor {
+    font-size: 18px !important;
+  }
+}
+
 /* 2.3. MASONRY GRID E ANIMAÇÕES DOS CARDS */
 .masonry-grid {
   display: flex;
