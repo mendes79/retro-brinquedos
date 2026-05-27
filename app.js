@@ -499,10 +499,6 @@ async function fetchBrinquedos(reset = false) {
           "background: #ec4899; color: #fff; padding: 3px; font-weight: bold;",
           "color: #06b6d4;",
         );
-
-        // 🛑 REMOVIDO O DISPARO AUTOMÁTICO VIA SETTIMEOUT
-        // Deixamos as rédeas do fluxo com o navegador e o scroll real do usuário.
-        // O próximo lote será puxado naturalmente quando o visor detectar o movimento.
       }
     }
 
@@ -519,23 +515,24 @@ async function fetchBrinquedos(reset = false) {
       document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
     }
 
-    // --- DEDUPLICAÇÃO ATUALIZADA COM IDENTIDADE ÚNICA ---
-    // Limpamos colisões dentro do mesmo lote ativo e criamos um mapeamento seguro
-    // adicionando um token dinâmico da semente para forçar nós independentes no DOM.
+    // --- DEDUPLICAÇÃO INTELIGENTE POR LOTE ---
+    // Limpa duplicatas acidentais da mesma requisição na rede, mas adiciona o token
+    // da semente corrente para permitir a repetição infinita e legítima de cards no DOM.
     const idsNoLoteAtual = new Set();
-    const itensNovos = itens
-      .filter((toy) => {
-        const idStr = String(toy.id).padStart(4, "0");
-        if (idsNoLoteAtual.has(idStr)) return false;
+    const itensNovos = [];
+
+    itens.forEach((toy) => {
+      const idStr = String(toy.id).padStart(4, "0");
+      if (!idsNoLoteAtual.has(idStr)) {
         idsNoLoteAtual.add(idStr);
-        return true;
-      })
-      .map((toy) => {
-        return {
+        // Injeta o token de semente para blindar a árvore do DOM contra colisões de nós
+        const sToken = sessionSeed.toString().substring(2, 6);
+        itensNovos.push({
           ...toy,
-          domUniqueId: `${toy.id}_s${sessionSeed.toString().substring(2, 6)}`,
-        };
-      });
+          domUniqueId: `card-${idStr}_s${sToken}`,
+        });
+      }
+    });
 
     console.log(
       "%c 🛠️ [TRACE 5.1] Itens filtrados novos únicos gerados:",
@@ -672,7 +669,11 @@ async function render(items, append = false) {
   for (const toy of items) {
     const idNormalizado = String(toy.id).padStart(4, "0");
 
-    const cardZumbi = document.getElementById(`card-${idNormalizado}`);
+    // 💡 SOLUÇÃO: Lê a identidade única da semente para gerenciar o nó no DOM
+    const elementoDomId = toy.domUniqueId || `card-${idNormalizado}`;
+
+    // Remove apenas se colidir na mesma semente por erro de rede reativo
+    const cardZumbi = document.getElementById(elementoDomId);
     if (cardZumbi) cardZumbi.remove();
 
     const ledHTML = buildLedDisplay(toy.raridade);
@@ -685,7 +686,7 @@ async function render(items, append = false) {
     const urlVersoOtimizada = otimizarUrlCloudinary(toy.url_verso, 500);
 
     const cardHTML = `
-    <div class="masonry-item card-enter" id="card-${idNormalizado}">
+    <div class="masonry-item card-enter" id="${elementoDomId}">
       <div class="card-inner" onclick="handleFlip('${idNormalizado}')">
         <div class="card-front">
           <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
@@ -777,7 +778,7 @@ async function render(items, append = false) {
     shortest.insertAdjacentHTML("beforeend", cardHTML);
 
     const imgInserida = shortest.querySelector(
-      `#card-${idNormalizado} .card-front img`,
+      `#${elementoDomId} .card-front img`,
     );
     if (imgInserida && !imgInserida.complete) {
       await new Promise((resolve) => {
