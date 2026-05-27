@@ -145,39 +145,55 @@ function setupObserver() {
 /* 3.3.1. Ranking — dados pré-computados no boot, modal acionado pelo pódio */
 
 let _rankingDados = null;
-let _rankingModoAtivo = "curtidas";
+let _rankingModoAtivo = "curtidas"; // "curtidas" | "visualizacoes"
 
-function _prepararDadosRanking() {
-  if (_rankingDados || !allToys.length) return;
-  _rankingDados = {
-    curtidas: [...allToys]
-      .sort((a, b) => (b.curtidas_count || 0) - (a.curtidas_count || 0))
-      .slice(0, 3),
-    visualizacoes: [...allToys]
-      .sort((a, b) => (b.visualizacoes || 0) - (a.visualizacoes || 0))
-      .slice(0, 3),
-    timestamp: new Date().toLocaleString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-  };
+// Refatorada para buscar direto do banco via RPC de forma assíncrona no segundo zero
+async function _prepararDadosRanking() {
+  if (_rankingDados) return; // Evita requisições duplicadas se já carregado na sessão
 
-  const todasImagens = [
-    ..._rankingDados.curtidas,
-    ..._rankingDados.visualizacoes,
-  ];
-  const vistas = new Set();
-  for (const toy of todasImagens) {
-    if (vistas.has(toy.id)) continue;
-    vistas.add(toy.id);
-    const url = _imagemRankingURL(toy.url_frente || "");
-    if (url) {
-      const img = new Image();
-      img.src = url;
+  try {
+    // Invoca a procedure SQL criada no Supabase
+    const { data, error } = await supabaseClient.rpc("obter_podio_ranking");
+
+    if (error) throw error;
+
+    if (data) {
+      _rankingDados = {
+        curtidas: data.curtidas || [],
+        visualizacoes: data.visualizacoes || [],
+        timestamp: new Date().toLocaleString("pt-BR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+
+      // Prefetch silencioso em background das imagens do pódio global
+      const todasImagens = [
+        ..._rankingDados.curtidas,
+        ..._rankingDados.visualizacoes,
+      ];
+      const vistas = new Set();
+      for (const toy of todasImagens) {
+        if (vistas.has(toy.id)) continue;
+        vistas.add(toy.id);
+        const url = _imagemRankingURL(toy.url_frente || "");
+        if (url) {
+          const img = new Image();
+          img.src = url;
+        }
+      }
     }
+  } catch (err) {
+    console.error("Erro ao processar dados do pódio via RPC:", err);
+    // Fallback seguro de inicialização para não quebrar a UI em caso de falha de rede
+    _rankingDados = {
+      curtidas: [],
+      visualizacoes: [],
+      timestamp: "Indisponível",
+    };
   }
 }
 
@@ -224,23 +240,23 @@ function _renderizarListaRanking(modo) {
     .join("");
 }
 
+// Alterada para abrir instantaneamente com base nos dados cacheados do boot
 function abrirRankingModal() {
-  _prepararDadosRanking();
   const modal = document.getElementById("rankingModal");
   if (!modal) return;
 
   _renderizarListaRanking(_rankingModoAtivo);
 
   const ts = document.getElementById("rankingTimestamp");
-  if (ts && _rankingDados)
+  if (ts && _rankingDados) {
     ts.textContent = "Atualizado em: " + _rankingDados.timestamp;
+  }
 
   _sincronizarBotoesRanking(_rankingModoAtivo);
 
   modal.classList.remove("hidden");
   modal.classList.add("flex");
 
-  // Empilha histórico fictício
   history.pushState({ modal: "ranking" }, "");
 }
 
@@ -368,7 +384,6 @@ async function fetchBrinquedos(reset = false) {
 
       if (reset && data.total) {
         document.getElementById("heroCount").textContent = data.total;
-        requestAnimationFrame(() => _prepararDadosRanking());
       }
 
       itens = data.itens || [];
@@ -2353,29 +2368,33 @@ async function init() {
     .catch(() => {});
 
   setupObserver();
-  await fetchBrinquedos(true);
+
+  // 🚀 PIPELINE DE BOOT PARALELO: Dispara o carregamento do catálogo principal
+  // e o ranking estático unificado RPC simultaneamente para máxima performance.
   ajustarPainelLED();
+
+  await Promise.all([fetchBrinquedos(true), _prepararDadosRanking()]);
 
   const bootFlag = localStorage.getItem("retro_led_boot");
   localStorage.removeItem("retro_led_boot");
 
-  let mensagemBoot;
+  let messageBoot;
   if (bootFlag === "logout") {
-    mensagemBoot =
+    messageBoot =
       "Até logo — Volte sempre para reviver a magia da infância ✦ RetroBrinquedos BR";
   } else if (isUserLogged) {
     const saudacao = _nomeUsuarioBoot
       ? "Bem-vindo de volta, " + _nomeUsuarioBoot + "!"
       : "Bem-vindo de volta!";
-    mensagemBoot =
+    messageBoot =
       saudacao +
       " ✦ Curta as cartas, marque seus brinquedos e deixe um comentário";
   } else {
-    mensagemBoot =
+    messageBoot =
       "Bem-vindo ao RetroBrinquedos BR — O museum dos brinquedos inesquecíveis ✦ Clique em qualquer carta para revelar a ficha Super Trunfo";
   }
 
-  iniciarPainelLED(mensagemBoot);
+  iniciarPainelLED(messageBoot);
 }
 
 function ajustarPainelLED() {
