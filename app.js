@@ -523,7 +523,7 @@ async function fetchBrinquedos(reset = false) {
     // --- DEDUPLICAÇÃO INTELIGENTE POR LOTE ---
     const idsNoLoteAtual = new Set();
     const itensNovos = [];
-    
+
     itens.forEach((toy) => {
       const idStr = String(toy.id).padStart(4, "0");
       if (!idsNoLoteAtual.has(idStr)) {
@@ -531,7 +531,7 @@ async function fetchBrinquedos(reset = false) {
         const sToken = sessionSeed.toString().substring(2, 6);
         itensNovos.push({
           ...toy,
-          domUniqueId: `card-${idStr}_s${sToken}`
+          domUniqueId: `card-${idStr}_s${sToken}`,
         });
       }
     });
@@ -550,8 +550,10 @@ async function fetchBrinquedos(reset = false) {
         "color: #purple;",
       );
       await render(itensNovos, !reset);
+
+      // 💡 FIX: Aspas corrigidas na string do log abaixo
       console.log(
-        %c 🎨 [TRACE 5.3] Função render() finalizada com sucesso.,
+        "%c 🎨 [TRACE 5.3] Função render() finalizada com sucesso.",
         "color: #purple;",
       );
 
