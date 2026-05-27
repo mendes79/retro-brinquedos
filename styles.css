@@ -511,19 +511,36 @@ body {
    Ajustes Responsivos Exclusivos do Ranking Mobile (max-width: 767px)
    ============================================================ */
 @media (max-width: 767px) {
-  /* Título Principal (+4px) */
+  /* Mantém estritamente intacto o tamanho dos títulos para evitar estouro de linha */
   #rankingTitulo {
-    font-size: 24px !important;
+    font-size: 11px !important; /* Mantém o tamanho original padrão */
+    white-space: nowrap;
   }
 
-  /* Botões de Alternância Curtidas/Views (+4px) */
+  /* Aumentar em 2px o tamanho do texto decorativo // Ranking (De 12px para 14px) */
+  .disclaimer-modal-box h2.font-orbitron.text-xs {
+    font-size: 14px !important;
+    letter-spacing: 0.12em;
+  }
+
+  /* Resolve e força a exibição e leitura limpa da Data e Hora */
+  #rankingTimestamp {
+    font-size: 13px !important; /* Legível no mobile */
+    color: #94a3b8 !important; /* Força cor estável da paleta slate */
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  /* Botões de Alternância Curtidas/Visualizações (+4px) */
   .ranking-toggle-btn {
     font-size: 15px !important;
   }
 
-  /* Timestamp de atualização (+4px) */
-  #rankingTimestamp {
-    font-size: 14px !important;
+  /* Elementos da lista: força comportamento de renderização imediata */
+  .ranking-modal-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
   }
 
   /* Posição Numérica do Pódio (+4px) */
@@ -531,20 +548,24 @@ body {
     font-size: 20px !important;
   }
 
-  /* Imagem do item inflada em +50% (De 48px para 72px) */
+  /* Imagem do item inflada em 50% (72px) - Contorna bug do lazy loading no boot */
   .ranking-modal-img {
     width: 72px !important;
     height: 72px !important;
+    flex-shrink: 0 !important;
+    display: block !important;
+    content-visibility: auto; /* Força o navegador a pintar os pixels imediatamente */
   }
 
-  /* Nome do Brinquedo (+4px) */
+  /* Nome do Brinquedo: reduzido em 1px em relação ao teste anterior */
   .ranking-modal-nome {
-    font-size: 19px !important;
+    font-size: 18px !important;
+    line-height: 1.2;
   }
 
-  /* Nome do Fabricante (+4px) */
+  /* Nome do Fabricante: MANTIDO idêntico ao desktop original */
   .ranking-modal-fabricante {
-    font-size: 15px !important;
+    font-size: 11px !important;
   }
 
   /* Valor da métrica de exibição (+4px) */
