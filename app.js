@@ -487,7 +487,7 @@ async function fetchBrinquedos(reset = false) {
       cursor = data.cursor;
       hasMais = data.temMais;
 
-      // 🔄 LOOP INFINITO (ANTECIPAÇÃO)
+      // 🔄 LOOP INFINITO (ANTECIPAÇÃO CALIBRADA)
       if (itens.length < limiteRequisitado) {
         const sementeAntiga = sessionSeed;
         sessionSeed = Math.random();
@@ -501,11 +501,18 @@ async function fetchBrinquedos(reset = false) {
         );
 
         if (itens.length > 0) {
+          // 🛑 FREIO DE MÃO: Ativa o disjuntor global de busca para congelar o Sentinela
+          if (typeof isSearching !== "undefined") isSearching = true;
+
           setTimeout(() => {
             if (filtroAtivo === "todos" && buscaAtiva.length < 2) {
+              console.log(
+                "%c 🚀 [LOOP INFINITO] Injetando próximo lote com segurança...",
+                "color: #06b6d4; font-weight: bold;",
+              );
               fetchBrinquedos(false);
             }
-          }, 80);
+          }, 1200); // ⏱️ Janela de segurança expandida para o Masonry assentar no DOM
         }
       }
     }
