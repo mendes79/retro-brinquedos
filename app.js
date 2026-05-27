@@ -2918,5 +2918,5 @@ function animarBandeirasEnduro() {
         }, 300);
       }
     }
-  }, 400);
+  }, 700);
 }
