@@ -343,12 +343,12 @@ body {
   cursor: pointer;
   display: flex; /* Alinha a caixa no eixo flexível do rodapé */
   align-items: center; /* Centraliza verticalmente */
-  width: 30px; /* Define o tamanho da caixa delimitadora */
-  height: 30px; /* Define o tamanho da caixa delimitadora */
+  width: 32px; /* Define o tamanho da caixa delimitadora */
+  height: 32px; /* Define o tamanho da caixa delimitadora */
 }
 .footer-podium-icon {
-  width: 100% !important; /* Herda os 30px exatos definidos no botão */
-  height: 100% !important; /* Herda os 30px exatos definidos no botão */
+  width: 100% !important; /* Herda os 32px exatos definidos no botão */
+  height: 100% !important; /* Herda os 32px exatos definidos no botão */
   object-fit: contain;
   filter: drop-shadow(0 0 0px transparent);
   transition:
