@@ -315,8 +315,15 @@ async function fetchBrinquedos(reset = false) {
 
   try {
     // --- 2. DISPARO DA REQUISIÇÃO PARA A API VERCEL ---
-    // Passa a semente atual (que muda dinamicamente a cada ciclo do loop infinito)
-    const url = `/api/brinquedos?cursor=${cursor}&limit=24&seed=${sessionSeed}&search=${encodeURIComponent(searchQuery)}&category=${encodeURIComponent(activeCategory)}&fabricante=${encodeURIComponent(activeFabricante)}`;
+    // 💡 CORREÇÃO: Usando a string de busca global limpa e os estados corretos da SPA
+    const buscaText = typeof currentSearch !== "undefined" ? currentSearch : "";
+    const catText =
+      typeof currentCategory !== "undefined" ? currentCategory : "";
+    const fabText =
+      typeof currentFabricante !== "undefined" ? currentFabricante : "";
+
+    const url = `/api/brinquedos?cursor=${cursor}&limit=24&seed=${sessionSeed}&search=${encodeURIComponent(buscaText)}&category=${encodeURIComponent(catText)}&fabricante=${encodeURIComponent(fabText)}`;
+
     const res = await fetch(url);
     if (!res.ok) throw new Error("Erro na resposta do servidor");
 
@@ -326,7 +333,8 @@ async function fetchBrinquedos(reset = false) {
 
     // Atualiza o contador do cabeçalho da SPA se for o boot inicial
     if (reset && totalDisponivelNoBanco) {
-      document.getElementById("heroCount").textContent = totalDisponivelNoBanco;
+      const heroEl = document.getElementById("heroCount");
+      if (heroEl) heroEl.textContent = totalDisponivelNoBanco;
     }
 
     // --- 3. LIMPEZA DOS SKELETONS ---
@@ -337,15 +345,10 @@ async function fetchBrinquedos(reset = false) {
     }
 
     // --- 4. TRATAMENTO DO GATILHO DE LOOP INFINITO (ANTECIPAÇÃO) ---
-    // Se o lote retornado for menor que o limite padrão (24), a semente atual esgotou no banco!
     let alcancouFimDaSemente = itens.length < 24;
-
-    // Guardamos o tamanho do lote atual antes de emendar o próximo
     const tamanhoLoteAtual = itens.length;
 
     // --- 5. DEDUPLICAÇÃO INTELIGENTE POR LOTE ---
-    // Liberamos os cards repetidos de sementes passadas, mas mantemos uma proteção estrita
-    // contra cliques ou disparos de rede duplicados dentro do MESMO lote ativo.
     const idsNoLoteAtual = new Set();
     const itensNovosFiltrados = itens.filter((toy) => {
       const idStr = String(toy.id).padStart(4, "0");
@@ -362,7 +365,6 @@ async function fetchBrinquedos(reset = false) {
     }
 
     // --- 6. RENDERIZAÇÃO DOS CARDS NO MASONRY ---
-    // Passa os novos cards para o motor síncrono calcular as colunas do layout
     _renderizarNovosCardsNoGrid(itensNovosFiltrados, grid);
 
     // --- 7. ATUALIZAÇÃO DOS PONTEIROS DE PAGINAÇÃO ---
@@ -371,40 +373,32 @@ async function fetchBrinquedos(reset = false) {
 
     // --- 8. PIPELINE DE EXECUÇÃO DO LOOP INFINITO EM BACKGROUND ---
     if (alcancouFimDaSemente) {
-      // 1. Gera imediatamente um novo sorteio randômico independente
       const sementeAntiga = sessionSeed;
       sessionSeed = Math.random();
 
-      // 2. Reseta o ponteiro de busca para o topo da nova ordenação do banco
       cursor = 0;
       hasMais = true;
 
-      // 3. LOG NEON NO F12: Rastreabilidade total para os seus testes de homologação
       console.log(
         `%c 🔄 [LOOP INFINITO MASONRY] %c Semente antiga (${sementeAntiga.toFixed(4)}) finalizada com lote de ${tamanhoLoteAtual} cards. Nova semente gerada: (${sessionSeed.toFixed(4)}). Reiniciando cursor para 0!`,
         "background: #ec4899; color: #fff; font-weight: bold; padding: 3px 5px; border-radius: 3px;",
         "color: #06b6d4; font-weight: bold;",
       );
 
-      // 4. Libera a trava de carregamento para o próximo passo assíncrono disparar limpo
+      // Desbloqueia o estado antes de emendar a chamada para evitar travamentos
       isLoading = false;
 
-      // 5. DISPARO POR ANTECIPAÇÃO: Se o usuário ainda estiver rolando a tela dentro da
-      // margem do rootMargin (1200px), emendamos imediatamente os próximos 24 cards repetidos.
       if (tamanhoLoteAtual > 0) {
-        // Dispara de forma assíncrona em background para preencher sem travar a thread principal
         setTimeout(() => fetchBrinquedos(false), 50);
       }
-      return; // Encerra o ciclo atual de forma limpa
+      return;
     }
   } catch (error) {
     console.error("Falha crônica no pipeline do catálogo infinito:", error);
     document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
   } finally {
-    // Só destrava o isLoading geral se não tiver entrado no bloco de reset de loop acima
-    if (cursor !== 0) {
-      isLoading = false;
-    }
+    // 💡 CORREÇÃO: Garante o destravamento seguro do fluxo de loading em qualquer cenário
+    isLoading = false;
   }
 }
 
