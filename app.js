@@ -487,7 +487,7 @@ async function fetchBrinquedos(reset = false) {
       cursor = data.cursor;
       hasMais = data.temMais;
 
-      // 🔄 LOOP INFINITO (ANTECIPAÇÃO CALIBRADA)
+      // 🔄 LOOP INFINITO (ANTECIPAÇÃO SILENCIOSA)
       if (itens.length < limiteRequisitado) {
         const sementeAntiga = sessionSeed;
         sessionSeed = Math.random();
@@ -495,25 +495,14 @@ async function fetchBrinquedos(reset = false) {
         hasMais = true;
 
         console.log(
-          `%c 🔄 [LOOP INFINITO ACTIVATED] %c Virando semente de ${sementeAntiga.toFixed(4)} para ${sessionSeed.toFixed(4)}`,
-          "background: #ec4899; color: #fff; padding: 2px;",
+          `%c 🔄 [LOOP INFINITO ACTIVATED] %c Semente antiga (${sementeAntiga.toFixed(4)}) finalizada. Nova semente gerada: (${sessionSeed.toFixed(4)}). Cursor resetado para 0!`,
+          "background: #ec4899; color: #fff; padding: 3px; font-weight: bold;",
           "color: #06b6d4;",
         );
 
-        if (itens.length > 0) {
-          // 🛑 FREIO DE MÃO: Ativa o disjuntor global de busca para congelar o Sentinela
-          if (typeof isSearching !== "undefined") isSearching = true;
-
-          setTimeout(() => {
-            if (filtroAtivo === "todos" && buscaAtiva.length < 2) {
-              console.log(
-                "%c 🚀 [LOOP INFINITO] Injetando próximo lote com segurança...",
-                "color: #06b6d4; font-weight: bold;",
-              );
-              fetchBrinquedos(false);
-            }
-          }, 1200); // ⏱️ Janela de segurança expandida para o Masonry assentar no DOM
-        }
+        // 🛑 REMOVIDO O DISPARO AUTOMÁTICO VIA SETTIMEOUT
+        // Deixamos as rédeas do fluxo com o navegador e o scroll real do usuário.
+        // O próximo lote será puxado naturalmente quando o visor detectar o movimento.
       }
     }
 
@@ -530,16 +519,26 @@ async function fetchBrinquedos(reset = false) {
       document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
     }
 
+    // --- DEDUPLICAÇÃO ATUALIZADA COM IDENTIDADE ÚNICA ---
+    // Limpamos colisões dentro do mesmo lote ativo e criamos um mapeamento seguro
+    // adicionando um token dinâmico da semente para forçar nós independentes no DOM.
     const idsNoLoteAtual = new Set();
-    const itensNovos = itens.filter((toy) => {
-      const idStr = String(toy.id).padStart(4, "0");
-      if (idsNoLoteAtual.has(idStr)) return false;
-      idsNoLoteAtual.add(idStr);
-      return true;
-    });
+    const itensNovos = itens
+      .filter((toy) => {
+        const idStr = String(toy.id).padStart(4, "0");
+        if (idsNoLoteAtual.has(idStr)) return false;
+        idsNoLoteAtual.add(idStr);
+        return true;
+      })
+      .map((toy) => {
+        return {
+          ...toy,
+          domUniqueId: `${toy.id}_s${sessionSeed.toString().substring(2, 6)}`,
+        };
+      });
 
     console.log(
-      "%c 🛠️ [TRACE 5.1] Itens filtrados novos:",
+      "%c 🛠️ [TRACE 5.1] Itens filtrados novos únicos gerados:",
       "color: #blue;",
       itensNovos.length,
     );
