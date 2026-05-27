@@ -24,22 +24,77 @@ let columnElements = [];
 let filtroAtivo = "todos"; // 'todos', 'tive', 'queria', 'curtidas'
 let isSearching = false; // 🛡️ DISJUNTOR FIX 6.5: Trava o scroll infinito automático durante o reset da busca
 
+// 🌐 FLAGS DE CONTROLE DE HISTÓRICO (HISTORY API - BOTÃO VOLTAR MOBILE)
+let retroSincronizandoHistorico = false;
+
 const sentinel = document.createElement("div");
 sentinel.id = "scrollSentinel";
 sentinel.className =
   "w-full h-10 col-span-full mt-4 opacity-0 pointer-events-none";
+
+/* 🎧 ESCUTADOR DO BOTÃO VOLTAR FÍSICO/GESTUAL MÓVEL (HISTORY API) */
+window.addEventListener("popstate", (event) => {
+  if (retroSincronizandoHistorico) {
+    retroSincronizandoHistorico = false;
+    return;
+  }
+
+  let modalFechado = false;
+
+  // 1. Card Verso Mobile Modal
+  const cardMobileModal = document.getElementById("cardVersoMobileModal");
+  if (cardMobileModal && !cardMobileModal.classList.contains("hidden")) {
+    fecharCardVersoMobile(null, true);
+    modalFechado = true;
+  }
+
+  // 2. Drawer de Comentários
+  const comentariosDrawer = document.getElementById("comentariosDrawer");
+  if (comentariosDrawer && comentariosDrawer.classList.contains("open")) {
+    fecharDrawerComentarios(true);
+    modalFechado = true;
+  }
+
+  // 3. Sugestão Modal
+  const sugestaoModal = document.getElementById("sugestaoModal");
+  if (sugestaoModal && !sugestaoModal.classList.contains("hidden")) {
+    fecharSugestaoModal(true);
+    modalFechado = true;
+  }
+
+  // 4. Modais de Fabricantes (Varre todos do 1 ao 8)
+  for (let i = 1; i <= 8; i++) {
+    const fabModal = document.getElementById("fabricanteModal" + i);
+    if (fabModal && !fabModal.classList.contains("hidden")) {
+      fecharFabricanteModal(true);
+      modalFechado = true;
+      break;
+    }
+  }
+
+  // 5. Disclaimer Modal
+  const disclaimerModal = document.getElementById("disclaimerModal");
+  if (disclaimerModal && !disclaimerModal.classList.contains("hidden")) {
+    fecharDisclaimerModal(true);
+    modalFechado = true;
+  }
+
+  // 6. Ranking Modal
+  const rankingModal = document.getElementById("rankingModal");
+  if (rankingModal && !rankingModal.classList.contains("hidden")) {
+    fecharRankingModal(null, true);
+    modalFechado = true;
+  }
+});
 
 /* 3.3. INFINITE SCROLL E CHAMADAS DE API */
 
 /* 3.3.2. Verifica se o sentinel ainda está visível após um fetch terminar
    e dispara mais um lote se necessário — cobre o gap do desktop (6 colunas) */
 function verificarSentinela() {
-  // H7/C3 — protege contra disparo parasita durante reset de busca
   if (!hasMais || isSearching) return;
-  // Aguarda o browser pintar os novos cards antes de medir
   requestAnimationFrame(() => {
     const rect = sentinel.getBoundingClientRect();
-    // ✅ Margem generosa: cobre mesmo telas 4K com 6 colunas
     if (rect.top < window.innerHeight + 1200 && !isLoading && !isSearching) {
       fetchBrinquedos();
     }
@@ -50,13 +105,10 @@ function verificarSentinela() {
 function setupObserver() {
   const observer = new IntersectionObserver(
     (entries) => {
-      // 🛡️ VALIDAÇÃO COMPLEMENTAR: Só dispara se o sentinel estiver visível,
-      // se não estiver carregando E se NÃO estiver no meio de um reset de busca (isSearching)
       if (entries[0].isIntersecting && !isLoading && hasMais && !isSearching) {
         fetchBrinquedos();
       }
     },
-    // rootMargin aumentado: pré-carrega antes do usuário chegar ao fim
     { rootMargin: "1200px" },
   );
 
@@ -73,9 +125,8 @@ function setupObserver() {
 
 /* 3.3.1. Ranking — dados pré-computados no boot, modal acionado pelo pódio */
 
-// Estado do ranking — calculado uma vez, reutilizado a cada abertura do modal
 let _rankingDados = null;
-let _rankingModoAtivo = "curtidas"; // "curtidas" | "visualizacoes"
+let _rankingModoAtivo = "curtidas";
 
 function _prepararDadosRanking() {
   if (_rankingDados || !allToys.length) return;
@@ -87,18 +138,18 @@ function _prepararDadosRanking() {
       .sort((a, b) => (b.visualizacoes || 0) - (a.visualizacoes || 0))
       .slice(0, 3),
     timestamp: new Date().toLocaleString("pt-BR", {
-      day: "2-digit", month: "2-digit", year: "numeric",
-      hour: "2-digit", minute: "2-digit",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     }),
   };
 
-  // Prefetch silencioso das 6 imagens (top3 curtidos + top3 visualizados)
-  // O browser as cacheia antes do usuário abrir o modal — abre instantâneo.
   const todasImagens = [
     ..._rankingDados.curtidas,
     ..._rankingDados.visualizacoes,
   ];
-  // Deduplica por id — um mesmo card pode aparecer nos dois rankings
   const vistas = new Set();
   for (const toy of todasImagens) {
     if (vistas.has(toy.id)) continue;
@@ -106,15 +157,17 @@ function _prepararDadosRanking() {
     const url = _imagemRankingURL(toy.url_frente || "");
     if (url) {
       const img = new Image();
-      img.src = url; // disparo em background — sem append ao DOM
+      img.src = url;
     }
   }
 }
 
 function _imagemRankingURL(url) {
-  // Solicita versão 80×80 crop quadrado ao Cloudinary — miniatura leve para o modal
   if (!url || !url.includes("cloudinary.com")) return url || "";
-  return url.replace("/upload/", "/upload/f_auto,q_auto,w_80,h_80,c_fill,g_auto/");
+  return url.replace(
+    "/upload/",
+    "/upload/f_auto,q_auto,w_80,h_80,c_fill,g_auto/",
+  );
 }
 
 function _renderizarListaRanking(modo) {
@@ -123,18 +176,23 @@ function _renderizarListaRanking(modo) {
   if (!lista || !_rankingDados) return;
 
   const isCurtidas = modo === "curtidas";
-  titulo.textContent = isCurtidas ? "Brinquedos mais Curtidos" : "Brinquedos mais Visualizados";
+  titulo.textContent = isCurtidas
+    ? "Brinquedos mais Curtidos"
+    : "Brinquedos mais Visualizados";
 
   const itens = _rankingDados[modo];
-  lista.innerHTML = itens.map((toy, i) => {
-    const pos = i + 1;
-    const imgURL = _imagemRankingURL(toy.url_frente || "");
-    const valor = isCurtidas ? (toy.curtidas_count || 0) : (toy.visualizacoes || 0);
-    const icone = isCurtidas ? "❤" : "👁";
-    const corValor = isCurtidas
-      ? "color: var(--trunfo-gold)"
-      : "color: var(--neon-blue)";
-    return `<li class="ranking-modal-item">
+  lista.innerHTML = itens
+    .map((toy, i) => {
+      const pos = i + 1;
+      const imgURL = _imagemRankingURL(toy.url_frente || "");
+      const valor = isCurtidas
+        ? toy.curtidas_count || 0
+        : toy.visualizacoes || 0;
+      const icone = isCurtidas ? "❤" : "👁";
+      const corValor = isCurtidas
+        ? "color: var(--trunfo-gold)"
+        : "color: var(--neon-blue)";
+      return `<li class="ranking-modal-item">
       <span class="ranking-modal-pos">${pos}.</span>
       <img class="ranking-modal-img" src="${imgURL}" alt="${toy.nome}" loading="lazy" />
       <div class="ranking-modal-info">
@@ -143,35 +201,42 @@ function _renderizarListaRanking(modo) {
       </div>
       <span class="ranking-modal-valor" style="${corValor}">${icone} ${valor}</span>
     </li>`;
-  }).join("");
+    })
+    .join("");
 }
 
 function abrirRankingModal() {
-  _prepararDadosRanking(); // no-op se já calculado
+  _prepararDadosRanking();
   const modal = document.getElementById("rankingModal");
   if (!modal) return;
 
-  // Renderiza o modo atual
   _renderizarListaRanking(_rankingModoAtivo);
 
-  // Atualiza timestamp
   const ts = document.getElementById("rankingTimestamp");
-  if (ts && _rankingDados) ts.textContent = "Atualizado em: " + _rankingDados.timestamp;
+  if (ts && _rankingDados)
+    ts.textContent = "Atualizado em: " + _rankingDados.timestamp;
 
-  // Sincroniza botões com modo ativo
   _sincronizarBotoesRanking(_rankingModoAtivo);
 
   modal.classList.remove("hidden");
   modal.classList.add("flex");
+
+  // Empilha histórico fictício
+  history.pushState({ modal: "ranking" }, "");
 }
 
-function fecharRankingModal(event) {
+function fecharRankingModal(event, veioDoPopstate = false) {
   const modal = document.getElementById("rankingModal");
   if (!modal) return;
-  // Fecha apenas se clicar no overlay, não dentro do box
   if (event && event.target !== modal) return;
+
   modal.classList.add("hidden");
   modal.classList.remove("flex");
+
+  if (!veioDoPopstate) {
+    retroSincronizandoHistorico = true;
+    history.back();
+  }
 }
 
 function trocarRanking(modo) {
@@ -199,32 +264,24 @@ async function fetchBrinquedos(reset = false) {
 
   const grid = document.getElementById("toyGrid");
 
-  // --- 1. FASE DE PREPARAÇÃO (EXIBIÇÃO DOS SKELETONS) ---
   if (reset) {
     cursor = 0;
     allToys = [];
     hasMais = true;
 
-    // H7/C2 — remove fisicamente o sentinel do DOM antes de esvaziar o grid.
-    // Isso impede que o IntersectionObserver detecte o sentinel "fantasma"
-    // quando a página encolhe após grid.innerHTML = "".
-    // O sentinel é reconectado no finally após o Masonry estabilizar.
     if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
 
-    // Calcula colunas e preenche com skeletons antes da carga
     const targetCols = getColumnCount();
     grid.innerHTML = "";
     for (let i = 0; i < targetCols; i++) {
       const colDiv = document.createElement("div");
       colDiv.className = "masonry-column";
-      // 2 skeletons por coluna para preencher a dobra inicial da tela
       colDiv.innerHTML = Array(2)
         .fill('<div class="skeleton-card"></div>')
         .join("");
       grid.appendChild(colDiv);
     }
   } else {
-    // Scroll Infinito: adiciona um skeleton no final de cada coluna existente
     const cols = document.querySelectorAll(".masonry-column");
     cols.forEach((col) => {
       const skeleton = document.createElement("div");
@@ -234,15 +291,9 @@ async function fetchBrinquedos(reset = false) {
   }
 
   try {
-    // --- 2. CHAMADA DOS DADOS (SUPABASE / VERCEL) ---
     let itens = [];
 
-    // 🛡️ FILTROS "MEU QUARTO": Busca server-side direta pelos IDs do Set local.
-    // Isso elimina a "loteria de paginação": em vez de buscar 20 itens aleatórios
-    // e esperar que os marcados apareçam, buscamos EXATAMENTE os IDs que o usuário
-    // marcou. Sem race condition, sem dependência de scroll infinito.
     if (filtroAtivo !== "todos" && buscaAtiva.length < 2) {
-      // Seleciona o Set correto para o filtro ativo
       const setAtivo =
         filtroAtivo === "tive"
           ? tiveDoUsuario
@@ -252,7 +303,6 @@ async function fetchBrinquedos(reset = false) {
 
       const idsFiltro = [...setAtivo];
 
-      // Se o Set estiver vazio, não há nada a buscar
       if (idsFiltro.length === 0) {
         if (reset) grid.innerHTML = "";
         document
@@ -272,12 +322,9 @@ async function fetchBrinquedos(reset = false) {
             </p>
           </div>`;
         hasMais = false;
-        return; // Sai do try, vai pro finally
+        return;
       }
 
-      // Busca todos os itens do filtro de uma vez (sem paginação — coleção pessoal
-      // raramente terá centenas de itens).
-      // ⚠️ IDs são VARCHAR "0052" no banco — NÃO converter para int, passar como string.
       const { data, error: filtroError } = await supabaseClient
         .from("brinquedos")
         .select("*")
@@ -285,9 +332,8 @@ async function fetchBrinquedos(reset = false) {
 
       if (filtroError) throw filtroError;
       itens = data || [];
-      hasMais = false; // Coleção pessoal: todos os itens chegam de uma vez
+      hasMais = false;
     } else if (buscaAtiva.length >= 2) {
-      // BUSCA POR TEXTO: usa o RPC com unaccent
       const { data, error: rpcError } = await supabaseClient.rpc(
         "buscar_brinquedos_search",
         { termo_busca: buscaAtiva, cursor_val: cursor, limite_val: LIMITE },
@@ -295,7 +341,6 @@ async function fetchBrinquedos(reset = false) {
       if (rpcError) throw rpcError;
       itens = data || [];
     } else {
-      // MODO NORMAL (Todos): paginação aleatória via Vercel
       const res = await fetch(
         `/api/brinquedos?cursor=${cursor}&limite=${LIMITE}&seed=${sessionSeed}`,
       );
@@ -304,7 +349,6 @@ async function fetchBrinquedos(reset = false) {
 
       if (reset && data.total) {
         document.getElementById("heroCount").textContent = data.total;
-        // Pré-computa os dados do ranking em background após o primeiro fetch
         requestAnimationFrame(() => _prepararDadosRanking());
       }
 
@@ -313,16 +357,12 @@ async function fetchBrinquedos(reset = false) {
       hasMais = data.temMais;
     }
 
-    // --- 3. LIMPEZA DOS SKELETONS ---
     if (reset) {
-      grid.innerHTML = ""; // Limpa tudo para o render() reconstruir as colunas
+      grid.innerHTML = "";
     } else {
-      // Remove apenas os skeletons temporários do scroll
       document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
     }
 
-    // --- 4. DEDUPLICAÇÃO: Garante unicidade antes de tocar no DOM ---
-    // ✅ Filtra itens cujo ID já existe em allToys (memória) OU no DOM (zumbi)
     const idsEmMemoria = new Set(
       allToys.map((t) => String(t.id).padStart(4, "0")),
     );
@@ -331,17 +371,14 @@ async function fetchBrinquedos(reset = false) {
       return !idsEmMemoria.has(idStr);
     });
 
-    // --- 5. RENDERIZAÇÃO DOS CARDS REAIS ---
     if (itensNovos.length > 0) {
       allToys = reset ? itensNovos : [...allToys, ...itensNovos];
       await render(itensNovos, !reset);
 
-      // Ajuste de cursor manual para busca RPC
       if (buscaAtiva.length >= 2 && !reset) {
         cursor += itens.length;
       }
     } else if (reset) {
-      // H2/H3 — w-full centraliza no masonry (display:flex, não CSS grid)
       const termoAtual = buscaAtiva || "";
       grid.innerHTML = `
         <div style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 1rem;gap:1rem;">
@@ -368,33 +405,26 @@ async function fetchBrinquedos(reset = false) {
   } finally {
     isLoading = false;
 
-    // H7/C4 — reconecta o sentinel ao DOM (foi removido no início do reset pelo C2)
-    // e só então desliga o disjuntor, garantindo que o observer não dispara
-    // antes do Masonry ter estabilizado completamente.
-    // Timer estendido de 400→600ms: margem maior para mobile com muitos cards.
     setTimeout(() => {
       const mainElement = document.querySelector("main");
       if (mainElement && !sentinel.parentNode) {
         mainElement.appendChild(sentinel);
       }
       isSearching = false;
-      // verificarSentinela só roda após isSearching=false — C3 garante proteção adicional
       verificarSentinela();
     }, 600);
   }
 }
 
-/* 3.4.1. Define colunas do grid pelo tamanho da tela */
 function getColumnCount() {
   const width = window.innerWidth;
-  if (width >= 1536) return 6; // Desktop Extra Largo
-  if (width >= 1280) return 5; // Desktop Largo
-  if (width >= 1024) return 4; // Desktop comum / Tablet Horizontal
-  if (width >= 640) return 3; // Tablet Vertical
-  return 2; // Mobile (Padrão)
+  if (width >= 1536) return 6;
+  if (width >= 1280) return 5;
+  if (width >= 1024) return 4;
+  if (width >= 640) return 3;
+  return 2;
 }
 
-/* 3.4.2. Gera código HTML dos LEDs de raridade */
 function buildLedDisplay(value) {
   const v = Math.round(Math.min(10, Math.max(0, value)));
   function ledClass(idx) {
@@ -410,38 +440,24 @@ function buildLedDisplay(value) {
   return `<div class="led-display"><div class="led-row">${leds}</div><div class="led-row">${leds}</div></div>`;
 }
 
-/* ---------------------------------------------------
-   GERADOR DE CÓDIGO SUPER TRUNFO 3.4.2.B
---------------------------------------------------- */
 function gerarIdSuperTrunfo(idBrinquedo) {
-  // Converte o ID para número (caso seja string)
   const idNum =
     typeof idBrinquedo === "number"
       ? idBrinquedo
       : parseInt(String(idBrinquedo).replace(/\D/g, "")) || 0;
 
-  // Padrão clássico de baralho: Letras de A a H, Números de 1 a 4
   const letras = ["A", "B", "C", "D", "E", "F", "G", "H"];
-
-  // Multiplicadores primos (3 e 7) espalham os resultados para parecerem bem aleatórios
   const letra = letras[(idNum * 3) % letras.length];
   const numero = ((idNum * 7) % 4) + 1;
 
   return `${letra}${numero}`;
 }
 
-/* 3.4.2 C */
-/* Função auxiliar para injetar transformações na URL do Cloudinary */
 function otimizarUrlCloudinary(url, largura = 600) {
   if (!url || !url.includes("cloudinary.com")) return url;
-  // f_auto: formato automático (WebP/AVIF)
-  // q_auto: qualidade automática inteligente
-  // w_XXX: redimensiona para a largura necessária
   return url.replace("/upload/", `/upload/f_auto,q_auto,w_${largura},c_limit/`);
 }
 
-/* 3.4.3. Monta e insere os cards 3D no HTML */
-/* 3.4.3. MASONRY COM INSERÇÃO SEQUENCIAL E IMAGENS OTIMIZADAS */
 async function render(items, append = false) {
   const grid = document.getElementById("toyGrid");
   const targetCols = getColumnCount();
@@ -458,12 +474,9 @@ async function render(items, append = false) {
     }
   }
 
-  // 🔄 LOOP SEQUENCIAL: Essencial para o cálculo de offsetHeight funcionar
   for (const toy of items) {
     const idNormalizado = String(toy.id).padStart(4, "0");
 
-    // 🛡️ GUARDA DE UNICIDADE: Última linha de defesa antes de tocar no DOM.
-    // Remove qualquer zumbi remanescente para garantir que o ID seja único.
     const cardZumbi = document.getElementById(`card-${idNormalizado}`);
     if (cardZumbi) cardZumbi.remove();
 
@@ -473,7 +486,6 @@ async function render(items, append = false) {
     const isQueria = queriaDoUsuario.has(idNormalizado);
     const trunfoCode = toy.codigo_trunfo || gerarIdSuperTrunfo(toy.id);
 
-    // ✅ CHAMADA DA OTIMIZAÇÃO: 600px para frente, 500px para o verso (menor)
     const urlFrenteOtimizada = otimizarUrlCloudinary(toy.url_frente, 600);
     const urlVersoOtimizada = otimizarUrlCloudinary(toy.url_verso, 500);
 
@@ -484,15 +496,12 @@ async function render(items, append = false) {
           <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
         </div>
         <div class="card-back flex flex-col">
-          <!-- NOVO CARD VERSO v2 — layout Super Trunfo real -->
           <div class="trunfo-header">
-            <!-- Linha 1: grid 3 colunas [código | título central | ✕] -->
             <div class="trunfo-top-bar-v2">
               <span class="trunfo-code-v2">${trunfoCode}</span>
               <span class="trunfo-brand-v2">RETROBRINQUEDOS</span>
               <button class="trunfo-close-v2" onclick="handleFlip('${idNormalizado}'); event.stopPropagation();" title="Fechar">✕</button>
             </div>
-            <!-- Linha 2: estrela + nome do brinquedo -->
             <div class="trunfo-title-area">
               <div class="trunfo-star"></div>
               <span class="trunfo-title-text">${toy.nome}</span>
@@ -506,15 +515,12 @@ async function render(items, append = false) {
           </div>
 
           <div class="trunfo-stats-area">
-            <!-- Curiosidade em itálico -->
             <div class="trunfo-curiosidade-v2">"${toy.curiosidade}"</div>
-            <!-- Atributos: label dourado | valor branco -->
             <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${toy.fabricante}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${toy.categoria}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${toy.tema}</span></div>
             <div class="trunfo-stat-row"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${toy.raridade}/10</span></div>
             <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="views-${idNormalizado}">👁 ${toy.visualizacoes || 0}</span></div>
-            <!-- Linha 15: EU TIVE | QUERIA TER -->
             <div class="trunfo-actions-v2">
               <button id="btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracao(event, '${idNormalizado}', 'tive')">
                 EU TIVE <span class="action-count-v2" id="count-tive-${idNormalizado}">${toy.tive_count || 0}</span>
@@ -525,11 +531,8 @@ async function render(items, append = false) {
             </div>
           </div>
 
-          <!-- FOOTER: 3 botões iguais — Comentário | WhatsApp | Curtir -->
           <div class="trunfo-footer">
             <div class="footer-icons-container">
-
-              <!-- 💬 Comentários — Bloco F: deslogado abre drawer em modo espia -->
               <button
                 class="footer-tab-btn comment-tab-btn"
                 onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${toy.nome.replace(/'/g, "\\'")}'); event.stopPropagation();"
@@ -540,7 +543,6 @@ async function render(items, append = false) {
                 </svg>
               </button>
 
-              <!-- 📲 WhatsApp — sempre ativo -->
               <button
                 class="footer-tab-btn whatsapp-tab-btn"
                 onclick="compartilharWhatsApp(event, '${idNormalizado}', '${toy.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;")}'); event.stopPropagation();"
@@ -551,7 +553,6 @@ async function render(items, append = false) {
                 </svg>
               </button>
 
-              <!-- ❤ Curtida + contador -->
               <button
                 id="heart-btn-${idNormalizado}"
                 class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}"
@@ -574,22 +575,18 @@ async function render(items, append = false) {
       </div>
     </div>`;
 
-    /* 🎯 CÁLCULO PRECISO: Insere na coluna que está REALMENTE mais curta */
     const shortest = columnElements.reduce((min, col) =>
       col.offsetHeight < min.offsetHeight ? col : min,
     );
 
     shortest.insertAdjacentHTML("beforeend", cardHTML);
 
-    // 💡 MASONRY PRECISO: Aguarda a imagem da frente carregar antes de medir
-    // offsetHeight. Em mobile com conexão lenta o rAF duplo não é suficiente —
-    // a imagem ainda não tem altura real quando medimos, causando desbalanceamento.
     const imgInserida = shortest.querySelector(
       `#card-${idNormalizado} .card-front img`,
     );
     if (imgInserida && !imgInserida.complete) {
       await new Promise((resolve) => {
-        const timeout = setTimeout(resolve, 800); // segurança: máx 800ms
+        const timeout = setTimeout(resolve, 800);
         imgInserida.addEventListener(
           "load",
           () => {
@@ -609,28 +606,23 @@ async function render(items, append = false) {
       });
     }
 
-    // rAF duplo para garantir que o browser atualizou o layout após o load
     await new Promise((resolve) =>
       requestAnimationFrame(() => requestAnimationFrame(resolve)),
     );
   }
 }
 
-/* 3.5. MECÂNICA DE INTERAÇÃO (Flip e Desfocar) */
-
-/* 3.5.1. Vira o card com cálculo de scroll dinâmico (Idêntico em Todas as Telas) */
-const _cardsVistos = new Set(); // controle de sessão — 1 visualização por card
+const _cardsVistos = new Set();
 
 async function registrarVisualizacao(id) {
-  if (_cardsVistos.has(id)) return; // já contou nessa sessão — ignora
+  if (_cardsVistos.has(id)) return;
   _cardsVistos.add(id);
   try {
     await supabaseClient.rpc("increment_visualizacoes", { card_id: id });
-  } catch (_) {} // silencioso — não bloqueia o flip em caso de falha
+  } catch (_) {}
 }
 
 function handleFlip(id) {
-  // 🛡️ ESCUDO DE FOCO MOBILE (Anti-Bubbling Nativo)
   const evento = window.event;
   if (evento && evento.target) {
     const tag = evento.target.tagName.toLowerCase();
@@ -645,13 +637,11 @@ function handleFlip(id) {
     }
   }
 
-  // C3 — Mobile: abre modal centralizado com proporção de carta real
   if (window.innerWidth < 768) {
     abrirCardVersoMobile(id);
     return;
   }
 
-  // Desktop: flip CSS original preservado integralmente
   const grid = document.getElementById("toyGrid");
   const card = document.getElementById(`card-${id}`);
   const isFlipped = card.classList.contains("is-flipped");
@@ -665,7 +655,7 @@ function handleFlip(id) {
     .forEach((c) => c.classList.remove("is-flipped"));
 
   if (!isFlipped) {
-    registrarVisualizacao(id); // fire-and-forget — não bloqueia o flip
+    registrarVisualizacao(id);
     card.classList.add("is-flipped");
     grid.classList.add("grid-focused");
 
@@ -685,21 +675,20 @@ function handleFlip(id) {
   }
 }
 
-// C3 — Abre o verso do card num modal centralizado no mobile
 function abrirCardVersoMobile(id) {
   const data = allToys.find(
-    (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0")
+    (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0"),
   );
   if (!data) return;
 
-  registrarVisualizacao(String(data.id).padStart(4, "0")); // fire-and-forget
+  registrarVisualizacao(String(data.id).padStart(4, "0"));
 
   const idNormalizado = String(data.id).padStart(4, "0");
   const urlVersoOtimizada = otimizarUrlCloudinary(data.url_verso, 500);
   const trunfoCode = data.codigo_trunfo || gerarIdSuperTrunfo(data.id);
-  const isTive   = tiveDoUsuario.has(idNormalizado);
+  const isTive = tiveDoUsuario.has(idNormalizado);
   const isQueria = queriaDoUsuario.has(idNormalizado);
-  const isLiked  = curtidasDoUsuario.has(idNormalizado);
+  const isLiked = curtidasDoUsuario.has(idNormalizado);
 
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
@@ -723,15 +712,12 @@ function abrirCardVersoMobile(id) {
       </div>
     </div>
     <div class="trunfo-stats-area">
-      <!-- Curiosidade: área variável flex:1 com scroll se necessário -->
       <div class="trunfo-curiosidade-v2">"${data.curiosidade}"</div>
-      <!-- Atributos ancorados na base -->
       <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${data.fabricante}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
       <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="m-views-${idNormalizado}">👁 ${data.visualizacoes || 0}</span></div>
-      <!-- EU TIVE / QUERIA TER ancorados logo acima do footer -->
       <div class="trunfo-actions-v2">
         <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'tive')">
           EU TIVE <span class="action-count-v2" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
@@ -771,8 +757,9 @@ function abrirCardVersoMobile(id) {
 
   const modal = document.getElementById("cardVersoMobileModal");
   if (modal) {
-    // 2 — Efeito de saída no card frente: leve fade+scale antes do modal abrir
-    const cardEl = document.getElementById(`card-${String(id).padStart(4, "0")}`);
+    const cardEl = document.getElementById(
+      `card-${String(id).padStart(4, "0")}`,
+    );
     if (cardEl) {
       cardEl.style.transition = "opacity 0.15s ease, transform 0.15s ease";
       cardEl.style.opacity = "0.4";
@@ -783,18 +770,19 @@ function abrirCardVersoMobile(id) {
         cardEl.style.transition = "";
       }, 320);
     }
-    // 3 — Reinicia a animação do box (necessário se o mesmo card for aberto 2x)
     box.style.animation = "none";
-    box.offsetHeight; // reflow forçado — descarta o frame anterior
+    box.offsetHeight;
     box.style.animation = "";
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
+
+    // Empilha o histórico fictício para capturar o botão voltar
+    history.pushState({ modal: "cardVersoMobile" }, "");
   }
 }
 
-// Toast de feedback dentro do modal — substitui LED coberto pelo overlay
 let _toastTimer = null;
-// Wrappers para ações no modal mobile — evita template literals aninhados
+
 function toggleInteracaoModal(event, id, tipo) {
   if (!isUserLogged) {
     event.stopPropagation();
@@ -817,7 +805,7 @@ function mostrarToastModal(mensagem) {
   const toast = document.getElementById("cardVersoToast");
   if (!toast) return;
   clearTimeout(_toastTimer);
-  toast.textContent = "⚡ " + mensagem;
+  toast.textContent = "⚡ " + message || "⚡ " + mensagem;
   toast.classList.remove("hidden");
   toast.classList.add("card-verso-toast--visible");
   _toastTimer = setTimeout(() => {
@@ -826,15 +814,20 @@ function mostrarToastModal(mensagem) {
   }, 2500);
 }
 
-function fecharCardVersoMobile(event) {
-  // Se clicou no box interno, não fecha
-  if (event && event.target !== document.getElementById("cardVersoMobileModal")) return;
+function fecharCardVersoMobile(event, veioDoPopstate = false) {
+  if (event && event.target !== document.getElementById("cardVersoMobileModal"))
+    return;
   const modal = document.getElementById("cardVersoMobileModal");
   if (modal) modal.classList.add("hidden");
   document.body.style.overflow = "";
+
+  // Se o fechamento foi manual, sincroniza e limpa a pilha do histórico
+  if (!veioDoPopstate) {
+    retroSincronizandoHistorico = true;
+    history.back();
+  }
 }
 
-/* 3.5.2. Escuta cliques externos para fechar cards */
 document.addEventListener("click", (event) => {
   const grid = document.getElementById("toyGrid");
   if (grid && grid.classList.contains("grid-focused")) {
@@ -847,17 +840,16 @@ document.addEventListener("click", (event) => {
 function resetarEstadoDosCards() {
   const grid = document.getElementById("toyGrid");
   if (grid) grid.classList.remove("grid-focused");
-  document.body.style.overflow = ""; // Garante scroll livre do body
+  document.body.style.overflow = "";
   document
     .querySelectorAll(".masonry-item")
     .forEach((card) => card.classList.remove("is-flipped"));
 }
 
-/* Letras Vermelhas Piscantes de Alerta (Locked) — Bloqueado contra concorrência */
 let ledLocked = false;
 
 function mostrarMensagemLED(mensagem) {
-  if (ledLocked) return; // Guarda de estado: impede que cliques múltiplos quebrem o ciclo
+  if (ledLocked) return;
   ledLocked = true;
 
   const estavaDesligado = !ledPainelAtivo;
@@ -876,7 +868,7 @@ function mostrarMensagemLED(mensagem) {
   }
 
   el.style.animation = "none";
-  el.offsetHeight; // Reflow forçado
+  el.offsetHeight;
 
   el.textContent = `⚡ ${mensagem} ⚡`;
   el.classList.add("tilt-mode");
@@ -884,7 +876,6 @@ function mostrarMensagemLED(mensagem) {
   painel.style.boxShadow =
     "0 0 16px rgba(255,32,32,0.3) inset, 0 2px 8px rgba(0,0,0,0.4)";
 
-  // Sequência fixa e síncrona: 6 passos (3 piscadas) com velocidade 20% mais lenta (850ms)
   let passo = 0;
   const totalPassos = 6;
 
@@ -896,7 +887,7 @@ function mostrarMensagemLED(mensagem) {
       clearInterval(piscadoLocked);
       el.style.opacity = "1";
       ledTiltAtivo = false;
-      ledLocked = false; // Libera o motor do LED
+      ledLocked = false;
 
       painel.style.borderColor = "";
       painel.style.boxShadow = "";
@@ -910,30 +901,26 @@ function mostrarMensagemLED(mensagem) {
       } else {
         el.classList.remove("tilt-mode");
         el.textContent = "";
-        iniciarCicloLED(); // Devolve para o fluxo normal do banco
+        iniciarCicloLED();
       }
     }
-  }, 850); // 20% mais lento que os 700ms originais do tilt comum
+  }, 850);
 }
 
-/* 3.5.3. COMPARTILHAMENTO DE MÍDIA NATIVA (MOBILE) OU LINK LIMPO (DESKTOP) */
 async function compartilharWhatsApp(event, id, nome) {
   if (event) event.stopPropagation();
 
-  // Localiza o brinquedo na memória RAM da aplicação (allToys)
   const toyData = allToys.find(
     (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0"),
   );
   const urlImagemFrente = toyData ? toyData.url_frente : "";
   const urlSPA = window.location.origin + window.location.pathname;
 
-  // Legenda rica que vai acoplada à foto real no Mobile
   const legendaText =
     `*RetroBrinquedos BR* — Você se lembra deste? *${nome}*\n` +
     `Reviva a nostalgia dos anos 80/90!\n\n` +
     `${urlSPA}`;
 
-  // 📱 DIRECTIVA ESTRETA MOBILE: Só tenta compartilhar arquivo binário em telas menores que 768px
   if (
     window.innerWidth < 768 &&
     navigator.canShare &&
@@ -955,7 +942,7 @@ async function compartilharWhatsApp(event, id, nome) {
           title: "RetroBrinquedos BR",
           text: legendaText,
         });
-        return; // Sucesso absoluto no mobile. Sai da função.
+        return;
       }
     } catch (err) {
       console.warn(
@@ -965,7 +952,6 @@ async function compartilharWhatsApp(event, id, nome) {
     }
   }
 
-  // 💻 DIRECTIVA ESTRETA DESKTOP / WHATSAPP WEB: Link limpo contextualizado que abre direto na aba
   const mensagemDesktop =
     `*RetroBrinquedos BR* — Você se lembra deste? *${nome}*\n` +
     `Reviva a nostalgia dos anos 80/90!\n\n` +
@@ -978,23 +964,20 @@ async function compartilharWhatsApp(event, id, nome) {
   );
 }
 
-/* 3.5.5. MODAL DE CARD COMPARTILHADO (Abolido e removido por decisão arquitetural) */
 function fecharCardModal() {
-  // Mantida apenas como casca de segurança caso algum clique zumbi a chame
   const modal = document.getElementById("cardCompartilhadoModal");
   if (modal) modal.classList.add("hidden");
   document.body.style.overflow = "";
 }
 
 /* ============================================================
-   3.5.4. DRAWER DE COMENTÁRIOS (Item 3.2)
+   3.5.4. DRAWER DE COMENTÁRIOS
    ============================================================ */
 let drawerIdAtivo = null;
 let drawerNomeAtivo = null;
 
 async function abrirDrawerComentarios(event, id, nome) {
   if (event) event.stopPropagation();
-  // Bloco F — Modo Espia: drawer abre para todos; input só aparece para logados
 
   drawerIdAtivo = id;
   drawerNomeAtivo = nome;
@@ -1003,15 +986,14 @@ async function abrirDrawerComentarios(event, id, nome) {
   document.getElementById("drawerListaComentarios").innerHTML =
     '<p class="drawer-loading">Carregando...</p>';
 
-  // Bloco F — controla visibilidade do input vs banner de login
-  const inputArea  = document.getElementById("drawerInputArea");
+  const inputArea = document.getElementById("drawerInputArea");
   const loginBanner = document.getElementById("drawerLoginBanner");
   if (isUserLogged) {
-    if (inputArea)   inputArea.classList.remove("hidden");
+    if (inputArea) inputArea.classList.remove("hidden");
     if (loginBanner) loginBanner.classList.add("hidden");
     document.getElementById("drawerComentarioInput").value = "";
   } else {
-    if (inputArea)   inputArea.classList.add("hidden");
+    if (inputArea) inputArea.classList.add("hidden");
     if (loginBanner) loginBanner.classList.remove("hidden");
   }
 
@@ -1019,14 +1001,22 @@ async function abrirDrawerComentarios(event, id, nome) {
   drawer.classList.add("open");
   document.body.classList.add("drawer-open");
 
+  // Empilha histórico fictício
+  history.pushState({ modal: "comentariosDrawer" }, "");
+
   await carregarComentariosDrawer(id);
 }
 
-function fecharDrawerComentarios() {
+function fecharDrawerComentarios(veioDoPopstate = false) {
   document.getElementById("comentariosDrawer").classList.remove("open");
   document.body.classList.remove("drawer-open");
   drawerIdAtivo = null;
   drawerNomeAtivo = null;
+
+  if (!veioDoPopstate) {
+    retroSincronizandoHistorico = true;
+    history.back();
+  }
 }
 
 function fecharDrawerSeForaDoPanel(event) {
@@ -1038,7 +1028,6 @@ function fecharDrawerSeForaDoPanel(event) {
 async function carregarComentariosDrawer(id) {
   const lista = document.getElementById("drawerListaComentarios");
 
-  // Roda estrita de 30 Emojis Temáticos Retro-Arcade
   const emojisRetro = [
     "🕹️",
     "👾",
@@ -1073,7 +1062,6 @@ async function carregarComentariosDrawer(id) {
   ];
 
   try {
-    // Adicionado o campo 'usuario_nome' na projeção do SELECT
     const { data, error } = await supabaseClient
       .from("comentarios")
       .select("id, texto, created_at, usuario_id, usuario_nome")
@@ -1090,7 +1078,6 @@ async function carregarComentariosDrawer(id) {
       return;
     }
 
-    // Resgata dados da sessão para pintar o próprio nome em dourado retro
     const session = await supabaseClient.auth.getSession();
     const meuUser = session?.data?.session?.user;
     const meuId = meuUser?.id;
@@ -1106,10 +1093,8 @@ async function carregarComentariosDrawer(id) {
 
     lista.innerHTML = data
       .map((c, i) => {
-        const emoji = emojisRetro[i % emojisRetro.length]; // Garante a rotação exata entre os 30 itens
+        const emoji = emojisRetro[i % emojisRetro.length];
         const eMeu = meuId && c.usuario_id === meuId;
-
-        // Resgata o nome gravado na tabela. Fallback para 'Jogador' se for nulo por segurança
         const nomeExibicao = c.usuario_nome || "Jogador";
 
         return `
@@ -1133,14 +1118,13 @@ async function carregarComentariosDrawer(id) {
 }
 
 async function enviarComentarioDrawer() {
-  if (!isUserLogged || !drawerIdAtivo) return; // ✅ Ajustado para a variável canônica do seu app.js
+  if (!isUserLogged || !drawerIdAtivo) return;
 
   const input = document.getElementById("drawerComentarioInput");
   if (!input) return;
   const texto = input.value.trim();
   if (!texto) return;
 
-  // 🛡️ Filtro Anti-Toxicidade Nativo integrado
   if (contemPalavraProibida(texto)) {
     dispararTiltBanimento("LINGUAGEM INADEQUADA DETECTADA");
     input.value = "";
@@ -1152,23 +1136,22 @@ async function enviarComentarioDrawer() {
     const user = session?.data?.session?.user;
     if (!user) return;
 
-    // Extrai o nome real completo dos metadados da sessão ativa (Google/Provedor)
     const nomeReal = user.user_metadata?.full_name || "Jogador";
 
     const { error } = await supabaseClient.from("comentarios").insert([
       {
-        brinquedo_id: drawerIdAtivo, // ✅ Ajustado para persistir como String VARCHAR "0052"
+        brinquedo_id: drawerIdAtivo,
         usuario_id: user.id,
         texto: texto,
-        usuario_nome: nomeReal, // Snapshot do nome gravado no INSERT (Solução A)
-        aprovado: true, // Aprovação automática pelo filtro de regex
+        usuario_nome: nomeReal,
+        aprovado: true,
       },
     ]);
 
     if (error) throw error;
 
     input.value = "";
-    await carregarComentariosDrawer(drawerIdAtivo); // ✅ Atualiza a lista usando o ID ativo correto
+    await carregarComentariosDrawer(drawerIdAtivo);
     document.getElementById("drawerListaComentarios").scrollTop = 0;
   } catch (err) {
     console.error("Erro ao enviar comentário:", err);
@@ -1180,10 +1163,8 @@ function handleDrawerEnter(event) {
   if (event.key === "Enter") enviarComentarioDrawer();
 }
 
-/* 3.5.6. MOTOR DO MODAL ESPELHO PARA SELEÇÃO MOBILE */
 async function abrirModalEspelhoMobile(cardId) {
   try {
-    // Busca o brinquedo direto na memória RAM (allToys) para resposta instantânea (0ms)
     const data = allToys.find(
       (t) => String(t.id).padStart(4, "0") === String(cardId).padStart(4, "0"),
     );
@@ -1194,7 +1175,6 @@ async function abrirModalEspelhoMobile(cardId) {
     const trunfoCode = data.codigo_trunfo || gerarIdSuperTrunfo(data.id);
     const ledHTML = buildLedDisplay(data.raridade);
 
-    // Alimenta o mesmo container de modal que o index.html já possui pronto
     document.getElementById("cardCompartilhadoContainer").innerHTML = `
       <div class="card-modal-trunfo">
         <div class="trunfo-header">
@@ -1238,62 +1218,52 @@ async function abrirModalEspelhoMobile(cardId) {
         </div>
       </div>`;
 
-    // Remove temporariamente a frase de "Alguém compartilhou" se o clique veio do próprio celular
     const modalLabel = document.querySelector(".card-modal-label");
     if (modalLabel) modalLabel.style.display = "none";
 
-    // Altera o texto do botão inferior para ficar contextualizado
     const modalCta = document.querySelector(".card-modal-cta");
     if (modalCta) modalCta.innerHTML = "✕ Voltar para o Quarto";
 
-    // Abre o modal de visualização móvel de forma imediata
     document
       .getElementById("cardCompartilhadoModal")
       .classList.remove("hidden");
-    document.body.style.overflow = "hidden"; // trava rolagem de fundo
+    document.body.style.overflow = "hidden";
   } catch (e) {
     console.error("Erro ao espelhar card mobile:", e);
   }
 }
 
 /* ============================================================
-   3.6. BUSCA INTELIGENTE (Debounce, Trigger, Disjuntor e Reset Rápido - Item 2)
+   3.6. BUSCA INTELIGENTE
    ============================================================ */
 let buscaAtiva = "";
-let fetchAbortController = null; // H7+ — cancela fetch anterior se novo for disparado
+let fetchAbortController = null;
 let debounceTimer = null;
 
-// Escuta a digitação reativa do usuário
-// ── Sanitização XSS: remove tags HTML e caracteres perigosos do termo de busca
 function sanitizarBusca(valor) {
   return valor
-    .replace(/[<>"'`]/g, "")   // remove caracteres de injeção HTML/JS
-    .replace(/\s+/g, " ")       // colapsa espaços múltiplos
+    .replace(/[<>"'`]/g, "")
+    .replace(/\s+/g, " ")
     .trim()
     .toLowerCase()
-    .slice(0, 60);              // limita tamanho máximo
+    .slice(0, 60);
 }
 
-// ── Núcleo da busca — compartilhado entre debounce e botão de busca forçada
 async function _executarBusca(term) {
   if (term === buscaAtiva) return;
 
-  // Trava busca vazia — orienta o usuário via LED
   if (term.length === 0 && buscaAtiva === "") {
     mostrarMensagemLED("DIGITE O TERMO QUE DESEJA BUSCAR");
     return;
   }
 
-  // Cancela qualquer fetch anterior que ainda esteja em andamento
   if (fetchAbortController) {
     fetchAbortController.abort();
   }
   fetchAbortController = new AbortController();
 
-  // H7/C1 — isSearching=true ANTES de qualquer outra operação
   isSearching = true;
 
-  // H7/C1 — scroll síncrono ANTES de limpar o grid
   const secaoColecao = document.getElementById("colecao");
   if (secaoColecao) {
     secaoColecao.scrollIntoView({ behavior: "smooth" });
@@ -1308,15 +1278,12 @@ async function _executarBusca(term) {
   allToys = [];
   hasMais = true;
 
-  // Pausa para o scroll iniciar antes do grid esvaziar
-  await new Promise(resolve => setTimeout(resolve, 80));
+  await new Promise((resolve) => setTimeout(resolve, 80));
 
   await fetchBrinquedos(true);
 }
 
-// ── Busca forçada — disparada pelo botão de lupa ou Enter
-// Cancela o debounce em andamento e executa imediatamente
-function executarBuscaForçada() {
+function ejecutarBuscaForçada() {
   const input = document.getElementById("searchInput");
   if (!input) return;
   const term = sanitizarBusca(input.value);
@@ -1331,7 +1298,6 @@ function executarBuscaForçada() {
   _executarBusca(term);
 }
 
-// ── Listener do input: debounce 600ms + sanitização + Enter
 document.getElementById("searchInput").addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -1343,7 +1309,6 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
   const term = sanitizarBusca(e.target.value);
   const clearBtn = document.getElementById("clearSearchBtn");
 
-  // Controla visibilidade do botão ✕ de forma reativa
   if (clearBtn) {
     if (e.target.value.length > 0) {
       clearBtn.classList.remove("hidden");
@@ -1358,41 +1323,32 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
   }, 600);
 });
 
-/* 3.6.2. BOTÃO GATILHO DE RESET DA BUSCA COM APENAS UM CLIQUE (Item 2) */
 async function limparBuscaRapida() {
   const input = document.getElementById("searchInput");
   const clearBtn = document.getElementById("clearSearchBtn");
 
   if (!input) return;
 
-  // Limpa o valor físico do input e esconde o botão '✕' síncronamente
   input.value = "";
   if (clearBtn) clearBtn.classList.add("hidden");
 
-  // Cancela qualquer timer de debounce que estivesse correndo em plano de fundo
   clearTimeout(debounceTimer);
 
-  // Se a busca já estava vazia, não há necessidade de re-consultar o banco
   if (buscaAtiva === "") return;
 
-  // 🛡️ DISJUNTOR SÍNCRONO: Neutraliza o sentinel enquanto o grid é esvaziado
   isSearching = true;
 
-  // Destrava o estado tridimensional de foco do grid Masonry
   if (typeof resetarEstadoDosCards === "function") {
     resetarEstadoDosCards();
   }
 
-  // Reseta completamente o estado global para a carga inicial
   buscaAtiva = "";
   cursor = 0;
   allToys = [];
   hasMais = true;
 
-  // Dispara a carga para restaurar a grade de brinquedos original ('todos')
   await fetchBrinquedos(true);
 
-  // Devolve o foco de tela de forma suave para o início da coleção
   const secaoColecao = document.getElementById("colecao");
   if (secaoColecao) {
     secaoColecao.scrollIntoView({ behavior: "smooth" });
@@ -1423,7 +1379,6 @@ function closeModal() {
   );
 }
 
-/* 3.7.2. MOTOR DE INSERÇÃO DE FICHA E LOGIN OAUTH (Item 1 — Correção Mobile Facebook) */
 function handleCoinSelect(btn, provider) {
   sf2CoinSound.currentTime = 0;
   sf2CoinSound.play().catch(() => {});
@@ -1431,32 +1386,28 @@ function handleCoinSelect(btn, provider) {
 
   const isMobile = window.innerWidth < 768;
 
-  // Bloco C — Facebook no mobile: o setTimeout quebra a janela de confiança do
-  // gesto do usuário e o browser bloqueia silenciosamente o redirect.
-  // Solução: Facebook mobile dispara imediatamente (sem setTimeout), preservando
-  // o vínculo direto com o gesto de clique exigido pelo Safari/Chrome mobile.
-  // Google e X continuam no setTimeout (popup funciona neles).
   if (provider === "facebook" && isMobile) {
-    supabaseClient.auth.signInWithOAuth({
-      provider: "facebook",
-      options: {
-        redirectTo: window.location.origin + window.location.pathname,
-        skipBrowserRedirect: true,
-        queryParams: { display: "page" },
-      },
-    }).then(({ data, error }) => {
-      if (error) {
-        console.error("Erro Facebook mobile:", error);
-        mostrarMensagemLED("ERRO NO SLOT FACEBOOK");
-        btn.classList.remove("coin-inserted");
-        return;
-      }
-      if (data?.url) window.location.href = data.url;
-    });
-    return; // sai da função — não entra no setTimeout abaixo
+    supabaseClient.auth
+      .signInWithOAuth({
+        provider: "facebook",
+        options: {
+          redirectTo: window.location.origin + window.location.pathname,
+          skipBrowserRedirect: true,
+          queryParams: { display: "page" },
+        },
+      })
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Erro Facebook mobile:", error);
+          mostrarMensagemLED("ERRO NO SLOT FACEBOOK");
+          btn.classList.remove("coin-inserted");
+          return;
+        }
+        if (data?.url) window.location.href = data.url;
+      });
+    return;
   }
 
-  // Google, X e Facebook desktop: fluxo original com animação de 1.5s
   setTimeout(async () => {
     try {
       const { data, error } = await supabaseClient.auth.signInWithOAuth({
@@ -1469,11 +1420,9 @@ function handleCoinSelect(btn, provider) {
 
       if (error) throw error;
 
-      // Outros providers no mobile: redirect manual
       if (isMobile && data?.url) {
         window.location.href = data.url;
       }
-
     } catch (err) {
       console.error(`Erro na autenticação via moeda (${provider}):`, err);
       if (typeof mostrarMensagemLED === "function") {
@@ -1481,7 +1430,7 @@ function handleCoinSelect(btn, provider) {
       }
       btn.classList.remove("coin-inserted");
     }
-  }, 1500); // 1.5s preservado para a imersão da animação da ficha
+  }, 1500);
 }
 
 function renderAvatarGrid() {
@@ -1492,18 +1441,13 @@ function renderAvatarGrid() {
     ...getRandomFromRange(81, 130, 5),
     ...getRandomFromRange(131, 150, 2),
   ];
-  // Item 4 — idx diferencia os primeiros (eager) dos demais (lazy)
   selecionados.forEach((num, idx) => {
-    // Item 4 — tenta WebP primeiro; onerror cai no PNG original sem quebrar nada
     const pathWebp = `/img/avatares/a${num.toString().padStart(2, "0")}.webp`;
     const pathPng = `/img/avatares/a${num.toString().padStart(2, "0")}.png`;
-    // Os 3 primeiros ficam eager (aparecem imediatamente no modal);
-    // os demais lazy para não bloquear o parser
     const loadStrategy = idx < 3 ? "eager" : "lazy";
     const item = document.createElement("div");
     item.className = "avatar-item rounded-md";
     item.innerHTML = `<img src="${pathWebp}" onerror="this.onerror=null;this.src='${pathPng}'" class="avatar-img" loading="${loadStrategy}" decoding="async" width="80" height="80" alt="Avatar ${num}">`;
-    // Preserva o path PNG no localStorage para compatibilidade total
     item.onclick = () => {
       localStorage.setItem("retro_avatar", pathWebp);
       location.reload();
@@ -1518,14 +1462,10 @@ function getRandomFromRange(min, max, count) {
 }
 
 function updateNavWithAvatar(avatarPath, name) {
-  // Usa o primeiro nome mas sem truncamento artificial por max-w fixo.
-  // O CSS cuida do overflow apenas em telas muito pequenas.
   const firstName = name.split(" ")[0];
 
   document.getElementById("userArea").innerHTML = `
     <div class="flex items-center gap-1.5 md:gap-3 relative" id="avatarMenuWrapper">
-
-      <!-- Nome + Player 1 -->
       <div class="flex flex-col items-end hidden sm:flex">
         <span class="text-[10px] md:text-xs text-cyan-400 font-orbitron uppercase tracking-widest leading-none">Player 1</span>
         <span class="text-[13px] md:text-base font-bold text-white uppercase tracking-tighter leading-tight max-w-[120px] md:max-w-[180px] truncate text-right">
@@ -1533,7 +1473,6 @@ function updateNavWithAvatar(avatarPath, name) {
         </span>
       </div>
 
-      <!-- Avatar clicável que abre o dropdown -->
       <button
         id="avatarMenuBtn"
         onclick="toggleAvatarMenu(event)"
@@ -1546,20 +1485,17 @@ function updateNavWithAvatar(avatarPath, name) {
           alt="avatar">
       </button>
 
-      <!-- Dropdown retrô -->
       <div
         id="avatarDropdown"
         class="hidden absolute top-[calc(100%+10px)] right-0 z-[200] min-w-[180px]
                bg-slate-900 border border-cyan-500/40 rounded-lg shadow-[0_0_20px_rgba(34,211,238,0.15)]
                overflow-hidden"
       >
-        <!-- No mobile: cabeçalho visível. No desktop: o CSS 3D assume o controle via #avatarDropdown -->
         <div class="md:hidden px-4 py-2.5 border-b border-white/10 bg-black/30">
           <p class="font-orbitron text-[0.55rem] text-cyan-400/70 uppercase tracking-widest">Meu Quarto</p>
           <p class="font-bold text-white text-sm uppercase tracking-tight truncate">${firstName}</p>
         </div>
 
-        <!-- Wrapper 3D: no desktop recebe a animação rotateY do CSS -->
         <div class="dropdown-3d-inner py-1">
           <button onclick="filtrarMeuQuarto('todos'); toggleAvatarMenu()" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-slate-900 hover:bg-yellow-300 transition-colors flex items-center gap-2.5 whitespace-nowrap">
             <span class="text-base">🕹</span> Todos
@@ -1580,28 +1516,24 @@ function updateNavWithAvatar(avatarPath, name) {
       </div>
     </div>`;
 
-  // A barra de filtros da nav fica oculta — os filtros agora vivem no dropdown
   document.getElementById("userFilters")?.classList.add("hidden");
 }
 
-/* Abre/fecha o dropdown do avatar */
 function toggleAvatarMenu(event) {
   if (event) event.stopPropagation();
   const dropdown = document.getElementById("avatarDropdown");
   if (!dropdown) return;
   dropdown.classList.toggle("hidden");
-  // Item 6 — sincroniza .is-open no wrapper para pausar a animação neon via CSS
   const wrapper = document.getElementById("avatarMenuWrapper");
   if (wrapper)
     wrapper.classList.toggle("is-open", !dropdown.classList.contains("hidden"));
 }
 
-/* Fecha o dropdown ao clicar fora dele */
 document.addEventListener("click", (e) => {
   const wrapper = document.getElementById("avatarMenuWrapper");
   if (wrapper && !wrapper.contains(e.target)) {
     document.getElementById("avatarDropdown")?.classList.add("hidden");
-    wrapper.classList.remove("is-open"); // Item 6 — remove is-open ao fechar por clique externo
+    wrapper.classList.remove("is-open");
   }
 });
 
@@ -1614,7 +1546,6 @@ async function logOut() {
 
 /* 3.8. GESTÃO DE DADOS (CURTIDAS E COLEÇÃO DO USUÁRIO) */
 
-/* 3.8.1. Puxa perfil e preenche as Memórias Visuais (Sets) */
 async function carregarInteracoesDoBanco(userId, tentativa = 1) {
   try {
     const [resCurtidas, resTive, resQueria] = await Promise.all([
@@ -1632,8 +1563,6 @@ async function carregarInteracoesDoBanco(userId, tentativa = 1) {
         .eq("usuario_id", userId),
     ]);
 
-    // 🛡️ RETRY: Se qualquer query falhar e ainda temos tentativas, aguarda e tenta novamente.
-    // Evita Sets vazios causados por cold start do Supabase ou token recém-renovado.
     const houveErro = resCurtidas.error || resTive.error || resQueria.error;
     if (houveErro && tentativa < 3) {
       console.warn(
@@ -1664,7 +1593,6 @@ async function carregarInteracoesDoBanco(userId, tentativa = 1) {
   }
 }
 
-/* 3.8.2. Commits Otimistas (Altera local e envia pro banco) */
 async function toggleCurtida(event, brinquedoId) {
   event.stopPropagation();
   const {
@@ -1718,7 +1646,6 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   const userId = session.user.id;
   const idParaBanco = String(brinquedoId).padStart(4, "0");
 
-  // Variáveis para o alvo atual e para o seu "Oposto"
   let memorySet, tableName, activeClass;
   let oppSet, oppTable, oppClass, oppTipo;
 
@@ -1727,7 +1654,6 @@ async function toggleInteracao(event, brinquedoId, tipo) {
     tableName = "interacoes_tive";
     activeClass = "active-tive";
 
-    // Define o oposto
     oppSet = queriaDoUsuario;
     oppTable = "interacoes_queria";
     oppClass = "active-queria";
@@ -1737,7 +1663,6 @@ async function toggleInteracao(event, brinquedoId, tipo) {
     tableName = "interacoes_queria";
     activeClass = "active-queria";
 
-    // Define o oposto
     oppSet = tiveDoUsuario;
     oppTable = "interacoes_tive";
     oppClass = "active-tive";
@@ -1750,7 +1675,6 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   let count = parseInt(countSpan ? countSpan.innerText : "0") || 0;
 
   if (isAtivo) {
-    // Ação normal de REMOVER a própria marcação
     memorySet.delete(idParaBanco);
     if (btn) btn.classList.remove(activeClass);
     if (countSpan) countSpan.innerText = Math.max(0, count - 1);
@@ -1767,7 +1691,6 @@ async function toggleInteracao(event, brinquedoId, tipo) {
       if (countSpan) countSpan.innerText = count;
     }
   } else {
-    // 🔴 EXCLUSÃO MÚTUA: Se o oposto estiver marcado, remove ele primeiro!
     if (oppSet.has(idParaBanco)) {
       oppSet.delete(idParaBanco);
       const oppBtn = document.getElementById(`btn-${oppTipo}-${idParaBanco}`);
@@ -1776,11 +1699,9 @@ async function toggleInteracao(event, brinquedoId, tipo) {
       );
       let oppCount = parseInt(oppCountSpan ? oppCountSpan.innerText : "0") || 0;
 
-      // UI Otimista: desmarca o botão oposto instantaneamente
       if (oppBtn) oppBtn.classList.remove(oppClass);
       if (oppCountSpan) oppCountSpan.innerText = Math.max(0, oppCount - 1);
 
-      // Manda apagar do banco silenciosamente
       supabaseClient
         .from(oppTable)
         .delete()
@@ -1789,7 +1710,6 @@ async function toggleInteracao(event, brinquedoId, tipo) {
         .then();
     }
 
-    // Ação normal de ADICIONAR a marcação atual
     memorySet.add(idParaBanco);
     if (btn) btn.classList.add(activeClass);
     if (countSpan) countSpan.innerText = count + 1;
@@ -1806,29 +1726,21 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   }
 }
 
-/* 3.8. FUNÇÃO DE FILTRO DO "MEU QUARTO" */
 async function filtrarMeuQuarto(tipo) {
-  // 1. Atualiza a variável global que o fetchBrinquedos usa
   filtroAtivo = tipo;
 
-  // 2. Atualiza visualmente os botões
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.classList.remove("active");
   });
   const btnAtivo = document.getElementById(`filter-${tipo}`);
   if (btnAtivo) btnAtivo.classList.add("active");
 
-  // 🛡️ FIX BUSCA HERDADA: Limpa o termo de busca ao trocar de filtro.
-  // Sem isso, um "bola" digitado em "Todos" seria herdado por "Fui Dono",
-  // exibindo resultados de busca em vez da coleção pessoal.
   buscaAtiva = "";
   const searchInput = document.getElementById("searchInput");
   if (searchInput) searchInput.value = "";
 
-  // 🛡️ FIX 1.3: Limpa o estado de flip ANTES de reconstruir o grid.
   resetarEstadoDosCards();
 
-  // 3. Reseta e recarrega o grid
   await fetchBrinquedos(true);
 }
 
@@ -1836,8 +1748,7 @@ async function filtrarMeuQuarto(tipo) {
    SEÇÃO 3.9. PAINEL LED — ENGINE COMPLETA
    ============================================================ */
 
-/* 3.9.1. ESTADO DO PAINEL */
-let ledPainelAtivo = false; /*localStorage.getItem("led_painel") !== "off";*/
+let ledPainelAtivo = false;
 let ledFilaAtual = [];
 let ledEmExibicao = false;
 let ledTiltAtivo = false;
@@ -1845,7 +1756,6 @@ let ledGlitchSessao = false;
 let ledEasterEggContador = 0;
 let ledEasterEggTimer = null;
 
-/* 3.9.2. CONTEÚDO FIXO — MENSAGENS FAKE (fallback) */
 const LED_MENSAGENS_FAKE = [
   'JOGADOR_77 sobre He-Man Masters of Universe: "O melhor brinquedo da minha infância"',
   'CAROL_BH sobre Estrela Júpiter: "Ganhei de aniversário e nunca mais esqueci"',
@@ -1861,7 +1771,7 @@ const LED_MENSAGENS_FAKE = [
   'PLAYER_DOS_8BITS sobre Atari 2600: "Meu primeiro videogame, nunca vou esquecer"',
   'NOSTALGIA_SP sobre Lego Fabuland: "Montei e desmontei centenas de vezes"',
   'RETROWAVE sobre Street Fighter Glasslite: "Hadouken! Aprendi esse golpe com 6 anos"',
-  'FELIPPE_BH sobre Bandeirante: "O caminhão verde era o meu favorito"',
+  'FEED_LIVE sobre Bandeirante: "O caminhão verde era o meu favorito"',
   'COLECIONADOR_RJ sobre Playmobil: "Ainda tenho alguns guardados na caixa original"',
   'GEEK_ANOS90 sobre Action Man Estrela: "Fiz uma corda de linha para ele descer"',
   'CRIANÇA_DE_80 sobre Scalextric: "A pista ficava no chão da sala o fim de semana inteiro"',
@@ -1869,7 +1779,6 @@ const LED_MENSAGENS_FAKE = [
   'MEMÓRIA_VIVA sobre Barbie Estrela: "Cortei o cabelo da minha e chorei depois"',
 ];
 
-/* 3.9.3. FRASES DO SISTEMA */
 const LED_FRASES_SISTEMA = [
   "PLEASE INSERT COIN",
   "VOLTAMOS EM BREVE...",
@@ -1880,25 +1789,23 @@ const LED_FRASES_SISTEMA = [
   "HIGH SCORE — SEU NOME AQUI",
   "PRESS START TO PLAY",
   "NÃO SE ESQUEÇA DE CURTIR SEUS BRINQUEDOS FAVORITOS",
-  "COMPARTILHE SUAS MEMÓRIAS COM SEUS AMIGOS",
+  "COMPARTILHE SUAS MEMÓRIAS WITH AMIGOS",
   "CLIQUE NO SWITCH PARA DESLIGAR ESSE PAINEL",
   "VOCÊ SE LEMBRA DESSE BRINQUEDO?",
   "REVIVA A MAGIA DA INFÂNCIA — RETROBRINQUEDOS BR",
 ];
 
-/* 3.9.4. SPRITES ASCII PARA O PAINEL */
 const LED_SPRITES = [
-  " ᗧ · · · · · · ᗣ · · ᗣ · · ᗣ ", // Pac-Man comendo as pastilhas
-  " ᗣ ᗣ ᗣ ᗣ · · · · · · · ᗤ ", // Pac-Man fugindo (Fantasma azul)
-  " /M\\  \\o/  /M\\  \\o/       _A_ ", // Space Invaders (Nave atirando de baixo)
-  " >===>  - - - - -  (O)  {X}  [||] ", // R-Type / Shmup (Nave atirando em inimigos)
-  " |   ·             |      PONG      |             ·   | ", // Pong clássico
-  " /\\   ·  ·  ·  *   O   o   . ", // Asteroids (Nave atirando nas pedras)
-  " (>'-')>  ======O      <('-'<) ", // Street Fighter (Hadouken)
-  " ~~~|===|~~~   [H]   ~~~|===|~~~ ", // River Raid (Helicóptero nas margens do rio)
+  " ᗧ · · · · · · ᗣ · · ᗣ · · ᗣ ",
+  " ᗣ ᗣ ᗣ ᗣ · · · · · · · ᗤ ",
+  " /M\\  \\o/  /M\\  \\o/       _A_ ",
+  " >===>  - - - - -  (O)  {X}  [||] ",
+  " |   ·             |      PONG      |             ·   | ",
+  " /\\   ·  ·  ·  * O   o   . ",
+  " (>'-')>  ======O      <('-'<) ",
+  " ~~~|===|~~~   [H]   ~~~|===|~~~ ",
 ];
 
-/* 3.9.5. INICIALIZAÇÃO DO PAINEL */
 function iniciarPainelLED(mensagemImediata) {
   const toggle = document.getElementById("ledToggleInput");
   if (toggle) toggle.checked = ledPainelAtivo;
@@ -1910,18 +1817,21 @@ function iniciarPainelLED(mensagemImediata) {
     painel.classList.remove("is-off");
     animarLigar();
 
-    // Exibe mensagem local imediata (zero latência) enquanto o fetch
-    // do banco aquece — elimina o painel vazio nos cold starts.
     if (mensagemImediata) {
       const el = document.getElementById("ledContent");
       if (el) {
         el.classList.remove("tilt-mode");
         el.textContent = mensagemImediata;
-        const duracao = Math.max(10, (mensagemImediata.length * 10 + window.innerWidth) / 80);
+        const duracao = Math.max(
+          10,
+          (mensagemImediata.length * 10 + window.innerWidth) / 80,
+        );
         el.style.animation = "none";
-        el.offsetHeight; // reflow forçado
+        el.offsetHeight;
         el.style.animation = `ledScroll ${duracao}s linear 1`;
-        el.addEventListener("animationend", () => iniciarCicloLED(), { once: true });
+        el.addEventListener("animationend", () => iniciarCicloLED(), {
+          once: true,
+        });
       }
     } else {
       setTimeout(() => iniciarCicloLED(), 800);
@@ -1930,7 +1840,6 @@ function iniciarPainelLED(mensagemImediata) {
     painel.classList.add("is-off");
   }
 
-  // Easter egg: 13 cliques no "R"
   const easterBtn = document.getElementById("easterEggBtn");
   if (easterBtn) {
     easterBtn.addEventListener("click", () => {
@@ -1946,7 +1855,6 @@ function iniciarPainelLED(mensagemImediata) {
     });
   }
 
-  // Glitch aleatório por sessão (15% de chance)
   if (Math.random() < 0.15) {
     ledGlitchSessao = true;
     const delay = 15000 + Math.random() * 40000;
@@ -1954,7 +1862,6 @@ function iniciarPainelLED(mensagemImediata) {
   }
 }
 
-/* 3.9.6. TOGGLE ON/OFF DO PAINEL */
 function toggleLedPanel(ligado) {
   const painel = document.getElementById("ledPanel");
   if (!painel) return;
@@ -1970,7 +1877,6 @@ function toggleLedPanel(ligado) {
   }
 }
 
-/* 3.9.7. ANIMAÇÕES DE LIGAR / DESLIGAR */
 function animarLigar() {
   const painel = document.getElementById("ledPanel");
   if (!painel) return;
@@ -1991,7 +1897,6 @@ function animarDesligar(callback) {
 
 /* 3.9.8. ENGINE DA FILA DE MENSAGENS */
 async function montarFila() {
-  // Busca últimas mensagens reais do banco
   let mensagensReais = [];
   try {
     const { data, error } = await supabaseClient
@@ -2005,21 +1910,16 @@ async function montarFila() {
           `${m.usuario_nome.toUpperCase()} sobre ${m.brinquedo_nome}${m.detalhe ? ': "' + m.detalhe + '"' : ""}`,
       );
     }
-  } catch (e) {
-    /* silencioso */
-  }
+  } catch (e) {}
 
-  // Mescla reais + fake, prioriza reais
   const pool =
     mensagensReais.length >= 5
       ? mensagensReais
       : [...mensagensReais, ...LED_MENSAGENS_FAKE].slice(0, 20);
 
-  // Escolhe quantidade randômica (10 a 20)
   const qtd = 10 + Math.floor(Math.random() * 11);
   const embaralhado = [...pool].sort(() => Math.random() - 0.5).slice(0, qtd);
 
-  // Monta fila: mensagens + separador + frase/sprite
   const fila = [
     ...embaralhado,
     "   . . .   ",
@@ -2033,7 +1933,6 @@ async function montarFila() {
   return fila;
 }
 
-/* 3.9.9. CICLO PRINCIPAL DE EXIBIÇÃO */
 async function iniciarCicloLED() {
   if (!ledPainelAtivo || ledTiltAtivo) return;
   ledFilaAtual = await montarFila();
@@ -2062,7 +1961,7 @@ function exibirFilaComoTicker(fila, onComplete) {
   el.classList.remove("tilt-mode");
   el.textContent = textoCompleto;
 
-  const velocidade = 80; // px/s
+  const velocidade = 80;
   const larguraEstimada = textoCompleto.length * 10;
   const duracao = Math.max(
     10,
@@ -2070,7 +1969,7 @@ function exibirFilaComoTicker(fila, onComplete) {
   );
 
   el.style.animation = "none";
-  el.offsetHeight; // reflow forçado
+  el.offsetHeight;
   el.style.animation = `ledScroll ${duracao}s linear 1`;
 
   const handler = () => {
@@ -2080,7 +1979,6 @@ function exibirFilaComoTicker(fila, onComplete) {
   el.addEventListener("animationend", handler);
 }
 
-/* 3.9.10. MENSAGEM PRIORITÁRIA (TILT — GERAL) */
 function dispararTilt(mensagem) {
   const estavaDesligado = !ledPainelAtivo;
   ledTiltAtivo = true;
@@ -2095,7 +1993,7 @@ function dispararTilt(mensagem) {
   }
 
   el.style.animation = "none";
-  el.offsetHeight; // reflow
+  el.offsetHeight;
 
   el.textContent = `⚡ ${mensagem} ⚡${mensagem} ⚡${mensagem} ⚡`;
   el.classList.add("tilt-mode");
@@ -2119,14 +2017,12 @@ function dispararTilt(mensagem) {
       painel.style.boxShadow = "";
 
       if (estavaDesligado) {
-        // Mantém vermelho enquanto faz o fade off, só limpa no callback
         animarDesligar(() => {
           painel.classList.add("is-off");
           el.classList.remove("tilt-mode");
           el.textContent = "";
         });
       } else {
-        // Apaga o texto temporariamente enquanto o Supabase carrega o próximo Ticker
         el.classList.remove("tilt-mode");
         el.textContent = "";
         iniciarCicloLED();
@@ -2135,7 +2031,6 @@ function dispararTilt(mensagem) {
   }, intervalo);
 }
 
-/* 3.9.11. EFEITO GLITCH */
 function dispararGlitch(duracao = 4000) {
   const painel = document.getElementById("ledPanel");
   if (!painel) return;
@@ -2143,12 +2038,10 @@ function dispararGlitch(duracao = 4000) {
   setTimeout(() => painel.classList.remove("glitch-line"), duracao);
 }
 
-/* 3.9.12. INJEÇÃO DE MENSAGEM PRIORITÁRIA (fura a fila) */
 function ledInjetarPrioritario(texto) {
   ledFilaAtual.unshift(texto);
 }
 
-/* 3.9.13. REALTIME — RECEBE NOVAS MENSAGENS DO BANCO */
 const feedChannel = supabaseClient.channel("museu-feed");
 feedChannel
   .on(
@@ -2200,7 +2093,6 @@ const palavrasProibidas = [
   "ânus",
 ];
 
-// O \b garante que vai buscar a palavra exata (evita bloquear "curso" por causa de "cu")
 const regexProibidas = new RegExp(
   `\\b(${palavrasProibidas.join("|")})\\b`,
   "i",
@@ -2210,7 +2102,6 @@ function contemPalavraProibida(texto) {
   return regexProibidas.test(texto);
 }
 
-/* TILT Vermelho Prolongado para Alerta / Banimento */
 function dispararTiltBanimento(mensagem, tempoCongelado = 4000) {
   const estavaDesligado = !ledPainelAtivo;
   ledTiltAtivo = true;
@@ -2225,7 +2116,7 @@ function dispararTiltBanimento(mensagem, tempoCongelado = 4000) {
   }
 
   el.style.animation = "none";
-  el.offsetHeight; // reflow
+  el.offsetHeight;
 
   el.textContent = `🚨 ${mensagem} 🚨`;
   el.classList.add("tilt-mode");
@@ -2267,7 +2158,6 @@ function dispararTiltBanimento(mensagem, tempoCongelado = 4000) {
   }, intervalo);
 }
 
-/* 3.9.14. ENVIO DE COMENTÁRIO DO CARD */
 async function enviarComentario(idNormalizado, nomeBrinquedo) {
   if (!isUserLogged) {
     dispararTilt("FAÇA LOGIN PARA COMENTAR");
@@ -2285,7 +2175,6 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
   const userId = session.user.id;
   const userName = session.user.user_metadata.full_name || "Player 1";
 
-  // 🔴 FILTRO ANTI-TOXICIDADE: Sistema de 3 Vidas
   if (contemPalavraProibida(texto)) {
     input.value = "";
 
@@ -2319,7 +2208,6 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
     return;
   }
 
-  // ✅ GUARDA O PLACEHOLDER ORIGINAL E LIMPA O INPUT
   const placeholderOriginal = input.placeholder;
   input.value = "";
 
@@ -2334,12 +2222,9 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
 
   if (error) {
     console.error("Erro no envio:", error);
-    input.value = texto; // Devolve o texto caso a rede falhe
+    input.value = texto;
   } else {
-    // 🎉 FEEDBACK VISUAL DE SUCESSO
     input.placeholder = "Enviada! ✉️";
-
-    // Devolve o placeholder original ao normal após 2.5 segundos
     setTimeout(() => {
       if (input) input.placeholder = placeholderOriginal;
     }, 2500);
@@ -2352,32 +2237,25 @@ function handleComentarioEnter(event, idNormalizado, nomeBrinquedo) {
     enviarComentario(idNormalizado, nomeBrinquedo);
   }
 }
+
 /* ============================================================
    SEÇÃO 3.10. INICIALIZAÇÃO DA APLICAÇÃO (BOOT)
    ============================================================ */
-
-/* 3.10.1. Adapta o layout para mudanças de tela limpas */
-let ultimaLarguraTela = window.innerWidth; // Salva a largura inicial
+let ultimaLarguraTela = window.innerWidth;
 let resizeTimer;
 
 window.addEventListener("resize", () => {
   const larguraAtual = window.innerWidth;
 
-  // 🛡️ TRAVA ANTI-TECLADO: Se a largura não mudou (apenas a altura mudou), aborta!
   if (larguraAtual === ultimaLarguraTela) {
     return;
   }
 
-  // Atualiza a memória com a nova largura
   ultimaLarguraTela = larguraAtual;
 
-  // Lógica original: Reseta os cards e redesenha a grade se a tela de fato mudou de largura
   resetarEstadoDosCards();
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
-    // ✅ Usa render() com allToys deduplicated — allToys já é a fonte de verdade
-    // após fetchBrinquedos filtrar por idsEmMemoria. Passamos false para forçar
-    // reconstrução das colunas com o novo número de colunas.
     if (allToys && allToys.length > 0) {
       const unique = [
         ...new Map(
@@ -2389,17 +2267,14 @@ window.addEventListener("resize", () => {
   }, 250);
 });
 
-/* 3.10.2. Chama Auth, recupera tokens e desenha primeira página */
-/* 3.10.2. Chama Auth, recupera tokens e desenha primeira página */
 async function init() {
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
 
-  let _nomeUsuarioBoot = ""; // içado para o escopo do init — usado na mensagem LED
+  let _nomeUsuarioBoot = "";
 
   if (session) {
-    // 🔴 CHECAGEM DE BANIMENTO NO BOOT
     const { data: banData } = await supabaseClient
       .from("lista_negra")
       .select("id")
@@ -2407,28 +2282,22 @@ async function init() {
       .limit(1);
 
     if (banData && banData.length > 0) {
-      // O usuário está na lista negra! Desloga e avisa.
       await supabaseClient.auth.signOut();
       localStorage.removeItem("retro_avatar");
       isUserLogged = false;
       document.body.classList.add("app-unlogged");
 
-      // Dispara o alerta após 1 segundo para a tela já ter carregado
       setTimeout(() => {
         dispararTiltBanimento(
           "ACESSO NEGADO — CONTA BANIDA POR VIOLAÇÃO DE TERMOS",
         );
       }, 1000);
     } else {
-      // ✅ Tudo certo, fluxo de login normal
       isUserLogged = true;
       document.body.classList.remove("app-unlogged");
       const userName = session.user.user_metadata.full_name || "Player 1";
-      _nomeUsuarioBoot = userName.split(" ")[0]; // primeiro nome para o LED
+      _nomeUsuarioBoot = userName.split(" ")[0];
 
-      // 🛡️ AWAIT GARANTIDO: Os Sets de interações DEVEM estar populados
-      // antes de fetchBrinquedos(true) ser chamado, caso contrário os filtros
-      // "Meu Quarto" encontram Sets vazios e não exibem nenhum card.
       await carregarInteracoesDoBanco(session.user.id);
 
       const savedAvatar = localStorage.getItem("retro_avatar");
@@ -2443,32 +2312,32 @@ async function init() {
     }
   }
 
-  // 🔤 Pré-carrega a fonte do painel LED durante o boot (painel ainda oculto),
-  // eliminando o delay de 3–4s no primeiro acionamento do toggle.
   new FontFace("LEDDisplay", "url(/fonts/advanced_led_board-7.ttf)")
     .load()
     .then((f) => document.fonts.add(f))
-    .catch(() => {}); // silencioso — fallback Courier New se o arquivo estiver ausente
+    .catch(() => {});
 
-  // 🛡️ setupObserver() antes do fetch para que o IntersectionObserver
-  // já esteja ativo quando os cards forem inseridos no DOM.
   setupObserver();
   await fetchBrinquedos(true);
   ajustarPainelLED();
 
-  // 🎬 Detecta o contexto de boot para exibir mensagem imediata no LED
-  // (elimina painel vazio durante cold start do Supabase)
   const bootFlag = localStorage.getItem("retro_led_boot");
-  localStorage.removeItem("retro_led_boot"); // consome a flag — uso único
+  localStorage.removeItem("retro_led_boot");
 
   let mensagemBoot;
   if (bootFlag === "logout") {
-    mensagemBoot = "Até logo — Volte sempre para reviver a magia da infância ✦ RetroBrinquedos BR";
+    mensagemBoot =
+      "Até logo — Volte sempre para reviver a magia da infância ✦ RetroBrinquedos BR";
   } else if (isUserLogged) {
-    const saudacao = _nomeUsuarioBoot ? "Bem-vindo de volta, " + _nomeUsuarioBoot + "!" : "Bem-vindo de volta!";
-    mensagemBoot = saudacao + " ✦ Curta as cartas, marque seus brinquedos e deixe um comentário";
+    const saudacao = _nomeUsuarioBoot
+      ? "Bem-vindo de volta, " + _nomeUsuarioBoot + "!"
+      : "Bem-vindo de volta!";
+    mensagemBoot =
+      saudacao +
+      " ✦ Curta as cartas, marque seus brinquedos e deixe um comentário";
   } else {
-    mensagemBoot = "Bem-vindo ao RetroBrinquedos BR — O museu dos brinquedos inesquecíveis ✦ Clique em qualquer carta para revelar a ficha Super Trunfo";
+    mensagemBoot =
+      "Bem-vindo ao RetroBrinquedos BR — O museum dos brinquedos inesquecíveis ✦ Clique em qualquer carta para revelar a ficha Super Trunfo";
   }
 
   iniciarPainelLED(mensagemBoot);
@@ -2491,43 +2360,51 @@ function ajustarPainelLED() {
   if (hero) hero.style.paddingTop = alturaNav + ledHeight + "px";
 }
 
-// Recalcula se a navbar mudar de tamanho (ex: wrap no mobile)
 window.addEventListener("resize", ajustarPainelLED);
 
-// ============================================================
-// H4 — MODAL DISCLAIMER / DIREITOS AUTORAIS
-// ============================================================
 function abrirDisclaimerModal() {
   const modal = document.getElementById("disclaimerModal");
-  if (modal) modal.classList.remove("hidden");
-}
-function fecharDisclaimerModal() {
-  const modal = document.getElementById("disclaimerModal");
-  if (modal) modal.classList.add("hidden");
-}
-
-// ============================================================
-// H5 — MODAIS DE FABRICANTES
-// ============================================================
-function abrirFabricanteModal(num) {
-  fecharFabricanteModal();
-  const modal = document.getElementById("fabricanteModal" + num);
-  if (modal) modal.classList.remove("hidden");
-}
-function fecharFabricanteModal() {
-  for (let i = 1; i <= 8; i++) {
-    const m = document.getElementById("fabricanteModal" + i);
-    if (m) m.classList.add("hidden");
+  if (modal) {
+    modal.classList.remove("hidden");
+    history.pushState({ modal: "disclaimer" }, "");
   }
 }
 
+function fecharDisclaimerModal(veioDoPopstate = false) {
+  const modal = document.getElementById("disclaimerModal");
+  if (modal) modal.classList.add("hidden");
 
-// ============================================================
-// Item 11 — FORMULÁRIO ARCADE DE SUGESTÃO DE BRINQUEDO
-// EmailJS: service_v7nw2eu / template_o5kwy8p / public key: 03eueUb3Hz_PxWXj2
-// ============================================================
+  if (!veioDoPopstate) {
+    retroSincronizandoHistorico = true;
+    history.back();
+  }
+}
 
-// Inicializa EmailJS uma única vez após o DOM carregar
+function abrirFabricanteModal(num) {
+  fecharFabricanteModal(true);
+  const modal = document.getElementById("fabricanteModal" + num);
+  if (modal) {
+    modal.classList.remove("hidden");
+    history.pushState({ modal: "fabricanteModal" + num }, "");
+  }
+}
+
+function fecharFabricanteModal(veioDoPopstate = false) {
+  let modalEstavaAberto = false;
+  for (let i = 1; i <= 8; i++) {
+    const m = document.getElementById("fabricanteModal" + i);
+    if (m && !m.classList.contains("hidden")) {
+      m.classList.add("hidden");
+      modalEstavaAberto = true;
+    }
+  }
+
+  if (modalEstavaAberto && !veioDoPopstate) {
+    retroSincronizandoHistorico = true;
+    history.back();
+  }
+}
+
 window.addEventListener("load", () => {
   if (typeof emailjs !== "undefined") {
     emailjs.init("03eueUb3Hz_PxWXj2");
@@ -2535,12 +2412,10 @@ window.addEventListener("load", () => {
 });
 
 async function abrirSugestaoModal(termoPreenchido = "") {
-  // Verifica sessão ativa via Supabase (padrão do projeto — não há currentUser global)
   const { data: sessionData } = await supabaseClient.auth.getSession();
   const userLogado = sessionData?.session?.user;
 
   if (!userLogado) {
-    // Visitante deslogado — feedback no painel LED, consistente com o fluxo de comentários
     dispararTiltBanimento("⚠ FAÇA LOGIN PARA SUGERIR UM ITEM", 3000);
     return;
   }
@@ -2548,7 +2423,6 @@ async function abrirSugestaoModal(termoPreenchido = "") {
   const modal = document.getElementById("sugestaoModal");
   if (!modal) return;
 
-  // Pré-preenche o nome com o termo buscado (remove espaços extras do RPC)
   const inputNome = document.getElementById("sug_nome");
   if (inputNome && termoPreenchido) {
     inputNome.value = termoPreenchido.trim();
@@ -2556,13 +2430,21 @@ async function abrirSugestaoModal(termoPreenchido = "") {
 
   _sugestaoResetUI();
   modal.classList.remove("hidden");
+
+  history.pushState({ modal: "sugestao" }, "");
+
   if (inputNome) setTimeout(() => inputNome.focus(), 80);
 }
 
-function fecharSugestaoModal() {
+function fecharSugestaoModal(veioDoPopstate = false) {
   const modal = document.getElementById("sugestaoModal");
   if (modal) modal.classList.add("hidden");
   _sugestaoResetUI();
+
+  if (!veioDoPopstate) {
+    retroSincronizandoHistorico = true;
+    history.back();
+  }
 }
 
 function _sugestaoResetUI() {
@@ -2571,14 +2453,13 @@ function _sugestaoResetUI() {
     feedback.textContent = "";
     feedback.className = "hidden sugestao-feedback mb-4";
   }
-  const btn   = document.getElementById("sugestaoEnviarBtn");
+  const btn = document.getElementById("sugestaoEnviarBtn");
   const label = document.getElementById("sugestaoEnviarLabel");
-  if (btn)   btn.disabled = false;
+  if (btn) btn.disabled = false;
   if (label) label.textContent = "▶ ENVIAR SUGESTÃO";
 }
 
 async function enviarSugestao() {
-  // Revalida sessão no momento do envio
   const { data: sessionData } = await supabaseClient.auth.getSession();
   const userLogado = sessionData?.session?.user;
   if (!userLogado) {
@@ -2587,25 +2468,27 @@ async function enviarSugestao() {
     return;
   }
 
-  const nome       = (document.getElementById("sug_nome")?.value       || "").trim();
-  const fabricante = (document.getElementById("sug_fabricante")?.value || "").trim();
-  const ano        = (document.getElementById("sug_ano")?.value        || "").trim();
-  const categoria  = (document.getElementById("sug_categoria")?.value  || "").trim();
-  const tema       = (document.getElementById("sug_tema")?.value       || "").trim();
-  const link       = (document.getElementById("sug_link")?.value       || "").trim();
-  const obs        = (document.getElementById("sug_obs")?.value        || "").trim();
+  const nome = (document.getElementById("sug_nome")?.value || "").trim();
+  const fabricante = (
+    document.getElementById("sug_fabricante")?.value || ""
+  ).trim();
+  const ano = (document.getElementById("sug_ano")?.value || "").trim();
+  const categoria = (
+    document.getElementById("sug_categoria")?.value || ""
+  ).trim();
+  const tema = (document.getElementById("sug_tema")?.value || "").trim();
+  const link = (document.getElementById("sug_link")?.value || "").trim();
+  const obs = (document.getElementById("sug_obs")?.value || "").trim();
 
-  const btn   = document.getElementById("sugestaoEnviarBtn");
+  const btn = document.getElementById("sugestaoEnviarBtn");
   const label = document.getElementById("sugestaoEnviarLabel");
 
-  // Validação: nome obrigatório
   if (!nome) {
     _sugestaoMostrarFeedback("⚠ O nome do brinquedo é obrigatório.", "erro");
     document.getElementById("sug_nome")?.focus();
     return;
   }
 
-  // Filtro anti-toxicidade — reutiliza contemPalavraProibida() já existente
   const camposTexto = [nome, fabricante, categoria, tema, obs];
   for (const campo of camposTexto) {
     if (campo && contemPalavraProibida(campo)) {
@@ -2618,54 +2501,59 @@ async function enviarSugestao() {
   btn.disabled = true;
   label.textContent = "⏳ ENVIANDO...";
 
-  const usuarioNome = userLogado.user_metadata?.full_name || userLogado.email || "Usuário";
+  const usuarioNome =
+    userLogado.user_metadata?.full_name || userLogado.email || "Usuário";
 
   try {
-    // 1. Persistir no Supabase (tabela sugestoes)
-    const { error: dbError } = await supabaseClient
-      .from("sugestoes")
-      .insert({
-        usuario_id:      userLogado.id,
-        usuario_nome:    usuarioNome,
-        nome_brinquedo:  nome,
-        fabricante:      fabricante || null,
-        ano:             ano        || null,
-        categoria:       categoria  || null,
-        tema:            tema       || null,
-        link_referencia: link       || null,
-        observacao:      obs        || null,
-        status:          "pendente",
-      });
+    const { error: dbError } = await supabaseClient.from("sugestoes").insert({
+      usuario_id: userLogado.id,
+      usuario_nome: usuarioNome,
+      nome_brinquedo: nome,
+      fabricante: fabricante || null,
+      ano: ano || null,
+      categoria: categoria || null,
+      tema: tema || null,
+      link_referencia: link || null,
+      observacao: obs || null,
+      status: "pendente",
+    });
 
     if (dbError) throw dbError;
 
-    // 2. Disparar e-mail via EmailJS
     await emailjs.send("service_v7nw2eu", "template_o5kwy8p", {
-      usuario_nome:    usuarioNome,
-      nome_brinquedo:  nome,
-      fabricante:      fabricante  || "—",
-      ano:             ano         || "—",
-      categoria:       categoria   || "—",
-      tema:            tema        || "—",
-      link_referencia: link        || "—",
-      observacao:      obs         || "—",
+      usuario_nome: usuarioNome,
+      nome_brinquedo: nome,
+      fabricante: fabricante || "—",
+      ano: ano || "—",
+      categoria: categoria || "—",
+      tema: tema || "—",
+      link_referencia: link || "—",
+      observacao: obs || "—",
     });
 
     _sugestaoMostrarFeedback(
       "✔ SUGESTÃO ENVIADA! Obrigado, " + usuarioNome.split(" ")[0] + "!",
-      "sucesso"
+      "sucesso",
     );
     label.textContent = "✔ ENVIADO";
 
-    // Limpa campos após sucesso
-    ["sug_nome","sug_fabricante","sug_ano","sug_categoria","sug_tema","sug_link","sug_obs"]
-      .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+    [
+      "sug_nome",
+      "sug_fabricante",
+      "sug_ano",
+      "sug_categoria",
+      "sug_tema",
+      "sug_link",
+      "sug_obs",
+    ].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
 
     setTimeout(() => {
       fecharSugestaoModal();
-      // H1 — limpa busca e recarrega grid após envio bem-sucedido
       const searchInput = document.getElementById("searchInput");
-      const clearBtn    = document.getElementById("clearSearchBtn");
+      const clearBtn = document.getElementById("clearSearchBtn");
       if (searchInput) {
         searchInput.value = "";
         buscaAtiva = "";
@@ -2673,7 +2561,6 @@ async function enviarSugestao() {
       }
       fetchBrinquedos(true);
     }, 2800);
-
   } catch (err) {
     console.error("Erro ao enviar sugestão:", err);
     _sugestaoMostrarFeedback("✖ ERRO AO ENVIAR. Tente novamente.", "erro");
@@ -2690,19 +2577,17 @@ function _sugestaoMostrarFeedback(mensagem, tipo) {
   feedback.classList.remove("hidden");
 }
 
-// Escape fecha todos os modais do site
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     fecharSugestaoModal();
     fecharDisclaimerModal();
     fecharFabricanteModal();
+    fecharRankingModal();
   }
 });
 
-
 init();
 
-// C2 — remove hint dos logos após animação
 setTimeout(() => {
   const firstLogo = document.querySelector(".hero-brand-btn:first-child");
   if (firstLogo) firstLogo.classList.add("hint-done");
