@@ -41,6 +41,25 @@ window.addEventListener("popstate", (event) => {
 
   let modalFechado = false;
 
+  // 0. Máquina de Estados do Arcade / Login / Avatar
+  const arcadeModal = document.getElementById("arcadeModal");
+  if (arcadeModal && !arcadeModal.classList.contains("pointer-events-none")) {
+    const gameOverScreen = document.getElementById("gameOverScreen");
+    const arcadeScreen = document.getElementById("arcadeScreen");
+    const selectionScreen = document.getElementById("selectionScreen");
+
+    if (gameOverScreen && gameOverScreen.classList.contains("hidden")) {
+      // Usuário estava no INSERT COIN ou SELECT PLAYER -> Vai para o GAME OVER
+      if (arcadeScreen) arcadeScreen.classList.add("hidden");
+      if (selectionScreen) selectionScreen.classList.add("hidden");
+      gameOverScreen.classList.remove("hidden");
+    } else {
+      // Usuário já estava no GAME OVER e apertou voltar de novo -> Desiste e desloga
+      fecharArcadePorDesistencia(true);
+    }
+    return;
+  }
+
   // 1. Card Verso Mobile Modal
   const cardMobileModal = document.getElementById("cardVersoMobileModal");
   if (cardMobileModal && !cardMobileModal.classList.contains("hidden")) {
@@ -1367,16 +1386,32 @@ function login() {
   if (selectionScreen) selectionScreen.classList.add("hidden");
   gameOverScreen.classList.add("hidden");
   arcadeModal.classList.remove("opacity-0", "pointer-events-none");
+
+  // Empilha o estado do Arcade para capturar o botão voltar do smartphone
+  history.pushState({ modal: "arcadeLogin" }, "");
 }
 
-function closeModal() {
+// Substitui a antiga função 'closeModal' para prever a desistencia com logout forçado
+function fecharArcadePorDesistencia(veioDoPopstate = false) {
   arcadeScreen.classList.add("hidden");
   if (selectionScreen) selectionScreen.classList.add("hidden");
   gameOverScreen.classList.remove("hidden");
-  setTimeout(
-    () => arcadeModal.classList.add("opacity-0", "pointer-events-none"),
-    1800,
-  );
+
+  if (!veioDoPopstate) {
+    retroSincronizandoHistorico = true;
+    history.back();
+  }
+
+  setTimeout(async () => {
+    arcadeModal.classList.add("opacity-0", "pointer-events-none");
+    // Executa o logout forçado para derrubar o token Supabase incompleto sem avatar selecionado
+    await logOut();
+  }, 1800);
+}
+
+// Mantém a assinatura legada caso algum evento inline chame por ela
+function closeModal() {
+  fecharArcadePorDesistencia(false);
 }
 
 function handleCoinSelect(btn, provider) {
