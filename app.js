@@ -839,7 +839,18 @@ function handleFlip(id) {
   }
 
   const grid = document.getElementById("toyGrid");
-  const card = document.getElementById(`card-${id}`);
+
+  // 💡 CORREÇÃO: Busca primeiro pelo ID único da semente atual, se não achar, tenta o ID clássico
+  const sToken =
+    typeof sessionSeed !== "undefined"
+      ? sessionSeed.toString().substring(2, 6)
+      : "";
+  let card =
+    document.getElementById(`card-${id}_s${sToken}`) ||
+    document.getElementById(`card-${id}`);
+
+  if (!card) return; // Proteção caso o elemento sumer do DOM
+
   const isFlipped = card.classList.contains("is-flipped");
 
   if (grid.classList.contains("grid-focused") && !isFlipped) {
@@ -1806,7 +1817,7 @@ async function carregarInteracoesDoBanco(userId, tentativa = 1) {
 }
 
 async function toggleCurtida(event, brinquedoId) {
-  event.stopPropagation();
+  if (event) event.stopPropagation();
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
@@ -1818,14 +1829,33 @@ async function toggleCurtida(event, brinquedoId) {
   const userId = session.user.id;
   const idParaBanco = String(brinquedoId).padStart(4, "0");
   const isLiked = curtidasDoUsuario.has(idParaBanco);
-  const btn = document.getElementById(`heart-btn-${idParaBanco}`);
-  const countSpan = document.getElementById(`count-${idParaBanco}`);
-  let count = parseInt(countSpan ? countSpan.innerText : "0") || 0;
+
+  // 💡 CORREÇÃO MOBILE + DESKTOP: Captura seletores universais para atualizar clones síncronos
+  const botoesGrid = document.querySelectorAll(
+    `[id^="heart-btn-${idParaBanco}"]`,
+  );
+  const botaoModalMobile = document.getElementById(
+    `m-heart-btn-${idParaBanco}`,
+  );
+  const contadores = document.querySelectorAll(
+    `[id^="count-${idParaBanco}"], #m-count-${idParaBanco}`,
+  );
+
+  // Pega o valor atual do primeiro contador válido encontrado
+  let count = 0;
+  const primeiroContador =
+    document.getElementById(`count-${idParaBanco}`) ||
+    document.getElementById(`m-count-${idParaBanco}`);
+  if (primeiroContador) {
+    count = parseInt(primeiroContador.innerText) || 0;
+  }
 
   if (isLiked) {
     curtidasDoUsuario.delete(idParaBanco);
-    if (btn) btn.classList.remove("liked");
-    if (countSpan) countSpan.innerText = Math.max(0, count - 1);
+    botoesGrid.forEach((btn) => btn.classList.remove("liked"));
+    if (botaoModalMobile) botaoModalMobile.classList.remove("liked");
+    contadores.forEach((c) => (c.innerText = Math.max(0, count - 1)));
+
     await supabaseClient
       .from("curtidas")
       .delete()
@@ -1833,11 +1863,13 @@ async function toggleCurtida(event, brinquedoId) {
       .eq("brinquedo_id", idParaBanco);
   } else {
     curtidasDoUsuario.add(idParaBanco);
-    if (btn) {
+    botoesGrid.forEach((btn) => {
       btn.classList.add("liked", "animating");
       setTimeout(() => btn.classList.remove("animating"), 600);
-    }
-    if (countSpan) countSpan.innerText = count + 1;
+    });
+    if (botaoModalMobile) botaoModalMobile.classList.add("liked");
+    contadores.forEach((c) => (c.innerText = count + 1));
+
     await supabaseClient
       .from("curtidas")
       .insert([{ usuario_id: userId, brinquedo_id: idParaBanco }]);
@@ -1845,7 +1877,7 @@ async function toggleCurtida(event, brinquedoId) {
 }
 
 async function toggleInteracao(event, brinquedoId, tipo) {
-  event.stopPropagation();
+  if (event) event.stopPropagation();
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
@@ -1882,14 +1914,31 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   }
 
   const isAtivo = memorySet.has(idParaBanco);
-  const btn = document.getElementById(`btn-${tipo}-${idParaBanco}`);
-  const countSpan = document.getElementById(`count-${tipo}-${idParaBanco}`);
-  let count = parseInt(countSpan ? countSpan.innerText : "0") || 0;
+
+  // 💡 CORREÇÃO UNIVERSAL: Captura botões do grid, do modal mobile e os contadores sincronizados
+  const botoesGrid = document.querySelectorAll(
+    `[id^="btn-${tipo}-${idParaBanco}"]`,
+  );
+  const botaoModalMobile = document.getElementById(
+    `m-btn-${tipo}-${idParaBanco}`,
+  );
+  const contadores = document.querySelectorAll(
+    `[id^="count-${tipo}-${idParaBanco}"], #m-count-${tipo}-${idParaBanco}`,
+  );
+
+  let count = 0;
+  const primeiroContador =
+    document.getElementById(`count-${tipo}-${idParaBanco}`) ||
+    document.getElementById(`m-count-${tipo}-${idParaBanco}`);
+  if (primeiroContador) {
+    count = parseInt(primeiroContador.innerText) || 0;
+  }
 
   if (isAtivo) {
     memorySet.delete(idParaBanco);
-    if (btn) btn.classList.remove(activeClass);
-    if (countSpan) countSpan.innerText = Math.max(0, count - 1);
+    botoesGrid.forEach((btn) => btn.classList.remove(activeClass));
+    if (botaoModalMobile) botaoModalMobile.classList.remove(activeClass);
+    contadores.forEach((c) => (c.innerText = Math.max(0, count - 1)));
 
     const { error } = await supabaseClient
       .from(tableName)
@@ -1899,20 +1948,35 @@ async function toggleInteracao(event, brinquedoId, tipo) {
 
     if (error) {
       memorySet.add(idParaBanco);
-      if (btn) btn.classList.add(activeClass);
-      if (countSpan) countSpan.innerText = count;
+      botoesGrid.forEach((btn) => btn.classList.add(activeClass));
+      if (botaoModalMobile) botaoModalMobile.classList.add(activeClass);
+      contadores.forEach((c) => (c.innerText = count));
     }
   } else {
     if (oppSet.has(idParaBanco)) {
       oppSet.delete(idParaBanco);
-      const oppBtn = document.getElementById(`btn-${oppTipo}-${idParaBanco}`);
-      const oppCountSpan = document.getElementById(
-        `count-${oppTipo}-${idParaBanco}`,
-      );
-      let oppCount = parseInt(oppCountSpan ? oppCountSpan.innerText : "0") || 0;
 
-      if (oppBtn) oppBtn.classList.remove(oppClass);
-      if (oppCountSpan) oppCountSpan.innerText = Math.max(0, oppCount - 1);
+      const oppBotoesGrid = document.querySelectorAll(
+        `[id^="btn-${oppTipo}-${idParaBanco}"]`,
+      );
+      const oppBotaoModalMobile = document.getElementById(
+        `m-btn-${oppTipo}-${idParaBanco}`,
+      );
+      const oppContadores = document.querySelectorAll(
+        `[id^="count-${oppTipo}-${idParaBanco}"], #m-count-${oppTipo}-${idParaBanco}`,
+      );
+
+      let oppCount = 0;
+      const primeiroOppContador =
+        document.getElementById(`count-${oppTipo}-${idParaBanco}`) ||
+        document.getElementById(`m-count-${oppTipo}-${idParaBanco}`);
+      if (primeiroOppContador) {
+        oppCount = parseInt(primeiroOppContador.innerText) || 0;
+      }
+
+      oppBotoesGrid.forEach((btn) => btn.classList.remove(oppClass));
+      if (oppBotaoModalMobile) oppBotaoModalMobile.classList.remove(oppClass);
+      oppContadores.forEach((c) => (c.innerText = Math.max(0, oppCount - 1)));
 
       supabaseClient
         .from(oppTable)
@@ -1923,8 +1987,9 @@ async function toggleInteracao(event, brinquedoId, tipo) {
     }
 
     memorySet.add(idParaBanco);
-    if (btn) btn.classList.add(activeClass);
-    if (countSpan) countSpan.innerText = count + 1;
+    botoesGrid.forEach((btn) => btn.classList.add(activeClass));
+    if (botaoModalMobile) botaoModalMobile.classList.add(activeClass);
+    contadores.forEach((c) => (c.innerText = count + 1));
 
     const { error } = await supabaseClient
       .from(tableName)
@@ -1932,8 +1997,9 @@ async function toggleInteracao(event, brinquedoId, tipo) {
 
     if (error) {
       memorySet.delete(idParaBanco);
-      if (btn) btn.classList.remove(activeClass);
-      if (countSpan) countSpan.innerText = count;
+      botoesGrid.forEach((btn) => btn.classList.remove(activeClass));
+      if (botaoModalMobile) botaoModalMobile.classList.remove(activeClass);
+      contadores.forEach((c) => (c.innerText = count));
     }
   }
 }
