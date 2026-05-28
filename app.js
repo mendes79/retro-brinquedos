@@ -993,10 +993,17 @@ function abrirCardVersoMobile(id) {
 
 let _toastTimer = null;
 
+/* ============================================================
+   AJUSTE DE INTERAÇÃO DOS MODAIS MOBILE (PAINEL LED FIX)
+   ============================================================ */
 function toggleInteracaoModal(event, id, tipo) {
   if (!isUserLogged) {
-    event.stopPropagation();
-    mostrarToastModal("FAÇA LOGIN PARA INTERAGIR");
+    if (event) event.stopPropagation();
+
+    // 💡 CORREÇÃO: Encaminha o alerta direto para a engine do Painel LED com o efeito TILT retro
+    if (typeof mostrarMensagemLED === "function") {
+      mostrarMensagemLED("FAÇA LOGIN PARA INTERAGIR");
+    }
     return;
   }
   toggleInteracao(event, id, tipo);
@@ -1004,8 +1011,12 @@ function toggleInteracaoModal(event, id, tipo) {
 
 function toggleCurtidaModal(event, id) {
   if (!isUserLogged) {
-    event.stopPropagation();
-    mostrarToastModal("FAÇA LOGIN PARA CURTIR");
+    if (event) event.stopPropagation();
+
+    // 💡 CORREÇÃO: Encaminha o alerta direto para a engine do Painel LED com o efeito TILT retro
+    if (typeof mostrarMensagemLED === "function") {
+      mostrarMensagemLED("FAÇA LOGIN PARA CURTIR");
+    }
     return;
   }
   toggleCurtida(event, id);
@@ -2537,33 +2548,36 @@ window.addEventListener("resize", () => {
   // Desliga o foco dos cards para evitar quebras visuais de flip ativo
   resetarEstadoDosCards();
   clearTimeout(resizeTimer);
-  
+
   resizeTimer = setTimeout(() => {
     const grid = document.getElementById("toyGrid");
     const targetCols = getColumnCount();
-    
+
     // 🛡️ DISJUNTOR CRÍTICO: Se o número ideal de colunas não mudou, não há motivo para mexer no DOM
     if (!grid || currentCols === targetCols) return;
-    
-    console.log(`%c 📱 [RESIZE INTELIGENTE] Movendo colunas de ${currentCols} para ${targetCols} sem reconstruir o DOM!`, "color: #eab308; font-weight: bold;");
-    
+
+    console.log(
+      `%c 📱 [RESIZE INTELIGENTE] Movendo colunas de ${currentCols} para ${targetCols} sem reconstruir o DOM!`,
+      "color: #eab308; font-weight: bold;",
+    );
+
     // 1. Captura e isola todos os cartões físicos que já estão renderizados e vivos na tela
     const cardsVivos = Array.from(grid.querySelectorAll(".masonry-item"));
-    
+
     if (cardsVivos.length === 0) return;
-    
+
     // 2. Limpa o esqueleto do grid de colunas antigo e prepara os novos contêineres de colunas
     grid.innerHTML = "";
     columnElements = [];
     currentCols = targetCols;
-    
+
     for (let i = 0; i < currentCols; i++) {
       const colDiv = document.createElement("div");
       colDiv.className = "masonry-column";
       grid.appendChild(colDiv);
       columnElements.push(colDiv);
     }
-    
+
     // 3. Distribui os mesmos nós do DOM existentes entre as novas colunas com performance instantânea
     // O appendChild preserva as instâncias, o cache das imagens e evita o reflow pesado do innerHTML!
     cardsVivos.forEach((card) => {
@@ -2572,8 +2586,11 @@ window.addEventListener("resize", () => {
       );
       shortest.appendChild(card);
     });
-    
-    console.log("%c 📱 [RESIZE] Grid reorganizado com sucesso em milissegundos!", "color: #22c55e;");
+
+    console.log(
+      "%c 📱 [RESIZE] Grid reorganizado com sucesso em milissegundos!",
+      "color: #22c55e;",
+    );
   }, 250);
 });
 
