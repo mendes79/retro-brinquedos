@@ -335,6 +335,40 @@ body {
    FOOTER PÓDIO + MODAL RANKING
    ============================================================ */
 
+/* ============================================================
+   CORREÇÃO DO RODAPÉ GLOBAL (ESTRUTURA DE CANTOS EXTREMOS)
+   ============================================================ */
+footer.w-full {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 2rem !important; /* Espaçamento confortável nas laterais do desktop */
+  height: 50px !important;
+  background-color: #0b0f19 !important; /* Mantém a paleta dark estável */
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Força os links das mídias sociais a manterem tamanho nítido e proporção original */
+footer.w-full .flex.items-center.gap-4 a,
+footer.w-full .flex.items-center.gap-4 svg {
+  width: 20px !important;
+  height: 20px !important;
+  display: inline-block;
+  color: #94a3b8; /* Cor original estável slate */
+  transition: color 0.2s ease;
+}
+
+footer.w-full .flex.items-center.gap-4 a:hover {
+  color: var(--neon-cyan) !important;
+}
+
+/* Ajuste fino responsivo para smartphones */
+@media (max-width: 767px) {
+  footer.w-full {
+    padding: 0 1rem !important;
+  }
+}
+
 /* Botão pódio no footer */
 .footer-podium-btn {
   background: transparent;
