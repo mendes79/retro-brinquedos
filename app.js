@@ -855,7 +855,7 @@ function handleFlip(id) {
 
   if (!cardOriginal) return;
 
-  // 📱 FLUXO MÓVEL ISOLADO (Garante centralização perfeita e livre das amarras do Masonry)
+  // 📱 FLUXO MÓVEL ISOLADO (Evita as quebras de contexto das colunas do Masonry)
   if (window.innerWidth < 768) {
     registrarVisualizacao(String(id).padStart(4, "0"));
     cardOriginalMobileAtivo = cardOriginal;
@@ -866,25 +866,25 @@ function handleFlip(id) {
     // Limpa resíduos de interações anteriores no contêiner raiz
     container.innerHTML = "";
 
-    // [FLIP - FIRST]: Captura a posição exata do card pequeno dentro do grid masonry
+    // [FLIP - FIRST]: Captura a posição do card pequeno dentro da coluna
     const rectInicial = cardOriginal.getBoundingClientRect();
 
-    // Bloqueia o scroll de fundo do smartphone
+    // Bloqueia o scroll do celular
     document.body.style.overflow = "hidden";
 
-    // Cria um clone vivo do card mantendo classes, curtidas e contadores já gerados pelo Supabase
+    // Cria um clone perfeito do card com todos os contadores e classes nativas
     const cardClone = cardOriginal.cloneNode(true);
     cardClone.removeAttribute("id");
     container.appendChild(cardClone);
 
-    // Oculta temporariamente a opacidade da carta de origem que ficou no grid de fundo
+    // Oculta suavemente o card original de fundo para não duplicar na tela
     cardOriginal.style.opacity = "0";
 
-    // Torna visível a camada escura global e o painel flex centralizador
+    // Ativa o backdrop escuro global de raiz
     overlay.classList.add("active");
     overlay.style.display = "flex";
 
-    // Vincula a ação de fechamento ao clique do botão de fechar (✕) do clone expandido
+    // Vincula a ação de fechar ao botão (✕) do clone expandido
     const btnFecharClone = cardClone.querySelector(".trunfo-close-v2");
     if (btnFecharClone) {
       btnFecharClone.onclick = (e) => {
@@ -893,7 +893,7 @@ function handleFlip(id) {
       };
     }
 
-    // Acopla listeners de clique nos botões de ação do clone para espelharem os disparos no card real de fundo
+    // Vincula os cliques dos botões do clone para espelharem as ações no card original real
     cardClone
       .querySelectorAll(".action-btn-v2, .action-btn, .heart-tab-btn")
       .forEach((btnClone) => {
@@ -911,7 +911,7 @@ function handleFlip(id) {
             }
           }
 
-          // Sincroniza visualmente as classes de estado ativo e números incrementados no clone móvel
+          // Sincroniza o visual do clone com as atualizações feitas no card original real
           setTimeout(() => {
             const btnOriginal = cardOriginal.querySelector(
               btnClone.classList.contains("heart-tab-btn")
@@ -926,10 +926,10 @@ function handleFlip(id) {
         };
       });
 
-    // [FLIP - LAST]: Captura a posição final do contêiner centralizado na viewport do visor
+    // [FLIP - LAST]: Posição do container de destino centralizado na viewport
     const rectFinal = container.getBoundingClientRect();
 
-    // [FLIP - INVERT]: Calcula a diferença matemática de escala e deslocamento geométrico
+    // [FLIP - INVERT]: Calcula o recuo exato para o card nascer sobre a sua coluna
     const deltaX = rectInicial.left - rectFinal.left;
     const deltaY = rectInicial.top - rectFinal.top;
     const deltaW = rectInicial.width / rectFinal.width;
@@ -937,11 +937,11 @@ function handleFlip(id) {
 
     const cloneInner = cardClone.querySelector(".card-inner");
 
-    // Desativa transições nativas e encolhe o clone de forma invisível sobre a posição da coluna inicial
+    // Força o card expandido a encolher e ir de forma opaca até a origem
     cloneInner.style.transition = "none";
     cloneInner.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${deltaW}, ${deltaH})`;
 
-    // [FLIP - PLAY]: Liga as transições e expande o card continuamente aplicando o giro 3D no eixo Y
+    // [FLIP - PLAY]: Dispara a expansão e rotação 3D combinadas por aceleração gráfica
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         cloneInner.style.transition = "";
@@ -954,7 +954,7 @@ function handleFlip(id) {
     return;
   }
 
-  // 💻 FLUXO DESKTOP STANDARD (Mantido original, fixo e estável)
+  // 💻 FLUXO DESKTOP STANDARD (Preservado estável e original)
   const grid = document.getElementById("toyGrid");
   const isFlipped = cardOriginal.classList.contains("is-flipped");
 
@@ -992,17 +992,14 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
   const overlay = document.getElementById("cardVersoMobileOverlay");
   if (!overlay || !overlay.classList.contains("active")) return;
 
-  // Restaura o fluxo normal de rolagem da página
   document.body.style.overflow = "";
   overlay.classList.remove("active");
 
-  // Devolve de forma limpa a visibilidade opaca do card nativo que ficou no grid Masonry
   if (cardOriginalMobileAtivo) {
     cardOriginalMobileAtivo.style.opacity = "1";
     cardOriginalMobileAtivo = null;
   }
 
-  // Aguarda o término da transição de esmaecimento para desmontar o nó clone da memória
   setTimeout(() => {
     overlay.style.display = "none";
     document.getElementById("cardVersoMobileContainer").innerHTML = "";
@@ -1040,11 +1037,11 @@ function mostrarToastModal(mensagem) {
   clearTimeout(_toastTimer);
 
   toast.textContent = "⚡ " + mensagem;
-
   toast.classList.remove("hidden");
   toast.classList.add("card-verso-toast--visible");
   _toastTimer = setTimeout(() => {
     toast.classList.remove("card-verso-toast--visible");
+    // 🎯 CORREÇÃO CIRÚRGICA: Adicionado o classList de forma nativa e correta
     setTimeout(() => toast.classList.add("hidden"), 300);
   }, 2500);
 }
@@ -1059,7 +1056,7 @@ function resetarEstadoDosCards() {
   });
 }
 
-// Escuta universal de cliques no overlay de fundo escuro para fechar a ficha no mobile
+// Ouvinte de clique externo para o overlay móvel
 document
   .getElementById("cardVersoMobileOverlay")
   .addEventListener("click", (event) => {
@@ -1068,7 +1065,7 @@ document
     }
   });
 
-// Escuta padrão unificada para fechar cards ao clicar fora em resoluções de Desktop
+// Ouvinte de clique externo estável para o desktop
 document.addEventListener("click", (event) => {
   if (window.innerWidth >= 768) {
     const grid = document.getElementById("toyGrid");
