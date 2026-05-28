@@ -338,34 +338,52 @@ body {
 /* ============================================================
    CORREÇÃO DO RODAPÉ GLOBAL (ESTRUTURA DE CANTOS EXTREMOS)
    ============================================================ */
-footer.w-full {
+footer.fixed.bottom-0 {
+  height: 44px !important; /* Altura original elegante e compacta */
+  background-color: rgba(
+    15,
+    23,
+    42,
+    0.95
+  ) !important; /* Paleta slate-900 estável */
+  border-top: 1px solid rgba(51, 65, 85, 0.25) !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
-  padding: 0 2rem !important; /* Espaçamento confortável nas laterais do desktop */
-  height: 50px !important;
-  background-color: #0b0f19 !important; /* Mantém a paleta dark estável */
-  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
-/* Força os links das mídias sociais a manterem tamanho nítido e proporção original */
-footer.w-full .flex.items-center.gap-4 a,
-footer.w-full .flex.items-center.gap-4 svg {
-  width: 20px !important;
-  height: 20px !important;
-  display: inline-block;
-  color: #94a3b8; /* Cor original estável slate */
-  transition: color 0.2s ease;
+/* Força a div interna do Tailwind a ocupar 100% da altura e alinhar na linha central */
+footer.fixed.bottom-0 > div.relative {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important; /* Afasta magneticamente para os cantos */
 }
 
-footer.w-full .flex.items-center.gap-4 a:hover {
-  color: var(--neon-cyan) !important;
+/* Alinhamento do texto de copyright central */
+footer.fixed.bottom-0 p {
+  font-family: "Orbitron", sans-serif !important;
+  font-size: 11px !important; /* Tamanho exato padrão original desktop */
+  letter-spacing: 0.08em !important;
+  margin: 0 auto !important;
 }
 
-/* Ajuste fino responsivo para smartphones */
+/* Dimensão e alinhamento vertical dos ícones das mídias sociais à direita */
+footer.fixed.bottom-0 .absolute.right-4 a,
+footer.fixed.bottom-0 .absolute.right-4 svg {
+  width: 18px !important; /* Tamanho clássico nítido do ANTES.jpg */
+  height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Modificadores responsivos para manter a harmonia no Mobile */
 @media (max-width: 767px) {
-  footer.w-full {
-    padding: 0 1rem !important;
+  footer.fixed.bottom-0 {
+    height: 48px !important; /* Dá uma área de toque maior no smartphone */
+  }
+  footer.fixed.bottom-0 p {
+    font-size: 12px !important;
   }
 }
 
