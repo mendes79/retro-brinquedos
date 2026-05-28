@@ -1499,7 +1499,7 @@ async function _executarBusca(term) {
   await fetchBrinquedos(true);
 }
 
-function ejecutarBuscaForçada() {
+function executarBuscaForçada() {
   const input = document.getElementById("searchInput");
   if (!input) return;
   const term = sanitizarBusca(input.value);
