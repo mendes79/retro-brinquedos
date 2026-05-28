@@ -994,16 +994,28 @@ function abrirCardVersoMobile(id) {
 let _toastTimer = null;
 
 /* ============================================================
-   AJUSTE DE INTERAÇÃO DOS MODAIS MOBILE (PAINEL LED FIX)
+   CORREÇÃO DO TOAST EXCLUSIVO DO MODAL MOBILE
    ============================================================ */
+function mostrarToastModal(mensagem) {
+  const toast = document.getElementById("cardVersoToast");
+  if (!toast) return;
+  clearTimeout(_toastTimer);
+
+  // 💡 FIX: Mudado de 'message' para 'mensagem' para ler o parâmetro correto!
+  toast.textContent = "⚡ " + mensagem;
+
+  toast.classList.remove("hidden");
+  toast.classList.add("card-verso-toast--visible");
+  _toastTimer = setTimeout(() => {
+    toast.classList.remove("card-verso-toast--visible");
+    setTimeout(() => toast.classList.add("hidden"), 300);
+  }, 2500);
+}
+
 function toggleInteracaoModal(event, id, tipo) {
   if (!isUserLogged) {
     if (event) event.stopPropagation();
-
-    // 💡 CORREÇÃO: Encaminha o alerta direto para a engine do Painel LED com o efeito TILT retro
-    if (typeof mostrarMensagemLED === "function") {
-      mostrarMensagemLED("FAÇA LOGIN PARA INTERAGIR");
-    }
+    mostrarToastModal("FAÇA LOGIN PARA INTERAGIR");
     return;
   }
   toggleInteracao(event, id, tipo);
@@ -1012,27 +1024,10 @@ function toggleInteracaoModal(event, id, tipo) {
 function toggleCurtidaModal(event, id) {
   if (!isUserLogged) {
     if (event) event.stopPropagation();
-
-    // 💡 CORREÇÃO: Encaminha o alerta direto para a engine do Painel LED com o efeito TILT retro
-    if (typeof mostrarMensagemLED === "function") {
-      mostrarMensagemLED("FAÇA LOGIN PARA CURTIR");
-    }
+    mostrarToastModal("FAÇA LOGIN PARA CURTIR");
     return;
   }
   toggleCurtida(event, id);
-}
-
-function mostrarToastModal(mensagem) {
-  const toast = document.getElementById("cardVersoToast");
-  if (!toast) return;
-  clearTimeout(_toastTimer);
-  toast.textContent = "⚡ " + message || "⚡ " + mensagem;
-  toast.classList.remove("hidden");
-  toast.classList.add("card-verso-toast--visible");
-  _toastTimer = setTimeout(() => {
-    toast.classList.remove("card-verso-toast--visible");
-    setTimeout(() => toast.classList.add("hidden"), 300);
-  }, 2500);
 }
 
 function fecharCardVersoMobile(event, veioDoPopstate = false) {
