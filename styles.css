@@ -3227,164 +3227,276 @@ body {
   border-color: rgba(0, 255, 255, 0.5);
   background: rgba(0, 255, 255, 0.06);
 }
+
 /* ============================================================
-   C3 — ENGINE VISUAL FLIP CONTINUO GLOBAL MOBILE
+   C3 — MODAL VERSO MOBILE
+   Carta centralizada com proporção real Super Trunfo (1:1.55)
    ============================================================ */
-@media (max-width: 767px) {
-  /* Camada preta translúcida global ocupando 100% da tela real */
-  #cardVersoMobileOverlay {
-    position: fixed !important;
-    inset: 0 !important;
-    background: rgba(5, 5, 10, 0.88) !important;
-    backdrop-filter: blur(4px) !important;
-    -webkit-backdrop-filter: blur(4px) !important;
-    z-index: 500 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+
+/* 1 — Overlay ocupa tela toda, padding mínimo de 10px cada lado */
+#cardVersoMobileModal {
+  padding: 10px;
+  animation: cardVersoOverlayFade 0.2s ease-out forwards;
+}
+
+@keyframes cardVersoOverlayFade {
+  0% {
     opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
   }
-
-  #cardVersoMobileOverlay.active {
-    opacity: 1 !important;
-    pointer-events: all !important;
-  }
-
-  /* Container interno que recebe o card clonado e garante proporções Super Trunfo */
-  #cardVersoMobileContainer {
-    position: relative !important;
-    width: min(calc(100vw - 32px), calc(82vh * 0.645)) !important;
-    max-width: 400px !important;
-    aspect-ratio: 0.645 / 1 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-  }
-
-  /* Força o card clonado a se expandir em 100% da área útil do container */
-  #cardVersoMobileContainer .masonry-item {
-    width: 100% !important;
-    height: 100% !important;
-    margin: 0 !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-  }
-
-  /* Transição ultra suave gerenciada via aceleração de hardware (GPU) */
-  #cardVersoMobileContainer .card-inner {
-    width: 100% !important;
-    height: 100% !important;
-    transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1) !important;
-  }
-
-  /* Exibe o botão fechar (✕) do topo apenas no modo expandido clonado */
-  #cardVersoMobileContainer .trunfo-close-v2 {
-    display: block !important;
-    background: #000 !important;
-    border: 1.5px solid var(--trunfo-gold) !important;
-    color: #fff !important;
-    font-size: clamp(11px, 3vw, 15px) !important;
-    font-weight: 700 !important;
-    padding: 2px 8px !important;
-    border-radius: 4px !important;
-  }
-
-  /* Ajustes finos de escalas internas do esqueleto Super Trunfo no clone expandido */
-  #cardVersoMobileContainer .card-back {
-    position: relative !important;
-    transform: rotateY(180deg) !important;
-    height: 100% !important;
-    max-height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-  }
-
-  #cardVersoMobileContainer .trunfo-stats-area {
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important;
-    overflow: hidden !important;
-  }
-
-  #cardVersoMobileContainer .trunfo-curiosidade-v2 {
-    flex: 1 !important;
-    overflow-y: auto !important;
-    font-size: clamp(11px, 2.8vw, 14px) !important;
-    padding: 6px 12px !important;
-    line-height: 1.5 !important;
-  }
-
-  #cardVersoMobileContainer .trunfo-photo {
-    height: 38vw !important;
-    max-height: 32vh !important;
-    object-fit: cover !important;
-  }
-
-  #cardVersoMobileContainer .trunfo-stat-row {
-    padding: 4px 12px !important;
-    flex-shrink: 0 !important;
-  }
-
-  #cardVersoMobileContainer .trunfo-label {
-    font-size: clamp(10px, 2.5vw, 13px) !important;
-  }
-
-  #cardVersoMobileContainer .trunfo-value {
-    font-size: clamp(11px, 3.2vw, 15px) !important;
-  }
-
-  #cardVersoMobileContainer .trunfo-actions-v2 {
-    padding: 6px 10px !important;
-    gap: 8px !important;
-    flex-shrink: 0 !important;
-  }
-
-  #cardVersoMobileContainer .action-btn-v2 {
-    font-size: clamp(10px, 2.6vw, 13px) !important;
-    padding: 7px 10px !important;
-  }
-
-  #cardVersoMobileContainer .trunfo-footer {
-    height: auto !important;
-    padding: 6px 0 !important;
-    flex-shrink: 0 !important;
-  }
-
-  #cardVersoMobileContainer .tab-icon-svg {
-    width: clamp(20px, 6vw, 26px) !important;
-    height: clamp(20px, 6vw, 26px) !important;
+  100% {
+    opacity: 1;
   }
 }
 
-/* Trava global de interações deslogadas */
+/* 1 — Card cresce o máximo possível mantendo proporção */
+.card-verso-mobile-box {
+  /* Proporção exata carta Super Trunfo: 63.5mm × 98.5mm = 0.645:1 */
+  /* Calcula largura máxima que cabe na tela sem ultrapassar 92vh de altura */
+  width: min(calc(100vw - 20px), calc(92vh * 0.645));
+  max-width: 400px;
+  /* Altura calculada automaticamente pela proporção */
+  aspect-ratio: 0.645 / 1;
+  /* overflow-y apenas se o conteúdo ultrapassar — fallback de segurança */
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #0f0e1e;
+  border: 3px solid var(--trunfo-gold);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  /* Animação de entrada: scanline CRT → overshoot elástico */
+  animation: cardVersoEntrada 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+}
+
+/*
+  Entrada combinada:
+  Fase 1 (0–55%)  — scanline CRT: card "liga" como monitor, cresce verticalmente
+                    com flash neon no pico (brightness 2.2)
+  Fase 2 (55–80%) — overshoot: escala ultrapassa 1 levemente (encaixe físico)
+  Fase 3 (80–100%)— recuo suave para escala e brilho normais
+*/
+@keyframes cardVersoEntrada {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.04) scaleX(0.92);
+    filter: brightness(3) blur(1px);
+  }
+  28% {
+    opacity: 1;
+    transform: scaleY(0.72) scaleX(0.97);
+    filter: brightness(2.2) blur(0px);
+  }
+  55% {
+    opacity: 1;
+    transform: scaleY(1) scaleX(1);
+    filter: brightness(1.5);
+  }
+  78% {
+    opacity: 1;
+    transform: scale(1.055);
+    filter: brightness(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+/* Foto maior no modal mobile */
+.card-verso-mobile-box .trunfo-photo {
+  height: 180px;
+  object-fit: cover;
+}
+
+/* 4 — RETROBRINQUEDOS maior e neon verde */
+.card-verso-mobile-box .trunfo-brand-v2 {
+  font-size: 0.52rem;
+  color: #39ff14;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.6);
+}
+
+/* 5 — Botão ✕ com fundo preto e borda dourada — contraste sobre header vermelho */
+.card-verso-mobile-box .trunfo-close-v2 {
+  background: #000;
+  border: 1.5px solid var(--trunfo-gold);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 3px;
+  cursor: pointer;
+  line-height: 1.4;
+  transition: all 0.15s ease;
+}
+.card-verso-mobile-box .trunfo-close-v2:hover {
+  background: var(--trunfo-gold);
+  color: #000;
+  border-color: var(--trunfo-gold);
+}
+
+/* ── Escala proporcional do conteúdo interno do card mobile ──
+   Layout: header fixo → foto fixo → curiosidade FLEX:1 (variável+scroll)
+   → atributos fixos → EU TIVE/QUERIA TER fixos → footer fixo
+   Card ≈ 90vw → tudo em vw para escalar junto */
+
+/* Card não transborda — proporção sempre respeitada */
+.card-verso-mobile-box {
+  overflow: hidden;
+}
+
+/* stats-area vira coluna flex para empurrar atributos para baixo */
+.card-verso-mobile-box .trunfo-stats-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  border-top: 2px solid var(--trunfo-gold);
+}
+
+/* Curiosidade — área variável, cresce e encolhe, scroll se precisar */
+.card-verso-mobile-box .trunfo-curiosidade-v2 {
+  flex: 1;
+  overflow-y: auto;
+  font-size: clamp(11px, 2.8vw, 15px);
+  padding: 6px 12px;
+  line-height: 1.6;
+  /* scroll sutil */
+  scrollbar-width: thin;
+  scrollbar-color: var(--trunfo-gold) transparent;
+}
+.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar {
+  width: 3px;
+}
+.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar-thumb {
+  background: var(--trunfo-gold);
+  border-radius: 2px;
+}
+
+/* Atributos — ancorados na base, acima dos botões */
+.card-verso-mobile-box .trunfo-stat-row {
+  padding: 3px 12px;
+  flex-shrink: 0;
+}
+.card-verso-mobile-box .trunfo-label {
+  font-size: clamp(10px, 2.5vw, 13px);
+  letter-spacing: 0.08em;
+}
+.card-verso-mobile-box .trunfo-value {
+  font-size: clamp(11px, 3.2vw, 15px);
+}
+.card-verso-mobile-box .trunfo-stat-last {
+  border-bottom: 2px solid var(--trunfo-gold) !important;
+}
+
+/* EU TIVE / QUERIA TER — ancorados logo acima do footer */
+.card-verso-mobile-box .trunfo-actions-v2 {
+  padding: 6px 10px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.card-verso-mobile-box .action-btn-v2 {
+  font-size: clamp(10px, 2.6vw, 13px);
+  padding: 7px 10px;
+  border-radius: 5px;
+}
+.card-verso-mobile-box .action-count-v2 {
+  font-size: clamp(11px, 3vw, 14px);
+}
+
+/* Header — RETROBRINQUEDOS maior e com mais destaque */
+.card-verso-mobile-box .trunfo-top-bar-v2 {
+  padding: 5px 10px;
+}
+.card-verso-mobile-box .trunfo-brand-v2 {
+  font-size: clamp(11px, 3.2vw, 16px);
+  color: #39ff14;
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.7);
+  letter-spacing: 0.15em;
+}
+.card-verso-mobile-box .trunfo-code-v2 {
+  font-size: clamp(11px, 3vw, 15px);
+}
+
+/* Título do brinquedo */
+.card-verso-mobile-box .trunfo-title-area {
+  padding: 7px 12px 9px;
+  gap: 10px;
+}
+.card-verso-mobile-box .trunfo-star {
+  width: 22px;
+  height: 22px;
+}
+.card-verso-mobile-box .trunfo-title-text {
+  font-size: clamp(13px, 3.8vw, 18px);
+}
+
+/* Foto */
+.card-verso-mobile-box .trunfo-photo {
+  height: 38vw;
+  max-height: 45vh;
+  object-fit: cover;
+}
+
+/* Footer — ícones com padding interno para não tocar as bordas */
+.card-verso-mobile-box .trunfo-footer {
+  height: auto;
+  padding: 4px 0;
+  flex-shrink: 0;
+}
+.card-verso-mobile-box .footer-icons-container {
+  align-items: center;
+}
+.card-verso-mobile-box .footer-tab-btn {
+  padding: 6px 0;
+}
+.card-verso-mobile-box .tab-icon-svg {
+  width: clamp(20px, 6vw, 28px) !important;
+  height: clamp(20px, 6vw, 28px) !important;
+}
+.card-verso-mobile-box .tab-count {
+  font-size: clamp(11px, 3vw, 14px);
+}
+
+/* ── Botões EU TIVE / QUERIA TER desabilitados para usuário deslogado ──
+   .app-unlogged é adicionado ao body quando não há sessão ativa.
+   Desktop (.action-btn) e Mobile (.action-btn-v2) tratados juntos. */
 .app-unlogged .action-btn,
 .app-unlogged .action-btn-v2 {
-  filter: grayscale(100%) opacity(0.45) !important;
-  cursor: not-allowed !important;
+  filter: grayscale(100%) opacity(0.45);
+  cursor: not-allowed;
 }
+/* Sem reveal de cor no hover quando deslogado */
 .app-unlogged .action-btn:hover,
 .app-unlogged .action-btn-v2:hover {
-  background: rgba(255, 255, 255, 0.02) !important;
-  border-color: transparent !important;
+  filter: grayscale(100%) opacity(0.45);
+  background: rgba(255, 255, 255, 0.02);
+  border-color: transparent;
+}
+/* Garante que os estados active-tive / active-queria também ficam cinza */
+.app-unlogged .action-btn.active-tive,
+.app-unlogged .action-btn.active-queria,
+.app-unlogged .action-btn-v2.active-tive,
+.app-unlogged .action-btn-v2.active-queria {
+  filter: grayscale(100%) opacity(0.45);
 }
 
-/* Toast de feedback flutuando acima do overlay */
+/* Toast de feedback no modal verso mobile */
 .card-verso-toast {
   position: fixed;
-  bottom: 30px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(10, 10, 20, 0.96);
   border: 1.5px solid rgba(255, 32, 32, 0.7);
   color: #ff5555;
   font-family: "Orbitron", monospace;
-  font-size: clamp(12px, 3.5vw, 15px);
+  font-size: clamp(12px, 3.5vw, 16px);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 10px 24px;
+  padding: 10px 20px;
   border-radius: 8px;
   z-index: 600;
   white-space: nowrap;
@@ -3395,4 +3507,23 @@ body {
 }
 .card-verso-toast--visible {
   opacity: 1;
+}
+
+/* Botões EU TIVE / QUERIA TER desabilitados para usuário deslogado */
+.app-unlogged .action-btn,
+.app-unlogged .action-btn-v2 {
+  filter: grayscale(100%) opacity(0.45);
+  cursor: not-allowed;
+}
+.app-unlogged .action-btn:hover,
+.app-unlogged .action-btn-v2:hover {
+  filter: grayscale(100%) opacity(0.45);
+  background: rgba(255, 255, 255, 0.02);
+  border-color: transparent;
+}
+.app-unlogged .action-btn.active-tive,
+.app-unlogged .action-btn.active-queria,
+.app-unlogged .action-btn-v2.active-tive,
+.app-unlogged .action-btn-v2.active-queria {
+  filter: grayscale(100%) opacity(0.45);
 }
