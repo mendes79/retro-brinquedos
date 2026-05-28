@@ -1063,8 +1063,6 @@ function resetarEstadoDosCards() {
 
 let ledLocked = false;
 
-let ledLocked = false;
-
 function mostrarMensagemLED(mensagem) {
   if (ledLocked) return;
   ledLocked = true;
