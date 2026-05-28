@@ -3228,49 +3228,59 @@ body {
   background: rgba(0, 255, 255, 0.06);
 }
 /* ============================================================
-   C3 — MUTAÇÃO FLIP EXPANDIDO MOBILE (CONCEITO FLIP CONTINUO)
+   C3 — ENGINE VISUAL FLIP CONTINUO GLOBAL MOBILE
    ============================================================ */
 @media (max-width: 767px) {
-  /* Classe mutadora que transforma o card do grid em um painel fixo centralizado */
-  .masonry-item.is-expanded-mobile {
+  /* Camada preta translúcida global ocupando 100% da tela real */
+  #cardVersoMobileOverlay {
     position: fixed !important;
-    /* Proporção exata da carta Super Trunfo: 0.645:1 */
+    inset: 0 !important;
+    background: rgba(5, 5, 10, 0.88) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    z-index: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  #cardVersoMobileOverlay.active {
+    opacity: 1 !important;
+    pointer-events: all !important;
+  }
+
+  /* Container interno que recebe o card clonado e garante proporções Super Trunfo */
+  #cardVersoMobileContainer {
+    position: relative !important;
     width: min(calc(100vw - 32px), calc(82vh * 0.645)) !important;
     max-width: 400px !important;
     aspect-ratio: 0.645 / 1 !important;
-
-    /* 💡 CORREÇÃO: Ancoragem zerada no topo esquerdo para bater com a matemática do JS */
-    top: 0 !important;
-    left: 0 !important;
-
-    z-index: 400 !important;
     margin: 0 !important;
     overflow: hidden !important;
   }
 
-  /* Força a transição suave de posicionamento físico usando a GPU do smartphone */
-  .masonry-item.is-expanded-mobile .card-inner {
+  /* Força o card clonado a se expandir em 100% da área útil do container */
+  #cardVersoMobileContainer .masonry-item {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+
+  /* Transição ultra suave gerenciada via aceleração de hardware (GPU) */
+  #cardVersoMobileContainer .card-inner {
     width: 100% !important;
     height: 100% !important;
     transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
 
-  /* Cria o overlay escuro dinâmico atrás do card mutado */
-  .masonry-item.is-expanded-mobile::before {
-    content: "";
-    position: fixed;
-    inset: -2000px;
-    background: rgba(5, 5, 10, 0.85);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    z-index: -1;
-    opacity: 0;
-    animation: fadeOverlayIn 0.3s ease-out forwards;
-    pointer-events: all;
-  }
-
-  /* Exibe o botão de fechar (✕) na barra do Trunfo apenas quando expandido no mobile */
-  .masonry-item.is-expanded-mobile .trunfo-close-v2 {
+  /* Exibe o botão fechar (✕) do topo apenas no modo expandido clonado */
+  #cardVersoMobileContainer .trunfo-close-v2 {
     display: block !important;
     background: #000 !important;
     border: 1.5px solid var(--trunfo-gold) !important;
@@ -3281,8 +3291,8 @@ body {
     border-radius: 4px !important;
   }
 
-  /* Escala fluida do esqueleto interno do Super Trunfo para preenchimento total do card expandido */
-  .masonry-item.is-expanded-mobile .card-back {
+  /* Ajustes finos de escalas internas do esqueleto Super Trunfo no clone expandido */
+  #cardVersoMobileContainer .card-back {
     position: relative !important;
     transform: rotateY(180deg) !important;
     height: 100% !important;
@@ -3292,14 +3302,14 @@ body {
     overflow: hidden !important;
   }
 
-  .masonry-item.is-expanded-mobile .trunfo-stats-area {
+  #cardVersoMobileContainer .trunfo-stats-area {
     display: flex !important;
     flex-direction: column !important;
     flex: 1 !important;
     overflow: hidden !important;
   }
 
-  .masonry-item.is-expanded-mobile .trunfo-curiosidade-v2 {
+  #cardVersoMobileContainer .trunfo-curiosidade-v2 {
     flex: 1 !important;
     overflow-y: auto !important;
     font-size: clamp(11px, 2.8vw, 14px) !important;
@@ -3307,68 +3317,61 @@ body {
     line-height: 1.5 !important;
   }
 
-  .masonry-item.is-expanded-mobile .trunfo-photo {
+  #cardVersoMobileContainer .trunfo-photo {
     height: 38vw !important;
     max-height: 32vh !important;
     object-fit: cover !important;
   }
 
-  .masonry-item.is-expanded-mobile .trunfo-stat-row {
+  #cardVersoMobileContainer .trunfo-stat-row {
     padding: 4px 12px !important;
     flex-shrink: 0 !important;
   }
 
-  .masonry-item.is-expanded-mobile .trunfo-label {
+  #cardVersoMobileContainer .trunfo-label {
     font-size: clamp(10px, 2.5vw, 13px) !important;
   }
 
-  .masonry-item.is-expanded-mobile .trunfo-value {
+  #cardVersoMobileContainer .trunfo-value {
     font-size: clamp(11px, 3.2vw, 15px) !important;
   }
 
-  .masonry-item.is-expanded-mobile .trunfo-actions-v2 {
+  #cardVersoMobileContainer .trunfo-actions-v2 {
     padding: 6px 10px !important;
     gap: 8px !important;
     flex-shrink: 0 !important;
   }
 
-  .masonry-item.is-expanded-mobile .action-btn-v2 {
+  #cardVersoMobileContainer .action-btn-v2 {
     font-size: clamp(10px, 2.6vw, 13px) !important;
     padding: 7px 10px !important;
   }
 
-  .masonry-item.is-expanded-mobile .trunfo-footer {
+  #cardVersoMobileContainer .trunfo-footer {
     height: auto !important;
     padding: 6px 0 !important;
     flex-shrink: 0 !important;
   }
 
-  .masonry-item.is-expanded-mobile .tab-icon-svg {
+  #cardVersoMobileContainer .tab-icon-svg {
     width: clamp(20px, 6vw, 26px) !important;
     height: clamp(20px, 6vw, 26px) !important;
   }
 }
 
-@keyframes fadeOverlayIn {
-  to {
-    opacity: 1;
-  }
-}
-
-/* Trava global de interações deslogadas para os botões nativos */
+/* Trava global de interações deslogadas */
 .app-unlogged .action-btn,
 .app-unlogged .action-btn-v2 {
   filter: grayscale(100%) opacity(0.45) !important;
   cursor: not-allowed !important;
 }
-
 .app-unlogged .action-btn:hover,
 .app-unlogged .action-btn-v2:hover {
   background: rgba(255, 255, 255, 0.02) !important;
   border-color: transparent !important;
 }
 
-/* Toast de feedback no modal mobile */
+/* Toast de feedback flutuando acima do overlay */
 .card-verso-toast {
   position: fixed;
   bottom: 30px;

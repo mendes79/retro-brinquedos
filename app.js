@@ -822,11 +822,10 @@ async function registrarVisualizacao(id) {
 }
 
 /* ============================================================
-   ENGINE FLIP 3D EXPANDIDO MOBILE (CONCEITO FLIP CONTINUO)
+   ENGINE FLIP 3D GLOBAL POR CLONAGEM MOBILE (FLIP CONTINUO V2)
    ============================================================ */
 
-// Estado persistente para controle do nó que está sob mutação no mobile
-let cardMutadoMobileAtivo = null;
+let cardOriginalMobileAtivo = null;
 
 function handleFlip(id) {
   const evento = window.event;
@@ -850,64 +849,104 @@ function handleFlip(id) {
       ? sessionSeed.toString().substring(2, 6)
       : "";
   const cardIdBuscado = `card-${String(id).padStart(4, "0")}_s${sToken}`;
-  const card =
+  const cardOriginal =
     document.getElementById(cardIdBuscado) ||
     document.getElementById(`card-${String(id).padStart(4, "0")}`);
 
-  if (!card) return;
+  if (!cardOriginal) return;
 
-  // 📱 FLUXO MÓVEL RECALIBRADO (< 768px)
+  // 📱 FLUXO MÓVEL ISOLADO (Garante centralização perfeita e livre das amarras do Masonry)
   if (window.innerWidth < 768) {
-    if (card.classList.contains("is-expanded-mobile")) return;
-
     registrarVisualizacao(String(id).padStart(4, "0"));
-    cardMutadoMobileAtivo = card;
+    cardOriginalMobileAtivo = cardOriginal;
 
-    const cardInner = card.querySelector(".card-inner");
+    const overlay = document.getElementById("cardVersoMobileOverlay");
+    const container = document.getElementById("cardVersoMobileContainer");
 
-    // [FLIP - FIRST]: Posição e tamanho iniciais do card na coluna
-    const rectInicial = card.getBoundingClientRect();
+    // Limpa resíduos de interações anteriores no contêiner raiz
+    container.innerHTML = "";
 
-    // Bloqueia o scroll da tela
+    // [FLIP - FIRST]: Captura a posição exata do card pequeno dentro do grid masonry
+    const rectInicial = cardOriginal.getBoundingClientRect();
+
+    // Bloqueia o scroll de fundo do smartphone
     document.body.style.overflow = "hidden";
 
-    // Ativa a mutação de nós para o modo expandido
-    card.classList.add("is-expanded-mobile", "is-flipped");
+    // Cria um clone vivo do card mantendo classes, curtidas e contadores já gerados pelo Supabase
+    const cardClone = cardOriginal.cloneNode(true);
+    cardClone.removeAttribute("id");
+    container.appendChild(cardClone);
 
-    // [FLIP - LAST]: Captura a nova posição dele fixada na tela (que agora inicia em top:0, left:0)
-    const rectFinal = card.getBoundingClientRect();
+    // Oculta temporariamente a opacidade da carta de origem que ficou no grid de fundo
+    cardOriginal.style.opacity = "0";
 
-    // 🎯 MATEMÁTICA CENTRALIZADORA: Calcula o destino perfeito para o centro da tela
-    const centroX = (window.innerWidth - rectFinal.width) / 2;
-    const centroY = (window.innerHeight - rectFinal.height) / 2;
+    // Torna visível a camada escura global e o painel flex centralizador
+    overlay.classList.add("active");
+    overlay.style.display = "flex";
 
-    // Força o card expandido a se posicionar no centro exato de forma estática
-    card.style.left = `${centroX}px`;
-    card.style.top = `${centroY}px`;
+    // Vincula a ação de fechamento ao clique do botão de fechar (✕) do clone expandido
+    const btnFecharClone = cardClone.querySelector(".trunfo-close-v2");
+    if (btnFecharClone) {
+      btnFecharClone.onclick = (e) => {
+        e.stopPropagation();
+        fecharCardVersoMobile();
+      };
+    }
 
-    // Re-captura a posição final ancorada e centralizada no meio do visor
-    const rectDestinoFinal = card.getBoundingClientRect();
+    // Acopla listeners de clique nos botões de ação do clone para espelharem os disparos no card real de fundo
+    cardClone
+      .querySelectorAll(".action-btn-v2, .action-btn, .heart-tab-btn")
+      .forEach((btnClone) => {
+        btnClone.onclick = (e) => {
+          e.stopPropagation();
 
-    // [FLIP - INVERT]: Calcula a distância real do ponto de origem até o centro do visor
-    const deltaX = rectInicial.left - rectDestinoFinal.left;
-    const deltaY = rectInicial.top - rectDestinoFinal.top;
-    const deltaW = rectInicial.width / rectDestinoFinal.width;
-    const deltaH = rectInicial.height / rectDestinoFinal.height;
+          if (btnClone.classList.contains("heart-tab-btn")) {
+            toggleCurtidaModal(e, id);
+          } else {
+            const textoBtn = btnClone.textContent.toUpperCase();
+            if (textoBtn.includes("TIVE")) {
+              toggleInteracaoModal(e, id, "tive");
+            } else if (textoBtn.includes("QUERIA")) {
+              toggleInteracaoModal(e, id, "queria");
+            }
+          }
 
-    // Congela transições para embutir a inversão invisível
-    cardInner.style.transition = "none";
-    card.style.transition = "none";
+          // Sincroniza visualmente as classes de estado ativo e números incrementados no clone móvel
+          setTimeout(() => {
+            const btnOriginal = cardOriginal.querySelector(
+              btnClone.classList.contains("heart-tab-btn")
+                ? ".heart-tab-btn"
+                : `[id*="${btnClone.id.split("-")[1]}"]`,
+            );
+            if (btnOriginal) {
+              btnClone.className = btnOriginal.className;
+              btnClone.innerHTML = btnOriginal.innerHTML;
+            }
+          }, 350);
+        };
+      });
 
-    // Encolhe o card central e o joga perfeitamente sobre a sua coluna correspondente
-    cardInner.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${deltaW}, ${deltaH})`;
+    // [FLIP - LAST]: Captura a posição final do contêiner centralizado na viewport do visor
+    const rectFinal = container.getBoundingClientRect();
 
-    // [FLIP - PLAY]: Executa a animação cinematográfica contínua desfazendo a inversão
+    // [FLIP - INVERT]: Calcula a diferença matemática de escala e deslocamento geométrico
+    const deltaX = rectInicial.left - rectFinal.left;
+    const deltaY = rectInicial.top - rectFinal.top;
+    const deltaW = rectInicial.width / rectFinal.width;
+    const deltaH = rectInicial.height / rectFinal.height;
+
+    const cloneInner = cardClone.querySelector(".card-inner");
+
+    // Desativa transições nativas e encolhe o clone de forma invisível sobre a posição da coluna inicial
+    cloneInner.style.transition = "none";
+    cloneInner.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${deltaW}, ${deltaH})`;
+
+    // [FLIP - PLAY]: Liga as transições e expande o card continuamente aplicando o giro 3D no eixo Y
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        cardInner.style.transition = "";
-        card.style.transition = "";
-        // O card expande organicamente do grid e faz o Flip 3D no centro da tela!
-        cardInner.style.transform = "rotateY(180deg)";
+        cloneInner.style.transition = "";
+        cloneInner.style.transform = "rotateY(180deg)";
+        cardClone.classList.add("is-flipped");
       });
     });
 
@@ -915,9 +954,9 @@ function handleFlip(id) {
     return;
   }
 
-  // 💻 FLUXO DESKTOP STANDARD (Mantido estável)
+  // 💻 FLUXO DESKTOP STANDARD (Mantido original, fixo e estável)
   const grid = document.getElementById("toyGrid");
-  const isFlipped = card.classList.contains("is-flipped");
+  const isFlipped = cardOriginal.classList.contains("is-flipped");
 
   if (grid.classList.contains("grid-focused") && !isFlipped) {
     return;
@@ -929,7 +968,7 @@ function handleFlip(id) {
 
   if (!isFlipped) {
     registrarVisualizacao(id);
-    card.classList.add("is-flipped");
+    cardOriginal.classList.add("is-flipped");
     grid.classList.add("grid-focused");
 
     const nav = document.querySelector("nav");
@@ -941,7 +980,8 @@ function handleFlip(id) {
     }
 
     const yOffset = -(headerHeight + 16);
-    const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    const y =
+      cardOriginal.getBoundingClientRect().top + window.pageYOffset + yOffset;
     window.scrollTo({ top: y, behavior: "smooth" });
   } else {
     grid.classList.remove("grid-focused");
@@ -949,27 +989,31 @@ function handleFlip(id) {
 }
 
 function fecharCardVersoMobile(event, veioDoPopstate = false) {
-  if (!cardMutadoMobileAtivo) return;
+  const overlay = document.getElementById("cardVersoMobileOverlay");
+  if (!overlay || !overlay.classList.contains("active")) return;
 
-  const card = cardMutadoMobileAtivo;
-  const cardInner = card.querySelector(".card-inner");
-
-  // Destrava o overflow do body imediatamente
+  // Restaura o fluxo normal de rolagem da página
   document.body.style.overflow = "";
+  overlay.classList.remove("active");
 
-  // Desliga o estado expandido e o flip suavemente
-  card.classList.remove("is-expanded-mobile", "is-flipped");
-  cardInner.style.transform = "";
-  cardMutadoMobileAtivo = null;
+  // Devolve de forma limpa a visibilidade opaca do card nativo que ficou no grid Masonry
+  if (cardOriginalMobileAtivo) {
+    cardOriginalMobileAtivo.style.opacity = "1";
+    cardOriginalMobileAtivo = null;
+  }
 
-  // Se o fechamento foi manual (clique no ✕), limpa a pilha do histórico do smartphone
+  // Aguarda o término da transição de esmaecimento para desmontar o nó clone da memória
+  setTimeout(() => {
+    overlay.style.display = "none";
+    document.getElementById("cardVersoMobileContainer").innerHTML = "";
+  }, 300);
+
   if (!veioDoPopstate) {
     retroSincronizandoHistorico = true;
     history.back();
   }
 }
 
-// Adaptação dos gatilhos de curtir e interagir no mobile para eliminarem o prefixo "m-"
 function toggleInteracaoModal(event, id, tipo) {
   if (!isUserLogged) {
     if (event) event.stopPropagation();
@@ -987,29 +1031,6 @@ function toggleCurtidaModal(event, id) {
   }
   toggleCurtida(event, id);
 }
-
-// Acoplador universal de escuta de cliques externos para fechar o card
-document.addEventListener("click", (event) => {
-  // Mobile: Se clicar fora do card expandido (no pseudo-elemento overlay), fecha
-  if (window.innerWidth < 768 && cardMutadoMobileAtivo) {
-    if (
-      cardMutadoMobileAtivo.classList.contains("is-expanded-mobile") &&
-      event.target === cardMutadoMobileAtivo
-    ) {
-      fecharCardVersoMobile();
-      return;
-    }
-  }
-
-  // Desktop: Mantém o reset clássico ao clicar fora
-  const grid = document.getElementById("toyGrid");
-  if (grid && grid.classList.contains("grid-focused")) {
-    const flippedCard = document.querySelector(".masonry-item.is-flipped");
-    if (flippedCard && !flippedCard.contains(event.target)) {
-      resetarEstadoDosCards();
-    }
-  }
-});
 
 let _toastTimer = null;
 
@@ -1028,55 +1049,37 @@ function mostrarToastModal(mensagem) {
   }, 2500);
 }
 
-function toggleInteracaoModal(event, id, tipo) {
-  if (!isUserLogged) {
-    if (event) event.stopPropagation();
-    mostrarToastModal("FAÇA LOGIN PARA INTERAGIR");
-    return;
-  }
-  toggleInteracao(event, id, tipo);
-}
-
-function toggleCurtidaModal(event, id) {
-  if (!isUserLogged) {
-    if (event) event.stopPropagation();
-    mostrarToastModal("FAÇA LOGIN PARA CURTIR");
-    return;
-  }
-  toggleCurtida(event, id);
-}
-
-function fecharCardVersoMobile(event, veioDoPopstate = false) {
-  if (event && event.target !== document.getElementById("cardVersoMobileModal"))
-    return;
-  const modal = document.getElementById("cardVersoMobileModal");
-  if (modal) modal.classList.add("hidden");
-  document.body.style.overflow = "";
-
-  // Se o fechamento foi manual, sincroniza e limpa a pilha do histórico
-  if (!veioDoPopstate) {
-    retroSincronizandoHistorico = true;
-    history.back();
-  }
-}
-
-document.addEventListener("click", (event) => {
-  const grid = document.getElementById("toyGrid");
-  if (grid && grid.classList.contains("grid-focused")) {
-    const flippedCard = document.querySelector(".masonry-item.is-flipped");
-    if (flippedCard && !flippedCard.contains(event.target))
-      resetarEstadoDosCards();
-  }
-});
-
 function resetarEstadoDosCards() {
   const grid = document.getElementById("toyGrid");
   if (grid) grid.classList.remove("grid-focused");
   document.body.style.overflow = "";
-  document
-    .querySelectorAll(".masonry-item")
-    .forEach((card) => card.classList.remove("is-flipped"));
+  document.querySelectorAll(".masonry-item").forEach((card) => {
+    card.classList.remove("is-flipped");
+    card.style.opacity = "1";
+  });
 }
+
+// Escuta universal de cliques no overlay de fundo escuro para fechar a ficha no mobile
+document
+  .getElementById("cardVersoMobileOverlay")
+  .addEventListener("click", (event) => {
+    if (event.target === document.getElementById("cardVersoMobileOverlay")) {
+      fecharCardVersoMobile();
+    }
+  });
+
+// Escuta padrão unificada para fechar cards ao clicar fora em resoluções de Desktop
+document.addEventListener("click", (event) => {
+  if (window.innerWidth >= 768) {
+    const grid = document.getElementById("toyGrid");
+    if (grid && grid.classList.contains("grid-focused")) {
+      const flippedCard = document.querySelector(".masonry-item.is-flipped");
+      if (flippedCard && !flippedCard.contains(event.target)) {
+        resetarEstadoDosCards();
+      }
+    }
+  }
+});
 
 let ledLocked = false;
 
