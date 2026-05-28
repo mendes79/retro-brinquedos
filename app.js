@@ -821,7 +821,7 @@ async function registrarVisualizacao(id) {
   } catch (_) {}
 }
 
-//* ============================================================
+/* ============================================================
    ENGINE FLIP 3D GLOBAL POR CLONAGEM MOBILE (FLIP CONTINUO V2)
    ============================================================ */
 
@@ -844,13 +844,17 @@ function handleFlip(id) {
     }
   }
 
-  const sToken = typeof sessionSeed !== "undefined" ? sessionSeed.toString().substring(2, 6) : "";
+  const sToken =
+    typeof sessionSeed !== "undefined"
+      ? sessionSeed.toString().substring(2, 6)
+      : "";
   const cardIdBuscado = `card-${String(id).padStart(4, "0")}_s${sToken}`;
-  const cardOriginal = document.getElementById(cardIdBuscado) || document.getElementById(`card-${String(id).padStart(4, "0")}`);
+  const cardOriginal =
+    document.getElementById(cardIdBuscado) ||
+    document.getElementById(`card-${String(id).padStart(4, "0")}`);
 
   if (!cardOriginal) return;
 
-  // 📱 FLUXO MÓVEL ISOLADO (Garante centralização perfeita e livre das amarras do Masonry)
   if (window.innerWidth < 768) {
     registrarVisualizacao(String(id).padStart(4, "0"));
     cardOriginalMobileAtivo = cardOriginal;
@@ -858,76 +862,72 @@ function handleFlip(id) {
     const overlay = document.getElementById("cardVersoMobileOverlay");
     const container = document.getElementById("cardVersoMobileContainer");
 
-    // Limpa resíduos de interações anteriores no contêiner raiz
     container.innerHTML = "";
 
-    // [FLIP - FIRST]: Captura a posição exata do card pequeno dentro do grid masonry
     const rectInicial = cardOriginal.getBoundingClientRect();
 
-    // Bloqueia o scroll de fundo do smartphone
     document.body.style.overflow = "hidden";
 
-    // Cria um clone vivo do card mantendo classes, curtidas e contadores já gerados pelo Supabase
     const cardClone = cardOriginal.cloneNode(true);
     cardClone.removeAttribute("id");
     container.appendChild(cardClone);
 
-    // Oculta temporariamente a opacidade da carta de origem que ficou no grid de fundo
     cardOriginal.style.opacity = "0";
 
-    // Torna visível a camada escura global e o painel flex centralizador
     overlay.classList.add("active");
     overlay.style.display = "flex";
 
-    // Vincula a ação de fechamento ao clique do botão de fechar (✕) do clone expandido
     const btnFecharClone = cardClone.querySelector(".trunfo-close-v2");
     if (btnFecharClone) {
-      btnFecharClone.onclick = (e) => { e.stopPropagation(); fecharCardVersoMobile(); };
+      btnFecharClone.onclick = (e) => {
+        e.stopPropagation();
+        fecharCardVersoMobile();
+      };
     }
 
-    // Acopla listeners de clique nos botões de ação do clone para espelharem os disparos no card real de fundo
-    cardClone.querySelectorAll(".action-btn-v2, .action-btn, .heart-tab-btn").forEach(btnClone => {
-      btnClone.onclick = (e) => {
-        e.stopPropagation();
-        
-        if (btnClone.classList.contains("heart-tab-btn")) {
-          toggleCurtidaModal(e, id);
-        } else {
-          const textoBtn = btnClone.textContent.toUpperCase();
-          if (textoBtn.includes("TIVE")) {
-            toggleInteracaoModal(e, id, "tive");
-          } else if (textoBtn.includes("QUERIA")) {
-            toggleInteracaoModal(e, id, "queria");
-          }
-        }
-        
-        // Sincroniza visualmente as classes de estado ativo e números incrementados no clone móvel
-        setTimeout(() => {
-          const btnOriginal = cardOriginal.querySelector(btnClone.classList.contains("heart-tab-btn") ? ".heart-tab-btn" : `[id*="${btnClone.id.split('-')[1]}"]`);
-          if (btnOriginal) {
-            btnClone.className = btnOriginal.className;
-            btnClone.innerHTML = btnOriginal.innerHTML;
-          }
-        }, 350);
-      };
-    });
+    cardClone
+      .querySelectorAll(".action-btn-v2, .action-btn, .heart-tab-btn")
+      .forEach((btnClone) => {
+        btnClone.onclick = (e) => {
+          e.stopPropagation();
 
-    // [FLIP - LAST]: Captura a posição final do contêiner centralizado na viewport do visor
+          if (btnClone.classList.contains("heart-tab-btn")) {
+            toggleCurtidaModal(e, id);
+          } else {
+            const textoBtn = btnClone.textContent.toUpperCase();
+            if (textoBtn.includes("TIVE")) {
+              toggleInteracaoModal(e, id, "tive");
+            } else if (textoBtn.includes("QUERIA")) {
+              toggleInteracaoModal(e, id, "queria");
+            }
+          }
+
+          setTimeout(() => {
+            const btnOriginal = cardOriginal.querySelector(
+              btnClone.classList.contains("heart-tab-btn")
+                ? ".heart-tab-btn"
+                : `[id*="${btnClone.id.split("-")[1]}"]`,
+            );
+            if (btnOriginal) {
+              btnClone.className = btnOriginal.className;
+              btnClone.innerHTML = btnOriginal.innerHTML;
+            }
+          }, 350);
+        };
+      });
+
     const rectFinal = container.getBoundingClientRect();
 
-    // [FLIP - INVERT]: Calcula a diferença matemática de escala e deslocamento geométrico 
     const deltaX = rectInicial.left - rectFinal.left;
     const deltaY = rectInicial.top - rectFinal.top;
     const deltaW = rectInicial.width / rectFinal.width;
     const deltaH = rectInicial.height / rectFinal.height;
 
     const cloneInner = cardClone.querySelector(".card-inner");
-    
-    // Desativa transições nativas e encolhe o clone de forma invisível sobre a posição da coluna inicial
+
     cloneInner.style.transition = "none";
     cloneInner.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${deltaW}, ${deltaH})`;
 
-    // [FLIP - PLAY]: Liga as transições e expande o card continuamente aplicando o giro 3D no eixo Y
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         cloneInner.style.transition = "";
@@ -940,7 +940,6 @@ function handleFlip(id) {
     return;
   }
 
-  // 💻 FLUXO DESKTOP STANDARD (Mantido original, fixo e estável)
   const grid = document.getElementById("toyGrid");
   const isFlipped = cardOriginal.classList.contains("is-flipped");
 
@@ -948,7 +947,9 @@ function handleFlip(id) {
     return;
   }
 
-  document.querySelectorAll(".masonry-item").forEach((c) => c.classList.remove("is-flipped"));
+  document
+    .querySelectorAll(".masonry-item")
+    .forEach((c) => c.classList.remove("is-flipped"));
 
   if (!isFlipped) {
     registrarVisualizacao(id);
@@ -964,7 +965,8 @@ function handleFlip(id) {
     }
 
     const yOffset = -(headerHeight + 16);
-    const y = cardOriginal.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    const y =
+      cardOriginal.getBoundingClientRect().top + window.pageYOffset + yOffset;
     window.scrollTo({ top: y, behavior: "smooth" });
   } else {
     grid.classList.remove("grid-focused");
@@ -975,17 +977,14 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
   const overlay = document.getElementById("cardVersoMobileOverlay");
   if (!overlay || !overlay.classList.contains("active")) return;
 
-  // Restaura o fluxo normal de rolagem da página
   document.body.style.overflow = "";
   overlay.classList.remove("active");
 
-  // Devolve de forma limpa a visibilidade opaca do card nativo que ficou no grid Masonry
   if (cardOriginalMobileAtivo) {
     cardOriginalMobileAtivo.style.opacity = "1";
     cardOriginalMobileAtivo = null;
   }
 
-  // Aguarda o término da transição de esmaecimento para desmontar o nó clone da memória
   setTimeout(() => {
     overlay.style.display = "none";
     document.getElementById("cardVersoMobileContainer").innerHTML = "";
@@ -1015,12 +1014,13 @@ function toggleCurtidaModal(event, id) {
   toggleCurtida(event, id);
 }
 
-// Acoplador universal de escuta de cliques externos para fechar o card
-document.getElementById("cardVersoMobileOverlay").addEventListener("click", (event) => {
-  if (event.target === document.getElementById("cardVersoMobileOverlay")) {
-    fecharCardVersoMobile();
-  }
-});
+document
+  .getElementById("cardVersoMobileOverlay")
+  .addEventListener("click", (event) => {
+    if (event.target === document.getElementById("cardVersoMobileOverlay")) {
+      fecharCardVersoMobile();
+    }
+  });
 
 let _toastTimer = null;
 
@@ -1039,7 +1039,6 @@ function mostrarToastModal(mensagem) {
   }, 2500);
 }
 
-// Ouvinte de clique externo estável para o desktop
 document.addEventListener("click", (event) => {
   if (window.innerWidth >= 768) {
     const grid = document.getElementById("toyGrid");
@@ -1056,12 +1055,10 @@ function resetarEstadoDosCards() {
   const grid = document.getElementById("toyGrid");
   if (grid) grid.classList.remove("grid-focused");
   document.body.style.overflow = "";
-  document
-    .querySelectorAll(".masonry-item")
-    .forEach((card) => {
-      card.classList.remove("is-flipped");
-      card.style.opacity = "1";
-    });
+  document.querySelectorAll(".masonry-item").forEach((card) => {
+    card.classList.remove("is-flipped");
+    card.style.opacity = "1";
+  });
 }
 
 let ledLocked = false;
