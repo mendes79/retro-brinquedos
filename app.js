@@ -504,6 +504,19 @@ async function fetchBrinquedos(reset = false) {
         if (typeof animarBandeirasEnduro === "function") {
           animarBandeirasEnduro();
         }
+
+        // 🔥 CORREÇÃO CRUCIAL: Se o lote veio 100% vazio (múltiplo exato), dispara o novo lote na mesma hora!
+        if (itens.length === 0) {
+          console.log(
+            "%c 🚀 [GATILHO AUTOMÁTICO] Lote vazio detectado no fim da semente. Buscando rodada subsequente imediatamente...",
+            "color: #ff9800; font-weight: bold;",
+          );
+          // Desbloqueia temporariamente o isLoading que impede chamadas simultâneas
+          isLoading = false;
+          // Chama a si mesma para carregar a nova rodada sem depender do movimento do scroll
+          await fetchBrinquedos({ reset: false });
+          return;
+        }
       }
     }
 
