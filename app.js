@@ -1499,6 +1499,7 @@ async function _executarBusca(term) {
   await fetchBrinquedos(true);
 }
 
+// Chamado quando o usuário pressiona Enter ou clica no botão de busca
 function executarBuscaForçada() {
   const input = document.getElementById("searchInput");
   if (!input) return;
