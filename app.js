@@ -821,6 +821,13 @@ async function registrarVisualizacao(id) {
   } catch (_) {}
 }
 
+/* ============================================================
+   ENGINE FLIP 3D EXPANDIDO MOBILE (CONCEITO FLIP CONTINUO)
+   ============================================================ */
+
+// Estado persistente para controle do nó que está sob mutação no mobile
+let cardMutadoMobileAtivo = null;
+
 function handleFlip(id) {
   const evento = window.event;
   if (evento && evento.target) {
@@ -830,30 +837,77 @@ function handleFlip(id) {
       tag === "button" ||
       tag === "svg" ||
       tag === "path" ||
-      evento.target.closest(".comment-area")
+      evento.target.closest(".comment-area") ||
+      evento.target.closest(".trunfo-actions-v2") ||
+      evento.target.closest(".trunfo-footer")
     ) {
       return;
     }
   }
 
-  if (window.innerWidth < 768) {
-    abrirCardVersoMobile(id);
-    return;
-  }
-
-  const grid = document.getElementById("toyGrid");
-
-  // 💡 CORREÇÃO: Busca primeiro pelo ID único da semente atual, se não achar, tenta o ID clássico
   const sToken =
     typeof sessionSeed !== "undefined"
       ? sessionSeed.toString().substring(2, 6)
       : "";
-  let card =
-    document.getElementById(`card-${id}_s${sToken}`) ||
-    document.getElementById(`card-${id}`);
+  const cardIdBuscado = `card-${String(id).padStart(4, "0")}_s${sToken}`;
+  const card =
+    document.getElementById(cardIdBuscado) ||
+    document.getElementById(`card-${String(id).padStart(4, "0")}`);
 
-  if (!card) return; // Proteção caso o elemento sumer do DOM
+  if (!card) return;
 
+  // 📱 FLUXO EXCLUSIVO: MOTOR FLIP CONTÍNUO PARA DISPOSITIVOS MÓVEIS (< 768px)
+  if (window.innerWidth < 768) {
+    if (card.classList.contains("is-expanded-mobile")) return;
+
+    registrarVisualizacao(String(id).padStart(4, "0"));
+    cardMutadoMobileAtivo = card;
+
+    const cardInner = card.querySelector(".card-inner");
+
+    // [FLIP - FIRST]: Captura a posição geométrica inicial na coluna do Masonry
+    const rectInicial = card.getBoundingClientRect();
+
+    // Bloqueia o scroll da página antes da mutação de nós
+    document.body.style.overflow = "hidden";
+
+    // Aplica a classe de mutação CSS para o card se transformar em Painel Fixo Central
+    card.classList.add("is-expanded-mobile", "is-flipped");
+
+    // [FLIP - LAST]: Captura a nova posição dele centralizado na tela gigante
+    const rectFinal = card.getBoundingClientRect();
+
+    // [FLIP - INVERT]: Calcula a diferença e aplica o transform reverso instantâneo (invisível)
+    const deltaX = rectInicial.left - rectFinal.left;
+    const deltaY = rectInicial.top - rectFinal.top;
+    const deltaW = rectInicial.width / rectFinal.width;
+    const deltaH = rectInicial.height / rectFinal.height;
+
+    // Desliga as transições temporariamente para embutir a inversão de nós de forma opaca
+    cardInner.style.transition = "none";
+    card.style.transition = "none";
+
+    // O card grande encolhe e se desloca de forma invisível para ficar IDÊNTICO ao card da coluna
+    cardInner.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${deltaW}, ${deltaH})`;
+
+    // [FLIP - PLAY]: Devolve o controle ao ciclo de frames do navegador para animar a expansão
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Restaura as transições fluidas e zera a inversão matemática
+        cardInner.style.transition = "";
+        card.style.transition = "";
+        // O card voa da coluna para o centro, girando 180° no eixo Y simultaneamente!
+        cardInner.style.transform = "rotateY(180deg)";
+      });
+    });
+
+    // Registra o estado no histórico para interceptar o botão voltar do smartphone
+    history.pushState({ modal: "cardVersoMobile" }, "");
+    return;
+  }
+
+  // 💻 FLUXO DESKTOP STANDARD (Mantido 100% original e estável)
+  const grid = document.getElementById("toyGrid");
   const isFlipped = card.classList.contains("is-flipped");
 
   if (grid.classList.contains("grid-focused") && !isFlipped) {
@@ -885,123 +939,76 @@ function handleFlip(id) {
   }
 }
 
-function abrirCardVersoMobile(id) {
-  const data = allToys.find(
-    (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0"),
-  );
-  if (!data) return;
+function fecharCardVersoMobile(event, veioDoPopstate = false) {
+  if (!cardMutadoMobileAtivo) return;
 
-  registrarVisualizacao(String(data.id).padStart(4, "0"));
+  const card = cardMutadoMobileAtivo;
+  const cardInner = card.querySelector(".card-inner");
 
-  const idNormalizado = String(data.id).padStart(4, "0");
-  const urlVersoOtimizada = otimizarUrlCloudinary(data.url_verso, 500);
-  const trunfoCode = data.codigo_trunfo || gerarIdSuperTrunfo(data.id);
-  const isTive = tiveDoUsuario.has(idNormalizado);
-  const isQueria = queriaDoUsuario.has(idNormalizado);
-  const isLiked = curtidasDoUsuario.has(idNormalizado);
+  // Destrava o overflow do body imediatamente
+  document.body.style.overflow = "";
 
-  const box = document.getElementById("cardVersoMobileBox");
-  if (!box) return;
+  // Desliga o estado expandido e o flip suavemente
+  card.classList.remove("is-expanded-mobile", "is-flipped");
+  cardInner.style.transform = "";
+  cardMutadoMobileAtivo = null;
 
-  box.innerHTML = `
-    <div class="trunfo-header">
-      <div class="trunfo-top-bar-v2">
-        <span class="trunfo-code-v2">${trunfoCode}</span>
-        <span class="trunfo-brand-v2">RETROBRINQUEDOS</span>
-        <button class="trunfo-close-v2" onclick="fecharCardVersoMobile()" title="Fechar">✕</button>
-      </div>
-      <div class="trunfo-title-area">
-        <div class="trunfo-star"></div>
-        <span class="trunfo-title-text">${data.nome}</span>
-      </div>
-    </div>
-    <div class="trunfo-photo-wrapper">
-      <div class="trunfo-photo-frame">
-        <img src="${urlVersoOtimizada}" alt="${data.nome}" class="trunfo-photo" loading="eager">
-        <span class="trunfo-photo-year">${data.ano}</span>
-      </div>
-    </div>
-    <div class="trunfo-stats-area">
-      <div class="trunfo-curiosidade-v2">"${data.curiosidade}"</div>
-      <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${data.fabricante}</span></div>
-      <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
-      <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
-      <div class="trunfo-stat-row"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
-      <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="m-views-${idNormalizado}">👁 ${data.visualizacoes || 0}</span></div>
-      <div class="trunfo-actions-v2">
-        <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'tive')">
-          EU TIVE <span class="action-count-v2" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
-        </button>
-        <button id="m-btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'queria')">
-          QUERIA TER <span class="action-count-v2" id="m-count-queria-${idNormalizado}">${data.queria_count || 0}</span>
-        </button>
-      </div>
-    </div>
-    <div class="trunfo-footer">
-      <div class="footer-icons-container">
-        <button
-          class="footer-tab-btn comment-tab-btn"
-          onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'")}'); fecharCardVersoMobile();"
-          title="${isUserLogged ? "Comentar" : "Ver comentários"}"
-        >
-          <svg class="tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
-        </button>
-        <button
-          class="footer-tab-btn whatsapp-tab-btn"
-          onclick="compartilharWhatsApp(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;")}'); fecharCardVersoMobile();"
-          title="Compartilhar no WhatsApp"
-        >
-          <svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        </button>
-        <button
-          id="m-heart-btn-${idNormalizado}"
-          class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}"
-          onclick="toggleCurtidaModal(event, '${idNormalizado}')"
-          title="${isUserLogged ? "Curtir" : "Faça login para curtir"}"
-        >
-          <svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
-          <span class="tab-count" id="m-count-${idNormalizado}">${data.curtidas_count || 0}</span>
-        </button>
-      </div>
-    </div>`;
-
-  const modal = document.getElementById("cardVersoMobileModal");
-  if (modal) {
-    const cardEl = document.getElementById(
-      `card-${String(id).padStart(4, "0")}`,
-    );
-    if (cardEl) {
-      cardEl.style.transition = "opacity 0.15s ease, transform 0.15s ease";
-      cardEl.style.opacity = "0.4";
-      cardEl.style.transform = "scale(0.97)";
-      setTimeout(() => {
-        cardEl.style.opacity = "";
-        cardEl.style.transform = "";
-        cardEl.style.transition = "";
-      }, 320);
-    }
-    box.style.animation = "none";
-    box.offsetHeight;
-    box.style.animation = "";
-    modal.classList.remove("hidden");
-    document.body.style.overflow = "hidden";
-
-    // Empilha o histórico fictício para capturar o botão voltar
-    history.pushState({ modal: "cardVersoMobile" }, "");
+  // Se o fechamento foi manual (clique no ✕), limpa a pilha do histórico do smartphone
+  if (!veioDoPopstate) {
+    retroSincronizandoHistorico = true;
+    history.back();
   }
 }
 
+// Adaptação dos gatilhos de curtir e interagir no mobile para eliminarem o prefixo "m-"
+function toggleInteracaoModal(event, id, tipo) {
+  if (!isUserLogged) {
+    if (event) event.stopPropagation();
+    mostrarToastModal("FAÇA LOGIN PARA INTERAGIR");
+    return;
+  }
+  toggleInteracao(event, id, tipo);
+}
+
+function toggleCurtidaModal(event, id) {
+  if (!isUserLogged) {
+    if (event) event.stopPropagation();
+    mostrarToastModal("FAÇA LOGIN PARA CURTIR");
+    return;
+  }
+  toggleCurtida(event, id);
+}
+
+// Acoplador universal de escuta de cliques externos para fechar o card
+document.addEventListener("click", (event) => {
+  // Mobile: Se clicar fora do card expandido (no pseudo-elemento overlay), fecha
+  if (window.innerWidth < 768 && cardMutadoMobileAtivo) {
+    if (
+      cardMutadoMobileAtivo.classList.contains("is-expanded-mobile") &&
+      event.target === cardMutadoMobileAtivo
+    ) {
+      fecharCardVersoMobile();
+      return;
+    }
+  }
+
+  // Desktop: Mantém o reset clássico ao clicar fora
+  const grid = document.getElementById("toyGrid");
+  if (grid && grid.classList.contains("grid-focused")) {
+    const flippedCard = document.querySelector(".masonry-item.is-flipped");
+    if (flippedCard && !flippedCard.contains(event.target)) {
+      resetarEstadoDosCards();
+    }
+  }
+});
+
 let _toastTimer = null;
 
-/* ============================================================
-   CORREÇÃO DO TOAST EXCLUSIVO DO MODAL MOBILE
-   ============================================================ */
 function mostrarToastModal(mensagem) {
   const toast = document.getElementById("cardVersoToast");
   if (!toast) return;
   clearTimeout(_toastTimer);
 
-  // 💡 FIX: Mudado de 'message' para 'mensagem' para ler o parâmetro correto!
   toast.textContent = "⚡ " + mensagem;
 
   toast.classList.remove("hidden");
