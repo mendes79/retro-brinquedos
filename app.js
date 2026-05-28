@@ -856,7 +856,7 @@ function handleFlip(id) {
 
   if (!card) return;
 
-  // 📱 FLUXO EXCLUSIVO: MOTOR FLIP CONTÍNUO PARA DISPOSITIVOS MÓVEIS (< 768px)
+  // 📱 FLUXO MÓVEL RECALIBRADO (< 768px)
   if (window.innerWidth < 768) {
     if (card.classList.contains("is-expanded-mobile")) return;
 
@@ -865,48 +865,57 @@ function handleFlip(id) {
 
     const cardInner = card.querySelector(".card-inner");
 
-    // [FLIP - FIRST]: Captura a posição geométrica inicial na coluna do Masonry
+    // [FLIP - FIRST]: Posição e tamanho iniciais do card na coluna
     const rectInicial = card.getBoundingClientRect();
 
-    // Bloqueia o scroll da página antes da mutação de nós
+    // Bloqueia o scroll da tela
     document.body.style.overflow = "hidden";
 
-    // Aplica a classe de mutação CSS para o card se transformar em Painel Fixo Central
+    // Ativa a mutação de nós para o modo expandido
     card.classList.add("is-expanded-mobile", "is-flipped");
 
-    // [FLIP - LAST]: Captura a nova posição dele centralizado na tela gigante
+    // [FLIP - LAST]: Captura a nova posição dele fixada na tela (que agora inicia em top:0, left:0)
     const rectFinal = card.getBoundingClientRect();
 
-    // [FLIP - INVERT]: Calcula a diferença e aplica o transform reverso instantâneo (invisível)
-    const deltaX = rectInicial.left - rectFinal.left;
-    const deltaY = rectInicial.top - rectFinal.top;
-    const deltaW = rectInicial.width / rectFinal.width;
-    const deltaH = rectInicial.height / rectFinal.height;
+    // 🎯 MATEMÁTICA CENTRALIZADORA: Calcula o destino perfeito para o centro da tela
+    const centroX = (window.innerWidth - rectFinal.width) / 2;
+    const centroY = (window.innerHeight - rectFinal.height) / 2;
 
-    // Desliga as transições temporariamente para embutir a inversão de nós de forma opaca
+    // Força o card expandido a se posicionar no centro exato de forma estática
+    card.style.left = `${centroX}px`;
+    card.style.top = `${centroY}px`;
+
+    // Re-captura a posição final ancorada e centralizada no meio do visor
+    const rectDestinoFinal = card.getBoundingClientRect();
+
+    // [FLIP - INVERT]: Calcula a distância real do ponto de origem até o centro do visor
+    const deltaX = rectInicial.left - rectDestinoFinal.left;
+    const deltaY = rectInicial.top - rectDestinoFinal.top;
+    const deltaW = rectInicial.width / rectDestinoFinal.width;
+    const deltaH = rectInicial.height / rectDestinoFinal.height;
+
+    // Congela transições para embutir a inversão invisível
     cardInner.style.transition = "none";
     card.style.transition = "none";
 
-    // O card grande encolhe e se desloca de forma invisível para ficar IDÊNTICO ao card da coluna
+    // Encolhe o card central e o joga perfeitamente sobre a sua coluna correspondente
     cardInner.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${deltaW}, ${deltaH})`;
 
-    // [FLIP - PLAY]: Devolve o controle ao ciclo de frames do navegador para animar a expansão
+    // [FLIP - PLAY]: Executa a animação cinematográfica contínua desfazendo a inversão
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        // Restaura as transições fluidas e zera a inversão matemática
         cardInner.style.transition = "";
         card.style.transition = "";
-        // O card voa da coluna para o centro, girando 180° no eixo Y simultaneamente!
+        // O card expande organicamente do grid e faz o Flip 3D no centro da tela!
         cardInner.style.transform = "rotateY(180deg)";
       });
     });
 
-    // Registra o estado no histórico para interceptar o botão voltar do smartphone
     history.pushState({ modal: "cardVersoMobile" }, "");
     return;
   }
 
-  // 💻 FLUXO DESKTOP STANDARD (Mantido 100% original e estável)
+  // 💻 FLUXO DESKTOP STANDARD (Mantido estável)
   const grid = document.getElementById("toyGrid");
   const isFlipped = card.classList.contains("is-flipped");
 

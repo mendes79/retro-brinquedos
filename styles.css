@@ -3235,13 +3235,14 @@ body {
   .masonry-item.is-expanded-mobile {
     position: fixed !important;
     /* Proporção exata da carta Super Trunfo: 0.645:1 */
-    width: min(calc(100vw - 32px), calc(85vh * 0.645)) !important;
+    width: min(calc(100vw - 32px), calc(82vh * 0.645)) !important;
     max-width: 400px !important;
     aspect-ratio: 0.645 / 1 !important;
-    top: 50% !important;
-    left: 50% !important;
-    /* O transform inicial é gerenciado via JS pela engine matemática do FLIP */
-    transform: translate(-50%, -50%);
+
+    /* 💡 CORREÇÃO: Ancoragem zerada no topo esquerdo para bater com a matemática do JS */
+    top: 0 !important;
+    left: 0 !important;
+
     z-index: 400 !important;
     margin: 0 !important;
     overflow: hidden !important;
