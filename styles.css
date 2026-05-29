@@ -15,7 +15,6 @@
    v2.0 (28/05/2026) — Reorganização em blocos e documentação
 ============================================================ */
 
-
 /* ================================================================
    1. VARIÁVEIS E BASE
    ================================================================ */
@@ -50,8 +49,6 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
-
 
 /* ================================================================
    2. HERO SECTION
@@ -400,8 +397,6 @@ body {
   animation: none;
 }
 
-
-
 /* ================================================================
    3. CATÁLOGO E GRID MASONRY
    ================================================================ */
@@ -569,8 +564,6 @@ body {
   color: #39ff14;
   box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.2);
 }
-
-
 
 /* ================================================================
    4. CARD FRENTE — TEMPLATE SUPER TRUNFO
@@ -799,8 +792,6 @@ body {
 .trunfo-curiosidade::-webkit-scrollbar-thumb:hover {
   background: var(--neon-blue);
 }
-
-
 
 /* ================================================================
    5. AÇÕES DO USUÁRIO — CURTIDAS, EU TIVE E QUERIA TER
@@ -1099,8 +1090,6 @@ body {
   pointer-events: none; /* Impede hover e clique */
 }
 
-
-
 /* ================================================================
    6. CARD VERSO — FLIP 3D DESKTOP
    ================================================================ */
@@ -1363,8 +1352,6 @@ body {
   background: rgba(0, 255, 255, 0.06);
 }
 
-
-
 /* ================================================================
    7. CARD VERSO — MODAL MOBILE
    ================================================================ */
@@ -1392,24 +1379,32 @@ body {
 
 /* 1 — Card cresce o máximo possível mantendo proporção */
 .card-verso-mobile-box {
-  /* Proporção exata carta Super Trunfo: 63.5mm × 98.5mm = 0.645:1 */
-  /* Calcula largura máxima que cabe na tela sem ultrapassar 92vh de altura */
-  width: min(calc(100vw - 20px), calc(92vh * 0.645));
-  max-width: 400px;
-  /* Altura calculada automaticamente pela proporção */
-  aspect-ratio: 0.645 / 1;
-  /* overflow-y apenas se o conteúdo ultrapassar — fallback de segurança */
-  overflow-y: auto;
-  overflow-x: hidden;
-  background: #0f0e1e;
-  border: 3px solid var(--trunfo-gold);
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  /* Animação de entrada: scanline CRT → overshoot elástico */
-  animation: cardVersoEntrada 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  transform-origin: center center;
-  will-change: transform, opacity, filter;
+  width: min(calc(100vw - 40px), calc(85vh * 0.645)) !important;
+  max-width: 340px !important;
+  aspect-ratio: 0.645 / 1 !important;
+  background: var(--trunfo-dark) !important;
+  border: 3px solid var(--trunfo-gold) !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+
+  /* 🚀 CAPACITADORES GEOMÉTRICOS 3D */
+  transform-style: preserve-3d !important;
+  perspective: 1000px !important;
+}
+
+/* 1.1 - Garante que a estrutura interna do card acompanhe o giro sem sofrer cortes */
+#cardVersoMobileBox > div {
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  transform-style: preserve-3d !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* 1.2 - Corrige o espelhamento do layout interno ao atingir o ápice dos 180 graus */
+#cardVersoMobileBox.flipped-stage > div {
+  transform: rotateY(180deg) !important;
 }
 
 /*
@@ -1670,8 +1665,6 @@ body {
   filter: grayscale(100%) opacity(0.45);
 }
 
-
-
 /* ================================================================
    8. CARD COMPARTILHADO — MODAL ?card=XXXX
    ================================================================ */
@@ -1781,8 +1774,6 @@ body {
   font-weight: bold;
   text-shadow: 0 0 4px rgba(240, 192, 64, 0.3);
 }
-
-
 
 /* ================================================================
    9. DRAWER DE COMENTÁRIOS
@@ -2456,8 +2447,6 @@ body {
   text-shadow: 0 0 4px rgba(240, 192, 64, 0.3);
 }
 
-
-
 /* ================================================================
    10. ARCADE MODAL — LOGIN E AVATARES
    ================================================================ */
@@ -2757,8 +2746,6 @@ body {
     width: 100%;
   }
 }
-
-
 
 /* ================================================================
    11. NAVBAR E AVATAR MENU
@@ -3279,8 +3266,6 @@ body {
   color: rgba(57, 255, 20, 0.35);
 }
 
-
-
 /* ================================================================
    12. PAINEL LED
    ================================================================ */
@@ -3587,8 +3572,6 @@ body {
 }
 /* Efeito de Pulsação para o Skeleton */
 
-
-
 /* ================================================================
    13. RANKING E PÓDIO
    ================================================================ */
@@ -3838,8 +3821,6 @@ body {
   }
 }
 
-
-
 /* ================================================================
    14. MODAIS ESTÁTICOS — DISCLAIMER, FABRICANTES E SUGESTÃO
    ================================================================ */
@@ -4074,4 +4055,3 @@ body {
 #sugestaoModal:not(.hidden) {
   animation: disclaimerFadeIn 0.2s ease forwards;
 }
-
