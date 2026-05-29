@@ -1379,21 +1379,21 @@ body {
 
 /* 1 — Card cresce o máximo possível mantendo proporção */
 .card-verso-mobile-box {
-  width: min(calc(100vw - 40px), calc(85vh * 0.645)) !important;
-  max-width: 340px !important;
-  aspect-ratio: 0.645 / 1 !important;
+  width: min(calc(100vw - 40px), 340px) !important;
+
+  /* 📐 ALTURA PROPORCIONAL AO DESKTOP (Regra de Três: 340 * 1.9057) */
+  height: 648px !important;
+
   background: var(--trunfo-dark) !important;
   border: 3px solid var(--trunfo-gold) !important;
   border-radius: 10px !important;
   display: flex !important;
   flex-direction: column !important;
+  padding-bottom: 4px !important;
 
   /* 🚀 CAPACITADORES GEOMÉTRICOS 3D */
   transform-style: preserve-3d !important;
   perspective: 1200px !important;
-  /* 🔥 AVISO PRÉVIO AO HARDWARE DO CELULAR:
-     Força o processador gráfico a isolar esta caixa em uma camada exclusiva
-     de renderização, eliminando qualquer gargalo ou travamento intermediário. */
   will-change: transform !important;
 }
 
@@ -1405,16 +1405,40 @@ body {
   -webkit-backface-visibility: visible !important;
 }
 
-/* 🔄 ESPELHAMENTO NATIVO DO CONTEÚDO
-   Garante que todo o esqueleto interno (fotos, cabeçalho e estatísticas)
-   já nasça rotacionado de costas dentro do container. Assim, quando a caixa
-   pai executar o giro de 180 graus no espaço, a leitura final para o usuário
-   acontecerá de forma perfeitamente natural (da esquerda para a direita). */
+/* 🔄 ESPELHAMENTO NATIVO DO CONTEÚDO */
 #cardVersoMobileBox > div,
 #cardVersoMobileBox > .trunfo-header,
 #cardVersoMobileBox > .trunfo-photo-wrapper,
 #cardVersoMobileBox > .trunfo-stats-area {
   transform: rotateY(180deg) !important;
+}
+
+/* 🎯 CAIXA DE CURIOSIDADES CALIBRADA POR MATRIZ MATEMÁTICA */
+.trunfo-curiosidade-scroll-box {
+  height: 96px !important; /* Altura exata derivada da proporção de 627x329 */
+  overflow-y: auto !important;
+  margin-bottom: 8px !important;
+  padding: 6px 8px !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  border-radius: 5px !important;
+  border: 1px solid rgba(212, 175, 55, 0.15) !important;
+}
+
+/* Texto interno estilizado em itálico e cinza do desktop */
+.trunfo-curiosidade-v2 {
+  font-size: 0.84rem !important;
+  line-height: 1.3 !important;
+  text-align: left !important;
+  font-style: italic !important;
+  color: #b0b5c0 !important;
+  word-wrap: break-word !important;
+}
+
+/* Equalização cirúrgica do tamanho da linha e ícone de visualizações */
+.trunfo-view-icon {
+  font-size: 0.85rem !important;
+  display: inline-block !important;
+  margin-right: 2px !important;
 }
 
 /*

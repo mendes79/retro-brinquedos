@@ -917,7 +917,6 @@ function abrirCardVersoMobile(id) {
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
 
-  // Captura o elemento original clicado no grid do Masonry
   const sToken =
     typeof sessionSeed !== "undefined"
       ? sessionSeed.toString().substring(2, 6)
@@ -927,7 +926,6 @@ function abrirCardVersoMobile(id) {
     document.getElementById(`card-${idNormalizado}`);
   const overlay = document.getElementById("cardVersoMobileModal");
 
-  // Coordenadas de contingência
   let rectInicial = {
     left: window.innerWidth / 2 - 75,
     top: window.innerHeight / 2 - 115,
@@ -938,14 +936,12 @@ function abrirCardVersoMobile(id) {
     rectInicial = cardOrigem.getBoundingClientRect();
   }
 
-  // Ativa o overlay invisível para preparar o cálculo do centro geométrico
   if (overlay) {
     overlay.classList.remove("hidden");
     overlay.classList.add("flex");
     overlay.style.opacity = "0";
   }
 
-  // Injeção limpa de toda a marcação estrutural do Super Trunfo
   box.innerHTML = `
     <div class="trunfo-header">
       <div class="trunfo-top-bar-v2">
@@ -965,12 +961,14 @@ function abrirCardVersoMobile(id) {
       </div>
     </div>
     <div class="trunfo-stats-area">
-      <div class="trunfo-curiosidade-v2">"${data.curiosidade}"</div>
+      <div class="trunfo-curiosidade-scroll-box">
+        <div class="trunfo-curiosidade-v2">"${data.curiosidade}"</div>
+      </div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${data.fabricante}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
       <div class="trunfo-stat-row"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
-      <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="m-views-${idNormalizado}">👁 ${data.visualizacoes || 0}</span></div>
+      <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="m-views-${idNormalizado}"><span class="trunfo-view-icon">👁</span> ${data.visualizacoes || 0}</span></div>
       <div class="trunfo-actions-v2">
         <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'tive')">
           EU TIVE <span class="action-count-v2" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
@@ -988,10 +986,8 @@ function abrirCardVersoMobile(id) {
       </div>
     </div>`;
 
-  // Captura o retângulo estático centralizado após a injeção
   const rectFinal = box.getBoundingClientRect();
 
-  // Mapeamento espacial exato da distância entre o clique e o centro
   const deltaX =
     rectInicial.left +
     rectInicial.width / 2 -
@@ -1003,12 +999,10 @@ function abrirCardVersoMobile(id) {
   const escalaX = rectInicial.width / rectFinal.width;
   const escalaY = rectInicial.height / rectFinal.height;
 
-  // Força a largada vindo encolhido e com rotação zero graus (plano) na origem da coluna 1
   box.classList.remove("flipped-stage");
   box.style.transition = "none";
   box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY}) rotateY(0deg)`;
 
-  // 🚀 ENGINE DE ANIMAÇÃO RECALIBRADA PARA MÁXIMA FLUIDEZ (SEM TRAVAMENTOS)
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       if (overlay) {
@@ -1017,7 +1011,6 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      // Mudamos para uma curva de aceleração que distribui o giro e o voo de forma linear e constante
       box.style.transition = "transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)";
       box.style.transform = "translate(0px, 0px) scale(1, 1) rotateY(180deg)";
     });
