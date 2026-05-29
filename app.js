@@ -17,7 +17,6 @@
    v2.0 (28/05/2026) — Reorganização em blocos e documentação
 ============================================================ */
 
-
 // ================================================================
 // 1. CONFIGURAÇÃO E ESTADO GLOBAL
 // ================================================================
@@ -57,13 +56,12 @@ sentinel.className =
 
 /* 🎧 ESCUTADOR DO BOTÃO VOLTAR FÍSICO/GESTUAL MÓVEL (HISTORY API) */
 
-
-
 // ================================================================
 // 2. BOOT E INICIALIZAÇÃO
 // ================================================================
 
-// 2.1 — verificarSentinela — verifica se o sentinel ainda está visível após um fetch e dispara novo lote se necessário (cobre o gap do desktop com 6 colunas)
+// 2.1 — verificarSentinela — verifica se o sentinel ainda está visível após um fetch
+// e dispara novo lote se necessário (cobre o gap do desktop com 6 colunas)
 function verificarSentinela() {
   if (!hasMais || isSearching) return;
   requestAnimationFrame(() => {
@@ -76,7 +74,8 @@ function verificarSentinela() {
 
 /* 3.11.1. Monta o vigia de scroll dinâmico (único ponto de disparo) */
 
-// 2.2 — setupObserver — cria o IntersectionObserver (rootMargin 1200px) que monitora o sentinel e aciona fetchBrinquedos() ao aproximar-se do fim do catálogo
+// 2.2 — setupObserver — cria o IntersectionObserver (rootMargin 1200px) que monitora o sentinel
+// e aciona fetchBrinquedos() ao aproximar-se do fim do catálogo
 function setupObserver() {
   const observer = new IntersectionObserver(
     (entries) => {
@@ -190,7 +189,8 @@ window.addEventListener("load", () => {
   }
 });
 
-// 2.7 — init — função principal de boot. Verifica sessão e banimento, carrega interações, configura o observer, busca o catálogo e o ranking em paralelo e inicia o painel LED com mensagem contextual
+// 2.7 — init — função principal de boot. Verifica sessão e banimento, carrega interações, configura o observer,
+// busca o catálogo e o ranking em paralelo e inicia o painel LED com mensagem contextual
 async function init() {
   const {
     data: { session },
@@ -271,8 +271,6 @@ async function init() {
   iniciarPainelLED(messageBoot);
 }
 
-
-
 // ================================================================
 // 3. CATÁLOGO — FETCH, MASONRY E HELPERS
 // ================================================================
@@ -288,6 +286,8 @@ function getColumnCount() {
 }
 
 // 3.2 — buildLedDisplay — monta o HTML do indicador LED de raridade (verde ≤6, amarelo ≤8, vermelho >8)
+// Está em desuso no momento dada a reestrutução do Card Verso Super Trunfo, mas pode ser facilmente adaptado
+// para um componente de barra de raridade ou similar no futuro
 function buildLedDisplay(value) {
   const v = Math.round(Math.min(10, Math.max(0, value)));
   function ledClass(idx) {
@@ -323,7 +323,8 @@ function otimizarUrlCloudinary(url, largura = 600) {
   return url.replace("/upload/", `/upload/f_auto,q_auto,w_${largura},c_limit/`);
 }
 
-// 3.5 — render — motor masonry. Para cada item: insere o HTML do card na coluna mais curta, aguarda o load da imagem (timeout 800ms) e executa duplo rAF antes do próximo card. Usa for...of, nunca .forEach.
+// 3.5 — render — motor masonry. Para cada item: insere o HTML do card na coluna mais curta, aguarda o load da imagem (timeout 800ms)
+// e executa duplo rAF antes do próximo card. Usa for...of, nunca .forEach.
 async function render(items, append = false) {
   const grid = document.getElementById("toyGrid");
   const targetCols = getColumnCount();
@@ -482,7 +483,8 @@ async function render(items, append = false) {
   }
 }
 
-// 3.6 — fetchBrinquedos — busca dados e aciona render(). Três fluxos: (A) filtro pessoal via Set em memória, (B) busca textual via RPC, (C) catálogo padrão via API Vercel com seed + cursor. Implementa disjuntores isLoading, hasMais e isSearching.
+// 3.6 — fetchBrinquedos — busca dados e aciona render(). Três fluxos: (A) filtro pessoal via Set em memória,
+// (B) busca textual via RPC, (C) catálogo padrão via API Vercel com seed + cursor. Implementa disjuntores isLoading, hasMais e isSearching.
 async function fetchBrinquedos(reset = false) {
   // 🛰️ TRACE 1: Entrada da função
   console.log(
@@ -801,13 +803,12 @@ async function fetchBrinquedos(reset = false) {
   }
 }
 
-
-
 // ================================================================
 // 4. CARDS — FLIP, VISUALIZAÇÃO E COMPARTILHAMENTO
 // ================================================================
 
-// 4.1 — _cardsVistos + registrarVisualizacao — incrementa o contador de visualizações via RPC, garantindo que cada card seja contado apenas uma vez por sessão
+// 4.1 — _cardsVistos + registrarVisualizacao — incrementa o contador de visualizações via RPC,
+// garantindo que cada card seja contado apenas uma vez por sessão
 const _cardsVistos = new Set();
 
 async function registrarVisualizacao(id) {
@@ -818,7 +819,8 @@ async function registrarVisualizacao(id) {
   } catch (_) {}
 }
 
-// 4.2 — handleFlip — gerencia o flip frente/verso. Desktop (≥768px): aplica CSS is-flipped + scroll suave. Mobile (<768px): delega para abrirCardVersoMobile(). Ignora cliques em botões, SVGs e inputs.
+// 4.2 — handleFlip — gerencia o flip frente/verso. Desktop (≥768px): aplica CSS is-flipped + scroll suave.
+// Mobile (<768px): delega para abrirCardVersoMobile(). Ignora cliques em botões, SVGs e inputs.
 function handleFlip(id) {
   const evento = window.event;
   if (evento && evento.target) {
@@ -883,7 +885,8 @@ function handleFlip(id) {
   }
 }
 
-// 4.3 — abrirCardVersoMobile — abre o modal do verso em telas < 768px. Busca dados em allToys[], injeta o HTML no #cardVersoMobileBox, exibe #cardVersoMobileModal e empilha histórico para o botão Voltar
+// 4.3 — abrirCardVersoMobile — abre o modal do verso em telas < 768px. Busca dados em allToys[],
+// injeta o HTML no #cardVersoMobileBox, exibe #cardVersoMobileModal e empilha histórico para o botão Voltar
 function abrirCardVersoMobile(id) {
   const data = allToys.find(
     (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0"),
@@ -1032,7 +1035,8 @@ function toggleCurtidaModal(event, id) {
   toggleCurtida(event, id);
 }
 
-// 4.7 — fecharCardVersoMobile — fecha o modal mobile e sincroniza a pilha de histórico. Aceita tanto clique no backdrop quanto chamada direta.
+// 4.7 — fecharCardVersoMobile — fecha o modal mobile e sincroniza a pilha de histórico.
+// Aceita tanto clique no backdrop quanto chamada direta.
 function fecharCardVersoMobile(event, veioDoPopstate = false) {
   if (event && event.target !== document.getElementById("cardVersoMobileModal"))
     return;
@@ -1067,7 +1071,8 @@ function resetarEstadoDosCards() {
     .forEach((card) => card.classList.remove("is-flipped"));
 }
 
-// 4.10 — compartilharWhatsApp — mobile: tenta Web Share API com a imagem como File; desktop/fallback: link wa.me com texto pré-formatado
+// 4.10 — compartilharWhatsApp — mobile: tenta Web Share API com a imagem como File;
+// desktop/fallback: link wa.me com texto pré-formatado
 async function compartilharWhatsApp(event, id, nome) {
   if (event) event.stopPropagation();
 
@@ -1136,7 +1141,8 @@ function fecharCardModal() {
    3.5.4. DRAWER DE COMENTÁRIOS
    ============================================================ */
 
-// 4.12 — abrirModalEspelhoMobile — monta a ficha completa do brinquedo no #cardCompartilhadoModal (usado pelo fluxo de URL compartilhada ?card=XXXX)
+// 4.12 — abrirModalEspelhoMobile — monta a ficha completa do brinquedo no #cardCompartilhadoModal
+// (usado pelo fluxo de URL compartilhada ?card=XXXX)
 async function abrirModalEspelhoMobile(cardId) {
   try {
     const data = allToys.find(
@@ -1211,13 +1217,12 @@ async function abrirModalEspelhoMobile(cardId) {
    3.6. BUSCA INTELIGENTE
    ============================================================ */
 
-
-
 // ================================================================
 // 5. INTERAÇÕES DO USUÁRIO — CURTIDAS, EU TIVE E QUERIA TER
 // ================================================================
 
-// 5.1 — carregarInteracoesDoBanco — carrega em memória os três Sets de interações do usuário com 3 queries paralelas e até 3 tentativas com backoff exponencial
+// 5.1 — carregarInteracoesDoBanco — carrega em memória os três Sets de interações do usuário com 3 queries paralelas
+// e até 3 tentativas com backoff exponencial
 async function carregarInteracoesDoBanco(userId, tentativa = 1) {
   try {
     const [resCurtidas, resTive, resQueria] = await Promise.all([
@@ -1265,7 +1270,8 @@ async function carregarInteracoesDoBanco(userId, tentativa = 1) {
   }
 }
 
-// 5.2 — toggleCurtida — adiciona ou remove uma curtida com atualização otimista da UI. Sincroniza botões do grid e do modal mobile simultaneamente via querySelectorAll.
+// 5.2 — toggleCurtida — adiciona ou remove uma curtida com atualização otimista da UI.
+// Sincroniza botões do grid e do modal mobile simultaneamente via querySelectorAll.
 async function toggleCurtida(event, brinquedoId) {
   if (event) event.stopPropagation();
   const {
@@ -1326,7 +1332,8 @@ async function toggleCurtida(event, brinquedoId) {
   }
 }
 
-// 5.3 — toggleInteracao — adiciona ou remove EU TIVE / QUERIA TER. As opções são mutuamente exclusivas: marcar uma remove a outra automaticamente. Inclui rollback em memória se o banco falhar.
+// 5.3 — toggleInteracao — adiciona ou remove EU TIVE / QUERIA TER. As opções são mutuamente exclusivas:
+// marcar uma remove a outra automaticamente. Inclui rollback em memória se o banco falhar.
 async function toggleInteracao(event, brinquedoId, tipo) {
   if (event) event.stopPropagation();
   const {
@@ -1455,7 +1462,8 @@ async function toggleInteracao(event, brinquedoId, tipo) {
   }
 }
 
-// 5.4 — filtrarMeuQuarto — aplica o filtro de coleção pessoal (todos/tive/queria/curtidas), atualiza o botão ativo na barra de filtros e recarrega o grid
+// 5.4 — filtrarMeuQuarto — aplica o filtro de coleção pessoal (todos/tive/queria/curtidas),
+// atualiza o botão ativo na barra de filtros e recarrega o grid
 async function filtrarMeuQuarto(tipo) {
   filtroAtivo = tipo;
 
@@ -1478,8 +1486,6 @@ async function filtrarMeuQuarto(tipo) {
    SEÇÃO 3.9. PAINEL LED — ENGINE COMPLETA
    ============================================================ */
 
-
-
 // ================================================================
 // 6. BUSCA INTELIGENTE
 // ================================================================
@@ -1499,7 +1505,8 @@ function sanitizarBusca(valor) {
     .slice(0, 60);
 }
 
-// 6.3 — _executarBusca — cancela fetch anterior via AbortController, ativa isSearching e dispara fetchBrinquedos(true). Guard: ignora se o termo não mudou.
+// 6.3 — _executarBusca — cancela fetch anterior via AbortController, ativa isSearching e dispara fetchBrinquedos(true).
+// Guard: ignora se o termo não mudou.
 async function _executarBusca(term) {
   if (term === buscaAtiva) return;
 
@@ -1534,8 +1541,10 @@ async function _executarBusca(term) {
   await fetchBrinquedos(true);
 }
 
-// 6.4 — ejecutarBuscaForçada — ignora o debounce e dispara a busca imediatamente (acionada pelo botão lupa ou pela tecla Enter)
-function ejecutarBuscaForçada() {
+// 6.4 — executarBuscaForçada — ignora o debounce e dispara a busca imediatamente
+// (acionada pelo botão lupa ou pela tecla Enter) - correção em 2026-05-29, a grafia estava ejecutarBuscaForçada() no HTML,
+// mas a função estava definida como executarBuscaForçada() — agora ambas estão alinhadas para evitar confusão futura!
+function executarBuscaForçada() {
   const input = document.getElementById("searchInput");
   if (!input) return;
   const term = sanitizarBusca(input.value);
@@ -1611,8 +1620,6 @@ async function limparBuscaRapida() {
 
 /* 3.7. ARCADE LOGIN E SISTEMA DE AVATARES */
 
-
-
 // ================================================================
 // 7. DRAWER DE COMENTÁRIOS
 // ================================================================
@@ -1621,7 +1628,8 @@ async function limparBuscaRapida() {
 let drawerIdAtivo = null;
 let drawerNomeAtivo = null;
 
-// 7.2 — abrirDrawerComentarios — abre o painel, exibe área de input apenas para logados, empilha histórico e carrega os comentários do banco
+// 7.2 — abrirDrawerComentarios — abre o painel, exibe área de input apenas para logados,
+// empilha histórico e carrega os comentários do banco
 async function abrirDrawerComentarios(event, id, nome) {
   if (event) event.stopPropagation();
 
@@ -1673,7 +1681,8 @@ function fecharDrawerSeForaDoPanel(event) {
   }
 }
 
-// 7.5 — carregarComentariosDrawer — busca até 50 comentários aprovados do Supabase e renderiza a lista com emojis retrô rotativos como avatares
+// 7.5 — carregarComentariosDrawer — busca até 50 comentários aprovados do Supabase e
+// renderiza a lista com emojis retrô rotativos como avatares
 async function carregarComentariosDrawer(id) {
   const lista = document.getElementById("drawerListaComentarios");
 
@@ -1766,7 +1775,8 @@ async function carregarComentariosDrawer(id) {
   }
 }
 
-// 7.6 — enviarComentarioDrawer — valida, modera e grava o comentário no Supabase. Recarrega a lista e faz scroll para o topo ao concluir.
+// 7.6 — enviarComentarioDrawer — valida, modera e grava o comentário no Supabase.
+// Recarrega a lista e faz scroll para o topo ao concluir.
 async function enviarComentarioDrawer() {
   if (!isUserLogged || !drawerIdAtivo) return;
 
@@ -1814,7 +1824,8 @@ function handleDrawerEnter(event) {
   if (event.key === "Enter") enviarComentarioDrawer();
 }
 
-// 7.8 — [LEGADO] enviarComentario — versão anterior usada pelo card verso desktop. Inclui sistema de strikes: 3 infrações geram banimento e logout automático.
+// 7.8 — [LEGADO] enviarComentario — versão anterior usada pelo card verso desktop.
+// Inclui sistema de strikes: 3 infrações geram banimento e logout automático.
 async function enviarComentario(idNormalizado, nomeBrinquedo) {
   if (!isUserLogged) {
     dispararTilt("FAÇA LOGIN PARA COMENTAR");
@@ -1900,8 +1911,6 @@ function handleComentarioEnter(event, idNormalizado, nomeBrinquedo) {
    SEÇÃO 3.10. INICIALIZAÇÃO DA APLICAÇÃO (BOOT)
    ============================================================ */
 
-
-
 // ================================================================
 // 8. ARCADE LOGIN E SISTEMA DE AVATARES
 // ================================================================
@@ -1926,7 +1935,8 @@ function login() {
 
 // Substitui a antiga função 'closeModal' para prever a desistencia com logout forçado
 
-// 8.3 — fecharArcadePorDesistencia — exibe a tela GAME OVER e força logout para derrubar o token Supabase incompleto (usuário autenticado mas sem avatar selecionado)
+// 8.3 — fecharArcadePorDesistencia — exibe a tela GAME OVER e força logout para derrubar o token Supabase incompleto
+// (usuário autenticado mas sem avatar selecionado)
 function fecharArcadePorDesistencia(veioDoPopstate = false) {
   arcadeScreen.classList.add("hidden");
   if (selectionScreen) selectionScreen.classList.add("hidden");
@@ -1951,7 +1961,8 @@ function closeModal() {
   fecharArcadePorDesistencia(false);
 }
 
-// 8.5 — handleCoinSelect — dispara o fluxo OAuth ao clicar em uma moeda. Facebook mobile usa redirect (skipBrowserRedirect); Google e Facebook desktop usam popup.
+// 8.5 — handleCoinSelect — dispara o fluxo OAuth ao clicar em uma moeda.
+// Facebook mobile usa redirect (skipBrowserRedirect); Google e Facebook desktop usam popup.
 function handleCoinSelect(btn, provider) {
   sf2CoinSound.currentTime = 0;
   sf2CoinSound.play().catch(() => {});
@@ -2006,7 +2017,8 @@ function handleCoinSelect(btn, provider) {
   }, 1500);
 }
 
-// 8.6 — renderAvatarGrid — monta a grade de avatares com seleção aleatória ponderada: 8 comuns (1-80), 5 raros (81-130), 2 lendários (131-150)
+// 8.6 — renderAvatarGrid — monta a grade de avatares com seleção aleatória ponderada:
+// 8 comuns (1-80), 5 raros (81-130), 2 lendários (131-150)
 function renderAvatarGrid() {
   const grid = document.getElementById("avatarGrid");
   grid.innerHTML = "";
@@ -2030,13 +2042,15 @@ function renderAvatarGrid() {
   });
 }
 
-// 8.7 — getRandomFromRange — retorna N números únicos aleatórios entre min e max (inclusive). Auxiliar de renderAvatarGrid().
+// 8.7 — getRandomFromRange — retorna N números únicos aleatórios entre min e max (inclusive).
+// Auxiliar de renderAvatarGrid().
 function getRandomFromRange(min, max, count) {
   const r = Array.from({ length: max - min + 1 }, (_, i) => i + min);
   return r.sort(() => Math.random() - 0.5).slice(0, count);
 }
 
-// 8.8 — updateNavWithAvatar — substitui o botão ENTRAR pelo avatar do usuário logado, com dropdown contendo filtros de coleção e botão de logout
+// 8.8 — updateNavWithAvatar — substitui o botão ENTRAR pelo avatar do usuário logado,
+// com dropdown contendo filtros de coleção e botão de logout
 function updateNavWithAvatar(avatarPath, name) {
   const firstName = name.split(" ")[0];
 
@@ -2125,13 +2139,12 @@ async function logOut() {
 
 /* 3.8. GESTÃO DE DADOS (CURTIDAS E COLEÇÃO DO USUÁRIO) */
 
-
-
 // ================================================================
 // 9. MODERAÇÃO E ANTI-TOXICIDADE
 // ================================================================
 
-// 9.1 — palavrasProibidas — lista de termos banidos (política + palavrões). Aplicada a comentários, sugestões e nomes de usuário.
+// 9.1 — palavrasProibidas — lista de termos banidos (política + palavrões).
+// Aplicada a comentários, sugestões e nomes de usuário.
 const palavrasProibidas = [
   "lula",
   "bolsonaro",
@@ -2178,8 +2191,6 @@ function contemPalavraProibida(texto) {
   return regexProibidas.test(texto);
 }
 
-
-
 // ================================================================
 // 10. PAINEL LED — ENGINE COMPLETA
 // ================================================================
@@ -2193,7 +2204,8 @@ let ledGlitchSessao = false;
 let ledEasterEggContador = 0;
 let ledEasterEggTimer = null;
 
-// 10.2 — LED_MENSAGENS_FAKE — pool de 20 mensagens de usuários fictícios, exibidas quando o feed_live do Supabase tem menos de 5 entradas reais
+// 10.2 — LED_MENSAGENS_FAKE — pool de 20 mensagens de usuários fictícios,
+// exibidas quando o feed_live do Supabase tem menos de 5 entradas reais
 const LED_MENSAGENS_FAKE = [
   'JOGADOR_77 sobre He-Man Masters of Universe: "O melhor brinquedo da minha infância"',
   'CAROL_BH sobre Estrela Júpiter: "Ganhei de aniversário e nunca mais esqueci"',
@@ -2228,7 +2240,7 @@ const LED_FRASES_SISTEMA = [
   "HIGH SCORE — SEU NOME AQUI",
   "PRESS START TO PLAY",
   "NÃO SE ESQUEÇA DE CURTIR SEUS BRINQUEDOS FAVORITOS",
-  "COMPARTILHE SUAS MEMÓRIAS WITH AMIGOS",
+  "COMPARTILHE SUAS MEMÓRIAS COM SEUS BESTS!",
   "CLIQUE NO SWITCH PARA DESLIGAR ESSE PAINEL",
   "VOCÊ SE LEMBRA DESSE BRINQUEDO?",
   "REVIVA A MAGIA DA INFÂNCIA — RETROBRINQUEDOS BR",
@@ -2246,7 +2258,8 @@ const LED_SPRITES = [
   " ~~~|===|~~~   [H]   ~~~|===|~~~ ",
 ];
 
-// 10.5 — iniciarPainelLED — configura o estado inicial do painel. Se ligado: anima a ligar e exibe a mensagem imediata. Configura o easter egg dos 13 cliques e o glitch aleatório da sessão (15% de chance).
+// 10.5 — iniciarPainelLED — configura o estado inicial do painel. Se ligado: anima a ligar e exibe a mensagem imediata.
+// Configura o easter egg dos 13 cliques e o glitch aleatório da sessão (15% de chance).
 function iniciarPainelLED(mensagemImediata) {
   const toggle = document.getElementById("ledToggleInput");
   if (toggle) toggle.checked = ledPainelAtivo;
@@ -2341,7 +2354,8 @@ function animarDesligar(callback) {
 
 /* 3.9.8. ENGINE DA FILA DE MENSAGENS */
 
-// 10.9 — ledLocked + mostrarMensagemLED — exibe mensagem informativa curta no LED (ex: "Faça login para curtir"). ledLocked evita sobreposição de chamadas concorrentes.
+// 10.9 — ledLocked + mostrarMensagemLED — exibe mensagem informativa curta no LED (ex: "Faça login para curtir").
+// ledLocked evita sobreposição de chamadas concorrentes.
 let ledLocked = false;
 
 function mostrarMensagemLED(mensagem) {
@@ -2456,7 +2470,8 @@ function dispararTilt(mensagem) {
   }, intervalo);
 }
 
-// 10.11 — dispararTiltBanimento — alerta severo de moderação: borda vermelha intensa, 2 piscadas longas e período de congelamento configurável
+// 10.11 — dispararTiltBanimento — alerta severo de moderação: borda vermelha intensa,
+// 2 piscadas longas e período de congelamento configurável
 function dispararTiltBanimento(mensagem, tempoCongelado = 4000) {
   const estavaDesligado = !ledPainelAtivo;
   ledTiltAtivo = true;
@@ -2526,7 +2541,8 @@ function ledInjetarPrioritario(texto) {
   ledFilaAtual.unshift(texto);
 }
 
-// 10.14 — montarFila — compõe a fila do próximo ciclo: busca mensagens reais do feed_live, completa com fake se <5 reais, e adiciona sprite ou frase do sistema no final
+// 10.14 — montarFila — compõe a fila do próximo ciclo: busca mensagens reais do feed_live,
+// completa com fake se <5 reais, e adiciona sprite ou frase do sistema no final
 async function montarFila() {
   let mensagensReais = [];
   try {
@@ -2613,7 +2629,8 @@ function exibirFilaComoTicker(fila, onComplete) {
   el.addEventListener("animationend", handler);
 }
 
-// 10.18 — feedChannel — canal Realtime do Supabase. Escuta INSERTs em feed_live e injeta cada nova mensagem no início da fila via ledInjetarPrioritario()
+// 10.18 — feedChannel — canal Realtime do Supabase. Escuta INSERTs em feed_live
+// e injeta cada nova mensagem no início da fila via ledInjetarPrioritario()
 const feedChannel = supabaseClient.channel("museu-feed");
 feedChannel
   .on(
@@ -2631,8 +2648,6 @@ feedChannel
    SISTEMA DE FILTRO E MODERAÇÃO (ANTI-TOXICIDADE)
    ============================================================ */
 
-
-
 // ================================================================
 // 11. RANKING E PÓDIO
 // ================================================================
@@ -2643,7 +2658,8 @@ let _rankingModoAtivo = "curtidas"; // "curtidas" | "visualizacoes"
 
 // Refatorada para buscar direto do banco via RPC de forma assíncrona no segundo zero
 
-// 11.2 — _prepararDadosRanking — busca o Top 3 de curtidas e visualizações via RPC obter_podio_ranking no boot (em paralelo ao fetchBrinquedos) e faz prefetch silencioso das imagens
+// 11.2 — _prepararDadosRanking — busca o Top 3 de curtidas e visualizações via RPC obter_podio_ranking no boot
+// (em paralelo ao fetchBrinquedos) e faz prefetch silencioso das imagens
 async function _prepararDadosRanking() {
   if (_rankingDados) return; // Evita requisições duplicadas se já carregado na sessão
 
@@ -2796,8 +2812,6 @@ function _sincronizarBotoesRanking(modo) {
   }
 }
 
-
-
 // ================================================================
 // 12. MODAIS ESTÁTICOS — DISCLAIMER, FABRICANTES E SUGESTÃO
 // ================================================================
@@ -2822,7 +2836,8 @@ function fecharDisclaimerModal(veioDoPopstate = false) {
   }
 }
 
-// 12.3 — abrirFabricanteModal — abre o modal de história do fabricante (1 a 8). Fecha qualquer outro modal de fabricante antes de abrir o novo.
+// 12.3 — abrirFabricanteModal — abre o modal de história do fabricante (1 a 8).
+// Fecha qualquer outro modal de fabricante antes de abrir o novo.
 function abrirFabricanteModal(num) {
   fecharFabricanteModal(true);
   const modal = document.getElementById("fabricanteModal" + num);
@@ -2900,7 +2915,8 @@ function _sugestaoResetUI() {
   if (label) label.textContent = "▶ ENVIAR SUGESTÃO";
 }
 
-// 12.8 — enviarSugestao — valida os campos, modera o conteúdo, grava no Supabase e dispara e-mail de notificação via EmailJS. Fecha o modal e recarrega o catálogo após 2.8s.
+// 12.8 — enviarSugestao — valida os campos, modera o conteúdo, grava no Supabase e dispara e-mail de notificação
+// via EmailJS. Fecha o modal e recarrega o catálogo após 2.8s.
 async function enviarSugestao() {
   const { data: sessionData } = await supabaseClient.auth.getSession();
   const userLogado = sessionData?.session?.user;
@@ -3030,13 +3046,13 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-
-
 // ================================================================
 // 13. HISTORY API — BOTÃO VOLTAR MOBILE
 // ================================================================
 
-// 13.1 — Listener popstate — máquina de estados dos modais. Cada modal empilha um estado com history.pushState(). Este listener identifica qual modal está aberto e chama sua função de fechar ao pressionar o botão Voltar físico/gestual do mobile.
+// 13.1 — Listener popstate — máquina de estados dos modais.
+// Cada modal empilha um estado com history.pushState(). Este listener identifica qual modal está aberto
+// e chama sua função de fechar ao pressionar o botão Voltar físico/gestual do mobile.
 window.addEventListener("popstate", (event) => {
   if (retroSincronizandoHistorico) {
     retroSincronizandoHistorico = false;
@@ -3115,13 +3131,12 @@ window.addEventListener("popstate", (event) => {
 /* 3.3.2. Verifica se o sentinel ainda está visível após um fetch terminar
    e dispara mais um lote se necessário — cobre o gap do desktop (6 colunas) */
 
-
-
 // ================================================================
 // 14. EASTER EGGS E NOSTALGIA
 // ================================================================
 
-// 14.1 — animarBandeirasEnduro — pisca as bandeirinhas estilo Enduro (Atari 2600) ao completar um loop do catálogo, quando a semente é reconfigurada para a próxima rodada
+// 14.1 — animarBandeirasEnduro — pisca as bandeirinhas estilo Enduro (Atari 2600) ao completar um loop do catálogo,
+// quando a semente é reconfigurada para a próxima rodada
 function animarBandeirasEnduro() {
   const flagsImg = document.getElementById("enduroFlags");
   if (!flagsImg) return;
