@@ -917,7 +917,7 @@ function abrirCardVersoMobile(id) {
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
 
-  // 🚀 ENGINE DE CAPTURA DO MÉTODO FLIP (RETROBRINQUEDOS)
+  // Captura o card físico correto do grid usando o token da semente
   const sToken =
     typeof sessionSeed !== "undefined"
       ? sessionSeed.toString().substring(2, 6)
@@ -927,9 +927,10 @@ function abrirCardVersoMobile(id) {
     document.getElementById(`card-${idNormalizado}`);
   const overlay = document.getElementById("cardVersoMobileModal");
 
+  // Coordenadas de contingência caso o card de origem falhe
   let rectInicial = {
-    left: window.innerWidth / 2,
-    top: window.innerHeight / 2,
+    left: window.innerWidth / 2 - 75,
+    top: window.innerHeight / 2 - 115,
     width: 150,
     height: 230,
   };
@@ -937,34 +938,14 @@ function abrirCardVersoMobile(id) {
     rectInicial = cardOrigem.getBoundingClientRect();
   }
 
-  // Torna o overlay invisível mas ativo no DOM para podermos calcular as dimensões do destino
+  // Prepara o overlay invisível para capturar o posicionamento final do centro
   if (overlay) {
     overlay.classList.remove("hidden");
     overlay.classList.add("flex");
     overlay.style.opacity = "0";
   }
 
-  // Captura as dimensões do contêiner centralizado estável
-  const rectFinal = box.getBoundingClientRect();
-
-  // Calcula os deltas matemáticos de deslocamento espacial (Eixos X, Y e Escala)
-  const deltaX =
-    rectInicial.left +
-    rectInicial.width / 2 -
-    (rectFinal.left + rectFinal.width / 2);
-  const deltaY =
-    rectInicial.top +
-    rectInicial.height / 2 -
-    (rectFinal.top + rectFinal.height / 2);
-  const escalaX = rectInicial.width / rectFinal.width;
-  const escalaY = rectInicial.height / rectFinal.height;
-
-  // Assenta o clone do modal na quina geométrica de origem do grid, sem transição
-  box.classList.remove("flipped-stage");
-  box.style.transition = "none";
-  box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY}) rotateY(0deg)`;
-
-  // Injeção do esqueleto de marcação estrutural da ficha técnica
+  // Injeta o HTML completo imediatamente para que imagens e textos comecem a carregar no frame zero
   box.innerHTML = `
     <div class="trunfo-header">
       <div class="trunfo-top-bar-v2">
@@ -1007,7 +988,26 @@ function abrirCardVersoMobile(id) {
       </div>
     </div>`;
 
-  // 🚀 DISPARO EM CADEIA DE FRAMES TRIDIMENSIONAIS (MÉTODO FLIP)
+  // Captura as dimensões reais do destino centralizado após a injeção do conteúdo
+  const rectFinal = box.getBoundingClientRect();
+
+  // Recalcula as matrizes espaciais precisas de deslocamento
+  const deltaX =
+    rectInicial.left +
+    rectInicial.width / 2 -
+    (rectFinal.left + rectFinal.width / 2);
+  const deltaY =
+    rectInicial.top +
+    rectInicial.height / 2 -
+    (rectFinal.top + rectFinal.height / 2);
+  const escalaX = rectInicial.width / rectFinal.width;
+  const escalaY = rectInicial.height / rectFinal.height;
+
+  // Congela o modal na origem exata do grid, mas pré-rotacionado em -180deg (virado de costas)
+  box.style.transition = "none";
+  box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY}) rotateY(-180deg)`;
+
+  // 🚀 ENGINE DE ANIMAÇÃO EM DUPLO QUADRO (FLIP SEM MÁSCARA)
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       if (overlay) {
@@ -1016,19 +1016,13 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      // Ativa a trajetória diagonal combinada ao overshoot de giro elástico
+      // Voa para o centro, expande a escala e desgira para 0deg (revelando a face normal de leitura)
       box.style.transition =
         "transform 0.6s cubic-bezier(0.25, 1.15, 0.45, 1.05)";
-      box.style.transform = "translate(0px, 0px) scale(1, 1) rotateY(180deg)";
-
-      // Dispara o acoplamento de face para desvirar o texto do verso no ápice do giro
-      setTimeout(() => {
-        box.classList.add("flipped-stage");
-      }, 150);
+      box.style.transform = "translate(0px, 0px) scale(1, 1) rotateY(0deg)";
     });
   });
 
-  // Empilha o histórico fictício para capturar o botão voltar
   history.pushState({ modal: "cardVersoMobile" }, "");
 }
 
