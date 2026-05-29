@@ -927,7 +927,7 @@ function abrirCardVersoMobile(id) {
     document.getElementById(`card-${idNormalizado}`);
   const overlay = document.getElementById("cardVersoMobileModal");
 
-  // Coordenadas de segurança
+  // Coordenadas de contingência baseadas na viewport mobile padrão
   let rectInicial = {
     left: window.innerWidth / 2 - 75,
     top: window.innerHeight / 2 - 115,
@@ -938,14 +938,14 @@ function abrirCardVersoMobile(id) {
     rectInicial = cardOrigem.getBoundingClientRect();
   }
 
-  // Torna o overlay flexível no DOM com opacidade zero para preparar o cálculo
+  // Torna o overlay visível no frame zero para calcular a caixa final centralizada
   if (overlay) {
     overlay.classList.remove("hidden");
     overlay.classList.add("flex");
     overlay.style.opacity = "0";
   }
 
-  // Injeção imediata de toda a estrutura do Super Trunfo (Garante renderização instantânea)
+  // Injeção imediata de toda a estrutura estrutural do Super Trunfo
   box.innerHTML = `
     <div class="trunfo-header">
       <div class="trunfo-top-bar-v2">
@@ -988,10 +988,10 @@ function abrirCardVersoMobile(id) {
       </div>
     </div>`;
 
-  // Mede as dimensões do container final centralizado com os dados injetados
+  // Captura o retângulo estático estável do destino centralizado
   const rectFinal = box.getBoundingClientRect();
 
-  // Calcula com precisão matemática os deltas em relação à coluna de origem
+  // Mapeamento espacial exato da distância entre o clique e o centro
   const deltaX =
     rectInicial.left +
     rectInicial.width / 2 -
@@ -1003,11 +1003,11 @@ function abrirCardVersoMobile(id) {
   const escalaX = rectInicial.width / rectFinal.width;
   const escalaY = rectInicial.height / rectFinal.height;
 
-  // Seta a largada do card vindo de costas, estável e plano diretamente do grid filho
+  // Seta a largada do card encolhido e plano na origem exata da coluna clicada
   box.style.transition = "none";
   box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY}) rotateY(0deg)`;
 
-  // 🚀 DISPARO DO DISPOSITIVO GRÁFICO EM DUPLO FRAME
+  // 🚀 ENGINE REATIVA DE TRANSIÇÃO (DUPLO FRAME ACELERADO)
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       if (overlay) {
@@ -1016,10 +1016,10 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      // Suaviza a viagem diagonal com o efeito elástico completo e limpo
+      // Corrige o corte de conteúdo removendo a inversão física de 180 graus da caixa pai
       box.style.transition =
         "transform 0.58s cubic-bezier(0.25, 1.15, 0.45, 1.05)";
-      box.style.transform = "translate(0px, 0px) scale(1, 1) rotateY(180deg)";
+      box.style.transform = "translate(0px, 0px) scale(1, 1) rotateY(0deg)";
     });
   });
 
