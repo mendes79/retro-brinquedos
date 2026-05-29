@@ -1390,20 +1390,26 @@ body {
 
   /* 🚀 CAPACITADORES GEOMÉTRICOS 3D */
   transform-style: preserve-3d !important;
-  perspective: 1000px !important;
+  perspective: 1200px !important;
 }
 
-/* 1.1 - Garante que a estrutura interna do card acompanhe o giro sem sofrer cortes */
-#cardVersoMobileBox > div {
-  backface-visibility: hidden !important;
-  -webkit-backface-visibility: hidden !important;
+/* Força todas as subcamadas e tags internas a manterem a visibilidade estável */
+#cardVersoMobileBox *,
+#cardVersoMobileBox div {
   transform-style: preserve-3d !important;
-  width: 100% !important;
-  height: 100% !important;
+  backface-visibility: visible !important;
+  -webkit-backface-visibility: visible !important;
 }
 
-/* 1.2 - Corrige o espelhamento do layout interno ao atingir o ápice dos 180 graus */
-#cardVersoMobileBox.flipped-stage > div {
+/* 🔄 ESPELHAMENTO NATIVO DO CONTEÚDO
+   Garante que todo o esqueleto interno (fotos, cabeçalho e estatísticas)
+   já nasça rotacionado de costas dentro do container. Assim, quando a caixa
+   pai executar o giro de 180 graus no espaço, a leitura final para o usuário
+   acontecerá de forma perfeitamente natural (da esquerda para a direita). */
+#cardVersoMobileBox > div,
+#cardVersoMobileBox > .trunfo-header,
+#cardVersoMobileBox > .trunfo-photo-wrapper,
+#cardVersoMobileBox > .trunfo-stats-area {
   transform: rotateY(180deg) !important;
 }
 

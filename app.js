@@ -917,7 +917,7 @@ function abrirCardVersoMobile(id) {
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
 
-  // Captura o card original de origem no grid do Masonry
+  // Captura o elemento original clicado no grid do Masonry
   const sToken =
     typeof sessionSeed !== "undefined"
       ? sessionSeed.toString().substring(2, 6)
@@ -927,7 +927,7 @@ function abrirCardVersoMobile(id) {
     document.getElementById(`card-${idNormalizado}`);
   const overlay = document.getElementById("cardVersoMobileModal");
 
-  // Coordenadas de contingência baseadas na viewport mobile padrão
+  // Coordenadas de contingência
   let rectInicial = {
     left: window.innerWidth / 2 - 75,
     top: window.innerHeight / 2 - 115,
@@ -938,14 +938,14 @@ function abrirCardVersoMobile(id) {
     rectInicial = cardOrigem.getBoundingClientRect();
   }
 
-  // Torna o overlay visível no frame zero para calcular a caixa final centralizada
+  // Ativa o overlay invisível para preparar o cálculo do centro geométrico
   if (overlay) {
     overlay.classList.remove("hidden");
     overlay.classList.add("flex");
     overlay.style.opacity = "0";
   }
 
-  // Injeção imediata de toda a estrutura estrutural do Super Trunfo
+  // Injeção limpa de toda a marcação estrutural do Super Trunfo
   box.innerHTML = `
     <div class="trunfo-header">
       <div class="trunfo-top-bar-v2">
@@ -988,7 +988,7 @@ function abrirCardVersoMobile(id) {
       </div>
     </div>`;
 
-  // Captura o retângulo estático estável do destino centralizado
+  // Captura o retângulo estático centralizado após a injeção
   const rectFinal = box.getBoundingClientRect();
 
   // Mapeamento espacial exato da distância entre o clique e o centro
@@ -1003,7 +1003,8 @@ function abrirCardVersoMobile(id) {
   const escalaX = rectInicial.width / rectFinal.width;
   const escalaY = rectInicial.height / rectFinal.height;
 
-  // Seta a largada do card encolhido e plano na origem exata da coluna clicada
+  // Força a largada vindo encolhido e com rotação zero graus (plano) na origem da coluna 1
+  box.classList.remove("flipped-stage");
   box.style.transition = "none";
   box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY}) rotateY(0deg)`;
 
@@ -1016,10 +1017,15 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      // Corrige o corte de conteúdo removendo a inversão física de 180 graus da caixa pai
+      // Voa para o centro expandindo e executando o giro de 180 graus completo
       box.style.transition =
         "transform 0.58s cubic-bezier(0.25, 1.15, 0.45, 1.05)";
-      box.style.transform = "translate(0px, 0px) scale(1, 1) rotateY(0deg)";
+      box.style.transform = "translate(0px, 0px) scale(1, 1) rotateY(180deg)";
+
+      // Ativa a subcamada de desgiro do texto para leitura normal
+      setTimeout(() => {
+        box.classList.add("flipped-stage");
+      }, 140);
     });
   });
 
@@ -1072,29 +1078,30 @@ function toggleCurtidaModal(event, id) {
 // Aceita tanto clique no backdrop quanto chamada direta.
 function fecharCardVersoMobile(event, veioDoPopstate = false) {
   if (event && event.target !== document.getElementById("cardVersoMobileModal"))
-    return; //
+    return;
 
-  const modal = document.getElementById("cardVersoMobileModal"); //
-  const box = document.getElementById("cardVersoMobileBox"); //
+  const modal = document.getElementById("cardVersoMobileModal");
+  const box = document.getElementById("cardVersoMobileBox");
 
   if (modal && box) {
     modal.style.opacity = "0";
     box.classList.remove("flipped-stage");
     box.style.transition =
-      "transform 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97)";
+      "transform 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97)";
+
+    // Força o card a desgirar de volta para a posição original antes de sumir
     box.style.transform = "scale(0.8) rotateY(0deg)";
 
     setTimeout(() => {
-      modal.classList.add("hidden"); //
-      document.body.style.overflow = ""; //
-    }, 400);
+      modal.classList.add("hidden");
+      document.body.style.overflow = "";
+    }, 420);
   }
 
   if (!veioDoPopstate) {
-    //
-    retroSincronizandoHistorico = true; //
-    history.back(); //
-  } //
+    retroSincronizandoHistorico = true;
+    history.back();
+  }
 }
 
 // 4.8 — Listener de click global — fecha o card flipado ao clicar fora dele no desktop
