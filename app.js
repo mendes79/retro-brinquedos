@@ -1008,24 +1008,18 @@ function abrirCardVersoMobile(id) {
   box.style.transition = "none";
   box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY}) rotateY(0deg)`;
 
-  // 🚀 ENGINE REATIVA DE TRANSIÇÃO (DUPLO FRAME ACELERADO)
+  // 🚀 ENGINE DE ANIMAÇÃO RECALIBRADA PARA MÁXIMA FLUIDEZ (SEM TRAVAMENTOS)
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       if (overlay) {
-        overlay.style.transition = "opacity 0.25s ease";
+        overlay.style.transition = "opacity 0.2s linear";
         overlay.style.opacity = "1";
       }
       document.body.style.overflow = "hidden";
 
-      // Voa para o centro expandindo e executando o giro de 180 graus completo
-      box.style.transition =
-        "transform 0.58s cubic-bezier(0.25, 1.15, 0.45, 1.05)";
+      // Mudamos para uma curva de aceleração que distribui o giro e o voo de forma linear e constante
+      box.style.transition = "transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)";
       box.style.transform = "translate(0px, 0px) scale(1, 1) rotateY(180deg)";
-
-      // Ativa a subcamada de desgiro do texto para leitura normal
-      setTimeout(() => {
-        box.classList.add("flipped-stage");
-      }, 140);
     });
   });
 
@@ -1089,7 +1083,8 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     box.style.transition =
       "transform 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97)";
 
-    // Força o card a desgirar de volta para a posição original antes de sumir
+    // Retorno constante e limpo em direção à coluna do Masonry
+    box.style.transition = "transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)";
     box.style.transform = "scale(0.8) rotateY(0deg)";
 
     setTimeout(() => {

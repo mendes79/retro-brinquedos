@@ -1391,6 +1391,10 @@ body {
   /* 🚀 CAPACITADORES GEOMÉTRICOS 3D */
   transform-style: preserve-3d !important;
   perspective: 1200px !important;
+  /* 🔥 AVISO PRÉVIO AO HARDWARE DO CELULAR:
+     Força o processador gráfico a isolar esta caixa em uma camada exclusiva
+     de renderização, eliminando qualquer gargalo ou travamento intermediário. */
+  will-change: transform !important;
 }
 
 /* Força todas as subcamadas e tags internas a manterem a visibilidade estável */
