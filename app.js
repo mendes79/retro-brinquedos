@@ -1078,19 +1078,24 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
   const box = document.getElementById("cardVersoMobileBox");
 
   if (modal && box) {
+    // 🚀 INÍCIO DA SUPRESSÃO DO FRAME INVERTIDO
+    // Esvaece o modal de fundo translúcido rapidamente
+    modal.style.transition = "opacity 0.25s linear";
     modal.style.opacity = "0";
-    box.classList.remove("flipped-stage");
-    box.style.transition =
-      "transform 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97)";
 
-    // Retorno constante e limpo em direção à coluna do Masonry
-    box.style.transition = "transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)";
-    box.style.transform = "scale(0.8) rotateY(0deg)";
+    // Reverte a aceleração e desbota o card enquanto ele encolhe de volta
+    box.style.transition =
+      "transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1)";
+    box.style.opacity = "0";
+    box.style.transform = "scale(0.7) rotateY(-180deg)";
 
     setTimeout(() => {
       modal.classList.add("hidden");
       document.body.style.overflow = "";
-    }, 420);
+
+      // Reseta os estados de opacidade para a próxima abertura do grid
+      box.style.opacity = "";
+    }, 350);
   }
 
   if (!veioDoPopstate) {
