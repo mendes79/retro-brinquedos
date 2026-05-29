@@ -696,6 +696,18 @@ async function fetchBrinquedos(reset = false) {
         if (typeof animarBandeirasEnduro === "function") {
           animarBandeirasEnduro();
         }
+
+        // 🔥 VALIDAÇÃO BLINDADA: Se o lote veio vazio por ser múltiplo exato, prepara os estados na memória
+        // e deixa que o sentinela ou o scroll natural puxem a rodada subsequente de forma assíncrona.
+        if (itens.length === 0) {
+          console.log(
+            "%c 🚀 [GATILHO SEGURO] Lote vazio detectado. Semente e cursor resetados na memória. Aguardando próximo pulso de scroll para evitar avalanche.",
+            "color: #ff9800; font-weight: bold;",
+          );
+          hasMais = true;
+          isLoading = false;
+          return;
+        }
       }
     }
 
