@@ -1,6 +1,8 @@
 # Dados de origem (Excel)
 brinquedos.xlsx
 ~$brinquedos.xlsx
+brinquedos_anos_80_90.xlsx
+~$brinquedos_anos_80_90.xlsx
 api/brinquedos_old.js
 api/brinquedos_gemini.js
 api/brinquedos_claude.js

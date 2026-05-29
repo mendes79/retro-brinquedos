@@ -1,8 +1,26 @@
 /* ============================================================
-   SEÇÃO 2: ESTILOS CUSTOMIZADOS
-   ============================================================ */
+   RetroBrinquedos BR — Catálogo Nostálgico de Brinquedos
+   Arquivo    : styles.css
+   Versão     : 2.0
+   Atualizado : 28/05/2026
 
-/* 2.1. VARIÁVEIS E BASE */
+   Descrição:
+   Estilos customizados da SPA (camada sobre Tailwind CSS).
+   Define: design system retrô (variáveis, fontes, backgrounds
+   grid 80s), motor masonry, template Super Trunfo, painel LED
+   ticker, modais, drawer, arcade login, ranking/pódio, avatar
+   dropdown 3D e ajustes responsivos mobile/desktop.
+
+   Histórico de versões:
+   v2.0 (28/05/2026) — Reorganização em blocos e documentação
+============================================================ */
+
+
+/* ================================================================
+   1. VARIÁVEIS E BASE
+   ================================================================ */
+
+/* 1.1 — Custom properties globais — paleta neon, cores trunfo, alturas fixas de navbar e painel LED */
 :root {
   --neon-pink: #ff00ff;
   --neon-blue: #00ffff;
@@ -14,6 +32,7 @@
   --led-height: 42px; /* Altura do painel LED Era 28, aumentei 50% */
 }
 
+/* 1.2 — Estilos base do body — fundo dark, fonte padrão e overflow-x hidden */
 body {
   font-family: "Inter", sans-serif;
   background-color: #0f172a;
@@ -21,6 +40,7 @@ body {
   overflow-x: hidden;
 }
 
+/* 1.3 — Utilitários de fonte e scrollbar — .font-retro, .font-orbitron, .no-scrollbar */
 .font-retro {
   font-family: "Archivo Black", sans-serif;
 }
@@ -31,7 +51,13 @@ body {
   display: none;
 }
 
-/* 2.2. HERO SECTION E EFEITOS */
+
+
+/* ================================================================
+   2. HERO SECTION
+   ================================================================ */
+
+/* 2.1 — Layout da hero section — padding, alinhamento e z-index base */
 .hero-section {
   position: relative;
   width: 100%;
@@ -44,6 +70,7 @@ body {
   box-sizing: border-box;
 }
 
+/* 2.2 — Background grid retro 80s — linhas de perspectiva animadas com gradiente neon sobre o hero */
 /* 2.2.1. Background Grid Retro 80s */
 .hero-bg {
   position: absolute;
@@ -198,6 +225,7 @@ body {
   line-height: 1.7;
 }
 
+/* 2.3 — Botão CTA principal — gradiente, @keyframes shine (brilho passante), hover e responsivo mobile */
 /* 2.2.2. Botão Principal Hero (Animação Shine) */
 .hero-cta {
   display: inline-flex;
@@ -246,6 +274,7 @@ body {
   }
 }
 
+/* 2.4 — Estatísticas da hero — contadores de brinquedos, usuários e curtidas; indicador animado de status */
 /* 2.2.3. Estatísticas e Indicador Animado */
 .hero-stats {
   display: flex;
@@ -254,6 +283,8 @@ body {
   padding-bottom: 0.5rem;
   flex-wrap: wrap;
 }
+
+/* 2.5 — Grid de logos de fabricantes — wrapper flex, logos com grayscale hover reveal e responsivo mobile */
 /* ============================================================
    B4 — GRID DE FABRICANTES (.hero-brands-wrapper)
    Desktop + Mobile: stats acima, 8 logos em linha única abaixo.
@@ -331,301 +362,51 @@ body {
   border-color: rgba(255, 255, 255, 0.6);
 }
 
-/* ============================================================
-   FOOTER PÓDIO + MODAL RANKING
-   ============================================================ */
-
-/* ============================================================
-   CORREÇÃO DO RODAPÉ GLOBAL (ESTRUTURA DE CANTOS EXTREMOS)
-   ============================================================ */
-footer.fixed.bottom-0 {
-  height: 44px !important; /* Altura original elegante e compacta */
-  background-color: rgba(
-    15,
-    23,
-    42,
-    0.95
-  ) !important; /* Paleta slate-900 estável */
-  border-top: 1px solid rgba(51, 65, 85, 0.25) !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-/* Força a div interna do Tailwind a ocupar 100% da altura e alinhar na linha central */
-footer.fixed.bottom-0 > div.relative {
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important; /* Afasta magneticamente para os cantos */
-}
-
-/* Alinhamento do texto de copyright central */
-footer.fixed.bottom-0 p {
-  font-family: "Orbitron", sans-serif !important;
-  font-size: 11px !important; /* Tamanho exato padrão original desktop */
-  letter-spacing: 0.08em !important;
-  margin: 0 auto !important;
-}
-
-/* Dimensão e alinhamento vertical dos ícones das mídias sociais à direita */
-footer.fixed.bottom-0 .absolute.right-4 a,
-footer.fixed.bottom-0 .absolute.right-4 svg {
-  width: 18px !important; /* Tamanho clássico nítido do ANTES.jpg */
-  height: 18px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-/* Modificadores responsivos para manter a harmonia no Mobile */
-@media (max-width: 767px) {
-  footer.fixed.bottom-0 {
-    height: 48px !important; /* Dá uma área de toque maior no smartphone */
+/* 2.6 — C2 — hint de interatividade nos logos — pulso neon branco dispara 2× no boot para indicar que os logos são clicáveis */
+@keyframes logoHintPulse {
+  0% {
+    box-shadow: none;
+    opacity: 1;
   }
-  footer.fixed.bottom-0 p {
-    font-size: 12px !important;
+  30% {
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, 0.9),
+      0 0 12px 4px rgba(255, 255, 255, 0.6),
+      0 0 24px 8px rgba(0, 255, 255, 0.4);
   }
-}
-
-/* Botão pódio no footer */
-.footer-podium-btn {
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  display: flex; /* Alinha a caixa no eixo flexível do rodapé */
-  align-items: center; /* Centraliza verticalmente */
-  width: 32px; /* Define o tamanho da caixa delimitadora */
-  height: 32px; /* Define o tamanho da caixa delimitadora */
-}
-.footer-podium-icon {
-  width: 100% !important; /* Herda os 32px exatos definidos no botão */
-  height: 100% !important; /* Herda os 32px exatos definidos no botão */
-  object-fit: contain;
-  filter: drop-shadow(0 0 0px transparent);
-  transition:
-    filter 0.3s ease,
-    transform 0.3s ease;
-}
-.footer-podium-btn:hover .footer-podium-icon {
-  /* Glow cyan no canto inferior direito — soma ao rosa do gradiente do ícone */
-  filter: drop-shadow(4px 4px 8px rgba(0, 255, 255, 0.85))
-    drop-shadow(2px 2px 4px rgba(0, 255, 255, 0.5));
-  transform: scale(1.12);
-}
-
-/* Modal ranking — lista de itens */
-.ranking-modal-lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.ranking-modal-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 4px;
-  border-bottom: 1px solid rgba(57, 255, 20, 0.08);
-}
-.ranking-modal-item:last-child {
-  border-bottom: none;
-}
-
-.ranking-modal-pos {
-  font-family: "Orbitron", monospace;
-  font-size: 0.6rem;
-  color: var(--trunfo-gold);
-  font-weight: 700;
-  min-width: 18px;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.ranking-modal-img {
-  width: 48px;
-  height: 48px;
-  object-fit: cover;
-  border-radius: 6px;
-  flex-shrink: 0;
-  border: 1px solid rgba(57, 255, 20, 0.2);
-}
-
-.ranking-modal-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-.ranking-modal-nome {
-  font-family: "Orbitron", monospace;
-  font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.9);
-  letter-spacing: 0.05em;
-  line-height: 1.4;
-  word-break: break-word;
-}
-.ranking-modal-fabricante {
-  font-family: "Orbitron", monospace;
-  font-size: 0.5rem;
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.08em;
-}
-
-.ranking-modal-valor {
-  font-family: "Orbitron", monospace;
-  font-size: 0.6rem;
-  font-weight: 700;
-  min-width: 44px;
-  text-align: right;
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-/* Toggle buttons */
-.ranking-toggle-btn {
-  font-family: "Orbitron", monospace;
-  font-size: 0.55rem;
-  letter-spacing: 0.1em;
-  padding: 5px 10px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.ranking-toggle-ativo#rankingBtnCurtidas {
-  background: rgba(240, 192, 64, 0.15);
-  border-color: var(--trunfo-gold);
-  color: var(--trunfo-gold);
-}
-.ranking-toggle-ativo#rankingBtnVisualizacoes {
-  background: rgba(0, 255, 255, 0.1);
-  border-color: var(--neon-blue);
-  color: var(--neon-blue);
-}
-.ranking-toggle-inativo {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.hero-stat-item {
-  text-align: center;
-}
-.hero-stat-number {
-  font-family: "Orbitron", monospace;
-  font-size: 1.5rem;
-  color: var(--neon-yellow);
-  display: block;
-}
-.hero-stat-label {
-  font-size: 0.62rem;
-  letter-spacing: 0.15em;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-}
-.hero-scroll-arrow {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  opacity: 0.5;
-  animation: bounce 2s infinite;
-}
-.hero-scroll-arrow span {
-  display: block;
-  width: 10px;
-  height: 10px;
-  border-right: 2px solid white;
-  border-bottom: 2px solid white;
-  transform: rotate(45deg);
-}
-@keyframes bounce {
-  0%,
+  60% {
+    box-shadow: none;
+  }
+  80% {
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, 0.7),
+      0 0 10px 3px rgba(255, 255, 255, 0.4),
+      0 0 20px 6px rgba(0, 255, 255, 0.3);
+  }
   100% {
-    transform: translateX(-50%) translateY(0);
-  }
-  50% {
-    transform: translateX(-50%) translateY(8px);
+    box-shadow: none;
+    opacity: 1;
   }
 }
 
-/* ============================================================
-   Ajustes Responsivos Exclusivos do Ranking Mobile (max-width: 767px)
-   ============================================================ */
-@media (max-width: 767px) {
-  /* Mantém estritamente intacto o tamanho dos títulos para evitar estouro de linha */
-  #rankingTitulo {
-    font-size: 11px !important; /* Mantém o tamanho original padrão */
-    white-space: nowrap;
-  }
-
-  /* Aumentar em 2px o tamanho do texto decorativo // Ranking (De 12px para 14px) */
-  .disclaimer-modal-box h2.font-orbitron.text-xs {
-    font-size: 14px !important;
-    letter-spacing: 0.12em;
-  }
-
-  /* Resolve e força a exibição e leitura limpa da Data e Hora */
-  #rankingTimestamp {
-    font-size: 13px !important; /* Legível no mobile */
-    color: #94a3b8 !important; /* Força cor estável da paleta slate */
-    display: block !important;
-    visibility: visible !important;
-  }
-
-  /* Botões de Alternância Curtidas/Visualizações (+4px) */
-  .ranking-toggle-btn {
-    font-size: 15px !important;
-  }
-
-  /* Elementos da lista: força comportamento de renderização imediata */
-  .ranking-modal-item {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-  }
-
-  /* Posição Numérica do Pódio (+4px) */
-  .ranking-modal-pos {
-    font-size: 20px !important;
-  }
-
-  /* Imagem do item inflada em 50% (72px) - Contorna bug do lazy loading no boot */
-  .ranking-modal-img {
-    width: 72px !important;
-    height: 72px !important;
-    flex-shrink: 0 !important;
-    display: block !important;
-    content-visibility: auto; /* Força o navegador a pintar os pixels imediatamente */
-  }
-
-  /* Nome do Brinquedo: reduzido em 1px em relação ao teste anterior */
-  .ranking-modal-nome {
-    font-size: 18px !important;
-    line-height: 1.2;
-  }
-
-  /* Nome do Fabricante: MANTIDO idêntico ao desktop original */
-  .ranking-modal-fabricante {
-    font-size: 11px !important;
-  }
-
-  /* Valor da métrica de exibição (+4px) */
-  .ranking-modal-valor {
-    font-size: 18px !important;
-  }
+/* Aplica no primeiro hero-brand-btn da página */
+.hero-brand-btn:first-child {
+  animation: logoHintPulse 2.2s ease-out 1.5s 2 forwards;
+  border-radius: 6px;
 }
 
+/* Garante que após a animação o botão fica sem efeito residual */
+.hero-brand-btn:first-child.hint-done {
+  animation: none;
+}
+
+
+
+/* ================================================================
+   3. CATÁLOGO E GRID MASONRY
+   ================================================================ */
+
+/* 3.1 — Grid masonry flex — colunas como filhos diretos, gap e alinhamento topo */
 /* 2.3. MASONRY GRID E ANIMAÇÕES DOS CARDS */
 .masonry-grid {
   display: flex;
@@ -656,6 +437,8 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   opacity: 0;
   transform: translateY(30px);
 }
+
+/* 3.2 — @keyframes cardFadeIn — fade + leve translate Y ao inserir cada card no grid */
 @keyframes cardFadeIn {
   to {
     opacity: 1;
@@ -663,109 +446,137 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   }
 }
 
-/* 2.3.1. Engine 3D e Mecânica Desktop vs Mobile */
-.card-inner {
-  position: relative;
-  width: 100%;
-  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-style: preserve-3d;
-  cursor: pointer;
-  will-change: transform;
-}
-
-/* 🔴 TIREI DO MEDIA QUERY: Agora vira em qualquer dispositivo! */
-.is-flipped .card-inner {
-  transform: rotateY(180deg);
-}
-
-/* Card virado deve ficar acima de todos os outros cards — desktop e mobile */
-.masonry-item.is-flipped {
-  z-index: 150 !important;
-  position: relative;
-}
-
-.is-flipped .card-back {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-/* Card virado no mobile: O contêiner pai fica FIXO e CENTRALIZADO na viewport */
+/* 3.3 — C1 — hint de flip no primeiro card — linha neon cyan na borda inferior pulsa 2× após carregar, indicando que o card é clicável */
 /* ============================================================
-   REGULAGEM MOBILE LIMPA (SEM CONFLITOS 3D)
+   BLOCO 6 — HINT DE FLIP NO PRIMEIRO CARD (C1)
+   Linha neon cyan na borda inferior do primeiro card do grid,
+   pulsando 2× após carregar. Só CSS — zero interferência com
+   o motor Masonry ou com o render.
    ============================================================ */
-@media (max-width: 767px) {
-  :root {
-    --led-height: 36px;
+@keyframes cardHintLine {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.3);
   }
-  .led-panel {
-    height: 36px;
+  25% {
+    opacity: 1;
+    transform: scaleX(1);
   }
-  .led-content {
-    font-size: 28px;
-    line-height: 36px;
+  50% {
+    opacity: 0;
+    transform: scaleX(0.8);
+  }
+  75% {
+    opacity: 0.8;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(0.3);
   }
 }
 
-.card-front,
-.card-back {
+.masonry-column:first-child .masonry-item:first-child {
+  position: relative;
+}
+
+.masonry-column:first-child .masonry-item:first-child::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 255, 255, 0.9) 30%,
+    rgba(0, 255, 255, 1) 50%,
+    rgba(0, 255, 255, 0.9) 70%,
+    transparent 100%
+  );
+  border-radius: 2px;
+  box-shadow: 0 0 8px 2px rgba(0, 255, 255, 0.5);
+  animation: cardHintLine 1.6s ease-in-out 1.2s 2 forwards;
+  pointer-events: none;
+}
+
+/* 3.4 — Skeleton loading — card placeholder com pulse e scanline enquanto o masonry carrega */
+@keyframes skeletonPulse {
+  0% {
+    background-color: rgba(30, 41, 59, 0.5);
+  }
+  50% {
+    background-color: rgba(51, 65, 85, 0.8);
+  }
+  100% {
+    background-color: rgba(30, 41, 59, 0.5);
+  }
+}
+
+.skeleton-card {
   width: 100%;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
+  min-height: 250px;
   border-radius: 1rem;
+  background-color: #1e293b;
+  border: 1px solid rgba(0, 255, 255, 0.1);
+  animation: skeletonPulse 1.5s infinite ease-in-out;
+  position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
-}
-.card-front {
-  background: #1e293b; /* Cor sólida (esqueleto) enquanto a imagem baixa */
-  border-radius: 1rem;
-  overflow: hidden;
+  margin-bottom: 1.5rem;
 }
 
-.card-front img {
-  display: block;
-  width: 100%;
-  height: auto;
-  /* Garante que o navegador reserve o espaço correto assim que os metadados da imagem chegam */
-  contain-intrinsic-size: auto 300px;
-}
-
-.card-back {
+/* Linha de brilho passando (Scanline effect) */
+.skeleton-card::after {
+  content: "";
   position: absolute;
   top: 0;
-  left: 0;
+  left: -100%;
+  width: 100%;
   height: 100%;
-  min-height: 540px;
-  max-height: 90vh;
-  transform: rotateY(180deg);
-  display: flex;
-  flex-direction: column;
-  background: var(--trunfo-dark);
-  border-radius: 1rem;
-  outline: 4px solid var(--trunfo-gold);
-  outline-offset: -6px;
-  border: 6px solid #0d0b1e;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 0, 255, 0.05),
+    transparent
+  );
+  animation: shine 2s infinite;
+}
+/* Estilo dos botões do Meu Quarto */
+
+/* 3.5 — Botões de filtro Meu Quarto (.filter-btn) — estilos base, hover neon e estado .active */
+.filter-btn {
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.65rem;
+  color: #94a3b8;
+  padding: 6px 15px;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  background: transparent;
+  cursor: pointer;
 }
 
-/* ============================================================
-   2.3.2. MOBILE — flip idêntico ao desktop, sem transform orbital
-   ============================================================ */
-@media (max-width: 767px) {
-  .masonry-item.is-flipped {
-    z-index: 150 !important;
-  }
-  /* Overlay escuro quando card está virado */
-  .masonry-item.is-flipped::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(5, 5, 10, 0.75);
-    z-index: -1;
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-    pointer-events: all;
-  }
+.filter-btn:hover {
+  border-color: #39ff14; /* Neon Green */
+  color: #39ff14;
 }
 
+.filter-btn.active {
+  background: rgba(57, 255, 20, 0.1);
+  border-color: #39ff14;
+  color: #39ff14;
+  box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.2);
+}
+
+
+
+/* ================================================================
+   4. CARD FRENTE — TEMPLATE SUPER TRUNFO
+   ================================================================ */
+
+/* 4.1 — Template Super Trunfo — estrutura completa do card frente: header, foto, stats, botões. Cores trunfo (vermelho/ouro/dark). */
 /* 2.4. TEMPLATE SUPER TRUNFO (Ficha e Estatísticas) */
 .trunfo-header {
   background: linear-gradient(180deg, #8b0000 0%, var(--trunfo-red) 100%);
@@ -894,6 +705,7 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   text-align: right;
 }
 
+/* 4.2 — Display LED de raridade — indicador colorido embutido no card (verde ≤6, amarelo ≤8, vermelho >8) */
 /* 2.4.1. Display LED de Raridade */
 .trunfo-raridade-area {
   padding: 6px 10px 6px;
@@ -960,6 +772,7 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
     0 0 10px rgba(255, 32, 32, 0.5);
 }
 
+/* 4.3 — Texto de curiosidade — área de descrição expandível no card frente */
 /* 2.4.2. Texto de Curiosidade */
 .trunfo-curiosidade {
   margin: 6px 10px 8px;
@@ -987,6 +800,13 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   background: var(--neon-blue);
 }
 
+
+
+/* ================================================================
+   5. AÇÕES DO USUÁRIO — CURTIDAS, EU TIVE E QUERIA TER
+   ================================================================ */
+
+/* 5.1 — Botões Tive/Queria/Curtidas — estados base, active (tive/queria), locked (não logado) e hover */
 /* 2.5. AÇÕES DO USUÁRIO NO CARD (Tive/Queria, Coração) */
 .trunfo-actions-area {
   display: flex;
@@ -1048,6 +868,7 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   color: var(--trunfo-red);
 }
 
+/* 5.2 — Footer do card — 3 botões iguais em flex row, separadores, SVG base e contador de curtidas */
 /* 2.5.1. Footer do card — 3 botões iguais */
 .trunfo-footer {
   background: linear-gradient(0deg, #6b0000, var(--trunfo-red));
@@ -1178,6 +999,7 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   letter-spacing: 0.08em;
 }
 
+/* 5.3 — Tooltip de aviso (login necessário) — balão retrô que aparece ao tentar curtir sem login; @keyframes pulseSoft e likeBurst */
 /* 2.5.2. Tooltip de Aviso (Login necessário) */
 .heart-tooltip {
   position: absolute;
@@ -1256,6 +1078,7 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   }
 }
 
+/* 5.4 — Área de comentário no estado deslogado — banner CTA para login dentro do card verso desktop */
 /* 2.5.3. Área de Comentário (Estado Deslogado) */
 .app-unlogged .comment-area {
   cursor: not-allowed;
@@ -1276,432 +1099,42 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   pointer-events: none; /* Impede hover e clique */
 }
 
-/* 2.6. ARCADE MODAL (LOGIN & AVATARES) */
-.arcade-box {
-  background: #050505;
-  border: 3px solid #39ff14;
-  border-radius: 12px;
-  box-shadow:
-    0 0 20px rgba(57, 255, 20, 0.4),
-    inset 0 0 30px rgba(57, 255, 20, 0.1);
-  background-image: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(57, 255, 20, 0.05) 2px,
-    rgba(57, 255, 20, 0.05) 4px
-  );
-}
-.insert-coin-text {
-  /* B1 — melting text: derreter suave em loop verde → cyan */
-  animation: meltingText 3s ease-in-out infinite;
+
+
+/* ================================================================
+   6. CARD VERSO — FLIP 3D DESKTOP
+   ================================================================ */
+
+/* 6.1 — Engine 3D desktop — perspectiva, preserve-3d, rotateY(180deg) ao .is-flipped e card focado (z-index 150) */
+/* 2.3.1. Engine 3D e Mecânica Desktop vs Mobile */
+.card-inner {
   position: relative;
-  display: inline-block;
-}
-.insert-coin-text::before,
-.insert-coin-text::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  background: inherit;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  z-index: -1;
-}
-.insert-coin-text::before {
-  animation: meltDrip 3s ease-in-out infinite;
-  opacity: 0.55;
-}
-.insert-coin-text::after {
-  filter: blur(8px);
-  animation: meltDrip 3s ease-in-out infinite 0.15s;
-  opacity: 0.3;
-}
-.coins-wrapper {
-  position: relative;
-}
-.coin-btn {
-  width: 70px;
-  height: 70px;
-  background: transparent;
-  border: none;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
   cursor: pointer;
-  outline: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  z-index: 1;
-}
-.coin-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.coins-wrapper:hover .coin-btn:not(:hover) {
-  filter: grayscale(100%) blur(2px);
-  opacity: 0.4;
-  transform: scale(0.9);
-}
-.coins-wrapper .coin-btn:hover {
-  transform: scale(1.15) translateY(-5px);
-  filter: drop-shadow(0 15px 12px rgba(57, 255, 20, 0.9));
-  z-index: 10;
-}
-.coin-inserted {
-  animation: insertFlash 0.3s forwards;
-  pointer-events: none;
-}
-.game-over-text {
-  text-shadow:
-    4px 4px 0 #4a0000,
-    0 0 20px #ff0000;
-  animation: glitchGameOver 0.2s infinite;
-}
-
-@keyframes blinkNeon {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
-}
-@keyframes insertFlash {
-  0% {
-    transform: scale(1.15);
-    filter: brightness(1.5) drop-shadow(0 15px 12px rgba(57, 255, 20, 1));
-  }
-  100% {
-    transform: scale(0.9) translateY(10px);
-    filter: brightness(0);
-    opacity: 0;
-  }
-}
-@keyframes glitchGameOver {
-  0%,
-  100% {
-    transform: translate(0);
-  }
-  20% {
-    transform: translate(-3px, 2px);
-  }
-  40% {
-    transform: translate(-1px, -2px);
-  }
-  60% {
-    transform: translate(3px, 1px);
-  }
-  80% {
-    transform: translate(1px, -1px);
-  }
-}
-
-/* 2.6.1. Galeria de Seleção de Avatares */
-.avatar-item {
-  width: 76px; /* D1 — aumentado de 60px para aproveitar espaço lateral no mobile */
-  height: 76px;
-  border: 2px solid #1e293b;
-  background: #0f172a;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 4px;
-  overflow: hidden;
-}
-@media (min-width: 768px) {
-  .avatar-item {
-    width: 80px;
-    height: 80px;
-  }
-}
-.avatar-item:hover {
-  border-color: #22d3ee;
-  transform: scale(1.1);
-  box-shadow: 0 0 15px #22d3ee;
-  z-index: 10;
-}
-.avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: grayscale(40%);
-  transition: filter 0.2s;
-}
-.avatar-item:hover .avatar-img {
-  filter: grayscale(0%);
-}
-.avatar-selected {
-  animation: selectFlash 0.5s step-end infinite;
-  border-color: #fff !important;
-}
-@keyframes selectFlash {
-  50% {
-    background: #22d3ee;
-  }
-}
-.select-player-text {
-  /* B2 — neon glow alternando cyan → pink */
-  animation: neonGlow 1.8s ease-in-out infinite alternate;
-}
-/* 2.7. TOGGLE SWITCH LED (CONTROLE DO PAINEL) */
-.led-toggle-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-.led-toggle-label {
-  font-family: "Orbitron", monospace;
-  font-size: 0.38rem;
-  letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.3);
-  text-transform: uppercase;
-  line-height: 1;
-}
-.switch {
-  display: block;
-}
-.switch input[type="checkbox"] {
-  display: none;
-}
-.slider {
-  background-color: #ffffff2b;
-  border-radius: 100px;
-  padding: 1px;
-  margin: 0;
-  cursor: pointer;
-  transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
-  align-items: center;
-  position: relative;
-  display: block;
-  width: 38px;
-  height: 22px;
-  box-shadow:
-    rgba(0, 0, 0, 0.62) 0px 0px 5px inset,
-    rgba(0, 0, 0, 0.21) 0px 0px 0px 18px inset,
-    #22cc3f 0px 0px 0px 0px inset,
-    rgba(224, 224, 224, 0.45) 0px 1px 0px 0px;
-}
-.slider::after {
-  content: "";
-  display: flex;
-  top: 2px;
-  left: 2px;
-  width: 18px;
-  height: 18px;
-  background-color: #e3e3e3;
-  border-radius: 200px;
-  position: absolute;
-  box-shadow:
-    transparent 0px 0px 0px 2px,
-    rgba(0, 0, 0, 0.3) 0px 4px 6px;
-  transition:
-    left 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s,
-    background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
-  will-change: left, background-color;
-}
-.switch input[type="checkbox"]:checked + .slider {
-  box-shadow:
-    rgba(0, 0, 0, 0.62) 0px 0px 5px inset,
-    #22cc3f 0px 0px 0px 2px inset,
-    #22cc3f 0px 0px 0px 18px inset,
-    rgba(224, 224, 224, 0.45) 0px 1px 0px 0px;
-}
-.switch input[type="checkbox"]:checked + .slider::after {
-  left: 18px;
-  background-color: #e3e3e3;
-}
-
-/* 2.8. PAINEL LED (DISPLAY TICKER NO FOOTER) */
-.led-panel {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 42px;
-  background: #080808;
-  overflow: hidden;
-  border-bottom: 1px solid rgba(57, 255, 20, 0.15);
-  box-shadow:
-    0 0 12px rgba(57, 255, 20, 0.06) inset,
-    0 2px 8px rgba(0, 0, 0, 0.4);
-  z-index: 159; /* Bug 1 fix — acima do card flipado (150), abaixo da navbar (160) */
-  transition:
-    height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.35s ease;
-}
-.led-panel.is-off {
-  height: 0;
-  opacity: 0;
-  border-bottom-width: 0;
-}
-
-/* Grade de pixels apagados simulando LED real */
-.led-pixel-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.55) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.55) 1px, transparent 1px);
-  background-size: 4px 4px;
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* Scanline horizontal sutil — fica ABAIXO do texto (z-index: 1) */
-.led-scanline {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent,
-    transparent 3px,
-    rgba(0, 0, 0, 0.15) 3px,
-    rgba(0, 0, 0, 0.15) 4px
-  );
-  z-index: 1; /* ← era 3 (sobre o texto); agora 1 (sob o texto) */
-  pointer-events: none;
-}
-
-/* Trilho de rolagem — acima da scanline */
-.led-track {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  z-index: 2; /* ← acima da scanline (z:1), texto visível sobre as listras */
-  padding: 0 8px;
-}
-
-/* Conteúdo animado */
-.led-content {
-  display: inline-block;
-  white-space: nowrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 17px;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  color: #39ff14;
-  text-shadow: 0 0 3px rgba(57, 255, 20, 0.4);
-  line-height: 42px;
-  /* ✏️ VELOCIDADE LED — ajuste o valor abaixo para mudar a velocidade global */
-  animation: ledScroll 40s linear infinite;
-  animation-delay: -20s;
   will-change: transform;
 }
-.led-content.is-paused {
-  animation-play-state: paused;
+
+/* 🔴 TIREI DO MEDIA QUERY: Agora vira em qualquer dispositivo! */
+.is-flipped .card-inner {
+  transform: rotateY(180deg);
 }
 
-@keyframes ledScroll {
-  0% {
-    transform: translateX(100vw);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+/* Card virado deve ficar acima de todos os outros cards — desktop e mobile */
+.masonry-item.is-flipped {
+  z-index: 150 !important;
+  position: relative;
 }
 
-/* ✏️ VELOCIDADE LED FIREFOX — ajuste o divisor (atualmente 70% mais lento)
-   Para mais lento: aumente o valor de 'animation-duration' (ex: 57s → 65s)
-   Para mais rápido: diminua (ex: 57s → 50s) */
-@-moz-document url-prefix() {
-  .led-content {
-    animation-duration: 57s; /* 40s ÷ 0.70 ≈ 57s → 70% da velocidade do Chrome */
-  }
+.is-flipped .card-back {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Estado TILT (login necessário) */
-.led-content.tilt-mode {
-  color: #ff2020;
-  text-shadow: 0 0 4px rgba(255, 32, 32, 0.6);
-  text-align: center;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Estado GLITCH */
-.led-panel.glitch-line::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 7px;
-  background: #080808;
-  z-index: 10;
-  top: var(--glitch-y, 10px);
-  animation: glitchShift 0.15s steps(1) infinite;
-}
-@keyframes glitchShift {
-  0% {
-    top: 6px;
-    opacity: 1;
-  }
-  33% {
-    top: 14px;
-    opacity: 0.7;
-  }
-  66% {
-    top: 3px;
-    opacity: 1;
-  }
-  100% {
-    top: 10px;
-    opacity: 0.8;
-  }
-}
-
-/* Animação de DESLIGAR (LEDs apagando esquerda→direita) */
-.led-panel.powering-off::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to right,
-    #080808 var(--wipe-pct, 0%),
-    transparent var(--wipe-pct, 0%)
-  );
-  z-index: 20;
-  animation: ledWipeOff 0.5s ease-in forwards;
-}
-@keyframes ledWipeOff {
-  from {
-    --wipe-pct: 0%;
-  }
-  to {
-    --wipe-pct: 100%;
-  }
-}
-
-/* Animação de RELIGAR (scan vertical topo→base) */
-.led-panel.powering-on::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(57, 255, 20, 0.18) 0%,
-    transparent 60%
-  );
-  z-index: 20;
-  animation: ledScanOn 0.45s ease-out forwards;
-}
-@keyframes ledScanOn {
-  from {
-    transform: translateY(-100%);
-  }
-  to {
-    transform: translateY(200%);
-  }
-}
-
-/* Mobile: painel LED — override de consistência */
+/* Card virado no mobile: O contêiner pai fica FIXO e CENTRALIZADO na viewport */
+/* ============================================================
+   REGULAGEM MOBILE LIMPA (SEM CONFLITOS 3D)
+   ============================================================ */
 @media (max-width: 767px) {
   :root {
     --led-height: 36px;
@@ -1711,439 +1144,651 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   }
   .led-content {
     font-size: 28px;
-    font-weight: 400;
     line-height: 36px;
   }
 }
-/* Efeito de Pulsação para o Skeleton */
-@keyframes skeletonPulse {
-  0% {
-    background-color: rgba(30, 41, 59, 0.5);
-  }
-  50% {
-    background-color: rgba(51, 65, 85, 0.8);
-  }
-  100% {
-    background-color: rgba(30, 41, 59, 0.5);
-  }
-}
 
-.skeleton-card {
+.card-front,
+.card-back {
   width: 100%;
-  min-height: 250px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
   border-radius: 1rem;
-  background-color: #1e293b;
-  border: 1px solid rgba(0, 255, 255, 0.1);
-  animation: skeletonPulse 1.5s infinite ease-in-out;
-  position: relative;
   overflow: hidden;
-  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+}
+.card-front {
+  background: #1e293b; /* Cor sólida (esqueleto) enquanto a imagem baixa */
+  border-radius: 1rem;
+  overflow: hidden;
 }
 
-/* Linha de brilho passando (Scanline effect) */
-.skeleton-card::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 0, 255, 0.05),
-    transparent
-  );
-  animation: shine 2s infinite;
-}
-/* Estilo dos botões do Meu Quarto */
-.filter-btn {
-  font-family: "Orbitron", sans-serif;
-  font-size: 0.65rem;
-  color: #94a3b8;
-  padding: 6px 15px;
-  border: 1px solid #334155;
-  border-radius: 4px;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  background: transparent;
-  cursor: pointer;
-}
-
-.filter-btn:hover {
-  border-color: #39ff14; /* Neon Green */
-  color: #39ff14;
-}
-
-.filter-btn.active {
-  background: rgba(57, 255, 20, 0.1);
-  border-color: #39ff14;
-  color: #39ff14;
-  box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.2);
-}
-
-/* ============================================================
-   2.9. DROPDOWN AVATAR — DESKTOP 3D WOBBLE (4.1.3)
-   Inspirado em https://dribbble.com/shots/8582990-VR-Menu-Interaction
-   Mobile mantém o dropdown simples definido inline pelo updateNavWithAvatar.
-   ============================================================ */
-
-/* ============================================================
-   2.9. DROPDOWN AVATAR — 3D WOBBLE (4.1.3)
-   Inspirado em https://dribbble.com/shots/8582990-VR-Menu-Interaction
-   Aplicado em todas as telas (mobile + desktop).
-   ============================================================ */
-
-#avatarDropdown {
-  background: rgba(10, 12, 28, 0.97) !important;
-  border: 1px solid rgba(34, 211, 238, 0.18) !important;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.7),
-    0 0 0 1px rgba(34, 211, 238, 0.06) !important;
-  border-radius: 10px !important;
-  padding: 8px 0 !important;
-  min-width: 200px !important;
-  perspective: 500px;
-}
-
-/* Container dos botões com rotação contínua */
-#avatarDropdown .dropdown-3d-inner {
-  display: flex;
-  flex-direction: column;
-  transform: rotateX(10deg);
-  animation: avatarMenuRotate 7s linear infinite;
-  transform-style: preserve-3d;
-}
-
-/* Cada botão do menu */
-#avatarDropdown .dropdown-filter-item,
-#avatarDropdown .dropdown-logout-item {
+.card-front img {
   display: block;
-  position: relative;
-  margin: 5px 0;
-  padding: 0.7em 2em;
-  cursor: pointer;
-  color: #c4cedc;
-  background: #0f172a;
-  border: none;
-  border-radius: 0.4em;
-  text-transform: uppercase;
-  font-size: 0.85em;
-  font-family: "Orbitron", monospace;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-  mix-blend-mode: color-dodge;
-  perspective: 500px;
-  transform-style: preserve-3d;
-  transition: background 0.3s 0.1s;
-  text-align: left;
   width: 100%;
-  /* ✅ Garante que o botão inteiro recebe o clique */
-  z-index: 1;
+  height: auto;
+  /* Garante que o navegador reserve o espaço correto assim que os metadados da imagem chegam */
+  contain-intrinsic-size: auto 300px;
 }
 
-/* Pseudo-elementos: pointer-events:none para não bloquear cliques */
-#avatarDropdown .dropdown-filter-item::before,
-#avatarDropdown .dropdown-filter-item::after,
-#avatarDropdown .dropdown-logout-item::before,
-#avatarDropdown .dropdown-logout-item::after {
-  --z: 0px;
+.card-back {
   position: absolute;
   top: 0;
   left: 0;
-  display: block;
-  content: "";
-  width: 100%;
   height: 100%;
-  opacity: 0;
-  mix-blend-mode: inherit;
-  border-radius: inherit;
-  transform-style: preserve-3d;
-  transform: translate3d(0, 0, 0);
-  /* ✅ Impede que os pseudo-elementos interceptem cliques */
-  pointer-events: none;
+  min-height: 540px;
+  max-height: 90vh;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  background: var(--trunfo-dark);
+  border-radius: 1rem;
+  outline: 4px solid var(--trunfo-gold);
+  outline-offset: -6px;
+  border: 6px solid #0d0b1e;
 }
 
-#avatarDropdown .dropdown-filter-item::after,
-#avatarDropdown .dropdown-logout-item::after {
-  background-color: #5d00ff;
-}
-#avatarDropdown .dropdown-filter-item::before,
-#avatarDropdown .dropdown-logout-item::before {
-  background-color: #ff1731;
-}
-
-/* Hover filtros: fundo amarelo elétrico */
-#avatarDropdown .dropdown-filter-item:hover {
-  background-color: #ffe500 !important;
-  color: #0f172a !important;
-}
-#avatarDropdown .dropdown-filter-item:hover::before {
-  --z: 0.04;
-  animation: avatarWobble 2.2s ease forwards;
-}
-#avatarDropdown .dropdown-filter-item:hover::after {
-  --z: -0.06;
-  animation: avatarWobble 2.2s ease forwards;
-}
-
-/* Botão SAIR: fundo vermelho translúcido, fonte DOURADA para legibilidade */
-#avatarDropdown .dropdown-logout-item {
-  background: rgba(180, 20, 20, 0.35) !important;
-  color: #ffd700 !important; /* ← dourado: legível sobre qualquer fundo */
-  margin-top: 8px;
-  border-top: 1px solid rgba(255, 60, 60, 0.2);
-}
-#avatarDropdown .dropdown-logout-item:hover {
-  background-color: #ff1731 !important;
-  color: #fff !important;
-}
-#avatarDropdown .dropdown-logout-item:hover::before {
-  --z: 0.04;
-  animation: avatarWobble 2.2s ease forwards;
-}
-#avatarDropdown .dropdown-logout-item:hover::after {
-  --z: -0.06;
-  animation: avatarWobble 2.2s ease forwards;
-}
-
-@keyframes avatarMenuRotate {
-  0% {
-    transform: rotateY(0deg) rotateX(10deg);
-    animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
-  }
-  25% {
-    transform: rotateY(18deg) rotateX(10deg);
-  }
-  50% {
-    transform: rotateY(0deg) rotateX(10deg);
-    animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
-  }
-  75% {
-    transform: rotateY(-18deg) rotateX(10deg);
-  }
-  100% {
-    transform: rotateY(0deg) rotateX(10deg);
-  }
-}
-
+/* 6.2 — Card flipado no mobile — overlay escuro ao flipar em telas ≤767px (z-index 150, backdrop blur) */
 /* ============================================================
-   ITEM 6 — ANIMAÇÃO NEON PULSANTE — #avatarMenuBtn
-   Pulso alternado cyan → pink, sinalizando interatividade ao
-   usuário logado, dentro do tema arcade retrô do site.
-   A animação pausa ao hover (transição de cor/borda já
-   existente no Tailwind assume o controle visual).
+   2.3.2. MOBILE — flip idêntico ao desktop, sem transform orbital
    ============================================================ */
-@keyframes avatarNeonPulse {
-  0% {
-    box-shadow:
-      0 0 6px 2px rgba(34, 211, 238, 0.55),
-      0 0 14px 4px rgba(34, 211, 238, 0.25);
+@media (max-width: 767px) {
+  .masonry-item.is-flipped {
+    z-index: 150 !important;
   }
-  40% {
-    box-shadow:
-      0 0 10px 4px rgba(34, 211, 238, 0.85),
-      0 0 22px 8px rgba(34, 211, 238, 0.35);
-  }
-  60% {
-    box-shadow:
-      0 0 10px 4px rgba(255, 0, 255, 0.75),
-      0 0 22px 8px rgba(255, 0, 255, 0.3);
-  }
-  100% {
-    box-shadow:
-      0 0 6px 2px rgba(34, 211, 238, 0.55),
-      0 0 14px 4px rgba(34, 211, 238, 0.25);
+  /* Overlay escuro quando card está virado */
+  .masonry-item.is-flipped::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 10, 0.75);
+    z-index: -1;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    pointer-events: all;
   }
 }
 
-#avatarMenuBtn {
-  animation: avatarNeonPulse 2.4s ease-in-out infinite;
+/* 6.3 — Layout verso desktop v2 — top bar (código|marca|✕), foto 130px, stats-area flex-coluna, curiosidade variável, atributos ancorados */
+/* ============================================================
+   CARD VERSO V2 — NOVO LAYOUT SUPER TRUNFO REAL
+   ============================================================ */
+
+/* Linha 1 — grid 3 colunas: código | marca central | ✕ */
+.trunfo-top-bar-v2 {
+  background: #6b0000;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: 3px 8px;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.trunfo-code-v2 {
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--trunfo-gold);
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+.trunfo-brand-v2 {
+  font-family: "Orbitron", monospace;
+  font-size: 0.52rem;
+  color: #39ff14;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Desktop: botão ✕ oculto — fechar clicando fora do card */
+.card-back .trunfo-close-v2 {
+  display: none;
+}
+.trunfo-close-v2 {
+  background: #8b0000;
+  border: 1px solid rgba(255, 80, 80, 0.5);
+  color: #ff6060;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  line-height: 1.4;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+.trunfo-close-v2:hover {
+  background: #c0392b;
+  border-color: #ff4040;
+  color: #fff;
 }
 
-/* Pausa a pulsação enquanto o dropdown estiver aberto
-   (o JS adiciona a classe .is-open ao wrapper via toggleAvatarMenu) */
-#avatarMenuWrapper.is-open #avatarMenuBtn {
-  animation-play-state: paused;
+/* Foto desktop v2 */
+.card-back .trunfo-photo {
+  height: 130px;
 }
 
-@keyframes avatarWobble {
+/* stats-area desktop: flex coluna — curiosidade variável, atributos+botões na base */
+.card-back .trunfo-stats-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Curiosidade v2 — área variável desktop */
+.trunfo-curiosidade-v2 {
+  flex: 1;
+  overflow-y: auto;
+  padding: 5px 10px;
+  font-size: 0.55rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  scrollbar-width: thin;
+  scrollbar-color: var(--trunfo-gold) transparent;
+}
+.trunfo-curiosidade-v2::-webkit-scrollbar {
+  width: 3px;
+}
+.trunfo-curiosidade-v2::-webkit-scrollbar-thumb {
+  background: var(--trunfo-gold);
+  border-radius: 2px;
+}
+
+/* Atributos: flex-shrink:0 — ancorados acima dos botões */
+.card-back .trunfo-stat-row {
+  flex-shrink: 0;
+}
+
+/* Última linha de atributos — borda dourada separando de EU TIVE */
+.trunfo-stat-last {
+  border-bottom: 2px solid var(--trunfo-gold) !important;
+}
+
+/* Linha 15 — EU TIVE | QUERIA TER ancorado acima do footer */
+.trunfo-actions-v2 {
+  display: flex;
+  gap: 6px;
+  padding: 5px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0f0e1e;
+  flex-shrink: 0;
+}
+.action-btn-v2 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: "Orbitron", monospace;
+  font-size: 0.42rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.03);
+}
+.action-count-v2 {
+  font-size: 0.55rem;
+  font-weight: 700;
+}
+.action-tive {
+  color: rgba(240, 192, 64, 0.6);
+  border-color: rgba(240, 192, 64, 0.25);
+}
+.action-tive:hover,
+.action-tive.active-tive {
+  color: var(--trunfo-gold);
+  border-color: rgba(240, 192, 64, 0.6);
+  background: rgba(240, 192, 64, 0.08);
+}
+.action-queria {
+  color: rgba(0, 255, 255, 0.6);
+  border-color: rgba(0, 255, 255, 0.2);
+}
+.action-queria:hover,
+.action-queria.active-queria {
+  color: var(--neon-blue);
+  border-color: rgba(0, 255, 255, 0.5);
+  background: rgba(0, 255, 255, 0.06);
+}
+
+
+
+/* ================================================================
+   7. CARD VERSO — MODAL MOBILE
+   ================================================================ */
+
+/* 7.1 — Overlay modal mobile — fade in, scaling proporcional do card, proporção sempre respeitada */
+/* ============================================================
+   C3 — MODAL VERSO MOBILE
+   Carta centralizada com proporção real Super Trunfo (1:1.55)
+   ============================================================ */
+
+/* 1 — Overlay ocupa tela toda, padding mínimo de 10px cada lado */
+#cardVersoMobileModal {
+  padding: 10px;
+  animation: cardVersoOverlayFade 0.2s ease-out forwards;
+}
+
+@keyframes cardVersoOverlayFade {
   0% {
     opacity: 0;
-    transform: translate3d(
-      calc(var(--z) * 0px),
-      calc(var(--z) * 0px),
-      calc(var(--z) * 0px)
-    );
   }
-  16% {
-    transform: translate3d(
-      calc(var(--z) * 160px),
-      calc(var(--z) * 160px),
-      calc(var(--z) * 160px)
-    );
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 1 — Card cresce o máximo possível mantendo proporção */
+.card-verso-mobile-box {
+  /* Proporção exata carta Super Trunfo: 63.5mm × 98.5mm = 0.645:1 */
+  /* Calcula largura máxima que cabe na tela sem ultrapassar 92vh de altura */
+  width: min(calc(100vw - 20px), calc(92vh * 0.645));
+  max-width: 400px;
+  /* Altura calculada automaticamente pela proporção */
+  aspect-ratio: 0.645 / 1;
+  /* overflow-y apenas se o conteúdo ultrapassar — fallback de segurança */
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #0f0e1e;
+  border: 3px solid var(--trunfo-gold);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  /* Animação de entrada: scanline CRT → overshoot elástico */
+  animation: cardVersoEntrada 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+}
+
+/*
+  Entrada combinada:
+  Fase 1 (0–55%)  — scanline CRT: card "liga" como monitor, cresce verticalmente
+                    com flash neon no pico (brightness 2.2)
+  Fase 2 (55–80%) — overshoot: escala ultrapassa 1 levemente (encaixe físico)
+  Fase 3 (80–100%)— recuo suave para escala e brilho normais
+*/
+@keyframes cardVersoEntrada {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.04) scaleX(0.92);
+    filter: brightness(3) blur(1px);
   }
   28% {
     opacity: 1;
-    transform: translate3d(
-      calc(var(--z) * 70px),
-      calc(var(--z) * 70px),
-      calc(var(--z) * 70px)
-    );
+    transform: scaleY(0.72) scaleX(0.97);
+    filter: brightness(2.2) blur(0px);
   }
-  44% {
-    transform: translate3d(
-      calc(var(--z) * 130px),
-      calc(var(--z) * 130px),
-      calc(var(--z) * 130px)
-    );
-  }
-  59% {
-    transform: translate3d(
-      calc(var(--z) * 85px),
-      calc(var(--z) * 85px),
-      calc(var(--z) * 85px)
-    );
-  }
-  73% {
-    transform: translate3d(
-      calc(var(--z) * 110px),
-      calc(var(--z) * 110px),
-      calc(var(--z) * 110px)
-    );
-  }
-  88% {
+  55% {
     opacity: 1;
-    transform: translate3d(
-      calc(var(--z) * 90px),
-      calc(var(--z) * 90px),
-      calc(var(--z) * 90px)
-    );
+    transform: scaleY(1) scaleX(1);
+    filter: brightness(1.5);
+  }
+  78% {
+    opacity: 1;
+    transform: scale(1.055);
+    filter: brightness(1);
   }
   100% {
     opacity: 1;
-    transform: translate3d(
-      calc(var(--z) * 100px),
-      calc(var(--z) * 100px),
-      calc(var(--z) * 100px)
-    );
+    transform: scale(1);
+    filter: brightness(1);
   }
 }
 
-/* ─── FIREFOX FALLBACK (4.1.3) ───────────────────────────────
-   Firefox não suporta mix-blend-mode em elementos interativos
-   da mesma forma que Chrome. Desativamos o blend e mantemos
-   hover funcional com estilo sólido. */
-@-moz-document url-prefix() {
-  #avatarDropdown .dropdown-filter-item,
-  #avatarDropdown .dropdown-logout-item {
-    mix-blend-mode: normal;
-  }
-  #avatarDropdown .dropdown-filter-item::before,
-  #avatarDropdown .dropdown-filter-item::after,
-  #avatarDropdown .dropdown-logout-item::before,
-  #avatarDropdown .dropdown-logout-item::after {
-    display: none; /* Remove pseudo-elementos que travam o hover no Firefox */
-  }
-  #avatarDropdown .dropdown-filter-item:hover {
-    background-color: #ffe500 !important;
-    color: #0f172a !important;
-  }
-  #avatarDropdown .dropdown-logout-item:hover {
-    background-color: #ff1731 !important;
-    color: #fff !important;
-  }
+/* Foto maior no modal mobile */
+.card-verso-mobile-box .trunfo-photo {
+  height: 180px;
+  object-fit: cover;
 }
 
-/* ============================================================
-   2.10. PAINEL LED — FONTE + ALTURA MOBILE (4.1.4)
-   Coloque o arquivo de fonte em: /fonts/BoldLED.ttf
-   Para trocar de fonte, altere apenas o src abaixo e o
-   font-family no .led-content { font-family: ... }
-   ============================================================ */
-
-/* ✏️ PONTO DE TROCA DE FONTE DO LED — edite apenas aqui */
-@font-face {
-  font-family: "LEDDisplay";
-  /* 📁 Arquivo em /fonts/advanced_led_board-7.ttf na raiz do projeto */
-  src: url("/fonts/advanced_led_board-7.ttf") format("truetype");
-  font-display: swap;
+/* 4 — RETROBRINQUEDOS maior e neon verde */
+.card-verso-mobile-box .trunfo-brand-v2 {
+  font-size: 0.52rem;
+  color: #39ff14;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.6);
 }
 
-/* Desktop: fonte LED máxima respeitando 2px acima e abaixo do painel (42px).
-   Espaço útil = 38px. Cap-height ~75% → font-size 34px ≈ 25px de glifo visível */
-.led-content {
-  font-family: "LEDDisplay", "Courier New", monospace;
-  font-size: 34px;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  line-height: 42px; /* igual à altura do painel no desktop */
-}
-
-/* Mobile: painel 36px → espaço útil 32px → font-size 28px */
-@media (max-width: 767px) {
-  :root {
-    --led-height: 36px; /* era 24px → +50% = 36px */
-  }
-  .led-panel {
-    height: 36px;
-  }
-  .led-content {
-    font-size: 28px;
-    line-height: 36px; /* acompanha a nova altura */
-  }
-}
-
-/* ============================================================
-   2.10.1. BOTÃO LIMPAR BUSCA — #clearSearchBtn (Item 2)
-   Centralização vertical absoluta independente da altura do input.
-   As classes Tailwind top-1.5/top-2 foram neutralizadas aqui
-   via override por ID para não alterar o HTML estrutural.
-   ============================================================ */
-#clearSearchBtn {
-  top: 50% !important;
-  transform: translateY(-50%);
-  /* Garante display flex ao ser revelado pelo JS (classList.remove("hidden"))
-     — sem isso o elemento volta como inline-block e perde o alinhamento interno */
-  display: none;
-}
-#clearSearchBtn.hidden {
-  display: none !important;
-}
-/* Quando o JS remove .hidden, o elemento fica flex e centralizado */
-#clearSearchBtn:not(.hidden) {
-  display: flex !important;
-}
-
-/* ============================================================
-   2.11. BOTÃO SHARE WHATSAPP (4.2.1)
-   ============================================================ */
-.whatsapp-share-btn {
-  background: transparent;
-  border: none;
+/* 5 — Botão ✕ com fundo preto e borda dourada — contraste sobre header vermelho */
+.card-verso-mobile-box .trunfo-close-v2 {
+  background: #000;
+  border: 1.5px solid var(--trunfo-gold);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 3px;
   cursor: pointer;
-  padding: 0 4px 0 0;
+  line-height: 1.4;
+  transition: all 0.15s ease;
+}
+.card-verso-mobile-box .trunfo-close-v2:hover {
+  background: var(--trunfo-gold);
+  color: #000;
+  border-color: var(--trunfo-gold);
+}
+
+/* ── Escala proporcional do conteúdo interno do card mobile ──
+   Layout: header fixo → foto fixo → curiosidade FLEX:1 (variável+scroll)
+   → atributos fixos → EU TIVE/QUERIA TER fixos → footer fixo
+   Card ≈ 90vw → tudo em vw para escalar junto */
+
+/* Card não transborda — proporção sempre respeitada */
+.card-verso-mobile-box {
+  overflow: hidden;
+}
+
+/* stats-area vira coluna flex para empurrar atributos para baixo */
+.card-verso-mobile-box .trunfo-stats-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  border-top: 2px solid var(--trunfo-gold);
+}
+
+/* Curiosidade — área variável, cresce e encolhe, scroll se precisar */
+.card-verso-mobile-box .trunfo-curiosidade-v2 {
+  flex: 1;
+  overflow-y: auto;
+  font-size: clamp(11px, 2.8vw, 15px);
+  padding: 6px 12px;
+  line-height: 1.6;
+  /* scroll sutil */
+  scrollbar-width: thin;
+  scrollbar-color: var(--trunfo-gold) transparent;
+}
+.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar {
+  width: 3px;
+}
+.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar-thumb {
+  background: var(--trunfo-gold);
+  border-radius: 2px;
+}
+
+/* Atributos — ancorados na base, acima dos botões */
+.card-verso-mobile-box .trunfo-stat-row {
+  padding: 3px 12px;
+  flex-shrink: 0;
+}
+.card-verso-mobile-box .trunfo-label {
+  font-size: clamp(10px, 2.5vw, 13px);
+  letter-spacing: 0.08em;
+}
+.card-verso-mobile-box .trunfo-value {
+  font-size: clamp(11px, 3.2vw, 15px);
+}
+.card-verso-mobile-box .trunfo-stat-last {
+  border-bottom: 2px solid var(--trunfo-gold) !important;
+}
+
+/* EU TIVE / QUERIA TER — ancorados logo acima do footer */
+.card-verso-mobile-box .trunfo-actions-v2 {
+  padding: 6px 10px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.card-verso-mobile-box .action-btn-v2 {
+  font-size: clamp(10px, 2.6vw, 13px);
+  padding: 7px 10px;
+  border-radius: 5px;
+}
+.card-verso-mobile-box .action-count-v2 {
+  font-size: clamp(11px, 3vw, 14px);
+}
+
+/* Header — RETROBRINQUEDOS maior e com mais destaque */
+.card-verso-mobile-box .trunfo-top-bar-v2 {
+  padding: 5px 10px;
+}
+.card-verso-mobile-box .trunfo-brand-v2 {
+  font-size: clamp(11px, 3.2vw, 16px);
+  color: #39ff14;
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.7);
+  letter-spacing: 0.15em;
+}
+.card-verso-mobile-box .trunfo-code-v2 {
+  font-size: clamp(11px, 3vw, 15px);
+}
+
+/* Título do brinquedo */
+.card-verso-mobile-box .trunfo-title-area {
+  padding: 7px 12px 9px;
+  gap: 10px;
+}
+.card-verso-mobile-box .trunfo-star {
+  width: 22px;
+  height: 22px;
+}
+.card-verso-mobile-box .trunfo-title-text {
+  font-size: clamp(13px, 3.8vw, 18px);
+}
+
+/* Foto */
+.card-verso-mobile-box .trunfo-photo {
+  height: 38vw;
+  max-height: 45vh;
+  object-fit: cover;
+}
+
+/* Footer — ícones com padding interno para não tocar as bordas */
+.card-verso-mobile-box .trunfo-footer {
+  height: auto;
+  padding: 4px 0;
+  flex-shrink: 0;
+}
+.card-verso-mobile-box .footer-icons-container {
+  align-items: center;
+}
+.card-verso-mobile-box .footer-tab-btn {
+  padding: 6px 0;
+}
+.card-verso-mobile-box .tab-icon-svg {
+  width: clamp(20px, 6vw, 28px) !important;
+  height: clamp(20px, 6vw, 28px) !important;
+}
+.card-verso-mobile-box .tab-count {
+  font-size: clamp(11px, 3vw, 14px);
+}
+
+/* ── Botões EU TIVE / QUERIA TER desabilitados para usuário deslogado ──
+   .app-unlogged é adicionado ao body quando não há sessão ativa.
+   Desktop (.action-btn) e Mobile (.action-btn-v2) tratados juntos. */
+.app-unlogged .action-btn,
+.app-unlogged .action-btn-v2 {
+  filter: grayscale(100%) opacity(0.45);
+  cursor: not-allowed;
+}
+/* Sem reveal de cor no hover quando deslogado */
+.app-unlogged .action-btn:hover,
+.app-unlogged .action-btn-v2:hover {
+  filter: grayscale(100%) opacity(0.45);
+  background: rgba(255, 255, 255, 0.02);
+  border-color: transparent;
+}
+/* Garante que os estados active-tive / active-queria também ficam cinza */
+.app-unlogged .action-btn.active-tive,
+.app-unlogged .action-btn.active-queria,
+.app-unlogged .action-btn-v2.active-tive,
+.app-unlogged .action-btn-v2.active-queria {
+  filter: grayscale(100%) opacity(0.45);
+}
+
+/* Toast de feedback no modal verso mobile */
+.card-verso-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 10, 20, 0.96);
+  border: 1.5px solid rgba(255, 32, 32, 0.7);
+  color: #ff5555;
+  font-family: "Orbitron", monospace;
+  font-size: clamp(12px, 3.5vw, 16px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border-radius: 8px;
+  z-index: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  box-shadow: 0 0 16px rgba(255, 32, 32, 0.35);
+}
+.card-verso-toast--visible {
+  opacity: 1;
+}
+
+/* Botões EU TIVE / QUERIA TER desabilitados para usuário deslogado */
+.app-unlogged .action-btn,
+.app-unlogged .action-btn-v2 {
+  filter: grayscale(100%) opacity(0.45);
+  cursor: not-allowed;
+}
+.app-unlogged .action-btn:hover,
+.app-unlogged .action-btn-v2:hover {
+  filter: grayscale(100%) opacity(0.45);
+  background: rgba(255, 255, 255, 0.02);
+  border-color: transparent;
+}
+.app-unlogged .action-btn.active-tive,
+.app-unlogged .action-btn.active-queria,
+.app-unlogged .action-btn-v2.active-tive,
+.app-unlogged .action-btn-v2.active-queria {
+  filter: grayscale(100%) opacity(0.45);
+}
+
+
+
+/* ================================================================
+   8. CARD COMPARTILHADO — MODAL ?card=XXXX
+   ================================================================ */
+
+/* 8.1 — Overlay e box do modal de card compartilhado — exibido ao abrir link ?card=XXXX diretamente; z-index 400, max-width 320px */
+/* ============================================================
+   2.13. MODAL CARD COMPARTILHADO (Item 5.2)
+   ============================================================ */
+.card-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
-  outline: none;
-  opacity: 0.45;
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+  padding: 16px;
+  overflow-y: auto;
 }
-.whatsapp-share-btn:hover {
-  opacity: 1;
-  transform: scale(1.15);
-}
-.whatsapp-icon {
-  width: 15px;
-  height: 15px;
-  fill: #25d366; /* Verde oficial WhatsApp */
-  filter: drop-shadow(0 0 3px rgba(37, 211, 102, 0.4));
+.card-modal-overlay.hidden {
+  display: none;
 }
 
+.card-modal-box {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  /* ESC fica acima do label — padding-top para dar espaço */
+  padding-top: 32px;
+  animation: cardFadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.card-modal-close {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  background: transparent;
+  border: none;
+  color: #39ff14;
+  font-family: "Orbitron", monospace;
+  font-size: 0.65rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;
+  white-space: nowrap;
+}
+.card-modal-close:hover {
+  color: #fff;
+}
+.card-modal-label {
+  font-family: "Orbitron", monospace;
+  font-size: 0.52rem;
+  color: var(--trunfo-gold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0 8px;
+  line-height: 1.5;
+}
+.card-modal-container {
+  width: 100%;
+}
+.card-modal-trunfo {
+  border-radius: 1rem;
+  overflow: hidden;
+  outline: 4px solid var(--trunfo-gold);
+  outline-offset: -6px;
+  border: 6px solid #0d0b1e;
+  background: var(--trunfo-dark);
+  display: flex;
+  flex-direction: column;
+  /* height auto: card cresce até seu tamanho natural sem barra de rolagem */
+  height: auto;
+  max-height: 82vh;
+  overflow-y: visible;
+  box-shadow: 0 0 40px rgba(240, 192, 64, 0.3);
+  animation: cardFadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.card-modal-cta {
+  background: var(--trunfo-gold);
+  color: #0f172a;
+  font-family: "Orbitron", monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+  margin-bottom: 8px;
+}
+.card-modal-cta:hover {
+  background: #fff;
+  transform: scale(1.04);
+}
+/* Cor especial dourada para o nome do autor do comentário logado */
+.drawer-user-me {
+  color: var(--trunfo-gold) !important;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(240, 192, 64, 0.3);
+}
+
+
+
+/* ================================================================
+   9. DRAWER DE COMENTÁRIOS
+   ================================================================ */
+
+/* 9.1 — Drawer base — overlay com pointer-events desligado; .open ativa backdrop e habilita cliques */
 /* ============================================================
    2.12. DRAWER DE COMENTÁRIOS (Item 3.2)
    ============================================================ */
@@ -2591,6 +2236,7 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   animation: disclaimerFadeIn 0.2s ease forwards;
 }
 
+/* 9.2 — Banner de login no drawer (Modo Espia) — substituí o input de comentário quando o visitante não está logado */
 /* ============================================================
    BLOCO F — MODO ESPIA: BANNER DE LOGIN NO DRAWER
    Exibido no rodapé do drawer quando o visitante não está logado.
@@ -2645,6 +2291,1560 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   animation: none;
 }
 
+/* 9.3 — .drawer-user-me — nome do próprio usuário destacado em dourado na lista de comentários */
+.drawer-user-me {
+  color: var(--trunfo-gold) !important;
+}
+.drawer-texto {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
+}
+
+.drawer-input-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #050a14;
+  flex-shrink: 0;
+}
+.drawer-prompt {
+  font-family: "Orbitron", monospace;
+  font-size: 0.7rem;
+  color: #39ff14;
+  flex-shrink: 0;
+}
+.drawer-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(57, 255, 20, 0.25);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 4px 2px;
+  outline: none;
+  font-family: "Inter", sans-serif;
+  transition: border-color 0.2s;
+}
+.drawer-input:focus {
+  border-bottom-color: #39ff14;
+}
+.drawer-send-btn {
+  background: transparent;
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+  font-family: "Orbitron", monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  flex-shrink: 0;
+}
+.drawer-send-btn:hover {
+  background: var(--neon-blue);
+  color: #0f172a;
+}
+
+/* ============================================================
+   2.13. MODAL CARD COMPARTILHADO (Item 5.2)
+   ============================================================ */
+.card-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+.card-modal-overlay.hidden {
+  display: none;
+}
+
+.card-modal-box {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  /* ESC fica acima do label — padding-top para dar espaço */
+  padding-top: 32px;
+  animation: cardFadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.card-modal-close {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  background: transparent;
+  border: none;
+  color: #39ff14;
+  font-family: "Orbitron", monospace;
+  font-size: 0.65rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;
+  white-space: nowrap;
+}
+.card-modal-close:hover {
+  color: #fff;
+}
+.card-modal-label {
+  font-family: "Orbitron", monospace;
+  font-size: 0.52rem;
+  color: var(--trunfo-gold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0 8px;
+  line-height: 1.5;
+}
+.card-modal-container {
+  width: 100%;
+}
+.card-modal-trunfo {
+  border-radius: 1rem;
+  overflow: hidden;
+  outline: 4px solid var(--trunfo-gold);
+  outline-offset: -6px;
+  border: 6px solid #0d0b1e;
+  background: var(--trunfo-dark);
+  display: flex;
+  flex-direction: column;
+  /* height auto: card cresce até seu tamanho natural sem barra de rolagem */
+  height: auto;
+  max-height: 82vh;
+  overflow-y: visible;
+  box-shadow: 0 0 40px rgba(240, 192, 64, 0.3);
+  animation: cardFadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.card-modal-cta {
+  background: var(--trunfo-gold);
+  color: #0f172a;
+  font-family: "Orbitron", monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+  margin-bottom: 8px;
+}
+.card-modal-cta:hover {
+  background: #fff;
+  transform: scale(1.04);
+}
+/* Cor especial dourada para o nome do autor do comentário logado */
+.drawer-user-me {
+  color: var(--trunfo-gold) !important;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(240, 192, 64, 0.3);
+}
+
+
+
+/* ================================================================
+   10. ARCADE MODAL — LOGIN E AVATARES
+   ================================================================ */
+
+/* 10.1 — Modal arcade principal — tela INSERT COIN, SELECT PLAYER e GAME OVER; borda neon animada, fundo scanline */
+/* 2.6. ARCADE MODAL (LOGIN & AVATARES) */
+.arcade-box {
+  background: #050505;
+  border: 3px solid #39ff14;
+  border-radius: 12px;
+  box-shadow:
+    0 0 20px rgba(57, 255, 20, 0.4),
+    inset 0 0 30px rgba(57, 255, 20, 0.1);
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(57, 255, 20, 0.05) 2px,
+    rgba(57, 255, 20, 0.05) 4px
+  );
+}
+.insert-coin-text {
+  /* B1 — melting text: derreter suave em loop verde → cyan */
+  animation: meltingText 3s ease-in-out infinite;
+  position: relative;
+  display: inline-block;
+}
+.insert-coin-text::before,
+.insert-coin-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  z-index: -1;
+}
+.insert-coin-text::before {
+  animation: meltDrip 3s ease-in-out infinite;
+  opacity: 0.55;
+}
+.insert-coin-text::after {
+  filter: blur(8px);
+  animation: meltDrip 3s ease-in-out infinite 0.15s;
+  opacity: 0.3;
+}
+.coins-wrapper {
+  position: relative;
+}
+.coin-btn {
+  width: 70px;
+  height: 70px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+}
+.coin-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.coins-wrapper:hover .coin-btn:not(:hover) {
+  filter: grayscale(100%) blur(2px);
+  opacity: 0.4;
+  transform: scale(0.9);
+}
+.coins-wrapper .coin-btn:hover {
+  transform: scale(1.15) translateY(-5px);
+  filter: drop-shadow(0 15px 12px rgba(57, 255, 20, 0.9));
+  z-index: 10;
+}
+.coin-inserted {
+  animation: insertFlash 0.3s forwards;
+  pointer-events: none;
+}
+.game-over-text {
+  text-shadow:
+    4px 4px 0 #4a0000,
+    0 0 20px #ff0000;
+  animation: glitchGameOver 0.2s infinite;
+}
+
+@keyframes blinkNeon {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+@keyframes insertFlash {
+  0% {
+    transform: scale(1.15);
+    filter: brightness(1.5) drop-shadow(0 15px 12px rgba(57, 255, 20, 1));
+  }
+  100% {
+    transform: scale(0.9) translateY(10px);
+    filter: brightness(0);
+    opacity: 0;
+  }
+}
+@keyframes glitchGameOver {
+  0%,
+  100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-3px, 2px);
+  }
+  40% {
+    transform: translate(-1px, -2px);
+  }
+  60% {
+    transform: translate(3px, 1px);
+  }
+  80% {
+    transform: translate(1px, -1px);
+  }
+}
+
+/* 10.2 — Galeria de seleção de avatares — grid de sprites, borda hover cyan, @keyframes selectFlash */
+/* 2.6.1. Galeria de Seleção de Avatares */
+.avatar-item {
+  width: 76px; /* D1 — aumentado de 60px para aproveitar espaço lateral no mobile */
+  height: 76px;
+  border: 2px solid #1e293b;
+  background: #0f172a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 4px;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .avatar-item {
+    width: 80px;
+    height: 80px;
+  }
+}
+.avatar-item:hover {
+  border-color: #22d3ee;
+  transform: scale(1.1);
+  box-shadow: 0 0 15px #22d3ee;
+  z-index: 10;
+}
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: grayscale(40%);
+  transition: filter 0.2s;
+}
+.avatar-item:hover .avatar-img {
+  filter: grayscale(0%);
+}
+.avatar-selected {
+  animation: selectFlash 0.5s step-end infinite;
+  border-color: #fff !important;
+}
+@keyframes selectFlash {
+  50% {
+    background: #22d3ee;
+  }
+}
+.select-player-text {
+  /* B2 — neon glow alternando cyan → pink */
+  animation: neonGlow 1.8s ease-in-out infinite alternate;
+}
+
+/* 10.3 — B1 — @keyframes meltingText e meltDrip — texto "INSERT COIN" derrete suavemente com gotejamento neon */
+@keyframes meltingText {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+    background: linear-gradient(180deg, #39ff14 0%, #00ffcc 50%, #128a02 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.7));
+  }
+  25% {
+    transform: translateY(3px) scaleY(1.02);
+    background: linear-gradient(180deg, #00ffff 0%, #39ff14 40%, #00cc88 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 14px rgba(0, 255, 255, 0.6));
+  }
+  50% {
+    transform: translateY(6px) scaleY(1.04);
+    background: linear-gradient(180deg, #39ff14 0%, #00ffff 60%, #006644 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 20px rgba(57, 255, 20, 0.9))
+      drop-shadow(0 8px 12px rgba(0, 255, 200, 0.4));
+  }
+  75% {
+    transform: translateY(3px) scaleY(1.02);
+    background: linear-gradient(180deg, #00ffff 0%, #39ff14 50%, #128a02 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 14px rgba(0, 255, 255, 0.5));
+  }
+}
+
+/* Pseudo-elementos: gotejamento abaixo do texto */
+@keyframes meltDrip {
+  0%,
+  100% {
+    transform: scaleY(1) translateY(0);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scaleY(1.6) translateY(4px);
+    opacity: 0.65;
+  }
+}
+
+/* 10.4 — B2 — @keyframes neonGlow — texto "SELECT YOUR PLAYER" alterna cyan → pink em loop */
+/* B2 — NEON GLOW: "SELECT YOUR PLAYER" alterna cyan → pink */
+@keyframes neonGlow {
+  0% {
+    color: #00ffff;
+    text-shadow:
+      0 0 5px #00ffff,
+      0 0 12px #00ffff,
+      0 0 25px #00ffff,
+      0 0 50px rgba(0, 255, 255, 0.5);
+  }
+  100% {
+    color: #ff00ff;
+    text-shadow:
+      0 0 5px #ff00ff,
+      0 0 12px #ff00ff,
+      0 0 25px #ff00ff,
+      0 0 50px rgba(255, 0, 255, 0.5);
+  }
+}
+
+/* 10.5 — B3 — labels das moedas de login — wrapper flex com label abaixo, moedas maiores no mobile para área de toque confortável */
+/* ============================================================
+   BLOCO 4 — LABELS MOEDAS (B3) + AVATARES MOBILE (D1)
+   ============================================================ */
+
+/* B3 — Wrapper de cada moeda com label abaixo */
+.coin-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.coin-label {
+  font-family: "Orbitron", monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(57, 255, 20, 0.55);
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+/* Label fica mais brilhante quando a moeda está em hover */
+.coin-slot:hover .coin-label {
+  color: rgba(57, 255, 20, 0.95);
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
+}
+
+/* B3 — moedas maiores no mobile para área de toque confortável */
+@media (max-width: 767px) {
+  .coin-btn {
+    width: 84px;
+    height: 84px;
+  }
+  .coin-label {
+    font-size: 0.55rem;
+  }
+}
+
+/* 10.6 — D1 — grid de avatares no mobile — aproveita espaço lateral aumentando colunas */
+/* D1 — grid de avatares aproveita espaço lateral no mobile */
+@media (max-width: 767px) {
+  #avatarGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 12px;
+    width: 100%;
+  }
+}
+
+
+
+/* ================================================================
+   11. NAVBAR E AVATAR MENU
+   ================================================================ */
+
+/* 11.1 — Toggle switch LED — controle na navbar para ligar/desligar o painel LED; estados on/off animados */
+/* 2.7. TOGGLE SWITCH LED (CONTROLE DO PAINEL) */
+.led-toggle-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.led-toggle-label {
+  font-family: "Orbitron", monospace;
+  font-size: 0.38rem;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  line-height: 1;
+}
+.switch {
+  display: block;
+}
+.switch input[type="checkbox"] {
+  display: none;
+}
+.slider {
+  background-color: #ffffff2b;
+  border-radius: 100px;
+  padding: 1px;
+  margin: 0;
+  cursor: pointer;
+  transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+  align-items: center;
+  position: relative;
+  display: block;
+  width: 38px;
+  height: 22px;
+  box-shadow:
+    rgba(0, 0, 0, 0.62) 0px 0px 5px inset,
+    rgba(0, 0, 0, 0.21) 0px 0px 0px 18px inset,
+    #22cc3f 0px 0px 0px 0px inset,
+    rgba(224, 224, 224, 0.45) 0px 1px 0px 0px;
+}
+.slider::after {
+  content: "";
+  display: flex;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background-color: #e3e3e3;
+  border-radius: 200px;
+  position: absolute;
+  box-shadow:
+    transparent 0px 0px 0px 2px,
+    rgba(0, 0, 0, 0.3) 0px 4px 6px;
+  transition:
+    left 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+  will-change: left, background-color;
+}
+.switch input[type="checkbox"]:checked + .slider {
+  box-shadow:
+    rgba(0, 0, 0, 0.62) 0px 0px 5px inset,
+    #22cc3f 0px 0px 0px 2px inset,
+    #22cc3f 0px 0px 0px 18px inset,
+    rgba(224, 224, 224, 0.45) 0px 1px 0px 0px;
+}
+.switch input[type="checkbox"]:checked + .slider::after {
+  left: 18px;
+  background-color: #e3e3e3;
+}
+
+/* 11.2 — Botão de filtro Meu Quarto na navbar — skeleton e botões .filter-btn também usados nesta área */
+/* 11.3 — Dropdown avatar 3D wobble — #avatarDropdown com perspectiva 500px, rotateX(10deg) e animação avatarMenuRotate */
+/* ============================================================
+   2.9. DROPDOWN AVATAR — DESKTOP 3D WOBBLE (4.1.3)
+   Inspirado em https://dribbble.com/shots/8582990-VR-Menu-Interaction
+   Mobile mantém o dropdown simples definido inline pelo updateNavWithAvatar.
+   ============================================================ */
+
+/* ============================================================
+   2.9. DROPDOWN AVATAR — 3D WOBBLE (4.1.3)
+   Inspirado em https://dribbble.com/shots/8582990-VR-Menu-Interaction
+   Aplicado em todas as telas (mobile + desktop).
+   ============================================================ */
+
+#avatarDropdown {
+  background: rgba(10, 12, 28, 0.97) !important;
+  border: 1px solid rgba(34, 211, 238, 0.18) !important;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(34, 211, 238, 0.06) !important;
+  border-radius: 10px !important;
+  padding: 8px 0 !important;
+  min-width: 200px !important;
+  perspective: 500px;
+}
+
+/* Container dos botões com rotação contínua */
+#avatarDropdown .dropdown-3d-inner {
+  display: flex;
+  flex-direction: column;
+  transform: rotateX(10deg);
+  animation: avatarMenuRotate 7s linear infinite;
+  transform-style: preserve-3d;
+}
+
+/* Cada botão do menu */
+#avatarDropdown .dropdown-filter-item,
+#avatarDropdown .dropdown-logout-item {
+  display: block;
+  position: relative;
+  margin: 5px 0;
+  padding: 0.7em 2em;
+  cursor: pointer;
+  color: #c4cedc;
+  background: #0f172a;
+  border: none;
+  border-radius: 0.4em;
+  text-transform: uppercase;
+  font-size: 0.85em;
+  font-family: "Orbitron", monospace;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  mix-blend-mode: color-dodge;
+  perspective: 500px;
+  transform-style: preserve-3d;
+  transition: background 0.3s 0.1s;
+  text-align: left;
+  width: 100%;
+  /* ✅ Garante que o botão inteiro recebe o clique */
+  z-index: 1;
+}
+
+/* Pseudo-elementos: pointer-events:none para não bloquear cliques */
+#avatarDropdown .dropdown-filter-item::before,
+#avatarDropdown .dropdown-filter-item::after,
+#avatarDropdown .dropdown-logout-item::before,
+#avatarDropdown .dropdown-logout-item::after {
+  --z: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  content: "";
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  mix-blend-mode: inherit;
+  border-radius: inherit;
+  transform-style: preserve-3d;
+  transform: translate3d(0, 0, 0);
+  /* ✅ Impede que os pseudo-elementos interceptem cliques */
+  pointer-events: none;
+}
+
+#avatarDropdown .dropdown-filter-item::after,
+#avatarDropdown .dropdown-logout-item::after {
+  background-color: #5d00ff;
+}
+#avatarDropdown .dropdown-filter-item::before,
+#avatarDropdown .dropdown-logout-item::before {
+  background-color: #ff1731;
+}
+
+/* Hover filtros: fundo amarelo elétrico */
+#avatarDropdown .dropdown-filter-item:hover {
+  background-color: #ffe500 !important;
+  color: #0f172a !important;
+}
+#avatarDropdown .dropdown-filter-item:hover::before {
+  --z: 0.04;
+  animation: avatarWobble 2.2s ease forwards;
+}
+#avatarDropdown .dropdown-filter-item:hover::after {
+  --z: -0.06;
+  animation: avatarWobble 2.2s ease forwards;
+}
+
+/* Botão SAIR: fundo vermelho translúcido, fonte DOURADA para legibilidade */
+#avatarDropdown .dropdown-logout-item {
+  background: rgba(180, 20, 20, 0.35) !important;
+  color: #ffd700 !important; /* ← dourado: legível sobre qualquer fundo */
+  margin-top: 8px;
+  border-top: 1px solid rgba(255, 60, 60, 0.2);
+}
+#avatarDropdown .dropdown-logout-item:hover {
+  background-color: #ff1731 !important;
+  color: #fff !important;
+}
+#avatarDropdown .dropdown-logout-item:hover::before {
+  --z: 0.04;
+  animation: avatarWobble 2.2s ease forwards;
+}
+#avatarDropdown .dropdown-logout-item:hover::after {
+  --z: -0.06;
+  animation: avatarWobble 2.2s ease forwards;
+}
+
+@keyframes avatarMenuRotate {
+  0% {
+    transform: rotateY(0deg) rotateX(10deg);
+    animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
+  }
+  25% {
+    transform: rotateY(18deg) rotateX(10deg);
+  }
+  50% {
+    transform: rotateY(0deg) rotateX(10deg);
+    animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
+  }
+  75% {
+    transform: rotateY(-18deg) rotateX(10deg);
+  }
+  100% {
+    transform: rotateY(0deg) rotateX(10deg);
+  }
+}
+
+/* ============================================================
+   ITEM 6 — ANIMAÇÃO NEON PULSANTE — #avatarMenuBtn
+   Pulso alternado cyan → pink, sinalizando interatividade ao
+   usuário logado, dentro do tema arcade retrô do site.
+   A animação pausa ao hover (transição de cor/borda já
+   existente no Tailwind assume o controle visual).
+   ============================================================ */
+@keyframes avatarNeonPulse {
+  0% {
+    box-shadow:
+      0 0 6px 2px rgba(34, 211, 238, 0.55),
+      0 0 14px 4px rgba(34, 211, 238, 0.25);
+  }
+  40% {
+    box-shadow:
+      0 0 10px 4px rgba(34, 211, 238, 0.85),
+      0 0 22px 8px rgba(34, 211, 238, 0.35);
+  }
+  60% {
+    box-shadow:
+      0 0 10px 4px rgba(255, 0, 255, 0.75),
+      0 0 22px 8px rgba(255, 0, 255, 0.3);
+  }
+  100% {
+    box-shadow:
+      0 0 6px 2px rgba(34, 211, 238, 0.55),
+      0 0 14px 4px rgba(34, 211, 238, 0.25);
+  }
+}
+
+#avatarMenuBtn {
+  animation: avatarNeonPulse 2.4s ease-in-out infinite;
+}
+
+/* Pausa a pulsação enquanto o dropdown estiver aberto
+   (o JS adiciona a classe .is-open ao wrapper via toggleAvatarMenu) */
+#avatarMenuWrapper.is-open #avatarMenuBtn {
+  animation-play-state: paused;
+}
+
+@keyframes avatarWobble {
+  0% {
+    opacity: 0;
+    transform: translate3d(
+      calc(var(--z) * 0px),
+      calc(var(--z) * 0px),
+      calc(var(--z) * 0px)
+    );
+  }
+  16% {
+    transform: translate3d(
+      calc(var(--z) * 160px),
+      calc(var(--z) * 160px),
+      calc(var(--z) * 160px)
+    );
+  }
+  28% {
+    opacity: 1;
+    transform: translate3d(
+      calc(var(--z) * 70px),
+      calc(var(--z) * 70px),
+      calc(var(--z) * 70px)
+    );
+  }
+  44% {
+    transform: translate3d(
+      calc(var(--z) * 130px),
+      calc(var(--z) * 130px),
+      calc(var(--z) * 130px)
+    );
+  }
+  59% {
+    transform: translate3d(
+      calc(var(--z) * 85px),
+      calc(var(--z) * 85px),
+      calc(var(--z) * 85px)
+    );
+  }
+  73% {
+    transform: translate3d(
+      calc(var(--z) * 110px),
+      calc(var(--z) * 110px),
+      calc(var(--z) * 110px)
+    );
+  }
+  88% {
+    opacity: 1;
+    transform: translate3d(
+      calc(var(--z) * 90px),
+      calc(var(--z) * 90px),
+      calc(var(--z) * 90px)
+    );
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(
+      calc(var(--z) * 100px),
+      calc(var(--z) * 100px),
+      calc(var(--z) * 100px)
+    );
+  }
+}
+
+/* ─── FIREFOX FALLBACK (4.1.3) ───────────────────────────────
+   Firefox não suporta mix-blend-mode em elementos interativos
+   da mesma forma que Chrome. Desativamos o blend e mantemos
+   hover funcional com estilo sólido. */
+@-moz-document url-prefix() {
+  #avatarDropdown .dropdown-filter-item,
+  #avatarDropdown .dropdown-logout-item {
+    mix-blend-mode: normal;
+  }
+  #avatarDropdown .dropdown-filter-item::before,
+  #avatarDropdown .dropdown-filter-item::after,
+  #avatarDropdown .dropdown-logout-item::before,
+  #avatarDropdown .dropdown-logout-item::after {
+    display: none; /* Remove pseudo-elementos que travam o hover no Firefox */
+  }
+  #avatarDropdown .dropdown-filter-item:hover {
+    background-color: #ffe500 !important;
+    color: #0f172a !important;
+  }
+  #avatarDropdown .dropdown-logout-item:hover {
+    background-color: #ff1731 !important;
+    color: #fff !important;
+  }
+}
+
+/* 11.4 — A2 — tag hero: evita quebra de linha no mobile (letter-spacing e font-size reduzidos) */
+/* A2 — Tag hero: evita quebra de linha no mobile */
+@media (max-width: 767px) {
+  .hero-tag {
+    letter-spacing: 0.12em;
+    font-size: 0.52rem;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+}
+
+/* 11.5 — A4 — botão × unificado para todos os modais — 44×44px área de toque, borda verde, × vermelho */
+/* A4 — Botão × unificado para todos os modais
+   Quadrado com borda verde arredondada, × vermelho,
+   área de toque 44×44px (padrão Apple/Google HIG) */
+.modal-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  min-width: 44px; /* área de toque mobile */
+  min-height: 44px;
+  background: transparent;
+  border: 1.5px solid rgba(57, 255, 20, 0.6);
+  border-radius: 6px;
+  color: #ef4444;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  margin: -6px -6px 0 0; /* compensa o espaço extra da área de toque */
+}
+.modal-close-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+}
+
+/* 11.6 — A5 — fonte menor no modal disclaimer (desktop ≥768px) */
+/* A5 — Fonte menor no modal disclaimer (desktop apenas) */
+@media (min-width: 768px) {
+  .disclaimer-modal-body {
+    font-size: 0.82rem;
+    line-height: 1.65;
+  }
+  .disclaimer-modal-body p {
+    margin-bottom: 0.6rem;
+  }
+}
+
+/* 11.7 — A6 — dropdown avatar: backdrop semitransparente no mobile (z-index 159, abaixo da navbar) */
+/* A6 — Dropdown avatar: backdrop semitransparente no mobile */
+@media (max-width: 767px) {
+  #avatarMenuWrapper.is-open::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(3px);
+    z-index: 159; /* abaixo da navbar (160), acima de tudo — cobre hero e cards */
+  }
+  #avatarDropdown {
+    position: fixed !important;
+    top: 70px !important;
+    right: 8px !important;
+    left: auto !important;
+    z-index: 200 !important; /* acima do backdrop e dos cards em qualquer scroll */
+  }
+}
+
+/* 11.8 — H6 — borda lateral neon colorida em cada item do dropdown (cyan/pink/gold/yellow/red por posição) */
+/* ============================================================
+   H6 — BORDA LATERAL ESPELHADA NOS ITENS DO DROPDOWN
+   ============================================================ */
+#avatarDropdown .dropdown-filter-item,
+#avatarDropdown .dropdown-logout-item {
+  border-left: 3px solid transparent !important;
+  border-right: 3px solid transparent !important;
+  transition:
+    background 0.3s 0.1s,
+    border-color 0.2s ease !important;
+}
+#avatarDropdown .dropdown-filter-item:nth-child(1) {
+  border-left-color: var(--neon-blue) !important;
+  border-right-color: var(--neon-blue) !important;
+}
+#avatarDropdown .dropdown-filter-item:nth-child(2) {
+  border-left-color: var(--neon-pink) !important;
+  border-right-color: var(--neon-pink) !important;
+}
+#avatarDropdown .dropdown-filter-item:nth-child(3) {
+  border-left-color: var(--trunfo-gold) !important;
+  border-right-color: var(--trunfo-gold) !important;
+}
+#avatarDropdown .dropdown-filter-item:nth-child(4) {
+  border-left-color: var(--neon-yellow) !important;
+  border-right-color: var(--neon-yellow) !important;
+}
+#avatarDropdown .dropdown-logout-item {
+  border-left-color: var(--trunfo-red) !important;
+  border-right-color: var(--trunfo-red) !important;
+}
+
+/* 11.9 — Botão de busca forçada #searchBtn — ícone lupa com opacity 0.5→1 no hover */
+/* ============================================================
+   BOTÃO DE BUSCA FORÇADA — #searchBtn
+   Posicionado no canto direito do input, visível sempre.
+   O botão ✕ (clearSearchBtn) foi deslocado para right-10
+   para não sobrepor o novo botão de busca.
+   ============================================================ */
+.search-btn-icon {
+  opacity: 0.5;
+  transition:
+    opacity 0.2s ease,
+    color 0.2s ease;
+}
+.search-btn-icon:hover {
+  opacity: 1;
+}
+
+/* 11.10 — LGPD consent bar — rodapé do dropdown de avatar com texto de privacidade e badges de certificação */
+/* LGPD — consent bar (B5 reintegrada) */
+.lgpd-consent-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0.5rem;
+  padding: 0.65rem 1rem;
+  border-top: 1px solid rgba(57, 255, 20, 0.1);
+  width: 100%;
+}
+.lgpd-consent-text {
+  font-family: "Orbitron", monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.04em;
+  color: rgba(148, 163, 184, 0.55);
+  text-align: center;
+  line-height: 1.7;
+  margin: 0;
+}
+.lgpd-consent-link {
+  color: rgba(0, 255, 255, 0.7);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-style: dotted;
+  transition: color 0.2s ease;
+}
+.lgpd-consent-link:hover {
+  color: var(--neon-blue);
+}
+.lgpd-consent-badges {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 0;
+}
+.lgpd-consent-badges span {
+  font-family: "Orbitron", monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(57, 255, 20, 0.35);
+}
+
+
+
+/* ================================================================
+   12. PAINEL LED
+   ================================================================ */
+
+/* 12.1 — @font-face LEDDisplay — fonte monoespaçada estilo placar; src: /fonts/advanced_led_board-7.ttf. Trocar apenas o src aqui. */
+/* ============================================================
+   2.10. PAINEL LED — FONTE + ALTURA MOBILE (4.1.4)
+   Coloque o arquivo de fonte em: /fonts/BoldLED.ttf
+   Para trocar de fonte, altere apenas o src abaixo e o
+   font-family no .led-content { font-family: ... }
+   ============================================================ */
+
+/* ✏️ PONTO DE TROCA DE FONTE DO LED — edite apenas aqui */
+@font-face {
+  font-family: "LEDDisplay";
+  /* 📁 Arquivo em /fonts/advanced_led_board-7.ttf na raiz do projeto */
+  src: url("/fonts/advanced_led_board-7.ttf") format("truetype");
+  font-display: swap;
+}
+
+/* Desktop: fonte LED máxima respeitando 2px acima e abaixo do painel (42px).
+   Espaço útil = 38px. Cap-height ~75% → font-size 34px ≈ 25px de glifo visível */
+.led-content {
+  font-family: "LEDDisplay", "Courier New", monospace;
+  font-size: 34px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  line-height: 42px; /* igual à altura do painel no desktop */
+}
+
+/* Mobile: painel 36px → espaço útil 32px → font-size 28px */
+@media (max-width: 767px) {
+  :root {
+    --led-height: 36px; /* era 24px → +50% = 36px */
+  }
+  .led-panel {
+    height: 36px;
+  }
+  .led-content {
+    font-size: 28px;
+    line-height: 36px; /* acompanha a nova altura */
+  }
+}
+
+/* 12.2 — Botão limpar busca #clearSearchBtn — centralização vertical absoluta e controle display via :not(.hidden) */
+/* ============================================================
+   2.10.1. BOTÃO LIMPAR BUSCA — #clearSearchBtn (Item 2)
+   Centralização vertical absoluta independente da altura do input.
+   As classes Tailwind top-1.5/top-2 foram neutralizadas aqui
+   via override por ID para não alterar o HTML estrutural.
+   ============================================================ */
+#clearSearchBtn {
+  top: 50% !important;
+  transform: translateY(-50%);
+  /* Garante display flex ao ser revelado pelo JS (classList.remove("hidden"))
+     — sem isso o elemento volta como inline-block e perde o alinhamento interno */
+  display: none;
+}
+#clearSearchBtn.hidden {
+  display: none !important;
+}
+/* Quando o JS remove .hidden, o elemento fica flex e centralizado */
+#clearSearchBtn:not(.hidden) {
+  display: flex !important;
+}
+
+/* 12.3 — Botão WhatsApp share — ícone verde, opacity hover e escala */
+/* ============================================================
+   2.11. BOTÃO SHARE WHATSAPP (4.2.1)
+   ============================================================ */
+.whatsapp-share-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  opacity: 0.45;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.whatsapp-share-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+.whatsapp-icon {
+  width: 15px;
+  height: 15px;
+  fill: #25d366; /* Verde oficial WhatsApp */
+  filter: drop-shadow(0 0 3px rgba(37, 211, 102, 0.4));
+}
+
+/* 12.4 — Painel LED principal — grade de pixels apagados, scanline, trilho de rolagem e conteúdo animado */
+/* 2.8. PAINEL LED (DISPLAY TICKER NO FOOTER) */
+.led-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 42px;
+  background: #080808;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(57, 255, 20, 0.15);
+  box-shadow:
+    0 0 12px rgba(57, 255, 20, 0.06) inset,
+    0 2px 8px rgba(0, 0, 0, 0.4);
+  z-index: 159; /* Bug 1 fix — acima do card flipado (150), abaixo da navbar (160) */
+  transition:
+    height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.35s ease;
+}
+.led-panel.is-off {
+  height: 0;
+  opacity: 0;
+  border-bottom-width: 0;
+}
+
+/* Grade de pixels apagados simulando LED real */
+.led-pixel-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.55) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.55) 1px, transparent 1px);
+  background-size: 4px 4px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Scanline horizontal sutil — fica ABAIXO do texto (z-index: 1) */
+.led-scanline {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.15) 3px,
+    rgba(0, 0, 0, 0.15) 4px
+  );
+  z-index: 1; /* ← era 3 (sobre o texto); agora 1 (sob o texto) */
+  pointer-events: none;
+}
+
+/* Trilho de rolagem — acima da scanline */
+.led-track {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  z-index: 2; /* ← acima da scanline (z:1), texto visível sobre as listras */
+  padding: 0 8px;
+}
+
+/* Conteúdo animado */
+.led-content {
+  display: inline-block;
+  white-space: nowrap;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: #39ff14;
+  text-shadow: 0 0 3px rgba(57, 255, 20, 0.4);
+  line-height: 42px;
+  /* ✏️ VELOCIDADE LED — ajuste o valor abaixo para mudar a velocidade global */
+  animation: ledScroll 40s linear infinite;
+  animation-delay: -20s;
+  will-change: transform;
+}
+.led-content.is-paused {
+  animation-play-state: paused;
+}
+
+/* 12.5 — @keyframes ledScroll — animação de scroll horizontal do ticker LED */
+@keyframes ledScroll {
+  0% {
+    transform: translateX(100vw);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* ✏️ VELOCIDADE LED FIREFOX — ajuste o divisor (atualmente 70% mais lento)
+   Para mais lento: aumente o valor de 'animation-duration' (ex: 57s → 65s)
+   Para mais rápido: diminua (ex: 57s → 50s) */
+
+/* 12.6 — @-moz-document — fallback Firefox: velocidade do LED 70% mais lenta para compensar diferença de renderização */
+@-moz-document url-prefix() {
+  .led-content {
+    animation-duration: 57s; /* 40s ÷ 0.70 ≈ 57s → 70% da velocidade do Chrome */
+  }
+}
+
+/* 12.7 — Estado TILT — borda piscando vermelha quando login é necessário para uma ação */
+/* Estado TILT (login necessário) */
+.led-content.tilt-mode {
+  color: #ff2020;
+  text-shadow: 0 0 4px rgba(255, 32, 32, 0.6);
+  text-align: center;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 12.8 — Estado GLITCH — deslocamento horizontal da linha do ticker; @keyframes glitchShift */
+/* Estado GLITCH */
+.led-panel.glitch-line::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 7px;
+  background: #080808;
+  z-index: 10;
+  top: var(--glitch-y, 10px);
+  animation: glitchShift 0.15s steps(1) infinite;
+}
+@keyframes glitchShift {
+  0% {
+    top: 6px;
+    opacity: 1;
+  }
+  33% {
+    top: 14px;
+    opacity: 0.7;
+  }
+  66% {
+    top: 3px;
+    opacity: 1;
+  }
+  100% {
+    top: 10px;
+    opacity: 0.8;
+  }
+}
+
+/* 12.9 — Animação de desligar — LEDs apagando esquerda→direita; @keyframes ledWipeOff */
+/* Animação de DESLIGAR (LEDs apagando esquerda→direita) */
+.led-panel.powering-off::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    #080808 var(--wipe-pct, 0%),
+    transparent var(--wipe-pct, 0%)
+  );
+  z-index: 20;
+  animation: ledWipeOff 0.5s ease-in forwards;
+}
+@keyframes ledWipeOff {
+  from {
+    --wipe-pct: 0%;
+  }
+  to {
+    --wipe-pct: 100%;
+  }
+}
+
+/* 12.10 — Animação de religar — scan vertical topo→base; @keyframes ledScanOn */
+/* Animação de RELIGAR (scan vertical topo→base) */
+.led-panel.powering-on::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(57, 255, 20, 0.18) 0%,
+    transparent 60%
+  );
+  z-index: 20;
+  animation: ledScanOn 0.45s ease-out forwards;
+}
+@keyframes ledScanOn {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(200%);
+  }
+}
+
+/* 12.11 — Responsivo mobile do painel LED — altura 36px e font-size 28px em telas ≤767px */
+/* Mobile: painel LED — override de consistência */
+@media (max-width: 767px) {
+  :root {
+    --led-height: 36px;
+  }
+  .led-panel {
+    height: 36px;
+  }
+  .led-content {
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 36px;
+  }
+}
+/* Efeito de Pulsação para o Skeleton */
+
+
+
+/* ================================================================
+   13. RANKING E PÓDIO
+   ================================================================ */
+
+/* 13.1 — Botão pódio no footer — estilos do gatilho que abre o modal de ranking */
+/* ============================================================
+   FOOTER PÓDIO + MODAL RANKING
+   ============================================================ */
+
+/* Botão pódio no footer */
+.footer-podium-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex; /* Alinha a caixa no eixo flexível do rodapé */
+  align-items: center; /* Centraliza verticalmente */
+  width: 32px; /* Define o tamanho da caixa delimitadora */
+  height: 32px; /* Define o tamanho da caixa delimitadora */
+}
+.footer-podium-icon {
+  width: 100% !important; /* Herda os 32px exatos definidos no botão */
+  height: 100% !important; /* Herda os 32px exatos definidos no botão */
+  object-fit: contain;
+  filter: drop-shadow(0 0 0px transparent);
+  transition:
+    filter 0.3s ease,
+    transform 0.3s ease;
+}
+.footer-podium-btn:hover .footer-podium-icon {
+  /* Glow cyan no canto inferior direito — soma ao rosa do gradiente do ícone */
+  filter: drop-shadow(4px 4px 8px rgba(0, 255, 255, 0.85))
+    drop-shadow(2px 2px 4px rgba(0, 255, 255, 0.5));
+  transform: scale(1.12);
+}
+
+/* Modal ranking — lista de itens */
+.ranking-modal-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ranking-modal-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  border-bottom: 1px solid rgba(57, 255, 20, 0.08);
+}
+.ranking-modal-item:last-child {
+  border-bottom: none;
+}
+
+.ranking-modal-pos {
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  color: var(--trunfo-gold);
+  font-weight: 700;
+  min-width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ranking-modal-img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  border: 1px solid rgba(57, 255, 20, 0.2);
+}
+
+.ranking-modal-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.ranking-modal-nome {
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+  word-break: break-word;
+}
+.ranking-modal-fabricante {
+  font-family: "Orbitron", monospace;
+  font-size: 0.5rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.08em;
+}
+
+.ranking-modal-valor {
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  min-width: 44px;
+  text-align: right;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Toggle buttons */
+.ranking-toggle-btn {
+  font-family: "Orbitron", monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.ranking-toggle-ativo#rankingBtnCurtidas {
+  background: rgba(240, 192, 64, 0.15);
+  border-color: var(--trunfo-gold);
+  color: var(--trunfo-gold);
+}
+.ranking-toggle-ativo#rankingBtnVisualizacoes {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: var(--neon-blue);
+  color: var(--neon-blue);
+}
+.ranking-toggle-inativo {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.hero-stat-item {
+  text-align: center;
+}
+.hero-stat-number {
+  font-family: "Orbitron", monospace;
+  font-size: 1.5rem;
+  color: var(--neon-yellow);
+  display: block;
+}
+.hero-stat-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+}
+.hero-scroll-arrow {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.5;
+  animation: bounce 2s infinite;
+}
+.hero-scroll-arrow span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(45deg);
+}
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(8px);
+  }
+}
+
+/* 13.2 — Responsivo mobile do modal de ranking (max-width: 767px) — ajustes de font-size com !important para todos os elementos da lista */
+/* ============================================================
+   Ajustes Responsivos Exclusivos do Ranking Mobile (max-width: 767px)
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Mantém estritamente intacto o tamanho dos títulos para evitar estouro de linha */
+  #rankingTitulo {
+    font-size: 11px !important; /* Mantém o tamanho original padrão */
+    white-space: nowrap;
+  }
+
+  /* Aumentar em 2px o tamanho do texto decorativo // Ranking (De 12px para 14px) */
+  .disclaimer-modal-box h2.font-orbitron.text-xs {
+    font-size: 14px !important;
+    letter-spacing: 0.12em;
+  }
+
+  /* Resolve e força a exibição e leitura limpa da Data e Hora */
+  #rankingTimestamp {
+    font-size: 13px !important; /* Legível no mobile */
+    color: #94a3b8 !important; /* Força cor estável da paleta slate */
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  /* Botões de Alternância Curtidas/Visualizações (+4px) */
+  .ranking-toggle-btn {
+    font-size: 15px !important;
+  }
+
+  /* Elementos da lista: força comportamento de renderização imediata */
+  .ranking-modal-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  /* Posição Numérica do Pódio (+4px) */
+  .ranking-modal-pos {
+    font-size: 20px !important;
+  }
+
+  /* Imagem do item inflada em 50% (72px) - Contorna bug do lazy loading no boot */
+  .ranking-modal-img {
+    width: 72px !important;
+    height: 72px !important;
+    flex-shrink: 0 !important;
+    display: block !important;
+    content-visibility: auto; /* Força o navegador a pintar os pixels imediatamente */
+  }
+
+  /* Nome do Brinquedo: reduzido em 1px em relação ao teste anterior */
+  .ranking-modal-nome {
+    font-size: 18px !important;
+    line-height: 1.2;
+  }
+
+  /* Nome do Fabricante: MANTIDO idêntico ao desktop original */
+  .ranking-modal-fabricante {
+    font-size: 11px !important;
+  }
+
+  /* Valor da métrica de exibição (+4px) */
+  .ranking-modal-valor {
+    font-size: 18px !important;
+  }
+}
+
+
+
+/* ================================================================
+   14. MODAIS ESTÁTICOS — DISCLAIMER, FABRICANTES E SUGESTÃO
+   ================================================================ */
+
+/* 14.1 — H4 — Modal disclaimer/direitos autorais — box verde com scanlines, scrollable body, scrollbar discreta; @keyframes disclaimerFadeIn */
 /* ============================================================
    H4 — MODAL DISCLAIMER / DIREITOS AUTORAIS
    ============================================================ */
@@ -2708,6 +3908,7 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   }
 }
 
+/* 14.2 — H5 — botão e logo nos modais de fabricante — .fabricante-modal-logo 96px, .hero-brand-btn com hover reveal */
 /* ============================================================
    H5 — BOTÃO E LOGO NOS MODAIS DE FABRICANTE
    ============================================================ */
@@ -2738,844 +3939,139 @@ footer.fixed.bottom-0 .absolute.right-4 svg {
   outline-offset: 3px;
 }
 
+/* 14.3 — Modal de sugestão de brinquedo — botão trigger, box, labels, inputs, textarea, botão de envio e feedback inline */
 /* ============================================================
-   H6 — BORDA LATERAL ESPELHADA NOS ITENS DO DROPDOWN
-   ============================================================ */
-#avatarDropdown .dropdown-filter-item,
-#avatarDropdown .dropdown-logout-item {
-  border-left: 3px solid transparent !important;
-  border-right: 3px solid transparent !important;
-  transition:
-    background 0.3s 0.1s,
-    border-color 0.2s ease !important;
-}
-#avatarDropdown .dropdown-filter-item:nth-child(1) {
-  border-left-color: var(--neon-blue) !important;
-  border-right-color: var(--neon-blue) !important;
-}
-#avatarDropdown .dropdown-filter-item:nth-child(2) {
-  border-left-color: var(--neon-pink) !important;
-  border-right-color: var(--neon-pink) !important;
-}
-#avatarDropdown .dropdown-filter-item:nth-child(3) {
-  border-left-color: var(--trunfo-gold) !important;
-  border-right-color: var(--trunfo-gold) !important;
-}
-#avatarDropdown .dropdown-filter-item:nth-child(4) {
-  border-left-color: var(--neon-yellow) !important;
-  border-right-color: var(--neon-yellow) !important;
-}
-#avatarDropdown .dropdown-logout-item {
-  border-left-color: var(--trunfo-red) !important;
-  border-right-color: var(--trunfo-red) !important;
-}
-
-/* ============================================================
-   BOTÃO DE BUSCA FORÇADA — #searchBtn
-   Posicionado no canto direito do input, visível sempre.
-   O botão ✕ (clearSearchBtn) foi deslocado para right-10
-   para não sobrepor o novo botão de busca.
-   ============================================================ */
-.search-btn-icon {
-  opacity: 0.5;
-  transition:
-    opacity 0.2s ease,
-    color 0.2s ease;
-}
-.search-btn-icon:hover {
-  opacity: 1;
-}
-
-/* ============================================================
-   BLOCO 1 — REFINAMENTOS DE DESIGN
+   2.15. FORMULÁRIO ARCADE DE SUGESTÃO (Item 11)
    ============================================================ */
 
-/* A2 — Tag hero: evita quebra de linha no mobile */
-@media (max-width: 767px) {
-  .hero-tag {
-    letter-spacing: 0.12em;
-    font-size: 0.52rem;
-    padding: 4px 10px;
-    white-space: nowrap;
-  }
-}
-
-/* A4 — Botão × unificado para todos os modais
-   Quadrado com borda verde arredondada, × vermelho,
-   área de toque 44×44px (padrão Apple/Google HIG) */
-.modal-close-btn {
+/* Botão "SUGERIR ESTE ITEM" na tela de resultado vazio */
+.sugestao-trigger-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  min-width: 44px; /* área de toque mobile */
-  min-height: 44px;
-  background: transparent;
-  border: 1.5px solid rgba(57, 255, 20, 0.6);
-  border-radius: 6px;
-  color: #ef4444;
-  font-size: 1.1rem;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 0;
-  margin: -6px -6px 0 0; /* compensa o espaço extra da área de toque */
-}
-.modal-close-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: #ef4444;
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
-}
-
-/* A5 — Fonte menor no modal disclaimer (desktop apenas) */
-@media (min-width: 768px) {
-  .disclaimer-modal-body {
-    font-size: 0.82rem;
-    line-height: 1.65;
-  }
-  .disclaimer-modal-body p {
-    margin-bottom: 0.6rem;
-  }
-}
-
-/* A6 — Dropdown avatar: backdrop semitransparente no mobile */
-@media (max-width: 767px) {
-  #avatarMenuWrapper.is-open::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(3px);
-    z-index: 159; /* abaixo da navbar (160), acima de tudo — cobre hero e cards */
-  }
-  #avatarDropdown {
-    position: fixed !important;
-    top: 70px !important;
-    right: 8px !important;
-    left: auto !important;
-    z-index: 200 !important; /* acima do backdrop e dos cards em qualquer scroll */
-  }
-}
-
-/* LGPD — consent bar (B5 reintegrada) */
-.lgpd-consent-bar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  margin-top: 0.5rem;
-  padding: 0.65rem 1rem;
-  border-top: 1px solid rgba(57, 255, 20, 0.1);
-  width: 100%;
-}
-.lgpd-consent-text {
-  font-family: "Orbitron", monospace;
-  font-size: 0.55rem;
-  letter-spacing: 0.04em;
-  color: rgba(148, 163, 184, 0.55);
-  text-align: center;
-  line-height: 1.7;
-  margin: 0;
-}
-.lgpd-consent-link {
-  color: rgba(0, 255, 255, 0.7);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-style: dotted;
-  transition: color 0.2s ease;
-}
-.lgpd-consent-link:hover {
-  color: var(--neon-blue);
-}
-.lgpd-consent-badges {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin: 0;
-}
-.lgpd-consent-badges span {
-  font-family: "Orbitron", monospace;
-  font-size: 0.5rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(57, 255, 20, 0.35);
-}
-
-/* ============================================================
-   BLOCO 2 — GRAYSCALE LOGOS + HINT DE INTERATIVIDADE (C2)
-   ============================================================ */
-
-/* C2 — Hint: neon branco brilhando no canto do primeiro logo
-   Animação dispara 2 vezes ao carregar, depois para.
-   Usa animation-iteration-count: 2 + animation-fill-mode: forwards
-   para não repetir indefinidamente. */
-@keyframes logoHintPulse {
-  0% {
-    box-shadow: none;
-    opacity: 1;
-  }
-  30% {
-    box-shadow:
-      0 0 0 2px rgba(255, 255, 255, 0.9),
-      0 0 12px 4px rgba(255, 255, 255, 0.6),
-      0 0 24px 8px rgba(0, 255, 255, 0.4);
-  }
-  60% {
-    box-shadow: none;
-  }
-  80% {
-    box-shadow:
-      0 0 0 2px rgba(255, 255, 255, 0.7),
-      0 0 10px 3px rgba(255, 255, 255, 0.4),
-      0 0 20px 6px rgba(0, 255, 255, 0.3);
-  }
-  100% {
-    box-shadow: none;
-    opacity: 1;
-  }
-}
-
-/* Aplica no primeiro hero-brand-btn da página */
-.hero-brand-btn:first-child {
-  animation: logoHintPulse 2.2s ease-out 1.5s 2 forwards;
-  border-radius: 6px;
-}
-
-/* Garante que após a animação o botão fica sem efeito residual */
-.hero-brand-btn:first-child.hint-done {
-  animation: none;
-}
-
-/* ============================================================
-   BLOCO 3 — ANIMAÇÕES INSERT COIN (B1) + SELECT YOUR PLAYER (B2)
-   ============================================================ */
-
-/* B1 — MELTING TEXT: "INSERT COIN" derrete suavemente
-   Gradiente verde escuro → verde neon → cyan, com oscilação vertical */
-@keyframes meltingText {
-  0%,
-  100% {
-    transform: translateY(0) scaleY(1);
-    background: linear-gradient(180deg, #39ff14 0%, #00ffcc 50%, #128a02 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.7));
-  }
-  25% {
-    transform: translateY(3px) scaleY(1.02);
-    background: linear-gradient(180deg, #00ffff 0%, #39ff14 40%, #00cc88 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: drop-shadow(0 0 14px rgba(0, 255, 255, 0.6));
-  }
-  50% {
-    transform: translateY(6px) scaleY(1.04);
-    background: linear-gradient(180deg, #39ff14 0%, #00ffff 60%, #006644 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: drop-shadow(0 0 20px rgba(57, 255, 20, 0.9))
-      drop-shadow(0 8px 12px rgba(0, 255, 200, 0.4));
-  }
-  75% {
-    transform: translateY(3px) scaleY(1.02);
-    background: linear-gradient(180deg, #00ffff 0%, #39ff14 50%, #128a02 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: drop-shadow(0 0 14px rgba(0, 255, 255, 0.5));
-  }
-}
-
-/* Pseudo-elementos: gotejamento abaixo do texto */
-@keyframes meltDrip {
-  0%,
-  100% {
-    transform: scaleY(1) translateY(0);
-    opacity: 0.45;
-  }
-  50% {
-    transform: scaleY(1.6) translateY(4px);
-    opacity: 0.65;
-  }
-}
-
-/* B2 — NEON GLOW: "SELECT YOUR PLAYER" alterna cyan → pink */
-@keyframes neonGlow {
-  0% {
-    color: #00ffff;
-    text-shadow:
-      0 0 5px #00ffff,
-      0 0 12px #00ffff,
-      0 0 25px #00ffff,
-      0 0 50px rgba(0, 255, 255, 0.5);
-  }
-  100% {
-    color: #ff00ff;
-    text-shadow:
-      0 0 5px #ff00ff,
-      0 0 12px #ff00ff,
-      0 0 25px #ff00ff,
-      0 0 50px rgba(255, 0, 255, 0.5);
-  }
-}
-
-/* ============================================================
-   BLOCO 4 — LABELS MOEDAS (B3) + AVATARES MOBILE (D1)
-   ============================================================ */
-
-/* B3 — Wrapper de cada moeda com label abaixo */
-.coin-slot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.coin-label {
-  font-family: "Orbitron", monospace;
-  font-size: 0.5rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(57, 255, 20, 0.55);
-  text-align: center;
-  transition: color 0.3s ease;
-}
-
-/* Label fica mais brilhante quando a moeda está em hover */
-.coin-slot:hover .coin-label {
-  color: rgba(57, 255, 20, 0.95);
-  text-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
-}
-
-/* B3 — moedas maiores no mobile para área de toque confortável */
-@media (max-width: 767px) {
-  .coin-btn {
-    width: 84px;
-    height: 84px;
-  }
-  .coin-label {
-    font-size: 0.55rem;
-  }
-}
-
-/* D1 — grid de avatares aproveita espaço lateral no mobile */
-@media (max-width: 767px) {
-  #avatarGrid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    padding: 12px;
-    width: 100%;
-  }
-}
-
-/* ============================================================
-   BLOCO 6 — HINT DE FLIP NO PRIMEIRO CARD (C1)
-   Linha neon cyan na borda inferior do primeiro card do grid,
-   pulsando 2× após carregar. Só CSS — zero interferência com
-   o motor Masonry ou com o render.
-   ============================================================ */
-@keyframes cardHintLine {
-  0% {
-    opacity: 0;
-    transform: scaleX(0.3);
-  }
-  25% {
-    opacity: 1;
-    transform: scaleX(1);
-  }
-  50% {
-    opacity: 0;
-    transform: scaleX(0.8);
-  }
-  75% {
-    opacity: 0.8;
-    transform: scaleX(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scaleX(0.3);
-  }
-}
-
-.masonry-column:first-child .masonry-item:first-child {
-  position: relative;
-}
-
-.masonry-column:first-child .masonry-item:first-child::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 10%;
-  width: 80%;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(0, 255, 255, 0.9) 30%,
-    rgba(0, 255, 255, 1) 50%,
-    rgba(0, 255, 255, 0.9) 70%,
-    transparent 100%
-  );
-  border-radius: 2px;
-  box-shadow: 0 0 8px 2px rgba(0, 255, 255, 0.5);
-  animation: cardHintLine 1.6s ease-in-out 1.2s 2 forwards;
-  pointer-events: none;
-}
-
-/* ============================================================
-   CARD VERSO V2 — NOVO LAYOUT SUPER TRUNFO REAL
-   ============================================================ */
-
-/* Linha 1 — grid 3 colunas: código | marca central | ✕ */
-.trunfo-top-bar-v2 {
-  background: #6b0000;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  padding: 3px 8px;
-  gap: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.trunfo-code-v2 {
-  font-family: "Orbitron", monospace;
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: var(--trunfo-gold);
-  letter-spacing: 0.08em;
-  flex-shrink: 0;
-}
-.trunfo-brand-v2 {
-  font-family: "Orbitron", monospace;
-  font-size: 0.52rem;
-  color: #39ff14;
-  text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* Desktop: botão ✕ oculto — fechar clicando fora do card */
-.card-back .trunfo-close-v2 {
-  display: none;
-}
-.trunfo-close-v2 {
-  background: #8b0000;
-  border: 1px solid rgba(255, 80, 80, 0.5);
-  color: #ff6060;
-  font-size: 0.6rem;
-  font-weight: 700;
-  padding: 1px 5px;
-  border-radius: 3px;
-  cursor: pointer;
-  line-height: 1.4;
-  flex-shrink: 0;
-  transition: all 0.15s ease;
-}
-.trunfo-close-v2:hover {
-  background: #c0392b;
-  border-color: #ff4040;
-  color: #fff;
-}
-
-/* Foto desktop v2 */
-.card-back .trunfo-photo {
-  height: 130px;
-}
-
-/* stats-area desktop: flex coluna — curiosidade variável, atributos+botões na base */
-.card-back .trunfo-stats-area {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-}
-
-/* Curiosidade v2 — área variável desktop */
-.trunfo-curiosidade-v2 {
-  flex: 1;
-  overflow-y: auto;
-  padding: 5px 10px;
-  font-size: 0.55rem;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.5);
-  font-style: italic;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  scrollbar-width: thin;
-  scrollbar-color: var(--trunfo-gold) transparent;
-}
-.trunfo-curiosidade-v2::-webkit-scrollbar {
-  width: 3px;
-}
-.trunfo-curiosidade-v2::-webkit-scrollbar-thumb {
-  background: var(--trunfo-gold);
-  border-radius: 2px;
-}
-
-/* Atributos: flex-shrink:0 — ancorados acima dos botões */
-.card-back .trunfo-stat-row {
-  flex-shrink: 0;
-}
-
-/* Última linha de atributos — borda dourada separando de EU TIVE */
-.trunfo-stat-last {
-  border-bottom: 2px solid var(--trunfo-gold) !important;
-}
-
-/* Linha 15 — EU TIVE | QUERIA TER ancorado acima do footer */
-.trunfo-actions-v2 {
-  display: flex;
-  gap: 6px;
-  padding: 5px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: #0f0e1e;
-  flex-shrink: 0;
-}
-.action-btn-v2 {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  font-family: "Orbitron", monospace;
-  font-size: 0.42rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
-  background: rgba(255, 255, 255, 0.03);
-}
-.action-count-v2 {
-  font-size: 0.55rem;
-  font-weight: 700;
-}
-.action-tive {
-  color: rgba(240, 192, 64, 0.6);
-  border-color: rgba(240, 192, 64, 0.25);
-}
-.action-tive:hover,
-.action-tive.active-tive {
-  color: var(--trunfo-gold);
-  border-color: rgba(240, 192, 64, 0.6);
-  background: rgba(240, 192, 64, 0.08);
-}
-.action-queria {
-  color: rgba(0, 255, 255, 0.6);
-  border-color: rgba(0, 255, 255, 0.2);
-}
-.action-queria:hover,
-.action-queria.active-queria {
-  color: var(--neon-blue);
-  border-color: rgba(0, 255, 255, 0.5);
-  background: rgba(0, 255, 255, 0.06);
-}
-
-/* ============================================================
-   C3 — MODAL VERSO MOBILE
-   Carta centralizada com proporção real Super Trunfo (1:1.55)
-   ============================================================ */
-
-/* 1 — Overlay ocupa tela toda, padding mínimo de 10px cada lado */
-#cardVersoMobileModal {
-  padding: 10px;
-  animation: cardVersoOverlayFade 0.2s ease-out forwards;
-}
-
-@keyframes cardVersoOverlayFade {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* 1 — Card cresce o máximo possível mantendo proporção */
-.card-verso-mobile-box {
-  /* Proporção exata carta Super Trunfo: 63.5mm × 98.5mm = 0.645:1 */
-  /* Calcula largura máxima que cabe na tela sem ultrapassar 92vh de altura */
-  width: min(calc(100vw - 20px), calc(92vh * 0.645));
-  max-width: 400px;
-  /* Altura calculada automaticamente pela proporção */
-  aspect-ratio: 0.645 / 1;
-  /* overflow-y apenas se o conteúdo ultrapassar — fallback de segurança */
-  overflow-y: auto;
-  overflow-x: hidden;
-  background: #0f0e1e;
-  border: 3px solid var(--trunfo-gold);
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  /* Animação de entrada: scanline CRT → overshoot elástico */
-  animation: cardVersoEntrada 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  transform-origin: center center;
-  will-change: transform, opacity, filter;
-}
-
-/*
-  Entrada combinada:
-  Fase 1 (0–55%)  — scanline CRT: card "liga" como monitor, cresce verticalmente
-                    com flash neon no pico (brightness 2.2)
-  Fase 2 (55–80%) — overshoot: escala ultrapassa 1 levemente (encaixe físico)
-  Fase 3 (80–100%)— recuo suave para escala e brilho normais
-*/
-@keyframes cardVersoEntrada {
-  0% {
-    opacity: 0;
-    transform: scaleY(0.04) scaleX(0.92);
-    filter: brightness(3) blur(1px);
-  }
-  28% {
-    opacity: 1;
-    transform: scaleY(0.72) scaleX(0.97);
-    filter: brightness(2.2) blur(0px);
-  }
-  55% {
-    opacity: 1;
-    transform: scaleY(1) scaleX(1);
-    filter: brightness(1.5);
-  }
-  78% {
-    opacity: 1;
-    transform: scale(1.055);
-    filter: brightness(1);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-    filter: brightness(1);
-  }
-}
-
-/* Foto maior no modal mobile */
-.card-verso-mobile-box .trunfo-photo {
-  height: 180px;
-  object-fit: cover;
-}
-
-/* 4 — RETROBRINQUEDOS maior e neon verde */
-.card-verso-mobile-box .trunfo-brand-v2 {
-  font-size: 0.52rem;
-  color: #39ff14;
-  text-shadow: 0 0 6px rgba(57, 255, 20, 0.6);
-}
-
-/* 5 — Botão ✕ com fundo preto e borda dourada — contraste sobre header vermelho */
-.card-verso-mobile-box .trunfo-close-v2 {
-  background: #000;
-  border: 1.5px solid var(--trunfo-gold);
-  color: #fff;
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 3px;
-  cursor: pointer;
-  line-height: 1.4;
-  transition: all 0.15s ease;
-}
-.card-verso-mobile-box .trunfo-close-v2:hover {
-  background: var(--trunfo-gold);
-  color: #000;
-  border-color: var(--trunfo-gold);
-}
-
-/* ── Escala proporcional do conteúdo interno do card mobile ──
-   Layout: header fixo → foto fixo → curiosidade FLEX:1 (variável+scroll)
-   → atributos fixos → EU TIVE/QUERIA TER fixos → footer fixo
-   Card ≈ 90vw → tudo em vw para escalar junto */
-
-/* Card não transborda — proporção sempre respeitada */
-.card-verso-mobile-box {
-  overflow: hidden;
-}
-
-/* stats-area vira coluna flex para empurrar atributos para baixo */
-.card-verso-mobile-box .trunfo-stats-area {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-  border-top: 2px solid var(--trunfo-gold);
-}
-
-/* Curiosidade — área variável, cresce e encolhe, scroll se precisar */
-.card-verso-mobile-box .trunfo-curiosidade-v2 {
-  flex: 1;
-  overflow-y: auto;
-  font-size: clamp(11px, 2.8vw, 15px);
-  padding: 6px 12px;
-  line-height: 1.6;
-  /* scroll sutil */
-  scrollbar-width: thin;
-  scrollbar-color: var(--trunfo-gold) transparent;
-}
-.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar {
-  width: 3px;
-}
-.card-verso-mobile-box .trunfo-curiosidade-v2::-webkit-scrollbar-thumb {
-  background: var(--trunfo-gold);
-  border-radius: 2px;
-}
-
-/* Atributos — ancorados na base, acima dos botões */
-.card-verso-mobile-box .trunfo-stat-row {
-  padding: 3px 12px;
-  flex-shrink: 0;
-}
-.card-verso-mobile-box .trunfo-label {
-  font-size: clamp(10px, 2.5vw, 13px);
-  letter-spacing: 0.08em;
-}
-.card-verso-mobile-box .trunfo-value {
-  font-size: clamp(11px, 3.2vw, 15px);
-}
-.card-verso-mobile-box .trunfo-stat-last {
-  border-bottom: 2px solid var(--trunfo-gold) !important;
-}
-
-/* EU TIVE / QUERIA TER — ancorados logo acima do footer */
-.card-verso-mobile-box .trunfo-actions-v2 {
-  padding: 6px 10px;
   gap: 8px;
-  flex-shrink: 0;
-}
-.card-verso-mobile-box .action-btn-v2 {
-  font-size: clamp(10px, 2.6vw, 13px);
-  padding: 7px 10px;
-  border-radius: 5px;
-}
-.card-verso-mobile-box .action-count-v2 {
-  font-size: clamp(11px, 3vw, 14px);
-}
-
-/* Header — RETROBRINQUEDOS maior e com mais destaque */
-.card-verso-mobile-box .trunfo-top-bar-v2 {
-  padding: 5px 10px;
-}
-.card-verso-mobile-box .trunfo-brand-v2 {
-  font-size: clamp(11px, 3.2vw, 16px);
+  font-family: "Orbitron", monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: #39ff14;
-  text-shadow: 0 0 8px rgba(57, 255, 20, 0.7);
-  letter-spacing: 0.15em;
+  background: transparent;
+  border: 2px solid rgba(57, 255, 20, 0.5);
+  border-radius: 6px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.15);
 }
-.card-verso-mobile-box .trunfo-code-v2 {
-  font-size: clamp(11px, 3vw, 15px);
-}
-
-/* Título do brinquedo */
-.card-verso-mobile-box .trunfo-title-area {
-  padding: 7px 12px 9px;
-  gap: 10px;
-}
-.card-verso-mobile-box .trunfo-star {
-  width: 22px;
-  height: 22px;
-}
-.card-verso-mobile-box .trunfo-title-text {
-  font-size: clamp(13px, 3.8vw, 18px);
+.sugestao-trigger-btn:hover {
+  background: rgba(57, 255, 20, 0.08);
+  border-color: #39ff14;
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.4);
+  color: #fff;
 }
 
-/* Foto */
-.card-verso-mobile-box .trunfo-photo {
-  height: 38vw;
-  max-height: 45vh;
-  object-fit: cover;
+/* Box do modal — mesma estética do disclaimer */
+.sugestao-modal-box {
+  background: #050505;
+  border: 2px solid rgba(57, 255, 20, 0.5);
+  border-radius: 10px;
+  padding: 1.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow:
+    0 0 24px rgba(57, 255, 20, 0.2),
+    inset 0 0 20px rgba(57, 255, 20, 0.04);
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(57, 255, 20, 0.03) 2px,
+    rgba(57, 255, 20, 0.03) 4px
+  );
 }
 
-/* Footer — ícones com padding interno para não tocar as bordas */
-.card-verso-mobile-box .trunfo-footer {
-  height: auto;
-  padding: 4px 0;
-  flex-shrink: 0;
-}
-.card-verso-mobile-box .footer-icons-container {
-  align-items: center;
-}
-.card-verso-mobile-box .footer-tab-btn {
-  padding: 6px 0;
-}
-.card-verso-mobile-box .tab-icon-svg {
-  width: clamp(20px, 6vw, 28px) !important;
-  height: clamp(20px, 6vw, 28px) !important;
-}
-.card-verso-mobile-box .tab-count {
-  font-size: clamp(11px, 3vw, 14px);
+/* Labels dos campos */
+.sugestao-label {
+  display: block;
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.8);
+  margin-bottom: 4px;
 }
 
-/* ── Botões EU TIVE / QUERIA TER desabilitados para usuário deslogado ──
-   .app-unlogged é adicionado ao body quando não há sessão ativa.
-   Desktop (.action-btn) e Mobile (.action-btn-v2) tratados juntos. */
-.app-unlogged .action-btn,
-.app-unlogged .action-btn-v2 {
-  filter: grayscale(100%) opacity(0.45);
+/* Inputs e textarea */
+.sugestao-input {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(57, 255, 20, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #e2e8f0;
+  font-size: 0.82rem;
+  font-family: inherit;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  outline: none;
+}
+.sugestao-input:focus {
+  border-color: rgba(57, 255, 20, 0.6);
+  box-shadow: 0 0 8px rgba(57, 255, 20, 0.15);
+}
+.sugestao-input::placeholder {
+  color: rgba(100, 116, 139, 0.7);
+  font-size: 0.78rem;
+}
+
+/* Botão de envio */
+.sugestao-btn-enviar {
+  font-family: "Orbitron", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #050505;
+  background: #39ff14;
+  border: none;
+  border-radius: 6px;
+  padding: 11px 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 14px rgba(57, 255, 20, 0.4);
+}
+.sugestao-btn-enviar:hover:not(:disabled) {
+  background: #5fff3a;
+  box-shadow: 0 0 22px rgba(57, 255, 20, 0.7);
+}
+.sugestao-btn-enviar:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
-/* Sem reveal de cor no hover quando deslogado */
-.app-unlogged .action-btn:hover,
-.app-unlogged .action-btn-v2:hover {
-  filter: grayscale(100%) opacity(0.45);
-  background: rgba(255, 255, 255, 0.02);
-  border-color: transparent;
-}
-/* Garante que os estados active-tive / active-queria também ficam cinza */
-.app-unlogged .action-btn.active-tive,
-.app-unlogged .action-btn.active-queria,
-.app-unlogged .action-btn-v2.active-tive,
-.app-unlogged .action-btn-v2.active-queria {
-  filter: grayscale(100%) opacity(0.45);
-}
 
-/* Toast de feedback no modal verso mobile */
-.card-verso-toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(10, 10, 20, 0.96);
-  border: 1.5px solid rgba(255, 32, 32, 0.7);
-  color: #ff5555;
+/* Feedback de resultado */
+.sugestao-feedback {
+  padding: 10px 14px;
+  border-radius: 6px;
   font-family: "Orbitron", monospace;
-  font-size: clamp(12px, 3.5vw, 16px);
+  font-size: 0.65rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 10px 20px;
-  border-radius: 8px;
-  z-index: 600;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-  pointer-events: none;
-  box-shadow: 0 0 16px rgba(255, 32, 32, 0.35);
 }
-.card-verso-toast--visible {
-  opacity: 1;
+.sugestao-feedback--ok {
+  background: rgba(57, 255, 20, 0.08);
+  border: 1px solid rgba(57, 255, 20, 0.4);
+  color: #39ff14;
+}
+.sugestao-feedback--erro {
+  background: rgba(255, 0, 80, 0.08);
+  border: 1px solid rgba(255, 0, 80, 0.4);
+  color: #ff0050;
 }
 
-/* Botões EU TIVE / QUERIA TER desabilitados para usuário deslogado */
-.app-unlogged .action-btn,
-.app-unlogged .action-btn-v2 {
-  filter: grayscale(100%) opacity(0.45);
-  cursor: not-allowed;
+/* Entrada suave do modal */
+#sugestaoModal:not(.hidden) {
+  animation: disclaimerFadeIn 0.2s ease forwards;
 }
-.app-unlogged .action-btn:hover,
-.app-unlogged .action-btn-v2:hover {
-  filter: grayscale(100%) opacity(0.45);
-  background: rgba(255, 255, 255, 0.02);
-  border-color: transparent;
-}
-.app-unlogged .action-btn.active-tive,
-.app-unlogged .action-btn.active-queria,
-.app-unlogged .action-btn-v2.active-tive,
-.app-unlogged .action-btn-v2.active-queria {
-  filter: grayscale(100%) opacity(0.45);
-}
+
