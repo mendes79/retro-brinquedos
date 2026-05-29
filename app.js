@@ -917,7 +917,7 @@ function abrirCardVersoMobile(id) {
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
 
-  // Captura o card físico correto do grid usando o token da semente
+  // Captura o card original de origem no grid do Masonry
   const sToken =
     typeof sessionSeed !== "undefined"
       ? sessionSeed.toString().substring(2, 6)
@@ -927,7 +927,7 @@ function abrirCardVersoMobile(id) {
     document.getElementById(`card-${idNormalizado}`);
   const overlay = document.getElementById("cardVersoMobileModal");
 
-  // Coordenadas de contingência caso o card de origem falhe
+  // Coordenadas de segurança
   let rectInicial = {
     left: window.innerWidth / 2 - 75,
     top: window.innerHeight / 2 - 115,
@@ -938,14 +938,14 @@ function abrirCardVersoMobile(id) {
     rectInicial = cardOrigem.getBoundingClientRect();
   }
 
-  // Prepara o overlay invisível para capturar o posicionamento final do centro
+  // Torna o overlay flexível no DOM com opacidade zero para preparar o cálculo
   if (overlay) {
     overlay.classList.remove("hidden");
     overlay.classList.add("flex");
     overlay.style.opacity = "0";
   }
 
-  // Injeta o HTML completo imediatamente para que imagens e textos comecem a carregar no frame zero
+  // Injeção imediata de toda a estrutura do Super Trunfo (Garante renderização instantânea)
   box.innerHTML = `
     <div class="trunfo-header">
       <div class="trunfo-top-bar-v2">
@@ -988,10 +988,10 @@ function abrirCardVersoMobile(id) {
       </div>
     </div>`;
 
-  // Captura as dimensões reais do destino centralizado após a injeção do conteúdo
+  // Mede as dimensões do container final centralizado com os dados injetados
   const rectFinal = box.getBoundingClientRect();
 
-  // Recalcula as matrizes espaciais precisas de deslocamento
+  // Calcula com precisão matemática os deltas em relação à coluna de origem
   const deltaX =
     rectInicial.left +
     rectInicial.width / 2 -
@@ -1003,11 +1003,11 @@ function abrirCardVersoMobile(id) {
   const escalaX = rectInicial.width / rectFinal.width;
   const escalaY = rectInicial.height / rectFinal.height;
 
-  // Congela o modal na origem exata do grid, mas pré-rotacionado em -180deg (virado de costas)
+  // Seta a largada do card vindo de costas, estável e plano diretamente do grid filho
   box.style.transition = "none";
-  box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY}) rotateY(-180deg)`;
+  box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY}) rotateY(0deg)`;
 
-  // 🚀 ENGINE DE ANIMAÇÃO EM DUPLO QUADRO (FLIP SEM MÁSCARA)
+  // 🚀 DISPARO DO DISPOSITIVO GRÁFICO EM DUPLO FRAME
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       if (overlay) {
@@ -1016,10 +1016,10 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      // Voa para o centro, expande a escala e desgira para 0deg (revelando a face normal de leitura)
+      // Suaviza a viagem diagonal com o efeito elástico completo e limpo
       box.style.transition =
-        "transform 0.6s cubic-bezier(0.25, 1.15, 0.45, 1.05)";
-      box.style.transform = "translate(0px, 0px) scale(1, 1) rotateY(0deg)";
+        "transform 0.58s cubic-bezier(0.25, 1.15, 0.45, 1.05)";
+      box.style.transform = "translate(0px, 0px) scale(1, 1) rotateY(180deg)";
     });
   });
 
