@@ -1,10 +1,37 @@
 <!doctype html>
+<!-- ============================================================
+     RetroBrinquedos BR — Catálogo Nostálgico de Brinquedos
+     Arquivo    : index.html
+     Versão     : 2.0
+     Atualizado : 28/05/2026
+
+     Descrição:
+     Documento raiz da SPA. Define a estrutura completa de
+     marcação: head (meta/SEO/SDKs), navbar, painel LED ticker,
+     hero section, grid masonry, footer, e todos os modais
+     (ranking, arcade login, drawer de comentários, card
+     compartilhado, sugestão, disclaimer, fabricantes e verso
+     mobile). Toda a lógica reside em app.js.
+
+     Histórico de versões:
+     v2.0 (28/05/2026) — Reorganização em blocos e documentação
+============================================================ -->
 <html lang="pt-br">
+
+
+    <!-- ============================================================
+         1. HEAD — META, SEO, OPEN GRAPH E SDKS EXTERNOS
+         Contém: charset/viewport, título, Open Graph (Facebook/WhatsApp),
+         Twitter Card, favicon, Supabase SDK, Tailwind CSS,
+         Google Fonts, styles.css, preconnect de avatares e EmailJS.
+         ============================================================ -->
+
+    <!-- 1.1 — Charset, viewport e título da página -->
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RetroBrinquedos BR | Arquivo Digital 80s/90s</title>
-
+    <!-- 1.2 — Open Graph — título, descrição, URL, tipo e imagem de capa (1200×630) para compartilhamento no Facebook e WhatsApp -->
     <meta
       property="og:title"
       content="RetroBrinquedos BR — O Museu dos Brinquedos Inesquecíveis"
@@ -22,19 +49,24 @@
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <!-- 1.3 — Twitter Card e Facebook App ID — preview no Twitter/X e SDK do Facebook OAuth -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="fb:app_id" content="1274152674923771" />
+    <!-- 1.4 — Favicon e Apple Touch Icon -->
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/favicon.png" />
-
+    <!-- 1.5 — Supabase JS SDK — cliente de banco de dados, autenticação e Realtime -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- 1.6 — Tailwind CSS CDN — utilitários de layout (grid, flex, spacing, colors). Estilos customizados sobrepõem via styles.css -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <!-- 1.7 — Google Fonts — Archivo Black (títulos retrô), Inter (corpo) e Orbitron (displays e labels arcade) -->
     <link
       href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700&family=Orbitron:wght@700&display=swap"
       rel="stylesheet"
     />
+    <!-- 1.8 — styles.css — camada de estilos customizados sobre o Tailwind -->
     <link rel="stylesheet" href="styles.css" />
+    <!-- 1.9 — Preconnect ao próprio origin — abre canal TCP/TLS antecipado para os avatares hospedados no Vercel -->
     <!-- Item 4 — preconnect ao próprio origin para que o browser abra o
          canal TCP/TLS com antecedência antes de requisitar os avatares -->
     <link
@@ -42,14 +74,25 @@
       href="https://retro-brinquedos.vercel.app"
       crossorigin
     />
+    <!-- 1.10 — EmailJS SDK — envio de e-mail de notificação ao submeter sugestão de brinquedo (sem backend) -->
     <!-- Item 11 — EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   </head>
 
   <body class="antialiased app-unlogged">
+
+
+    <!-- ============================================================
+         2. NAVBAR
+         Barra fixa no topo (z-index 160). Contém em ordem:
+         2.1 Logo + título, 2.2 Área do usuário/avatar,
+         2.3 Quebra de linha mobile, 2.4 Toggle LED + campo de busca,
+         2.5 Barra de filtros Meu Quarto (oculta por padrão).
+         ============================================================ -->
+
     <nav
       class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-[160] px-3 md:px-6 py-2.5 md:py-3 flex flex-wrap items-center gap-y-3 gap-x-2 md:gap-x-6 transition-all"
-    >
+    >    <!-- 2.1 — Logo — botão easter egg (R rosa) + título "RetroBrinquedos" com gradiente pink→cyan. Cliques no logo disparam o easter egg do LED. -->
       <!-- 1. LOGO E TÍTULO -->
       <div class="flex items-center gap-2 md:gap-3 shrink-0 order-1">
         <div
@@ -65,7 +108,7 @@
           RetroBrinquedos
         </h1>
       </div>
-
+    <!-- 2.2 — #userArea — botão ENTRAR (estado deslogado) substituído por avatar + dropdown pelo JS após login bem-sucedido -->
       <!-- 2. ÁREA DO USUÁRIO / ENTRAR -->
       <div
         id="userArea"
@@ -78,10 +121,10 @@
           ENTRAR
         </button>
       </div>
-
+    <!-- 2.3 — Quebra de linha forçada no mobile — div invisible order-3 que força o campo de busca para a segunda linha em telas pequenas -->
       <!-- QUEBRA DE LINHA FORÇADA NO MOBILE -->
       <div class="w-full h-0 md:hidden order-3"></div>
-
+    <!-- 2.4 — Toggle LED + campo de busca — switch on/off do painel LED, input de busca com debounce, botão ✕ para limpar e botão lupa para busca forçada -->
       <!-- 3. TOGGLE + BUSCA -->
       <div
         class="flex items-center gap-3 md:gap-5 flex-grow md:flex-1 order-4 md:order-2 shrink-0 md:shrink"
@@ -154,6 +197,7 @@
           </button>
         </div>
       </div>
+    <!-- 2.5 — #userFilters — barra de filtros Meu Quarto (TODOS / FUI DONO / QUERIA TER / FAVORITOS). Oculta até o login; exibida pelo JS via updateNavWithAvatar() -->
       <div
         id="userFilters"
         class="hidden w-full flex gap-3 overflow-x-auto no-scrollbar py-2 px-3 md:px-6 border-t border-white/5 bg-black/20 order-5"
@@ -189,6 +233,17 @@
       </div>
     </nav>
 
+
+    <!-- ============================================================
+         3. PAINEL LED — TICKER ANIMADO
+         Faixa fixa posicionada pelo JS abaixo da navbar (ajustarPainelLED).
+         Exibe mensagens do feed_live do Supabase em tempo real,
+         pool de mensagens fake, frases arcade e sprites ASCII.
+         Controlado inteiramente pelo Bloco 10 do app.js.
+         ============================================================ -->
+
+    <!-- 3.1 — #ledPanel — container principal. Classes: is-off (boot), powering-on/off (animação), tilt (alerta), glitch-line (easter egg) -->
+    <!-- 3.2 — #ledTrack + #ledContent — trilho de rolagem e texto animado via @keyframes ledScroll no styles.css -->
     <div id="ledPanel" class="led-panel is-off">
       <div class="led-pixel-grid"></div>
       <div class="led-scanline"></div>
@@ -197,6 +252,19 @@
       </div>
     </div>
 
+
+    <!-- ============================================================
+         4. HERO SECTION
+         Seção de entrada acima do catálogo. Contém background grid 80s,
+         vinheta, título, CTA "Ver a Coleção", stats em tempo real
+         (brinquedos/usuários/curtidas) e grid de logos de fabricantes.
+         ============================================================ -->
+
+    <!-- 4.1 — Background grid retrô 80s — linhas de perspectiva animadas geradas via CSS (.hero-bg + .hero-grid-line) -->
+    <!-- 4.2 — Vinheta e fade — .hero-vignette e .hero-fade suavizam as bordas do background -->
+    <!-- 4.3 — Conteúdo hero — tag, título principal, subtítulo, botão CTA e seta de scroll -->
+    <!-- 4.4 — Stats em tempo real — contadores de brinquedos, usuários cadastrados e total de curtidas atualizados pelo JS no boot -->
+    <!-- 4.5 — Grid de logos de fabricantes — 8 marcas clicáveis (Estrela, Mimo, Grow, Tectoy, Elka, Atma, Xalingo, Bandeirante). Cada logo abre seu modal via abrirFabricanteModal(N) -->
     <section class="hero-section">
       <div class="hero-bg">
         <img
@@ -383,6 +451,16 @@
       </div>
     </section>
 
+
+    <!-- ============================================================
+         5. CATÁLOGO — HEADER E GRID MASONRY
+         Header com título da seção e grid flex onde os cards
+         Super Trunfo são injetados dinamicamente pelo motor
+         masonry do app.js (função render()).
+         ============================================================ -->
+
+    <!-- 5.1 — #colecao — header da seção com título e subtítulo. Âncora de scroll do botão CTA da hero. -->
+    <!-- 5.2 — #toyGrid — container masonry vazio no HTML. Populado inteiramente pelo JS: render() injeta .masonry-column e .masonry-item com o HTML dos cards. -->
     <header id="colecao" class="pt-6 pb-2 px-6 text-center w-full mx-auto">
       <p class="text-cyan-400 font-bold tracking-widest text-xs mb-2 uppercase">
         Arquivo Digital de Nostalgia
@@ -396,6 +474,19 @@
       <div id="toyGrid" class="masonry-grid"></div>
     </main>
 
+
+    <!-- ============================================================
+         6. FOOTER FIXO
+         Barra fixa no rodapé (z-index 90). Contém à esquerda:
+         botão pódio e bandeirinhas Enduro (easter egg).
+         Ao centro: copyright clicável (abre disclaimer).
+         À direita: links de Instagram, Facebook e e-mail.
+         ============================================================ -->
+
+    <!-- 6.1 — Botão pódio — abre o modal de ranking via abrirRankingModal() -->
+    <!-- 6.2 — #enduroFlags — bandeirinhas do jogo Enduro (Atari 2600). Ocultas por padrão; animarBandeirasEnduro() as exibe ao completar um loop do catálogo -->
+    <!-- 6.3 — Copyright — botão que abre o modal de disclaimer/direitos autorais -->
+    <!-- 6.4 — Links de redes sociais — Instagram, Facebook e e-mail (ícones SVG inline) -->
     <!-- Footer fixo: Texto centralizado absoluto e ícones na margem direita -->
     <footer
       class="fixed bottom-0 w-full z-[90] bg-slate-900/95 backdrop-blur-md border-t border-slate-800 py-3 md:py-1.5"
@@ -500,6 +591,17 @@
       </div>
     </footer>
 
+
+    <!-- ============================================================
+         7. MODAL RANKING E PÓDIO
+         Overlay z-index 500. Exibe Top 3 de curtidas ou visualizações
+         com toggle de alternância. Dados carregados no boot via
+         RPC obter_podio_ranking e cacheados em _rankingDados.
+         ============================================================ -->
+
+    <!-- 7.1 — #rankingModal — overlay com fecharRankingModal() no backdrop click -->
+    <!-- 7.2 — #rankingBox — caixa do modal com header, título dinâmico (#rankingTitulo), lista (#rankingLista) e toggle curtidas/visualizações -->
+    <!-- 7.3 — Toggle de ranking — botões #rankingBtnCurtidas e #rankingBtnVisualizacoes acionam trocarRanking(modo) no app.js -->
     <!-- Modal Ranking — estilo fabricantes (verde/Orbitron) -->
     <div
       id="rankingModal"
@@ -569,6 +671,20 @@
       </div>
     </div>
 
+
+    <!-- ============================================================
+         8. ARCADE MODAL — LOGIN E SELEÇÃO DE AVATAR
+         Modal de autenticação estilo fliperama (z-index 200).
+         Três telas: INSERT COIN (escolha do provedor OAuth),
+         SELECT YOUR PLAYER (grade de avatares) e GAME OVER
+         (desistência ou erro). Fluxo controlado pelo Bloco 8 do app.js.
+         ============================================================ -->
+
+    <!-- 8.1 — #arcadeModal — overlay com backdrop e transição de opacidade. closeModal() no clique fora. -->
+    <!-- 8.2 — #arcadeScreen — tela INSERT COIN. Três coin-slots: Google, Facebook (desabilitado mobile) e Facebook desktop. Cada moeda chama handleCoinSelect(provider). -->
+    <!-- 8.3 — LGPD consent bar (B5) — aviso de privacidade e cookies exibido abaixo das moedas, dentro do arcade modal -->
+    <!-- 8.4 — #selectionScreen — tela SELECT YOUR PLAYER. Grade de avatares injetada por renderAvatarGrid(). Oculta até o OAuth completar. -->
+    <!-- 8.5 — #gameOverScreen — tela GAME OVER. Exibida por fecharArcadePorDesistencia() quando o usuário fecha o modal antes de escolher o avatar. -->
     <div
       id="arcadeModal"
       class="fixed inset-0 z-[200] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300"
@@ -719,6 +835,19 @@
       </div>
     </div>
 
+
+    <!-- ============================================================
+         9. DRAWER DE COMENTÁRIOS
+         Painel deslizante lateral (z-index 300). Mobile: sobe de baixo.
+         Desktop: painel fixo à direita (360px). Aberto por
+         abrirDrawerComentarios() ao clicar no botão 💬 do card.
+         ============================================================ -->
+
+    <!-- 9.1 — #comentariosDrawer — overlay com fecharDrawerSeForaDoPanel() para fechar ao clicar fora -->
+    <!-- 9.2 — Header do drawer — label "COMENTÁRIOS", nome do brinquedo (#drawerNomeBrinquedo) e botão ✕ -->
+    <!-- 9.3 — #drawerListaComentarios — lista populada por carregarComentariosDrawer() com até 50 comentários aprovados -->
+    <!-- 9.4 — #drawerInputArea — área de input de novo comentário (visível apenas para logados). Input + botão SEND acionam enviarComentarioDrawer() -->
+    <!-- 9.5 — #drawerLoginBanner (Bloco F) — banner de CTA de login exibido para visitantes não logados no lugar do input -->
     <!-- ============================================================
          DRAWER DE COMENTÁRIOS (Item 3.2)
          Mobile: desliza de baixo | Desktop: painel lateral direito
@@ -781,6 +910,18 @@
       </div>
     </div>
 
+
+    <!-- ============================================================
+         10. MODAL CARD COMPARTILHADO — ?card=XXXX
+         Overlay z-index 400. Exibido automaticamente pelo JS quando a
+         URL contém o parâmetro ?card=XXXX (link compartilhado
+         via WhatsApp). Monta a ficha completa do brinquedo via
+         abrirModalEspelhoMobile().
+         ============================================================ -->
+
+    <!-- 10.1 — #cardCompartilhadoModal — overlay com fecharCardModal() no backdrop click e no botão [ ESC ] -->
+    <!-- 10.2 — #cardCompartilhadoContainer — div vazio injetado por abrirModalEspelhoMobile() com o HTML completo do card verso -->
+    <!-- 10.3 — Botão CTA "Ver a Coleção Completa" — fecha o modal e retorna ao catálogo -->
     <!-- ============================================================
          MODAL DE CARD COMPARTILHADO (Item 5.2)
          Abre quando a URL contém ?card=XXXX
@@ -804,8 +945,30 @@
       </div>
     </div>
 
+
+    <!-- ============================================================
+         11. ENTRY POINT — CARREGAMENTO DO app.js
+         Script principal da SPA. Carregado após todos os modais
+         estarem no DOM, garantindo que getElementById() e
+         querySelector() encontrem todos os elementos ao iniciar.
+         ============================================================ -->
+
     <script src="app.js"></script>
 
+
+    <!-- ============================================================
+         12. MODAL SUGESTÃO DE BRINQUEDO
+         Overlay z-index 500. Formulário para o usuário sugerir um
+         brinquedo não catalogado. Campos: nome*, fabricante, ano,
+         categoria, tema, link de referência e observação.
+         Envio via enviarSugestao() → Supabase + EmailJS.
+         ============================================================ -->
+
+    <!-- 12.1 — #sugestaoModal — overlay com fecharSugestaoModal() no backdrop click. role="dialog" e aria-modal para acessibilidade. -->
+    <!-- 12.2 — Cabeçalho do modal — título "// SUGERIR BRINQUEDO" e botão × com modal-close-btn -->
+    <!-- 12.3 — #sugestaoFeedback — div oculta que exibe mensagem de sucesso/erro via _sugestaoMostrarFeedback() -->
+    <!-- 12.4 — #sugestaoFormBody — campos do formulário: nome (obrigatório), fabricante, ano, categoria, tema, link e observação -->
+    <!-- 12.5 — #sugestaoEnviarBtn — botão de envio que aciona enviarSugestao(). Label trocado para "ENVIANDO..." durante o processamento. -->
     <!-- ============================================================
          Item 11 — MODAL SUGESTÃO DE BRINQUEDO
          Aberto pelo botão na tela "Nenhum item encontrado"
@@ -947,6 +1110,16 @@
     </div>
     <!-- /Item 11 -->
 
+
+    <!-- ============================================================
+         13. MODAL DISCLAIMER — DIREITOS AUTORAIS E CONTATO
+         Overlay z-index 500. Exibe a política de uso, aviso de
+         direitos autorais das imagens e canal de contato para
+         solicitação de remoção de conteúdo.
+         ============================================================ -->
+
+    <!-- 13.1 — #disclaimerModal — overlay com fecharDisclaimerModal() no backdrop click -->
+    <!-- 13.2 — Corpo do disclaimer — texto de isenção, aviso DMCA e .disclaimer-contact-box com e-mail de contato -->
     <!-- ============================================================
          H4 — MODAL DISCLAIMER / DIREITOS AUTORAIS
          ============================================================ -->
@@ -1019,6 +1192,25 @@
       </div>
     </div>
 
+
+    <!-- ============================================================
+         14. MODAIS DE FABRICANTES (1–8)
+         Oito modais idênticos em estrutura, um por fabricante.
+         Abertos por abrirFabricanteModal(N) ao clicar nos logos
+         da hero section. Fechados por fecharFabricanteModal().
+         Conteúdo: logo 96px + texto histórico + link externo.
+         Fabricantes: 01-Estrela 02-Mimo 03-Grow 04-Tectoy
+                      05-Elka 06-Atma 07-Xalingo 08-Bandeirante
+         ============================================================ -->
+
+    <!-- 14.1 — fabricanteModal1 — Estrela -->
+    <!-- 14.2 — fabricanteModal2 — Mimo -->
+    <!-- 14.3 — fabricanteModal3 — Grow -->
+    <!-- 14.4 — fabricanteModal4 — Tectoy -->
+    <!-- 14.5 — fabricanteModal5 — Elka -->
+    <!-- 14.6 — fabricanteModal6 — Atma -->
+    <!-- 14.7 — fabricanteModal7 — Xalingo -->
+    <!-- 14.8 — fabricanteModal8 — Bandeirante -->
     <!-- ============================================================
          H5 — MODAIS DE FABRICANTES (8 modais)
          ============================================================ -->
@@ -1611,6 +1803,17 @@
     </div>
     <!-- /H4 H5 -->
 
+
+    <!-- ============================================================
+         15. MODAL VERSO MOBILE — CARD SUPER TRUNFO CENTRALIZADO
+         Overlay z-index 400. Exibido por handleFlip() em viewport
+         < 768px no lugar do flip 3D CSS (que só opera no desktop).
+         Conteúdo injetado pelo JS via abrirCardVersoMobile().
+         ============================================================ -->
+
+    <!-- 15.1 — #cardVersoMobileModal — overlay com fecharCardVersoMobile() no backdrop click. Fade via @keyframes cardVersoOverlayFade. -->
+    <!-- 15.2 — #cardVersoMobileBox — container do card verso injetado pelo JS. CSS: card-verso-mobile-box com proporção Super Trunfo (1:1.55). -->
+    <!-- 15.3 — #cardVersoToast — toast de feedback (ex: "Faça login para curtir") exibido por mostrarToastModal(). Substitui o painel LED coberto pelo overlay. -->
     <!-- ============================================================
          MODAL VERSO MOBILE — card Super Trunfo centralizado
          Aberto por handleFlip() em viewport < 768px
