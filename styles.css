@@ -1421,15 +1421,21 @@ body {
   transform-style: preserve-3d !important;
 }
 
-/* FACE FRENTE: Mostra apenas a fotografia pura ocupando todo o espaço */
+/* FACE FRENTE: Mostra a fotografia pura centralizada e protegida contra distorções */
 .card-mobile-face.face-frente {
   z-index: 2;
   transform: rotateY(0deg) !important;
+  background: var(--trunfo-dark) !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 6px !important; /* Margem interna de segurança idêntica ao card do grid */
 }
+
 .card-mobile-face.face-frente img {
-  width: 100%;
+  width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
+  object-fit: cover !important; /* Mantém o corte proporcional sem achatar nem esticar */
+  border-radius: 6px !important;
 }
 
 /* FACE VERSO: Nasce rotacionada de costas. Quando o pai girar 180°, 

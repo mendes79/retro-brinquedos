@@ -1032,14 +1032,13 @@ function abrirCardVersoMobile(id) {
       document.body.style.overflow = "hidden";
 
       // Abre expandindo e centralizando a órbita na tela
-      box.style.transition = "transform 0.52s cubic-bezier(0.2, 0.8, 0.2, 1)";
+      box.style.transition = "transform 0.68s cubic-bezier(0.2, 0.8, 0.2, 1)"; //era 0.52 antes, ajustado para deixar mais lento o giro.
       box.style.transform = "translate(0px, 0px) scale(1, 1)";
 
       // Dispara a revirada tridimensional da folha no ar logo após a decolagem
       setTimeout(() => {
         if (engine) engine.classList.add("is-flipped-mobile");
-      }, 40);
-    });
+      }, 60); // Era 40ms antes, aumentado o atraso para 60ms para acompanhar o giro mais lento e suave do card mobile.
   });
 
   history.pushState({ modal: "cardVersoMobile" }, "");
@@ -1135,10 +1134,10 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     const escalaY = rectInicial.height / rectFinal.height;
 
     // 3. Sincroniza o overlay e encolhe a órbita de volta para o seu nicho exato no Masonry
-    modal.style.transition = "opacity 0.45s linear";
+    modal.style.transition = "opacity 0.55s linear";
     modal.style.opacity = "0";
 
-    box.style.transition = "transform 0.48s cubic-bezier(0.2, 0.8, 0.2, 1)";
+    box.style.transition = "transform 0.62s cubic-bezier(0.2, 0.8, 0.2, 1)";
     box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY})`;
 
     setTimeout(() => {
@@ -1148,7 +1147,7 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
       // Limpa os estilos injetados para a próxima decolagem limpa
       box.style.transform = "";
       box.style.transition = "";
-    }, 480);
+    }, 620);
   } else if (modal) {
     // Fallback de segurança simples caso o engine interno falhe
     modal.classList.add("hidden");
