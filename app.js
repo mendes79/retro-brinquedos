@@ -916,6 +916,9 @@ function abrirCardVersoMobile(id) {
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
 
+  // 🛡️ GUARDA O ID NO CONTAINER: Evita buscas perigosas no innerHTML durante o fechamento
+  box.setAttribute("data-current-id", idNormalizado);
+
   const sToken =
     typeof sessionSeed !== "undefined"
       ? sessionSeed.toString().substring(2, 6)
@@ -1016,7 +1019,6 @@ function abrirCardVersoMobile(id) {
   const escalaX = rectInicial.width / rectFinal.width;
   const escalaY = rectInicial.height / rectFinal.height;
 
-  // O contêiner de órbita viaja plano, enquanto o motor interno (inner) nasce em 0deg (frente visível)
   const engine = document.getElementById("cardMobileInnerEngine");
   if (engine) engine.style.transform = "rotateY(0deg)";
 
@@ -1031,14 +1033,14 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      // Abre expandindo e centralizando a órbita na tela
-      box.style.transition = "transform 0.68s cubic-bezier(0.2, 0.8, 0.2, 1)"; //era 0.52 antes, ajustado para deixar mais lento o giro.
+      // ⏱️ Desaceleração de 20%: Ajustado para 0.68s para um efeito mais cadenciado
+      box.style.transition = "transform 0.68s cubic-bezier(0.2, 0.8, 0.2, 1)";
       box.style.transform = "translate(0px, 0px) scale(1, 1)";
 
-      // Dispara a revirada tridimensional da folha no ar logo após a decolagem
       setTimeout(() => {
         if (engine) engine.classList.add("is-flipped-mobile");
-      }, 60); // Era 40ms antes, aumentado o atraso para 60ms para acompanhar o giro mais lento e suave do card mobile.
+      }, 60);
+    });
   });
 
   history.pushState({ modal: "cardVersoMobile" }, "");
@@ -1099,10 +1101,8 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     // 1. Desgira a folha interna de volta para 0deg, revelando a imagem da FRENTE em pleno ar
     engine.classList.remove("is-flipped-mobile");
 
-    // 2. Coleta dinamicamente as coordenadas atuais de onde o card original está no grid
-    const idNormalizado = box.innerHTML.includes("m-views-")
-      ? box.innerHTML.split("m-views-")[1].substring(0, 4)
-      : "";
+    // 2. 🛡️ EXTRAÇÃO TOTALMENTE SEGURA: Lê o ID direto do atributo data guardado na abertura
+    const idNormalizado = box.getAttribute("data-current-id") || "";
     const sToken =
       typeof sessionSeed !== "undefined"
         ? sessionSeed.toString().substring(2, 6)
@@ -1137,6 +1137,7 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     modal.style.transition = "opacity 0.55s linear";
     modal.style.opacity = "0";
 
+    // ⏱️ Desaceleração de 20%: Retorno suavizado e estendido para 0.62s
     box.style.transition = "transform 0.62s cubic-bezier(0.2, 0.8, 0.2, 1)";
     box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY})`;
 
@@ -1144,12 +1145,12 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
       modal.classList.add("hidden");
       document.body.style.overflow = "";
 
-      // Limpa os estilos injetados para a próxima decolagem limpa
+      // Limpa os estilos injetados e remove o atributo temporário
       box.style.transform = "";
       box.style.transition = "";
-    }, 620);
+      box.removeAttribute("data-current-id");
+    }, 620); // Perfeitamente casado com os 0.62s do box transition
   } else if (modal) {
-    // Fallback de segurança simples caso o engine interno falhe
     modal.classList.add("hidden");
     document.body.style.overflow = "";
   }
