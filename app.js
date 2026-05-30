@@ -897,8 +897,7 @@ function handleFlip(id) {
   }
 }
 
-// 4.3 — abrirCardVersoMobile — abre o modal do verso em telas < 768px. Busca dados em allToys[],
-// injeta o HTML no #cardVersoMobileBox, exibe #cardVersoMobileModal e empilha histórico para o botão Voltar
+// 4.3 — abrirCardVersoMobile — abre o modal do verso em telas < 768px com arquitetura de duas faces 3D reais
 function abrirCardVersoMobile(id) {
   const data = allToys.find(
     (t) => String(t.id).padStart(4, "0") === String(id).padStart(4, "0"),
@@ -926,6 +925,13 @@ function abrirCardVersoMobile(id) {
     document.getElementById(`card-${idNormalizado}`);
   const overlay = document.getElementById("cardVersoMobileModal");
 
+  // Captura a foto da frente do card original para alimentar a face frontal do modal
+  let urlFrenteOriginal = data.url_frente;
+  if (cardOrigem) {
+    const imgFrente = cardOrigem.querySelector(".card-front img");
+    if (imgFrente) urlFrenteOriginal = imgFrente.src;
+  }
+
   let rectInicial = {
     left: window.innerWidth / 2 - 75,
     top: window.innerHeight / 2 - 115,
@@ -942,48 +948,59 @@ function abrirCardVersoMobile(id) {
     overlay.style.opacity = "0";
   }
 
+  // Injeção da arquitetura sanduíche legítima de Duas Faces Reais
   box.innerHTML = `
-    <div class="trunfo-header">
-      <div class="trunfo-top-bar-v2">
-        <span class="trunfo-code-v2">${trunfoCode}</span>
-        <span class="trunfo-brand-v2">RETROBRINQUEDOS</span>
-        <button class="trunfo-close-v2" onclick="fecharCardVersoMobile()" title="Fechar">✕</button>
+    <div class="card-mobile-inner" id="cardMobileInnerEngine">
+      
+      <div class="card-mobile-face face-frente">
+        <img src="${urlFrenteOriginal}" alt="${data.nome} frente" loading="eager">
       </div>
-      <div class="trunfo-title-area">
-        <div class="trunfo-star"></div>
-        <span class="trunfo-title-text">${data.nome}</span>
+
+      <div class="card-mobile-face face-verso">
+        <div class="trunfo-header">
+          <div class="trunfo-top-bar-v2">
+            <span class="trunfo-code-v2">${trunfoCode}</span>
+            <span class="trunfo-brand-v2">RETROBRINQUEDOS</span>
+            <button class="trunfo-close-v2" onclick="fecharCardVersoMobile()" title="Fechar">✕</button>
+          </div>
+          <div class="trunfo-title-area">
+            <div class="trunfo-star"></div>
+            <span class="trunfo-title-text">${data.nome}</span>
+          </div>
+        </div>
+        <div class="trunfo-photo-wrapper">
+          <div class="trunfo-photo-frame">
+            <img src="${urlVersoOtimizada}" alt="${data.nome}" class="trunfo-photo" loading="eager">
+            <span class="trunfo-photo-year">${data.ano}</span>
+          </div>
+        </div>
+        <div class="trunfo-stats-area">
+          <div class="trunfo-curiosidade-scroll-box">
+            <div class="trunfo-curiosidade-v2">"${data.curiosidade}"</div>
+          </div>
+          <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${data.fabricante}</span></div>
+          <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
+          <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
+          <div class="trunfo-stat-row"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
+          <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="m-views-${idNormalizado}"><span class="trunfo-view-icon">👁</span> ${data.visualizacoes || 0}</span></div>
+          <div class="trunfo-actions-v2">
+            <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'tive')">
+              EU TIVE <span class="action-count-v2" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
+            </button>
+            <button id="m-btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'queria')">
+              QUERIA TER <span class="action-count-v2" id="m-count-queria-${idNormalizado}">${data.queria_count || 0}</span>
+            </button>
+          </div>
+        </div>
+        <div class="trunfo-footer">
+          <div class="footer-icons-container">
+            <button class="footer-tab-btn comment-tab-btn" onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'")}'); fecharCardVersoMobile();" title="${isUserLogged ? "Comentar" : "Ver comentários"}"><svg class="tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg></button>
+            <button class="footer-tab-btn whatsapp-tab-btn" onclick="compartilharWhatsApp(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;")}'); fecharCardVersoMobile();" title="Compartilhar no WhatsApp"><svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+            <button id="m-heart-btn-${idNormalizado}" class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}" onclick="toggleCurtidaModal(event, '${idNormalizado}')" title="${isUserLogged ? "Curtir" : "Faça login para curtir"}"><svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg><span class="tab-count" id="m-count-${idNormalizado}">${data.curtidas_count || 0}</span></button>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="trunfo-photo-wrapper">
-      <div class="trunfo-photo-frame">
-        <img src="${urlVersoOtimizada}" alt="${data.nome}" class="trunfo-photo" loading="eager">
-        <span class="trunfo-photo-year">${data.ano}</span>
-      </div>
-    </div>
-    <div class="trunfo-stats-area">
-      <div class="trunfo-curiosidade-scroll-box">
-        <div class="trunfo-curiosidade-v2">"${data.curiosidade}"</div>
-      </div>
-      <div class="trunfo-stat-row"><span class="trunfo-label">Fabricante</span><span class="trunfo-value">${data.fabricante}</span></div>
-      <div class="trunfo-stat-row"><span class="trunfo-label">Categoria</span><span class="trunfo-value">${data.categoria}</span></div>
-      <div class="trunfo-stat-row"><span class="trunfo-label">Tema</span><span class="trunfo-value">${data.tema}</span></div>
-      <div class="trunfo-stat-row"><span class="trunfo-label">Raridade</span><span class="trunfo-value">${data.raridade}/10</span></div>
-      <div class="trunfo-stat-row trunfo-stat-last"><span class="trunfo-label">Visualizações</span><span class="trunfo-value" id="m-views-${idNormalizado}"><span class="trunfo-view-icon">👁</span> ${data.visualizacoes || 0}</span></div>
-      <div class="trunfo-actions-v2">
-        <button id="m-btn-tive-${idNormalizado}" class="action-btn-v2 action-tive ${isTive ? "active-tive" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'tive')">
-          EU TIVE <span class="action-count-v2" id="m-count-tive-${idNormalizado}">${data.tive_count || 0}</span>
-        </button>
-        <button id="m-btn-queria-${idNormalizado}" class="action-btn-v2 action-queria ${isQueria ? "active-queria" : ""}" onclick="toggleInteracaoModal(event, '${idNormalizado}', 'queria')">
-          QUERIA TER <span class="action-count-v2" id="m-count-queria-${idNormalizado}">${data.queria_count || 0}</span>
-        </button>
-      </div>
-    </div>
-    <div class="trunfo-footer">
-      <div class="footer-icons-container">
-        <button class="footer-tab-btn comment-tab-btn" onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'")}'); fecharCardVersoMobile();" title="${isUserLogged ? "Comentar" : "Ver comentários"}"><svg class="tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg></button>
-        <button class="footer-tab-btn whatsapp-tab-btn" onclick="compartilharWhatsApp(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;")}'); fecharCardVersoMobile();" title="Compartilhar no WhatsApp"><svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
-        <button id="m-heart-btn-${idNormalizado}" class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}" onclick="toggleCurtidaModal(event, '${idNormalizado}')" title="${isUserLogged ? "Curtir" : "Faça login para curtir"}"><svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg><span class="tab-count" id="m-count-${idNormalizado}">${data.curtidas_count || 0}</span></button>
-      </div>
+
     </div>`;
 
   const rectFinal = box.getBoundingClientRect();
@@ -999,9 +1016,12 @@ function abrirCardVersoMobile(id) {
   const escalaX = rectInicial.width / rectFinal.width;
   const escalaY = rectInicial.height / rectFinal.height;
 
-  box.classList.remove("flipped-stage");
+  // O contêiner de órbita viaja plano, enquanto o motor interno (inner) nasce em 0deg (frente visível)
+  const engine = document.getElementById("cardMobileInnerEngine");
+  if (engine) engine.style.transform = "rotateY(0deg)";
+
   box.style.transition = "none";
-  box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY}) rotateY(0deg)`;
+  box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY})`;
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -1011,8 +1031,14 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      box.style.transition = "transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)";
-      box.style.transform = "translate(0px, 0px) scale(1, 1) rotateY(180deg)";
+      // Abre expandindo e centralizando a órbita na tela
+      box.style.transition = "transform 0.52s cubic-bezier(0.2, 0.8, 0.2, 1)";
+      box.style.transform = "translate(0px, 0px) scale(1, 1)";
+
+      // Dispara a revirada tridimensional da folha no ar logo após a decolagem
+      setTimeout(() => {
+        if (engine) engine.classList.add("is-flipped-mobile");
+      }, 40);
     });
   });
 
@@ -1061,34 +1087,72 @@ function toggleCurtidaModal(event, id) {
   toggleCurtida(event, id);
 }
 
-// 4.7 — fecharCardVersoMobile — fecha o modal mobile e sincroniza a pilha de histórico.
-// Aceita tanto clique no backdrop quanto chamada direta.
+// 4.7 — fecharCardVersoMobile — fecha o modal mobile executando o desgiro inverso legítimo para revelar a frente
 function fecharCardVersoMobile(event, veioDoPopstate = false) {
   if (event && event.target !== document.getElementById("cardVersoMobileModal"))
     return;
 
   const modal = document.getElementById("cardVersoMobileModal");
   const box = document.getElementById("cardVersoMobileBox");
+  const engine = document.getElementById("cardMobileInnerEngine");
 
-  if (modal && box) {
-    // 🚀 INÍCIO DA SUPRESSÃO DO FRAME INVERTIDO
-    // Esvaece o modal de fundo translúcido rapidamente
-    modal.style.transition = "opacity 0.25s linear";
+  if (modal && box && engine) {
+    // 1. Desgira a folha interna de volta para 0deg, revelando a imagem da FRENTE em pleno ar
+    engine.classList.remove("is-flipped-mobile");
+
+    // 2. Coleta dinamicamente as coordenadas atuais de onde o card original está no grid
+    const idNormalizado = box.innerHTML.includes("m-views-")
+      ? box.innerHTML.split("m-views-")[1].substring(0, 4)
+      : "";
+    const sToken =
+      typeof sessionSeed !== "undefined"
+        ? sessionSeed.toString().substring(2, 6)
+        : "";
+    const cardOrigem =
+      document.getElementById(`card-${idNormalizado}_s${sToken}`) ||
+      document.getElementById(`card-${idNormalizado}`);
+
+    let rectInicial = {
+      left: window.innerWidth / 2 - 75,
+      top: window.innerHeight / 2 - 115,
+      width: 150,
+      height: 230,
+    };
+    if (cardOrigem) {
+      rectInicial = cardOrigem.getBoundingClientRect();
+    }
+
+    const rectFinal = box.getBoundingClientRect();
+    const deltaX =
+      rectInicial.left +
+      rectInicial.width / 2 -
+      (rectFinal.left + rectFinal.width / 2);
+    const deltaY =
+      rectInicial.top +
+      rectInicial.height / 2 -
+      (rectFinal.top + rectFinal.height / 2);
+    const escalaX = rectInicial.width / rectFinal.width;
+    const escalaY = rectInicial.height / rectFinal.height;
+
+    // 3. Sincroniza o overlay e encolhe a órbita de volta para o seu nicho exato no Masonry
+    modal.style.transition = "opacity 0.45s linear";
     modal.style.opacity = "0";
 
-    // Reverte a aceleração e desbota o card enquanto ele encolhe de volta
-    box.style.transition =
-      "transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1)";
-    box.style.opacity = "0";
-    box.style.transform = "scale(0.7) rotateY(-180deg)";
+    box.style.transition = "transform 0.48s cubic-bezier(0.2, 0.8, 0.2, 1)";
+    box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY})`;
 
     setTimeout(() => {
       modal.classList.add("hidden");
       document.body.style.overflow = "";
 
-      // Reseta os estados de opacidade para a próxima abertura do grid
-      box.style.opacity = "";
-    }, 350);
+      // Limpa os estilos injetados para a próxima decolagem limpa
+      box.style.transform = "";
+      box.style.transition = "";
+    }, 480);
+  } else if (modal) {
+    // Fallback de segurança simples caso o engine interno falhe
+    modal.classList.add("hidden");
+    document.body.style.overflow = "";
   }
 
   if (!veioDoPopstate) {

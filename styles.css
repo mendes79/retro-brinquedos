@@ -1377,45 +1377,79 @@ body {
   }
 }
 
-/* 1 — Card cresce o máximo possível mantendo proporção */
+/* Container de órbita do Modal (mantém a proporção matemática de 648px x 340px) */
 .card-verso-mobile-box {
   width: min(calc(100vw - 40px), 340px) !important;
-
-  /* 📐 ALTURA PROPORCIONAL AO DESKTOP (Regra de Três: 340 * 1.9057) */
   height: 648px !important;
-
-  background: var(--trunfo-dark) !important;
-  border: 3px solid var(--trunfo-gold) !important;
-  border-radius: 10px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  padding-bottom: 4px !important;
-
-  /* 🚀 CAPACITADORES GEOMÉTRICOS 3D */
-  transform-style: preserve-3d !important;
+  background: transparent !important; /* Fundo transparente para não vazar nas quinas */
   perspective: 1200px !important;
   will-change: transform !important;
+  z-index: 401;
 }
 
-/* Força todas as subcamadas e tags internas a manterem a visibilidade estável */
-#cardVersoMobileBox *,
-#cardVersoMobileBox div {
+/* 🚀 MOTOR INTERNO 3D DO MODAL MOBILE
+   Esta caixa vai agrupar fisicamente a frente e o verso da carta e 
+   gerenciar o giro de 180 graus de forma linear e limpa. */
+.card-mobile-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d !important;
+  transition: transform 0.58s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  will-change: transform;
+}
+
+/* Estado reativo acionado pelo JavaScript para executar a revirada de folha */
+.card-mobile-inner.is-flipped-mobile {
+  transform: rotateY(180deg) !important;
+}
+
+/* Blindagem universal das duas faces físicas do sanduíche mobile */
+.card-mobile-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  border-radius: 10px !important;
+  border: 3px solid var(--trunfo-gold) !important;
+  background: var(--trunfo-dark) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  transform-style: preserve-3d !important;
+}
+
+/* FACE FRENTE: Mostra apenas a fotografia pura ocupando todo o espaço */
+.card-mobile-face.face-frente {
+  z-index: 2;
+  transform: rotateY(0deg) !important;
+}
+.card-mobile-face.face-frente img {
+  width: 100%;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* FACE VERSO: Nasce rotacionada de costas. Quando o pai girar 180°, 
+   ela se revelará na posição correta de leitura da esquerda para a direita. */
+.card-mobile-face.face-verso {
+  transform: rotateY(180deg) !important;
+  padding-bottom: 4px !important;
+}
+
+/* Força o ecossistema interno do verso a renderizar plano */
+.card-mobile-face.face-verso *,
+.card-mobile-face.face-verso div {
   transform-style: preserve-3d !important;
   backface-visibility: visible !important;
   -webkit-backface-visibility: visible !important;
 }
 
-/* 🔄 ESPELHAMENTO NATIVO DO CONTEÚDO */
-#cardVersoMobileBox > div,
-#cardVersoMobileBox > .trunfo-header,
-#cardVersoMobileBox > .trunfo-photo-wrapper,
-#cardVersoMobileBox > .trunfo-stats-area {
-  transform: rotateY(180deg) !important;
-}
-
 /* 🎯 CAIXA DE CURIOSIDADES CALIBRADA POR MATRIZ MATEMÁTICA */
 .trunfo-curiosidade-scroll-box {
-  height: 96px !important; /* Altura exata derivada da proporção de 627x329 */
+  height: 96px !important;
   overflow-y: auto !important;
   margin-bottom: 8px !important;
   padding: 6px 8px !important;
@@ -1424,7 +1458,6 @@ body {
   border: 1px solid rgba(212, 175, 55, 0.15) !important;
 }
 
-/* Texto interno estilizado em itálico e cinza do desktop */
 .trunfo-curiosidade-v2 {
   font-size: 0.84rem !important;
   line-height: 1.3 !important;
@@ -1434,7 +1467,6 @@ body {
   word-wrap: break-word !important;
 }
 
-/* Equalização cirúrgica do tamanho da linha e ícone de visualizações */
 .trunfo-view-icon {
   font-size: 0.85rem !important;
   display: inline-block !important;
