@@ -916,7 +916,7 @@ function abrirCardVersoMobile(id) {
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
 
-  // 🛡️ GUARDA O ID NO CONTAINER: Evita buscas perigosas no innerHTML durante o fechamento
+  // Guarda de forma blindada o id atual como atributo de dados no container externo
   box.setAttribute("data-current-id", idNormalizado);
 
   const sToken =
@@ -1033,7 +1033,7 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      // ⏱️ Desaceleração de 20%: Ajustado para 0.68s para um efeito mais cadenciado
+      // ⏱️ Desaceleração de 20%: Movimento estendido para 0.68s para maior suavidade
       box.style.transition = "transform 0.68s cubic-bezier(0.2, 0.8, 0.2, 1)";
       box.style.transform = "translate(0px, 0px) scale(1, 1)";
 
@@ -1101,7 +1101,7 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     // 1. Desgira a folha interna de volta para 0deg, revelando a imagem da FRENTE em pleno ar
     engine.classList.remove("is-flipped-mobile");
 
-    // 2. 🛡️ EXTRAÇÃO TOTALMENTE SEGURA: Lê o ID direto do atributo data guardado na abertura
+    // 2. 🛡️ LEITURA INTEGRALMENTE SEGURA VIA DATASET: Extingue erros de fatiamento de string
     const idNormalizado = box.getAttribute("data-current-id") || "";
     const sToken =
       typeof sessionSeed !== "undefined"
