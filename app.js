@@ -1127,7 +1127,7 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     setTimeout(() => {
       if (modal) modal.style.zIndex = "140";
       if (cardOrigem) cardOrigem.style.zIndex = "160";
-    }, 180);
+    }, 220); //alterado de 180 para 220.
 
     const rectFinal = box.getBoundingClientRect();
     const deltaX =
@@ -1146,7 +1146,7 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     modal.style.opacity = "0";
 
     // ⚡ RETORNO ACELERADO: Reduzido de 0.62s para 0.42s para um fechamento ágil e responsivo
-    box.style.transition = "transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1)";
+    box.style.transition = "transform 0.52s cubic-bezier(0.2, 0.8, 0.2, 1)"; //estava em .42, mas ficou muito rápido.
     box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY})`;
 
     // TIMEOUT CASADO: Reduzido para 420ms para bater com a nova velocidade de transição física
@@ -1160,7 +1160,7 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
       box.removeAttribute("data-current-id");
       if (modal) modal.style.zIndex = "400";
       if (cardOrigem) cardOrigem.style.zIndex = "";
-    }, 420);
+    }, 520); // <-- era 420, mas estava muito rápido.
   } else if (modal) {
     modal.classList.add("hidden");
     document.body.style.overflow = "";
