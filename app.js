@@ -1122,13 +1122,12 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
       rectInicial = cardOrigem.getBoundingClientRect();
     }
 
-    // 🎯 SUA PROPOSTA: No meio do trajeto de fechamento (aos 280ms), jogamos o z-index do modal
-    // para baixo e o card original do grid para cima. Isso faz o card perfeito assumir a frente,
-    // ocultando completamente o frame distorcido que terminará de encolher por trás dele!
+    // 🎯 AJUSTE DE TIMEOUT ANTECIPADO: Como a viagem ficou mais rápida, antecipamos a troca
+    // de camadas para 180ms para que o card perfeito do grid assuma a frente logo no início do recuo.
     setTimeout(() => {
-      if (modal) modal.style.zIndex = "140"; // Cai para baixo do nível padrão do grid focado
-      if (cardOrigem) cardOrigem.style.zIndex = "160"; // Sobe para o topo absoluto do teatro visual
-    }, 280);
+      if (modal) modal.style.zIndex = "140";
+      if (cardOrigem) cardOrigem.style.zIndex = "160";
+    }, 180);
 
     const rectFinal = box.getBoundingClientRect();
     const deltaX =
@@ -1142,13 +1141,15 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     const escalaX = rectInicial.width / rectFinal.width;
     const escalaY = rectInicial.height / rectFinal.height;
 
-    // 3. Sincroniza o recuo balístico em 0.62s
-    modal.style.transition = "opacity 0.55s linear";
+    // 3. Sincroniza o esvaecimento do overlay de fundo de forma acelerada
+    modal.style.transition = "opacity 0.35s linear";
     modal.style.opacity = "0";
 
-    box.style.transition = "transform 0.62s cubic-bezier(0.2, 0.8, 0.2, 1)";
+    // ⚡ RETORNO ACELERADO: Reduzido de 0.62s para 0.42s para um fechamento ágil e responsivo
+    box.style.transition = "transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1)";
     box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY})`;
 
+    // TIMEOUT CASADO: Reduzido para 420ms para bater com a nova velocidade de transição física
     setTimeout(() => {
       modal.classList.add("hidden");
       document.body.style.overflow = "";
@@ -1159,7 +1160,7 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
       box.removeAttribute("data-current-id");
       if (modal) modal.style.zIndex = "400";
       if (cardOrigem) cardOrigem.style.zIndex = "";
-    }, 620);
+    }, 420);
   } else if (modal) {
     modal.classList.add("hidden");
     document.body.style.overflow = "";
