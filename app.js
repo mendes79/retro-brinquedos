@@ -916,7 +916,7 @@ function abrirCardVersoMobile(id) {
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
 
-  // Guarda de forma blindada o id atual como atributo de dados no container externo
+  // Guarda o ID atual no container de forma blindada para o fechamento
   box.setAttribute("data-current-id", idNormalizado);
 
   const sToken =
@@ -928,7 +928,7 @@ function abrirCardVersoMobile(id) {
     document.getElementById(`card-${idNormalizado}`);
   const overlay = document.getElementById("cardVersoMobileModal");
 
-  // Captura a foto da frente do card original para alimentar a face frontal do modal
+  // Captura a foto da frente original do grid do Masonry
   let urlFrenteOriginal = data.url_frente;
   if (cardOrigem) {
     const imgFrente = cardOrigem.querySelector(".card-front img");
@@ -951,12 +951,12 @@ function abrirCardVersoMobile(id) {
     overlay.style.opacity = "0";
   }
 
-  // Injeção da arquitetura sanduíche legítima de Duas Faces Reais
+  // Injeção limpa da estrutura sanduíche de duas faces reais
   box.innerHTML = `
     <div class="card-mobile-inner" id="cardMobileInnerEngine">
       
-      <div class="card-mobile-face face-frente" id="cardMobileFaceFrenteEngine">
-        <img src="${urlFrenteOriginal}" alt="${data.nome} frente" loading="eager">
+      <div class="card-mobile-face face-frente">
+        <img src="${urlFrenteOriginal}" alt="${data.nome} frente" id="cardMobileImgFrenteEngine" loading="eager">
       </div>
 
       <div class="card-mobile-face face-verso">
@@ -1033,7 +1033,7 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      // Abre expandindo e centralizando a órbita na tela — 0.68s para maior suavidade
+      // Decolagem e expansão cadenciada em 0.68s
       box.style.transition = "transform 0.68s cubic-bezier(0.2, 0.8, 0.2, 1)";
       box.style.transform = "translate(0px, 0px) scale(1, 1)";
 
@@ -1093,16 +1093,24 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
   if (event && event.target !== document.getElementById("cardVersoMobileModal"))
     return;
 
-  const modal = document.getElementById("cardVersoMobileModal");
+  const modal = document.getElementById("arcadeModal"); // Fallback de segurança para ponteiros globais
+  const mobileModal = document.getElementById("cardVersoMobileModal");
   const box = document.getElementById("cardVersoMobileBox");
   const engine = document.getElementById("cardMobileInnerEngine");
-  const faceFrente = document.getElementById("cardMobileFaceFrenteEngine");
+  const imgFrente = document.getElementById("cardMobileImgFrenteEngine");
 
-  if (modal && box && engine) {
+  if (mobileModal && box && engine) {
     // 1. Desgira a folha interna de volta para 0deg, revelando a imagem da FRENTE em pleno ar
     engine.classList.remove("is-flipped-mobile");
 
-    // 2. LEITURA SEGURA DO DATASET DE ORIGEM
+    // 🎯 AJUSTE DE CONTROLE GRÁFICO: Altera o object-fit para contain no início da viagem.
+    // Isso força o navegador a respeitar a proporção da foto nativa do brinquedo por dentro do box,
+    // eliminando a distorção horizontal sem encolher o elemento em duplo escopo!
+    if (imgFrente) {
+      imgFrente.style.objectFit = "contain";
+    }
+
+    // 2. Coleta segura do ID do dataset
     const idNormalizado = box.getAttribute("data-current-id") || "";
     const sToken =
       typeof sessionSeed !== "undefined"
@@ -1122,18 +1130,6 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
       rectInicial = cardOrigem.getBoundingClientRect();
     }
 
-    // 🎯 ESTRATÉGIA ABORDAGEM B: No instante do fechamento, força a face da frente a assumir
-    // a proporção geométrica exata do card de destino. Isso anula a escala assimétrica
-    // e impede a GPU do smartphone de achatar a foto horizontalmente nos frames finais.
-    if (faceFrente) {
-      faceFrente.style.width = `${rectInicial.width}px`;
-      faceFrente.style.height = `${rectInicial.height}px`;
-      faceFrente.style.top = "50%";
-      faceFrente.style.left = "50%";
-      faceFrente.style.transform = "translate(-50%, -50%) rotateY(0deg)";
-      faceFrente.style.borderRadius = "1rem";
-    }
-
     const rectFinal = box.getBoundingClientRect();
     const deltaX =
       rectInicial.left +
@@ -1146,32 +1142,27 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     const escalaX = rectInicial.width / rectFinal.width;
     const escalaY = rectInicial.height / rectFinal.height;
 
-    // 3. Sincroniza o esvaecimento do overlay e encolhe o box de volta para o Masonry (0.62s)
-    modal.style.transition = "opacity 0.55s linear";
-    modal.style.opacity = "0";
+    // 3. Sincroniza o recuo balístico em 0.62s
+    mobileModal.style.transition = "opacity 0.55s linear";
+    mobileModal.style.opacity = "0";
 
     box.style.transition = "transform 0.62s cubic-bezier(0.2, 0.8, 0.2, 1)";
     box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY})`;
 
     setTimeout(() => {
-      modal.classList.add("hidden");
+      mobileModal.classList.add("hidden");
       document.body.style.overflow = "";
 
-      // Limpa os estilos injetados e remove o atributo temporário para o próximo clique
+      // Limpeza cirúrgica dos estados temporários
       box.style.transform = "";
       box.style.transition = "";
       box.removeAttribute("data-current-id");
-      if (faceFrente) {
-        faceFrente.style.width = "";
-        faceFrente.style.height = "";
-        faceFrente.style.top = "";
-        faceFrente.style.left = "";
-        faceFrente.style.transform = "";
-        faceFrente.style.borderRadius = "";
+      if (imgFrente) {
+        imgFrente.style.objectFit = "";
       }
-    }, 620); // Perfeitamente casado com os 0.62s do box transition
-  } else if (modal) {
-    modal.classList.add("hidden");
+    }, 620);
+  } else if (mobileModal) {
+    mobileModal.classList.add("hidden");
     document.body.style.overflow = "";
   }
 
