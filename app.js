@@ -949,14 +949,15 @@ function abrirCardVersoMobile(id) {
     overlay.classList.remove("hidden");
     overlay.classList.add("flex");
     overlay.style.opacity = "0";
+    overlay.style.zIndex = "400"; // Força o z-index padrão de abertura
   }
 
-  // Injeção limpa da estrutura sanduíche de duas faces reais
+  // Injeção da estrutura sanduíche legítima de Duas Faces Reais
   box.innerHTML = `
     <div class="card-mobile-inner" id="cardMobileInnerEngine">
       
       <div class="card-mobile-face face-frente">
-        <img src="${urlFrenteOriginal}" alt="${data.nome} frente" id="cardMobileImgFrenteEngine" loading="eager">
+        <img src="${urlFrenteOriginal}" alt="${data.nome} frente" loading="eager">
       </div>
 
       <div class="card-mobile-face face-verso">
@@ -1033,7 +1034,7 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      // Decolagem e expansão cadenciada em 0.68s
+      // Abre expandindo e centralizando a órbita na tela — 0.68s para maior suavidade
       box.style.transition = "transform 0.68s cubic-bezier(0.2, 0.8, 0.2, 1)";
       box.style.transform = "translate(0px, 0px) scale(1, 1)";
 
@@ -1093,24 +1094,15 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
   if (event && event.target !== document.getElementById("cardVersoMobileModal"))
     return;
 
-  const modal = document.getElementById("arcadeModal"); // Fallback de segurança para ponteiros globais
-  const mobileModal = document.getElementById("cardVersoMobileModal");
+  const modal = document.getElementById("cardVersoMobileModal");
   const box = document.getElementById("cardVersoMobileBox");
   const engine = document.getElementById("cardMobileInnerEngine");
-  const imgFrente = document.getElementById("cardMobileImgFrenteEngine");
 
-  if (mobileModal && box && engine) {
+  if (modal && box && engine) {
     // 1. Desgira a folha interna de volta para 0deg, revelando a imagem da FRENTE em pleno ar
     engine.classList.remove("is-flipped-mobile");
 
-    // 🎯 AJUSTE DE CONTROLE GRÁFICO: Altera o object-fit para contain no início da viagem.
-    // Isso força o navegador a respeitar a proporção da foto nativa do brinquedo por dentro do box,
-    // eliminando a distorção horizontal sem encolher o elemento em duplo escopo!
-    if (imgFrente) {
-      imgFrente.style.objectFit = "contain";
-    }
-
-    // 2. Coleta segura do ID do dataset
+    // 2. Leitura segura do ID do dataset
     const idNormalizado = box.getAttribute("data-current-id") || "";
     const sToken =
       typeof sessionSeed !== "undefined"
@@ -1130,6 +1122,14 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
       rectInicial = cardOrigem.getBoundingClientRect();
     }
 
+    // 🎯 SUA PROPOSTA: No meio do trajeto de fechamento (aos 280ms), jogamos o z-index do modal
+    // para baixo e o card original do grid para cima. Isso faz o card perfeito assumir a frente,
+    // ocultando completamente o frame distorcido que terminará de encolher por trás dele!
+    setTimeout(() => {
+      if (modal) modal.style.zIndex = "140"; // Cai para baixo do nível padrão do grid focado
+      if (cardOrigem) cardOrigem.style.zIndex = "160"; // Sobe para o topo absoluto do teatro visual
+    }, 280);
+
     const rectFinal = box.getBoundingClientRect();
     const deltaX =
       rectInicial.left +
@@ -1143,26 +1143,25 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     const escalaY = rectInicial.height / rectFinal.height;
 
     // 3. Sincroniza o recuo balístico em 0.62s
-    mobileModal.style.transition = "opacity 0.55s linear";
-    mobileModal.style.opacity = "0";
+    modal.style.transition = "opacity 0.55s linear";
+    modal.style.opacity = "0";
 
     box.style.transition = "transform 0.62s cubic-bezier(0.2, 0.8, 0.2, 1)";
     box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY})`;
 
     setTimeout(() => {
-      mobileModal.classList.add("hidden");
+      modal.classList.add("hidden");
       document.body.style.overflow = "";
 
-      // Limpeza cirúrgica dos estados temporários
+      // Limpeza completa e restauração dos barramentos originais de z-index
       box.style.transform = "";
       box.style.transition = "";
       box.removeAttribute("data-current-id");
-      if (imgFrente) {
-        imgFrente.style.objectFit = "";
-      }
+      if (modal) modal.style.zIndex = "400";
+      if (cardOrigem) cardOrigem.style.zIndex = "";
     }, 620);
-  } else if (mobileModal) {
-    mobileModal.classList.add("hidden");
+  } else if (modal) {
+    modal.classList.add("hidden");
     document.body.style.overflow = "";
   }
 
