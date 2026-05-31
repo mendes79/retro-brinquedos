@@ -955,7 +955,7 @@ function abrirCardVersoMobile(id) {
   box.innerHTML = `
     <div class="card-mobile-inner" id="cardMobileInnerEngine">
       
-      <div class="card-mobile-face face-frente">
+      <div class="card-mobile-face face-frente" id="cardMobileFaceFrenteEngine">
         <img src="${urlFrenteOriginal}" alt="${data.nome} frente" loading="eager">
       </div>
 
@@ -1033,7 +1033,7 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      // ⏱️ Desaceleração de 20%: Movimento estendido para 0.68s para maior suavidade
+      // Abre expandindo e centralizando a órbita na tela — 0.68s para maior suavidade
       box.style.transition = "transform 0.68s cubic-bezier(0.2, 0.8, 0.2, 1)";
       box.style.transform = "translate(0px, 0px) scale(1, 1)";
 
@@ -1096,12 +1096,13 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
   const modal = document.getElementById("cardVersoMobileModal");
   const box = document.getElementById("cardVersoMobileBox");
   const engine = document.getElementById("cardMobileInnerEngine");
+  const faceFrente = document.getElementById("cardMobileFaceFrenteEngine");
 
   if (modal && box && engine) {
     // 1. Desgira a folha interna de volta para 0deg, revelando a imagem da FRENTE em pleno ar
     engine.classList.remove("is-flipped-mobile");
 
-    // 2. 🛡️ LEITURA INTEGRALMENTE SEGURA VIA DATASET: Extingue erros de fatiamento de string
+    // 2. LEITURA SEGURA DO DATASET DE ORIGEM
     const idNormalizado = box.getAttribute("data-current-id") || "";
     const sToken =
       typeof sessionSeed !== "undefined"
@@ -1121,6 +1122,18 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
       rectInicial = cardOrigem.getBoundingClientRect();
     }
 
+    // 🎯 ESTRATÉGIA ABORDAGEM B: No instante do fechamento, força a face da frente a assumir
+    // a proporção geométrica exata do card de destino. Isso anula a escala assimétrica
+    // e impede a GPU do smartphone de achatar a foto horizontalmente nos frames finais.
+    if (faceFrente) {
+      faceFrente.style.width = `${rectInicial.width}px`;
+      faceFrente.style.height = `${rectInicial.height}px`;
+      faceFrente.style.top = "50%";
+      faceFrente.style.left = "50%";
+      faceFrente.style.transform = "translate(-50%, -50%) rotateY(0deg)";
+      faceFrente.style.borderRadius = "1rem";
+    }
+
     const rectFinal = box.getBoundingClientRect();
     const deltaX =
       rectInicial.left +
@@ -1133,11 +1146,10 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     const escalaX = rectInicial.width / rectFinal.width;
     const escalaY = rectInicial.height / rectFinal.height;
 
-    // 3. Sincroniza o overlay e encolhe a órbita de volta para o seu nicho exato no Masonry
+    // 3. Sincroniza o esvaecimento do overlay e encolhe o box de volta para o Masonry (0.62s)
     modal.style.transition = "opacity 0.55s linear";
     modal.style.opacity = "0";
 
-    // ⏱️ Desaceleração de 20%: Retorno suavizado e estendido para 0.62s
     box.style.transition = "transform 0.62s cubic-bezier(0.2, 0.8, 0.2, 1)";
     box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY})`;
 
@@ -1145,10 +1157,18 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
       modal.classList.add("hidden");
       document.body.style.overflow = "";
 
-      // Limpa os estilos injetados e remove o atributo temporário
+      // Limpa os estilos injetados e remove o atributo temporário para o próximo clique
       box.style.transform = "";
       box.style.transition = "";
       box.removeAttribute("data-current-id");
+      if (faceFrente) {
+        faceFrente.style.width = "";
+        faceFrente.style.height = "";
+        faceFrente.style.top = "";
+        faceFrente.style.left = "";
+        faceFrente.style.transform = "";
+        faceFrente.style.borderRadius = "";
+      }
     }, 620); // Perfeitamente casado com os 0.62s do box transition
   } else if (modal) {
     modal.classList.add("hidden");
