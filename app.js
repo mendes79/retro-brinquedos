@@ -808,10 +808,10 @@ async function fetchBrinquedos(reset = false) {
         <div class="text-center py-20 w-full flex flex-col items-center justify-center col-span-full">
           <p class="text-pink-500 font-retro text-2xl mb-4 uppercase tracking-wider">ITEM NÃO ENCONTRADO</p>
           <p class="text-slate-400 font-sans text-sm max-w-md mb-6 px-4">
-            Esse brinquedo ainda não está catalogado no nosso fliperama digital. Quer nos ajudar a resgatar essa memória?
+            Esse brinquedo ainda não está catalogado no nosso acervo digital. Quer nos ajudar a resgatar essa memória?
           </p>
           <button onclick="abrirSugestaoModal()" class="sugestao-btn-enviar flex items-center gap-2 transform hover:scale-105 active:scale-95 transition-all">
-            🎮 SOLICITAR INCLUSÃO DO ITEM
+            🎮 SOLICITAR INCLUSAO DO ITEM
           </button>
         </div>
       `;
