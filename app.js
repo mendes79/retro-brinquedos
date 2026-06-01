@@ -550,7 +550,7 @@ async function fetchBrinquedos(reset = false) {
       if (sentinel && sentinel.parentNode) {
         sentinel.parentNode.removeChild(sentinel);
         console.log(
-          "%c 🚏 [TRACE 3.1] Sentinela removido do DOM temporariamente",
+          "%c 𚟏 [TRACE 3.1] Sentinela removido do DOM temporariamente",
           "color: #gray;",
         );
       }
@@ -567,13 +567,24 @@ async function fetchBrinquedos(reset = false) {
     );
 
     grid.innerHTML = "";
-    for (let i = 0; i < targetCols; i++) {
-      const colDiv = document.createElement("div");
-      colDiv.className = "masonry-column";
-      colDiv.innerHTML = Array(2)
-        .fill('<div class="skeleton-card"></div>')
-        .join("");
-      grid.appendChild(colDiv);
+
+    // 🛡️ ITEM 3 RESOLVIDO: Se for uma busca por texto ativa (isSearching), pula a injeção de skeletons para evitar piscadas ópticas
+    if (!isSearching) {
+      for (let i = 0; i < targetCols; i++) {
+        const colDiv = document.createElement("div");
+        colDiv.className = "masonry-column";
+        colDiv.innerHTML = Array(2)
+          .fill('<div class="skeleton-card"></div>')
+          .join("");
+        grid.appendChild(colDiv);
+      }
+    } else {
+      // Cria apenas os containers vazios das colunas masonry para receber os dados limpos em seguida
+      for (let i = 0; i < targetCols; i++) {
+        const colDiv = document.createElement("div");
+        colDiv.className = "masonry-column";
+        grid.appendChild(colDiv);
+      }
     }
   } else {
     console.log(
@@ -791,8 +802,19 @@ async function fetchBrinquedos(reset = false) {
         "%c 🛑 [TRACE 5.4] Nenhum item encontrado no reset.",
         "color: #red;",
       );
-      const termoAtual = typeof buscaAtiva !== "undefined" ? buscaAtiva : "";
-      grid.innerHTML = `<div class="text-center py-20"><p class="text-pink-500 font-retro text-xl">ITEM NÃO ENCONTRADO</p></div>`;
+
+      // 🎯 ITEM 7 RESTAURADO: Reinjeção limpa do bloco de sugestões com layout arcade original
+      grid.innerHTML = `
+        <div class="text-center py-20 w-full flex flex-col items-center justify-center col-span-full">
+          <p class="text-pink-500 font-retro text-2xl mb-4 uppercase tracking-wider">ITEM NÃO ENCONTRADO</p>
+          <p class="text-slate-400 font-sans text-sm max-w-md mb-6 px-4">
+            Esse brinquedo ainda não está catalogado no nosso fliperama digital. Quer nos ajudar a resgatar essa memória?
+          </p>
+          <button onclick="abrirSugestaoModal()" class="sugestao-btn-enviar flex items-center gap-2 transform hover:scale-105 active:scale-95 transition-all">
+            🎮 SOLICITAR INCLUSÃO DO ITEM
+          </button>
+        </div>
+      `;
       hasMais = false;
     } else {
       hasMais = false;
@@ -814,13 +836,14 @@ async function fetchBrinquedos(reset = false) {
       "color: #gray;",
     );
 
+    // ⏱️ OTIMIZAÇÃO CRÍTICA DA ETAPA 3: Reduzido de 600ms para 300ms para destravar os filtros e limpar a interface de imediato
     setTimeout(() => {
       try {
         const mainElement = document.querySelector("main");
         if (mainElement && sentinel && !sentinel.parentNode) {
           mainElement.appendChild(sentinel);
           console.log(
-            "%c 🚏 [TRACE FINALLY] Sentinela re-acoplado ao main",
+            "%c 𚟏 [TRACE FINALLY] Sentinela re-acoplado ao main",
             "color: #gray;",
           );
         }
@@ -829,7 +852,7 @@ async function fetchBrinquedos(reset = false) {
       } catch (e) {
         console.warn("Aviso no finally do sentinel:", e);
       }
-    }, 600);
+    }, 300);
   }
 }
 
