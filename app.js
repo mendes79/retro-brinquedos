@@ -236,10 +236,28 @@ async function init() {
     }
   }
 
-  new FontFace("LEDDisplay", "url(/fonts/advanced_led_board-7.ttf)")
+  new FontFace("LEDDisplay", "url('./fonts/advanced_led_board-7.ttf')", {
+    style: "normal",
+    weight: "400",
+  })
     .load()
-    .then((f) => document.fonts.add(f))
-    .catch(() => {});
+    .then((loadedFace) => {
+      document.fonts.add(loadedFace);
+      console.log(
+        "%c 🟢 [FONTE] advanced_led_board-7.ttf carregada com sucesso via hardware!",
+        "color: #39ff14; font-weight: bold;",
+      );
+
+      // Força o redesenho físico do painel para aplicar o glifo digital imediatamente no desktop
+      const ledEl = document.getElementById("ledContent");
+      if (ledEl) ledEl.style.fontFamily = "'LEDDisplay', monospace";
+    })
+    .catch((err) => {
+      console.warn(
+        "Aviso no carregamento da fonte LED principal, usando fallback:",
+        err,
+      );
+    });
 
   setupObserver();
 
@@ -265,7 +283,7 @@ async function init() {
       " ✦ Curta as cartas, marque seus brinquedos e deixe um comentário";
   } else {
     messageBoot =
-      "Bem-vindo ao RetroBrinquedos BR — O museum dos brinquedos inesquecíveis ✦ Clique em qualquer carta para revelar a ficha Super Trunfo";
+      "Bem-vindo ao RetroBrinquedos BR — O museu dos brinquedos inesquecíveis ✦ Clique em qualquer carta para revelar a ficha Super Trunfo";
   }
 
   iniciarPainelLED(messageBoot);
@@ -1586,6 +1604,9 @@ async function toggleInteracao(event, brinquedoId, tipo) {
 // 5.4 — filtrarMeuQuarto — aplica o filtro de coleção pessoal (todos/tive/queria/curtidas),
 // atualiza o botão ativo na barra de filtros e recarrega o grid
 async function filtrarMeuQuarto(tipo) {
+  // 🛡️ REPARO ADICIONAL DA ETAPA 3 ANTECIPADO: Destrava defensivamente o disjuntor de busca para evitar congelamentos
+  isSearching = false;
+
   filtroAtivo = tipo;
 
   document.querySelectorAll(".filter-btn").forEach((btn) => {
@@ -1599,6 +1620,12 @@ async function filtrarMeuQuarto(tipo) {
   if (searchInput) searchInput.value = "";
 
   resetarEstadoDosCards();
+
+  // 🎯 REDIRECIONAMENTO DE TELA: Força o scroll suave para o início do Masonry
+  const secaoColecao = document.getElementById("colecao");
+  if (secaoColecao) {
+    secaoColecao.scrollIntoView({ behavior: "smooth" });
+  }
 
   await fetchBrinquedos(true);
 }
@@ -2252,8 +2279,13 @@ document.addEventListener("click", (e) => {
 
 // 8.11 — logOut — faz signOut no Supabase, limpa localStorage e redireciona para a página inicial no estado deslogado
 async function logOut() {
-  await supabaseClient.auth.signOut();
   localStorage.removeItem("retro_avatar");
+  localStorage.removeItem("retro_led_boot");
+  curtidasDoUsuario.clear();
+  tiveDoUsuario.clear();
+  queriaDoUsuario.clear();
+
+  await supabaseClient.auth.signOut();
   localStorage.setItem("retro_led_boot", "logout");
   window.location.href = window.location.origin;
 }
@@ -3160,10 +3192,20 @@ function _sugestaoMostrarFeedback(mensagem, tipo) {
 // 12.10 — Listener de tecla Escape — fecha qualquer modal estático que esteja aberto (sugestão, disclaimer, fabricantes, ranking)
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
-    fecharSugestaoModal();
-    fecharDisclaimerModal();
-    fecharFabricanteModal();
-    fecharRankingModal();
+    // Captura se há algum modal visível para interceptar o comportamento padrão do browser
+    const modaisAbertos = document.querySelector(
+      "#sugestaoModal:not(.hidden), #disclaimerModal:not(.hidden), [id^='fabricanteModal']:not(.hidden), #rankingModal:not(.hidden)",
+    );
+
+    if (modaisAbertos) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    fecharSugestaoModal(true);
+    fecharDisclaimerModal(true);
+    fecharFabricanteModal(true);
+    fecharRankingModal(null, true);
   }
 });
 
