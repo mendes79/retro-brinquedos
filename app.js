@@ -673,6 +673,10 @@ async function fetchBrinquedos(reset = false) {
       );
       if (rpcError) throw rpcError;
       itens = data || [];
+
+      // 🎯 TRAVA ANTI-PISCADA: Como a busca por termo esgota os resultados no RPC,
+      // desativamos o hasMais de imediato para impedir o sentinel de injetar skeletons fantasmas
+      hasMais = false;
     } else {
       // 🚀 CANAL PADRÃO DO CATÁLOGO
       const limiteRequisitado = typeof LIMITE !== "undefined" ? LIMITE : 24;
@@ -1691,6 +1695,8 @@ async function _executarBusca(term) {
   }
   fetchAbortController = new AbortController();
 
+  // 🎯 CORREÇÃO CRÍTICA: Destrava o carregador para dar prioridade imediata à busca digitada
+  isLoading = false;
   isSearching = true;
 
   const secaoColecao = document.getElementById("colecao");

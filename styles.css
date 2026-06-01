@@ -3359,20 +3359,21 @@ body {
   font-display: swap;
 }
 
-/* Calibragem estrita para o Desktop (38px de área útil centralizada) */
+/* Calibragem estrita para o Desktop (Garante exatos 4px de respiro livre acima e abaixo) */
 .led-content {
   font-family: "LEDDisplay", "Courier New", monospace;
-  font-size: 34px !important;
+  font-size: 30px !important; /* Ajustado de 34px para 30px */
   font-weight: 400 !important;
   letter-spacing: 0.12em !important;
-  line-height: 38px !important; /* Resguarda 2px acima e 2px abaixo dentro do painel de 42px */
+  line-height: 34px !important; /* Ajustado de 38px para 34px (42px total - 8px de respiros) */
   color: #39ff14;
   text-shadow: 0 0 6px rgba(57, 255, 20, 0.65) !important;
   display: inline-block;
   white-space: nowrap;
   will-change: transform;
 }
-/* Mobile: painel 36px → espaço útil 32px → font-size 28px */
+
+/* Mobile: painel 36px → respiro proporcional travado */
 @media (max-width: 767px) {
   :root {
     --led-height: 36px; /* era 24px → +50% = 36px */
@@ -3381,8 +3382,8 @@ body {
     height: 36px;
   }
   .led-content {
-    font-size: 28px;
-    line-height: 36px; /* acompanha a nova altura */
+    font-size: 24px !important;
+    line-height: 28px !important; /* Resguarda o recuo proporcional no smartphone */
   }
 }
 
