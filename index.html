@@ -17,16 +17,14 @@
      v2.0 (28/05/2026) — Reorganização em blocos e documentação
 ============================================================ -->
 <html lang="pt-br">
-
-
-    <!-- ============================================================
+  <!-- ============================================================
          1. HEAD — META, SEO, OPEN GRAPH E SDKS EXTERNOS
          Contém: charset/viewport, título, Open Graph (Facebook/WhatsApp),
          Twitter Card, favicon, Supabase SDK, Tailwind CSS,
          Google Fonts, styles.css, preconnect de avatares e EmailJS.
          ============================================================ -->
 
-    <!-- 1.1 — Charset, viewport e título da página -->
+  <!-- 1.1 — Charset, viewport e título da página -->
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -80,8 +78,6 @@
   </head>
 
   <body class="antialiased app-unlogged">
-
-
     <!-- ============================================================
          2. NAVBAR
          Barra fixa no topo (z-index 160). Contém em ordem:
@@ -92,7 +88,8 @@
 
     <nav
       class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 z-[160] px-3 md:px-6 py-2.5 md:py-3 flex flex-wrap items-center gap-y-3 gap-x-2 md:gap-x-6 transition-all"
-    >    <!-- 2.1 — Logo — botão easter egg (R rosa) + título "RetroBrinquedos" com gradiente pink→cyan. Cliques no logo disparam o easter egg do LED. -->
+    >
+      <!-- 2.1 — Logo — botão easter egg (R rosa) + título "RetroBrinquedos" com gradiente pink→cyan. Cliques no logo disparam o easter egg do LED. -->
       <!-- 1. LOGO E TÍTULO -->
       <div class="flex items-center gap-2 md:gap-3 shrink-0 order-1">
         <div
@@ -108,7 +105,7 @@
           RetroBrinquedos
         </h1>
       </div>
-    <!-- 2.2 — #userArea — botão ENTRAR (estado deslogado) substituído por avatar + dropdown pelo JS após login bem-sucedido -->
+      <!-- 2.2 — #userArea — botão ENTRAR (estado deslogado) substituído por avatar + dropdown pelo JS após login bem-sucedido -->
       <!-- 2. ÁREA DO USUÁRIO / ENTRAR -->
       <div
         id="userArea"
@@ -121,10 +118,10 @@
           ENTRAR
         </button>
       </div>
-    <!-- 2.3 — Quebra de linha forçada no mobile — div invisible order-3 que força o campo de busca para a segunda linha em telas pequenas -->
+      <!-- 2.3 — Quebra de linha forçada no mobile — div invisible order-3 que força o campo de busca para a segunda linha em telas pequenas -->
       <!-- QUEBRA DE LINHA FORÇADA NO MOBILE -->
       <div class="w-full h-0 md:hidden order-3"></div>
-    <!-- 2.4 — Toggle LED + campo de busca — switch on/off do painel LED, input de busca com debounce, botão ✕ para limpar e botão lupa para busca forçada -->
+      <!-- 2.4 — Toggle LED + campo de busca — switch on/off do painel LED, input de busca com debounce, botão ✕ para limpar e botão lupa para busca forçada -->
       <!-- 3. TOGGLE + BUSCA -->
       <div
         class="flex items-center gap-3 md:gap-5 flex-grow md:flex-1 order-4 md:order-2 shrink-0 md:shrink"
@@ -197,7 +194,7 @@
           </button>
         </div>
       </div>
-    <!-- 2.5 — #userFilters — barra de filtros Meu Quarto (TODOS / FUI DONO / QUERIA TER / FAVORITOS). Oculta até o login; exibida pelo JS via updateNavWithAvatar() -->
+      <!-- 2.5 — #userFilters — barra de filtros Meu Quarto (TODOS / FUI DONO / QUERIA TER / FAVORITOS). Oculta até o login; exibida pelo JS via updateNavWithAvatar() -->
       <div
         id="userFilters"
         class="hidden w-full flex gap-3 overflow-x-auto no-scrollbar py-2 px-3 md:px-6 border-t border-white/5 bg-black/20 order-5"
@@ -233,7 +230,6 @@
       </div>
     </nav>
 
-
     <!-- ============================================================
          3. PAINEL LED — TICKER ANIMADO
          Faixa fixa posicionada pelo JS abaixo da navbar (ajustarPainelLED).
@@ -251,7 +247,6 @@
         <div id="ledContent" class="led-content"></div>
       </div>
     </div>
-
 
     <!-- ============================================================
          4. HERO SECTION
@@ -451,7 +446,6 @@
       </div>
     </section>
 
-
     <!-- ============================================================
          5. CATÁLOGO — HEADER E GRID MASONRY
          Header com título da seção e grid flex onde os cards
@@ -474,7 +468,6 @@
       <div id="toyGrid" class="masonry-grid"></div>
     </main>
 
-
     <!-- ============================================================
          6. FOOTER FIXO
          Barra fixa no rodapé (z-index 90). Contém à esquerda:
@@ -489,14 +482,12 @@
     <!-- 6.4 — Links de redes sociais — Instagram, Facebook e e-mail (ícones SVG inline) -->
     <!-- Footer fixo: Texto centralizado absoluto e ícones na margem direita -->
     <footer
-      class="fixed bottom-0 w-full z-[90] bg-slate-900/95 backdrop-blur-md border-t border-slate-800 py-3 md:py-1.5"
+      class="fixed bottom-0 w-full z-[90] bg-slate-900/95 backdrop-blur-md border-t border-slate-800 py-3 md:py-2"
     >
       <div
-        class="relative flex flex-row items-center justify-center w-full px-4 md:px-8 max-w-screen-2xl mx-auto h-full min-h-[24px]"
+        class="relative flex flex-row items-center justify-between w-full px-4 md:px-8"
       >
-        <div
-          class="absolute left-4 md:left-8 flex items-center gap-3.5 md:gap-4 footer-podium-wrapper"
-        >
+        <div class="flex items-center gap-4 footer-podium-wrapper">
           <button
             onclick="abrirRankingModal()"
             class="footer-podium-btn"
@@ -511,18 +502,17 @@
               height="28"
             />
           </button>
-
           <img
             id="enduroFlags"
             src="/img/flags.jpg"
             alt="Enduro Stage"
-            class="hidden opacity-0 h-[18px] md:h-[15px] w-auto transition-opacity duration-200 select-none pointer-events-none"
+            class="hidden opacity-0 h-[18px] md:h-[16px] w-auto transition-opacity duration-200 select-none pointer-events-none"
             title="Fase Concluída!"
           />
         </div>
 
         <p
-          class="text-[14.5px] md:text-[11px] text-slate-400 text-center truncate px-16 md:px-24"
+          class="text-sm md:text-xs text-slate-400 text-center truncate flex-1 px-4"
         >
           <button
             onclick="abrirDisclaimerModal()"
@@ -531,14 +521,12 @@
           >
             © 2026 RetroBrinquedos BR
           </button>
-          <span class="hidden sm:inline"
-            >- Revivendo memórias em alta resolução.</span
+          <span class="hidden sm:inline">
+            - Revivendo memórias em alta resolução.</span
           >
         </p>
 
-        <div
-          class="absolute right-4 md:right-8 flex items-center gap-4 md:gap-5 shrink-0"
-        >
+        <div class="flex items-center gap-4 md:gap-5 shrink-0">
           <a
             href="#"
             title="Instagram"
@@ -546,7 +534,7 @@
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6 md:w-[18px] md:h-[18px]"
+              class="w-6 h-6 md:w-5 md:h-5"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -562,7 +550,7 @@
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6 md:w-[18px] md:h-[18px]"
+              class="w-6 h-6 md:w-5 md:h-5"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -578,7 +566,7 @@
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6 md:w-[18px] md:h-[18px]"
+              class="w-6 h-6 md:w-5 md:h-5"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -590,7 +578,6 @@
         </div>
       </div>
     </footer>
-
 
     <!-- ============================================================
          7. MODAL RANKING E PÓDIO
@@ -670,7 +657,6 @@
         </div>
       </div>
     </div>
-
 
     <!-- ============================================================
          8. ARCADE MODAL — LOGIN E SELEÇÃO DE AVATAR
@@ -835,7 +821,6 @@
       </div>
     </div>
 
-
     <!-- ============================================================
          9. DRAWER DE COMENTÁRIOS
          Painel deslizante lateral (z-index 300). Mobile: sobe de baixo.
@@ -910,7 +895,6 @@
       </div>
     </div>
 
-
     <!-- ============================================================
          10. MODAL CARD COMPARTILHADO — ?card=XXXX
          Overlay z-index 400. Exibido automaticamente pelo JS quando a
@@ -945,7 +929,6 @@
       </div>
     </div>
 
-
     <!-- ============================================================
          11. ENTRY POINT — CARREGAMENTO DO app.js
          Script principal da SPA. Carregado após todos os modais
@@ -954,7 +937,6 @@
          ============================================================ -->
 
     <script src="app.js"></script>
-
 
     <!-- ============================================================
          12. MODAL SUGESTÃO DE BRINQUEDO
@@ -1110,7 +1092,6 @@
     </div>
     <!-- /Item 11 -->
 
-
     <!-- ============================================================
          13. MODAL DISCLAIMER — DIREITOS AUTORAIS E CONTATO
          Overlay z-index 500. Exibe a política de uso, aviso de
@@ -1191,7 +1172,6 @@
         </div>
       </div>
     </div>
-
 
     <!-- ============================================================
          14. MODAIS DE FABRICANTES (1–8)
@@ -1802,7 +1782,6 @@
       </div>
     </div>
     <!-- /H4 H5 -->
-
 
     <!-- ============================================================
          15. MODAL VERSO MOBILE — CARD SUPER TRUNFO CENTRALIZADO

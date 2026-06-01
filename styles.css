@@ -3353,21 +3353,25 @@ body {
 /* ✏️ PONTO DE TROCA DE FONTE DO LED — edite apenas aqui */
 @font-face {
   font-family: "LEDDisplay";
-  /* 📁 Arquivo em /fonts/advanced_led_board-7.ttf na raiz do projeto */
-  src: url("/fonts/advanced_led_board-7.ttf") format("truetype");
+  src:
+    url("./fonts/advanced_led_board-7.ttf") format("truetype"),
+    url("/fonts/advanced_led_board-7.ttf") format("truetype");
   font-display: swap;
 }
 
-/* Desktop: fonte LED máxima respeitando 2px acima e abaixo do painel (42px).
-   Espaço útil = 38px. Cap-height ~75% → font-size 34px ≈ 25px de glifo visível */
+/* Calibragem estrita para o Desktop (38px de área útil centralizada) */
 .led-content {
   font-family: "LEDDisplay", "Courier New", monospace;
-  font-size: 34px;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  line-height: 42px; /* igual à altura do painel no desktop */
+  font-size: 34px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.12em !important;
+  line-height: 38px !important; /* Resguarda 2px acima e 2px abaixo dentro do painel de 42px */
+  color: #39ff14;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.65) !important;
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
 }
-
 /* Mobile: painel 36px → espaço útil 32px → font-size 28px */
 @media (max-width: 767px) {
   :root {
@@ -3693,8 +3697,8 @@ body {
 .ranking-modal-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 4px;
+  gap: 14px !important; /* Mais espaçamento */
+  padding: 10px 6px !important; /* Caixa mais robusta */
   border-bottom: 1px solid rgba(57, 255, 20, 0.08);
 }
 .ranking-modal-item:last-child {
@@ -3703,21 +3707,21 @@ body {
 
 .ranking-modal-pos {
   font-family: "Orbitron", monospace;
-  font-size: 0.6rem;
+  font-size: 0.85rem !important; /* +30% de escala */
   color: var(--trunfo-gold);
   font-weight: 700;
-  min-width: 18px;
+  min-width: 24px;
   text-align: center;
   flex-shrink: 0;
 }
 
 .ranking-modal-img {
-  width: 48px;
-  height: 48px;
+  width: 72px !important; /* Inflado em 50% de tamanho */
+  height: 72px !important; /* Inflado em 50% de tamanho */
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 8px !important;
   flex-shrink: 0;
-  border: 1px solid rgba(57, 255, 20, 0.2);
+  border: 1.5px solid rgba(57, 255, 20, 0.25) !important;
 }
 
 .ranking-modal-info {
@@ -3729,24 +3733,24 @@ body {
 }
 .ranking-modal-nome {
   font-family: "Orbitron", monospace;
-  font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.82rem !important; /* +30% de escala */
+  color: rgba(255, 255, 255, 0.95);
   letter-spacing: 0.05em;
   line-height: 1.4;
   word-break: break-word;
 }
 .ranking-modal-fabricante {
   font-family: "Orbitron", monospace;
-  font-size: 0.5rem;
+  font-size: 0.65rem !important; /* +30% de escala */
   color: rgba(255, 255, 255, 0.4);
   letter-spacing: 0.08em;
 }
 
 .ranking-modal-valor {
   font-family: "Orbitron", monospace;
-  font-size: 0.6rem;
+  font-size: 0.82rem !important; /* +30% de escala */
   font-weight: 700;
-  min-width: 44px;
+  min-width: 60px;
   text-align: right;
   flex-shrink: 0;
   white-space: nowrap;
