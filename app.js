@@ -227,6 +227,16 @@ async function init() {
       const savedAvatar = localStorage.getItem("retro_avatar");
       if (savedAvatar) {
         updateNavWithAvatar(savedAvatar, userName);
+
+        // 🎯 CAPTURA DE INTENÇÃO PÓS-LOGIN: Se o usuário veio do fluxo de sugestão bloqueada,
+        // consome a flag do localStorage e abre o formulário imediatamente após o reload do avatar!
+        if (localStorage.getItem("retro_abrir_sugestao_pos_login") === "true") {
+          localStorage.removeItem("retro_abrir_sugestao_pos_login");
+          // Aguarda um pequeno delay de renderização para saltar o modal na tela de forma suave
+          setTimeout(() => {
+            abrirSugestaoModal();
+          }, 600);
+        }
       } else {
         login();
         arcadeScreen.classList.add("hidden");
@@ -808,14 +818,15 @@ async function fetchBrinquedos(reset = false) {
       );
 
       // 🎯 ITEM 7 RESTAURADO: Reinjeção limpa do bloco de sugestões com layout arcade original
+      // 🎯 MODIFICAÇÃO CIRÚRGICA: O botão agora chama tratarCliqueSugestao() para gerenciar a intenção pós-login 2026-06-01
       grid.innerHTML = `
         <div class="text-center py-20 w-full flex flex-col items-center justify-center col-span-full">
           <p class="text-pink-500 font-retro text-2xl mb-4 uppercase tracking-wider">ITEM NÃO ENCONTRADO</p>
           <p class="text-slate-400 font-sans text-sm max-w-md mb-6 px-4">
-            Esse brinquedo ainda não está catalogado no nosso acervo digital. Quer nos ajudar a resgatar essa memória?
+            Esse brinquedo ainda não está catalogado no nosso fliperama digital. Quer nos ajudar a resgatar essa memória?
           </p>
-          <button onclick="abrirSugestaoModal()" class="sugestao-btn-enviar flex items-center gap-2 transform hover:scale-105 active:scale-95 transition-all">
-            🎮 SOLICITAR INCLUSAO DO ITEM
+          <button onclick="tratarCliqueSugestao()" class="sugestao-btn-enviar flex items-center gap-2 transform hover:scale-105 active:scale-95 transition-all">
+            🎮 SOLICITAR INCLUSÃO DO ITEM
           </button>
         </div>
       `;
@@ -3070,6 +3081,21 @@ async function abrirSugestaoModal(termoPreenchido = "") {
   history.pushState({ modal: "sugestao" }, "");
 
   if (inputNome) setTimeout(() => inputNome.focus(), 80);
+}
+
+// 12.5.1 — tratarCliqueSugestao — Gerencia o fluxo inteligente de sugestão para usuários logados e deslogados
+function tratarCliqueSugestao() {
+  if (isUserLogged) {
+    // Se já está logado, abre o formulário direto com tapete vermelho
+    abrirSugestaoModal();
+  } else {
+    // 📢 UX REFINADA: Sinaliza no LED, grava a intenção no cache físico e abre o Arcade de Login
+    mostrarMensagemLED("FAÇA LOGIN PARA SUGERIR UM ITEM");
+    localStorage.setItem("retro_abrir_sugestao_pos_login", "true");
+
+    // Abre o modal de login para o usuário inserir a moeda e escolher o avatar
+    login();
+  }
 }
 
 // 12.6 — fecharSugestaoModal — fecha o modal de sugestão, reseta o formulário e sincroniza o histórico
