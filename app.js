@@ -297,6 +297,12 @@ async function init() {
   }
 
   iniciarPainelLED(messageBoot);
+
+  // 🎯 TRAVA ANTIPULO NO BOOT: Garante que, após toda a montagem assíncrona do Masonry,
+  // a viewport seja cravada no topo absoluto (Hero Section), limpando qualquer safanão do navegador.
+  requestAnimationFrame(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  });
 }
 
 // ================================================================
