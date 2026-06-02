@@ -1795,6 +1795,9 @@ async function limparBuscaRapida() {
     resetarEstadoDosCards();
   }
 
+  // 🎯 CAPTURA DA BUSCA ATIVA ANTES DO RESET: Valida se havia uma busca real rodando
+  const tinhaBuscaRodando = buscaAtiva !== "";
+
   buscaAtiva = "";
   cursor = 0;
   allToys = [];
@@ -1802,9 +1805,12 @@ async function limparBuscaRapida() {
 
   await fetchBrinquedos(true);
 
-  const secaoColecao = document.getElementById("colecao");
-  if (secaoColecao) {
-    secaoColecao.scrollIntoView({ behavior: "smooth" });
+  // 🎯 PROTEÇÃO: Só executa o scroll se o usuário estava limpando uma busca real ativa (evita pulos no reload)
+  if (tinhaBuscaRodando) {
+    const secaoColecao = document.getElementById("colecao");
+    if (secaoColecao) {
+      secaoColecao.scrollIntoView({ behavior: "smooth" });
+    }
   }
 }
 
