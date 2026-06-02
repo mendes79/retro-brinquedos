@@ -192,6 +192,12 @@ window.addEventListener("load", () => {
 // 2.7 — init — função principal de boot. Verifica sessão e banimento, carrega interações, configura o observer,
 // busca o catálogo e o ranking em paralelo e inicia o painel LED com mensagem contextual
 async function init() {
+  // 🎯 BLINDAGEM DE ROLAGEM: Desativa a restauração automática de scroll do navegador no reload.
+  // Isso força a SPA a nascer estrita e nativamente no Hero Section, eliminando pulos e subidas fantasmas.
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
@@ -297,12 +303,6 @@ async function init() {
   }
 
   iniciarPainelLED(messageBoot);
-
-  // 🎯 TRAVA ANTIPULO NO BOOT: Garante que, após toda a montagem assíncrona do Masonry,
-  // a viewport seja cravada no topo absoluto (Hero Section), limpando qualquer safanão do navegador.
-  requestAnimationFrame(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  });
 }
 
 // ================================================================
