@@ -2928,6 +2928,14 @@ body {
   transform-style: preserve-3d;
 }
 
+/* 🎯 INTERCEPTOR DE CLIQUE: Pausa e estabiliza a rotação 3D ao passar o mouse 
+   para conferir precisão cirúrgica e profissional ao clique do usuário */
+#avatarDropdown:hover .dropdown-3d-inner {
+  animation-play-state: paused !important;
+  transform: rotateX(0deg) rotateY(0deg) !important;
+  transition: transform 0.2s ease-out;
+}
+
 /* Cada botão do menu */
 #avatarDropdown .dropdown-filter-item,
 #avatarDropdown .dropdown-logout-item {
@@ -2949,14 +2957,15 @@ body {
   mix-blend-mode: color-dodge;
   perspective: 500px;
   transform-style: preserve-3d;
-  transition: background 0.3s 0.1s;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
   text-align: left;
   width: 100%;
-  /* ✅ Garante que o botão inteiro recebe o clique */
-  z-index: 1;
+  z-index: 10 !important; /* Mantém o botão de texto sempre acima dos feixes de brilho */
 }
 
-/* Pseudo-elementos: pointer-events:none para não bloquear cliques */
+/* Pseudo-elementos (Feixes de brilho neon decorativos) */
 #avatarDropdown .dropdown-filter-item::before,
 #avatarDropdown .dropdown-filter-item::after,
 #avatarDropdown .dropdown-logout-item::before,
@@ -2974,8 +2983,9 @@ body {
   border-radius: inherit;
   transform-style: preserve-3d;
   transform: translate3d(0, 0, 0);
-  /* ✅ Impede que os pseudo-elementos interceptem cliques */
-  pointer-events: none;
+  /* 🛡️ BLINDAGEM ABSOLUTA: Impede por completo que as luzes neon interceptem o clique do mouse */
+  pointer-events: none !important;
+  z-index: -1 !important; /* Joga os brilhos para trás do texto plano do botão */
 }
 
 #avatarDropdown .dropdown-filter-item::after,
@@ -3004,7 +3014,7 @@ body {
 /* Botão SAIR: fundo vermelho translúcido, fonte DOURADA para legibilidade */
 #avatarDropdown .dropdown-logout-item {
   background: rgba(180, 20, 20, 0.35) !important;
-  color: #ffd700 !important; /* ← dourado: legível sobre qualquer fundo */
+  color: #ffd700 !important;
   margin-top: 8px;
   border-top: 1px solid rgba(255, 60, 60, 0.2);
 }

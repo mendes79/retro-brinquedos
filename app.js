@@ -1641,8 +1641,8 @@ async function toggleInteracao(event, brinquedoId, tipo) {
 
 // 5.4 — filtrarMeuQuarto — aplica o filtro de coleção pessoal (todos/tive/queria/curtidas),
 // atualiza o botão ativo na barra de filtros e recarrega o grid
-async function filtrarMeuQuarto(tipo) {
-  // 🛡️ REPARO ADICIONAL DA ETAPA 3 ANTECIPADO: Destrava defensivamente o disjuntor de busca para evitar congelamentos
+async function filtrarMeuQuarto(tipo, forçarScroll = true) {
+  // 🛡️ REPARO ADICIONAL: Destrava defensivamente o disjuntor de busca para evitar congelamentos
   isSearching = false;
 
   filtroAtivo = tipo;
@@ -1659,10 +1659,12 @@ async function filtrarMeuQuarto(tipo) {
 
   resetarEstadoDosCards();
 
-  // 🎯 REDIRECIONAMENTO DE TELA: Força o scroll suave para o início do Masonry
-  const secaoColecao = document.getElementById("colecao");
-  if (secaoColecao) {
-    secaoColecao.scrollIntoView({ behavior: "smooth" });
+  // 🎯 REDIRECIONAMENTO DE TELA PROTEGIDO: Só executa o scroll se for uma ação direta do usuário (evita pulos no reload)
+  if (forçarScroll) {
+    const secaoColecao = document.getElementById("colecao");
+    if (secaoColecao) {
+      secaoColecao.scrollIntoView({ behavior: "smooth" });
+    }
   }
 
   await fetchBrinquedos(true);
@@ -2275,16 +2277,16 @@ function updateNavWithAvatar(avatarPath, name) {
         </div>
 
         <div class="dropdown-3d-inner py-1">
-          <button onclick="filtrarMeuQuarto('todos'); toggleAvatarMenu()" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-slate-900 hover:bg-yellow-300 transition-colors flex items-center gap-2.5 whitespace-nowrap">
+          <button onclick="filtrarMeuQuarto('todos', true)" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-slate-900 hover:bg-yellow-300 transition-colors flex items-center gap-2.5 whitespace-nowrap">
             <span class="text-base">🕹</span> Todos
           </button>
-          <button onclick="filtrarMeuQuarto('tive'); toggleAvatarMenu()" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-slate-900 hover:bg-yellow-300 transition-colors flex items-center gap-2.5 whitespace-nowrap">
+          <button onclick="filtrarMeuQuarto('tive', true)" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-slate-900 hover:bg-yellow-300 transition-colors flex items-center gap-2.5 whitespace-nowrap">
             <span class="text-base">🏆</span> Fui Dono
           </button>
-          <button onclick="filtrarMeuQuarto('queria'); toggleAvatarMenu()" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-slate-900 hover:bg-yellow-300 transition-colors flex items-center gap-2.5 whitespace-nowrap">
+          <button onclick="filtrarMeuQuarto('queria', true)" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-slate-900 hover:bg-yellow-300 transition-colors flex items-center gap-2.5 whitespace-nowrap">
             <span class="text-base">⭐</span> Queria Ter
           </button>
-          <button onclick="filtrarMeuQuarto('curtidas'); toggleAvatarMenu()" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-slate-900 hover:bg-yellow-300 transition-colors flex items-center gap-2.5 whitespace-nowrap">
+          <button onclick="filtrarMeuQuarto('curtidas', true)" class="dropdown-filter-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-slate-300 hover:text-slate-900 hover:bg-yellow-300 transition-colors flex items-center gap-2.5 whitespace-nowrap">
             <span class="text-base">❤️</span> Favoritos
           </button>
           <button onclick="logOut()" class="dropdown-logout-item w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-wide text-pink-400 transition-colors flex items-center gap-2.5 whitespace-nowrap mt-1">
