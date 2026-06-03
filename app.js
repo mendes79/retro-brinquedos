@@ -3393,7 +3393,7 @@ function animarBandeirasEnduro() {
   flagsImg.classList.add("opacity-0");
 
   let piscadas = 0;
-  const maxPiscadas = 3;
+  const maxPiscadas = 5;
 
   // Ciclo de pisca clássico retrô (400ms visível, 400ms invisível)
   const cicloPisca = setInterval(() => {
@@ -3405,7 +3405,7 @@ function animarBandeirasEnduro() {
       flagsImg.classList.add("opacity-0");
       piscadas++;
 
-      // Ao fechar as 3 piscadas completas na tela, desliga o circuito
+      // Ao fechar as 5 piscadas completas na tela, desliga o circuito
       if (piscadas >= maxPiscadas) {
         clearInterval(cicloPisca);
         setTimeout(() => {
