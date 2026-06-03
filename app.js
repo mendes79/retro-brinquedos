@@ -23,7 +23,10 @@
 
 // 1.1 — Helper de debug: todos os traces ficam silenciados em produção.
 //        Para ativar, abra o console e execute: window.RETRO_DEBUG = true
-const _log = (...a) => { if (window.RETRO_DEBUG) console.log(...a); };
+const _log = (...a) => {
+  if (window.RETRO_DEBUG || sessionStorage.getItem("RETRO_DEBUG"))
+    console.log(...a);
+};
 
 // 1.2 — Conexão com o Supabase — chave anon (pública, segura para o frontend)
 const urlDB = "https://gsiyknrzjwhdaqhfzimc.supabase.co";
