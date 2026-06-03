@@ -2009,13 +2009,15 @@ async function enviarComentarioDrawer() {
 
     const nomeReal = user.user_metadata?.full_name || "Jogador";
 
+    // 7.6 — aprovado é definido server-side pelo trigger auto_aprovar_comentario
+    // no Supabase (DEFAULT false + trigger BEFORE INSERT). O frontend nunca
+    // envia o campo — evita mass assignment do status de moderação.
     const { error } = await supabaseClient.from("comentarios").insert([
       {
         brinquedo_id: drawerIdAtivo,
         usuario_id: user.id,
         texto: texto,
         usuario_nome: nomeReal,
-        aprovado: true,
       },
     ]);
 
@@ -2067,12 +2069,14 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
         "ÚLTIMO AVISO IGNORADO — SUA CONTA FOI BANIDA",
         4000,
       );
-      await supabaseClient.from("lista_negra").insert([
-        {
-          usuario_id: userId,
-          motivo: "Uso de palavras proibidas (3 infrações)",
-        },
-      ]);
+      // 9.3 — Banimento via Edge Function server-side.
+      // A função ban-user usa SUPABASE_SERVICE_ROLE_KEY (secret de ambiente,
+      // nunca exposta ao client) para inserir na lista_negra.
+      // O frontend só informa o motivo — jamais o usuario_id da vítima.
+      // O Supabase extrai o auth.uid() do JWT validado no servidor.
+      await supabaseClient.functions.invoke("ban-user", {
+        body: { motivo: "Uso de palavras proibidas (3 infrações)" },
+      });
       localStorage.removeItem(strikeKey);
       setTimeout(() => {
         logOut();
