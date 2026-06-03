@@ -1996,17 +1996,44 @@ async function enviarComentarioDrawer() {
   const texto = input.value.trim();
   if (!texto) return;
 
+  // Sessão obtida antes da moderação para que user.id esteja disponível
+  // no sistema de strikes — sem este await o ban nunca chegaria a ser acionado.
+  const session = await supabaseClient.auth.getSession();
+  const user = session?.data?.session?.user;
+  if (!user) return;
+
   if (contemPalavraProibida(texto)) {
-    dispararTiltBanimento("LINGUAGEM INADEQUADA DETECTADA");
+    // Sistema de strikes — mesmo mecanismo do enviarComentario() legado.
+    // 3 infrações acumuladas disparam o ban-user server-side e o logOut.
+    const strikeKey = `retro_strikes_${user.id}`;
+    let strikes = parseInt(localStorage.getItem(strikeKey) || "0");
+    strikes++;
+    localStorage.setItem(strikeKey, strikes);
+
+    if (strikes >= 3) {
+      dispararTiltBanimento(
+        "ÚLTIMO AVISO IGNORADO — SUA CONTA FOI BANIDA",
+        4000,
+      );
+      await supabaseClient.functions.invoke("ban-user", {
+        body: { motivo: "Uso de palavras proibidas (3 infrações)" },
+      });
+      localStorage.removeItem(strikeKey);
+      setTimeout(() => {
+        logOut();
+      }, 5500);
+    } else {
+      const chances = 3 - strikes;
+      dispararTiltBanimento(
+        `PALAVRA IMPRÓPRIA — VOCÊ TEM MAIS ${chances} CHANCE(S) ANTES DO BANIMENTO`,
+        4000,
+      );
+    }
     input.value = "";
     return;
   }
 
   try {
-    const session = await supabaseClient.auth.getSession();
-    const user = session?.data?.session?.user;
-    if (!user) return;
-
     const nomeReal = user.user_metadata?.full_name || "Jogador";
 
     // 7.6 — aprovado é definido server-side pelo trigger auto_aprovar_comentario
