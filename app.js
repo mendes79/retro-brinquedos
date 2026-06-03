@@ -2015,9 +2015,10 @@ async function enviarComentarioDrawer() {
         "ÚLTIMO AVISO IGNORADO — SUA CONTA FOI BANIDA",
         4000,
       );
-      await supabaseClient.functions.invoke("ban-user", {
+      const { error: banErr } = await supabaseClient.functions.invoke("ban-user", {
         body: { motivo: "Uso de palavras proibidas (3 infrações)" },
       });
+      if (banErr) console.error("[ban-user] Falha ao registrar banimento:", banErr);
       localStorage.removeItem(strikeKey);
       setTimeout(() => {
         logOut();
@@ -2101,9 +2102,10 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
       // nunca exposta ao client) para inserir na lista_negra.
       // O frontend só informa o motivo — jamais o usuario_id da vítima.
       // O Supabase extrai o auth.uid() do JWT validado no servidor.
-      await supabaseClient.functions.invoke("ban-user", {
+      const { error: banErr } = await supabaseClient.functions.invoke("ban-user", {
         body: { motivo: "Uso de palavras proibidas (3 infrações)" },
       });
+      if (banErr) console.error("[ban-user] Falha ao registrar banimento:", banErr);
       localStorage.removeItem(strikeKey);
       setTimeout(() => {
         logOut();
