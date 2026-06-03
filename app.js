@@ -2000,7 +2000,9 @@ async function enviarComentarioDrawer() {
   // no sistema de strikes — sem este await o ban nunca chegaria a ser acionado.
   const session = await supabaseClient.auth.getSession();
   const user = session?.data?.session?.user;
-  if (!user) return;
+  const accessToken = session?.data?.session?.access_token;
+  // Sem accessToken não é possível autenticar o ban-user server-side
+  if (!user || !accessToken) return;
 
   if (contemPalavraProibida(texto)) {
     // Sistema de strikes — mesmo mecanismo do enviarComentario() legado.
@@ -2016,6 +2018,9 @@ async function enviarComentarioDrawer() {
         4000,
       );
       const { error: banErr } = await supabaseClient.functions.invoke("ban-user", {
+        // Passa o access_token explicitamente: o SDK não o inclui automaticamente
+        // quando o cliente foi inicializado apenas com a anon key.
+        headers: { Authorization: `Bearer ${accessToken}` },
         body: { motivo: "Uso de palavras proibidas (3 infrações)" },
       });
       if (banErr) console.error("[ban-user] Falha ao registrar banimento:", banErr);
@@ -2083,6 +2088,7 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
 
   const userId = session.user.id;
   const userName = session.user.user_metadata.full_name || "Player 1";
+  const accessToken = session.access_token;
 
   if (contemPalavraProibida(texto)) {
     input.value = "";
@@ -2103,6 +2109,7 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
       // O frontend só informa o motivo — jamais o usuario_id da vítima.
       // O Supabase extrai o auth.uid() do JWT validado no servidor.
       const { error: banErr } = await supabaseClient.functions.invoke("ban-user", {
+        headers: { Authorization: `Bearer ${accessToken}` },
         body: { motivo: "Uso de palavras proibidas (3 infrações)" },
       });
       if (banErr) console.error("[ban-user] Falha ao registrar banimento:", banErr);
