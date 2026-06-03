@@ -21,7 +21,11 @@
 // 1. CONFIGURAÇÃO E ESTADO GLOBAL
 // ================================================================
 
-// 1.1 — Conexão com o Supabase — chave anon (pública, segura para o frontend)
+// 1.1 — Helper de debug: todos os traces ficam silenciados em produção.
+//        Para ativar, abra o console e execute: window.RETRO_DEBUG = true
+const _log = (...a) => { if (window.RETRO_DEBUG) _log(...a); };
+
+// 1.2 — Conexão com o Supabase — chave anon (pública, segura para o frontend)
 const urlDB = "https://gsiyknrzjwhdaqhfzimc.supabase.co";
 const chaveDB =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzaXlrbnJ6andoZGFxaGZ6aW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4OTYxNTUsImV4cCI6MjA5MjQ3MjE1NX0.hRr5Ku3JILqFTvaz94Xryr8U5ZZ0brqJ1MCoXXaFxDM";
@@ -153,7 +157,7 @@ window.addEventListener("resize", () => {
     // Dupla checagem de segurança para garantir a integridade do DOM
     if (!grid) return;
 
-    console.log(
+    _log(
       `%c 📱 [RESIZE INTELIGENTE] Movendo colunas de ${currentCols} para ${targetCols} sem reconstruir o DOM!`,
       "color: #eab308; font-weight: bold;",
     );
@@ -184,7 +188,7 @@ window.addEventListener("resize", () => {
       shortest.appendChild(card);
     });
 
-    console.log(
+    _log(
       "%c 📱 [RESIZE] Grid reorganizado com sucesso em milissegundos!",
       "color: #22c55e;",
     );
@@ -268,7 +272,7 @@ async function init() {
     .load()
     .then((loadedFace) => {
       document.fonts.add(loadedFace);
-      console.log(
+      _log(
         "%c 🟢 [FONTE] advanced_led_board-7.ttf carregada com sucesso via hardware!",
         "color: #39ff14; font-weight: bold;",
       );
@@ -530,14 +534,14 @@ async function render(items, append = false) {
 // (B) busca textual via RPC, (C) catálogo padrão via API Vercel com seed + cursor. Implementa disjuntores isLoading, hasMais e isSearching.
 async function fetchBrinquedos(reset = false) {
   // 🛰️ TRACE 1: Entrada da função
-  console.log(
+  _log(
     "%c 🟢 [TRACE 1] Entrou em fetchBrinquedos",
     "color: #00ff00; font-weight: bold;",
     { reset, isLoading, hasMais, cursor },
   );
 
   if (isLoading || (!hasMais && !reset)) {
-    console.log(
+    _log(
       "%c ⚠️ [TRACE 1.1] Bloqueado pelos disjuntores iniciais",
       "color: #yellow;",
     );
@@ -547,7 +551,7 @@ async function fetchBrinquedos(reset = false) {
 
   // 🛰️ TRACE 2: Captura do DOM
   const grid = document.getElementById("toyGrid");
-  console.log(
+  _log(
     "%c 📦 [TRACE 2] Elemento toyGrid capturado:",
     "color: #00ffff;",
     grid,
@@ -563,7 +567,7 @@ async function fetchBrinquedos(reset = false) {
   }
 
   if (reset) {
-    console.log(
+    _log(
       "%c 🔄 [TRACE 3] Executando bloco RESET (Limpeza do catálogo)",
       "color: #magenta;",
     );
@@ -574,7 +578,7 @@ async function fetchBrinquedos(reset = false) {
     try {
       if (sentinel && sentinel.parentNode) {
         sentinel.parentNode.removeChild(sentinel);
-        console.log(
+        _log(
           "%c 𚟏 [TRACE 3.1] Sentinela removido do DOM temporariamente",
           "color: #gray;",
         );
@@ -585,7 +589,7 @@ async function fetchBrinquedos(reset = false) {
 
     const targetCols =
       typeof getColumnCount === "function" ? getColumnCount() : 3;
-    console.log(
+    _log(
       "%c 📊 [TRACE 3.2] Colunas calculadas:",
       "color: #magenta;",
       targetCols,
@@ -612,7 +616,7 @@ async function fetchBrinquedos(reset = false) {
       }
     }
   } else {
-    console.log(
+    _log(
       "%c 📥 [TRACE 3] Executando bloco SCROLL (Injetando skeletons temporários)",
       "color: #cyan;",
     );
@@ -628,7 +632,7 @@ async function fetchBrinquedos(reset = false) {
     let itens = [];
 
     // 🛰️ TRACE 4: Estados dos Filtros Globais
-    console.log(
+    _log(
       "%c 🔍 [TRACE 4] Avaliando filtros de busca:",
       "color: #orange;",
       {
@@ -646,7 +650,7 @@ async function fetchBrinquedos(reset = false) {
       typeof buscaAtiva !== "undefined" &&
       buscaAtiva.length < 2
     ) {
-      console.log(
+      _log(
         "%c 🗂️ [TRACE 4.1] Entrou no fluxo de Filtros Pessoais (Tive/Queria/Curtidas)",
         "color: #orange;",
       );
@@ -664,7 +668,7 @@ async function fetchBrinquedos(reset = false) {
               : new Set();
 
       const idsFiltro = [...setAtivo];
-      console.log("IDs no set ativo do usuário:", idsFiltro);
+      _log("IDs no set ativo do usuário:", idsFiltro);
 
       if (idsFiltro.length === 0) {
         if (reset) grid.innerHTML = "";
@@ -688,7 +692,7 @@ async function fetchBrinquedos(reset = false) {
       itens = data || [];
       hasMais = false;
     } else if (typeof buscaAtiva !== "undefined" && buscaAtiva.length >= 2) {
-      console.log(
+      _log(
         "%c 🔤 [TRACE 4.2] Entrou no fluxo de Busca por Texto RPC",
         "color: #orange;",
       );
@@ -707,7 +711,7 @@ async function fetchBrinquedos(reset = false) {
       const limiteRequisitado = typeof LIMITE !== "undefined" ? LIMITE : 24;
       const urlCompleta = `/api/brinquedos?cursor=${cursor}&limite=${limiteRequisitado}&seed=${sessionSeed}`;
 
-      console.log(
+      _log(
         "%c 🌐 [TRACE 4.3] Disparando Fetch para a API Vercel:",
         "color: #green; font-weight: bold;",
         urlCompleta,
@@ -717,14 +721,14 @@ async function fetchBrinquedos(reset = false) {
       if (!res.ok) throw new Error("Falha na API");
 
       const data = await res.json();
-      console.log(
+      _log(
         "%c 📥 [TRACE 4.4] Resposta recebida da API:",
         "color: #green;",
         data,
       );
 
       if (reset && data.total) {
-        console.log(
+        _log(
           "%c 🔢 [TRACE 4.5] Atualizando heroCount para:",
           "color: #green;",
           data.total,
@@ -744,7 +748,7 @@ async function fetchBrinquedos(reset = false) {
         cursor = 0;
         hasMais = true;
 
-        console.log(
+        _log(
           `%c 🔄 [LOOP INFINITO ACTIVATED] %c Semente antiga (${sementeAntiga.toFixed(4)}) finalizada. Nova semente gerada: (${sessionSeed.toFixed(4)}). Cursor resetado para 0!`,
           "background: #ec4899; color: #fff; padding: 3px; font-weight: bold;",
           "color: #06b6d4;",
@@ -758,7 +762,7 @@ async function fetchBrinquedos(reset = false) {
         // 🔥 VALIDAÇÃO BLINDADA: Se o lote veio vazio por ser múltiplo exato, prepara os estados na memória
         // e deixa que o sentinela ou o scroll natural puxem a rodada subsequente de forma assíncrona.
         if (itens.length === 0) {
-          console.log(
+          _log(
             "%c 🚀 [GATILHO SEGURO] Lote vazio detectado. Semente e cursor resetados na memória. Aguardando próximo pulso de scroll para evitar avalanche.",
             "color: #ff9800; font-weight: bold;",
           );
@@ -770,7 +774,7 @@ async function fetchBrinquedos(reset = false) {
     }
 
     // 🛰️ TRACE 5: Processamento pós-busca
-    console.log(
+    _log(
       "%c 🛠️ [TRACE 5] Processando itens para renderização. Qtd recebida:",
       "color: #blue;",
       itens.length,
@@ -798,7 +802,7 @@ async function fetchBrinquedos(reset = false) {
       }
     });
 
-    console.log(
+    _log(
       "%c 🛠️ [TRACE 5.1] Itens filtrados novos únicos gerados:",
       "color: #blue;",
       itensNovos.length,
@@ -807,14 +811,14 @@ async function fetchBrinquedos(reset = false) {
     if (itensNovos.length > 0) {
       allToys = reset ? itensNovos : [...allToys, ...itensNovos];
 
-      console.log(
+      _log(
         "%c 🎨 [TRACE 5.2] Chamando função render()...",
         "color: #purple;",
       );
       await render(itensNovos, !reset);
 
       // 💡 FIX: Aspas corrigidas na string do log abaixo
-      console.log(
+      _log(
         "%c 🎨 [TRACE 5.3] Função render() finalizada com sucesso.",
         "color: #purple;",
       );
@@ -827,7 +831,7 @@ async function fetchBrinquedos(reset = false) {
         cursor += itens.length;
       }
     } else if (reset) {
-      console.log(
+      _log(
         "%c 🛑 [TRACE 5.4] Nenhum item encontrado no reset.",
         "color: #red;",
       );
@@ -861,7 +865,7 @@ async function fetchBrinquedos(reset = false) {
     document.querySelectorAll(".temp-skeleton").forEach((el) => el.remove());
   } finally {
     isLoading = false;
-    console.log(
+    _log(
       "%c 🏁 [TRACE FINALLY] Executando finalizadores de ciclo",
       "color: #gray;",
     );
@@ -872,7 +876,7 @@ async function fetchBrinquedos(reset = false) {
         const mainElement = document.querySelector("main");
         if (mainElement && sentinel && !sentinel.parentNode) {
           mainElement.appendChild(sentinel);
-          console.log(
+          _log(
             "%c 𚟏 [TRACE FINALLY] Sentinela re-acoplado ao main",
             "color: #gray;",
           );
@@ -1454,7 +1458,7 @@ async function carregarInteracoesDoBanco(userId, tentativa = 1) {
         resQueria.data.map((i) => String(i.brinquedo_id).padStart(4, "0")),
       );
 
-    console.log(
+    _log(
       `✅ Interações carregadas — Tive: ${tiveDoUsuario.size} | Queria: ${queriaDoUsuario.size} | Curtidas: ${curtidasDoUsuario.size}`,
     );
   } catch (e) {
@@ -1960,25 +1964,47 @@ async function carregarComentariosDrawer(id) {
       });
     };
 
-    lista.innerHTML = data
-      .map((c, i) => {
-        const emoji = emojisRetro[i % emojisRetro.length];
-        const eMeu = meuId && c.usuario_id === meuId;
-        const nomeExibicao = c.usuario_nome || "Jogador";
+    // V-01 — XSS: nomeExibicao e c.texto são dados do banco e nunca
+    // devem ser injetados via innerHTML. Usamos createElement + textContent.
+    lista.innerHTML = "";
+    data.forEach((c, i) => {
+      const emoji = emojisRetro[i % emojisRetro.length];
+      const eMeu = meuId && c.usuario_id === meuId;
+      const nomeExibicao = c.usuario_nome || "Jogador";
 
-        return `
-        <div class="drawer-comentario">
-          <div class="drawer-avatar-placeholder">${emoji}</div>
-          <div class="drawer-comentario-body">
-            <div class="drawer-meta">
-              <span class="drawer-user${eMeu ? " drawer-user-me" : ""}">${nomeExibicao}</span>
-              <span class="drawer-data">${formatarData(c.created_at)}</span>
-            </div>
-            <span class="drawer-texto">${c.texto}</span>
-          </div>
-        </div>`;
-      })
-      .join("");
+      const wrapper   = document.createElement("div");
+      wrapper.className = "drawer-comentario";
+
+      const avatarDiv = document.createElement("div");
+      avatarDiv.className = "drawer-avatar-placeholder";
+      avatarDiv.textContent = emoji;
+
+      const body    = document.createElement("div");
+      body.className = "drawer-comentario-body";
+
+      const meta    = document.createElement("div");
+      meta.className = "drawer-meta";
+
+      const nomeSpan = document.createElement("span");
+      nomeSpan.className = "drawer-user" + (eMeu ? " drawer-user-me" : "");
+      nomeSpan.textContent = nomeExibicao;   // ← textContent: XSS impossível
+
+      const dataSpan = document.createElement("span");
+      dataSpan.className = "drawer-data";
+      dataSpan.textContent = formatarData(c.created_at);
+
+      const textoSpan = document.createElement("span");
+      textoSpan.className = "drawer-texto";
+      textoSpan.textContent = c.texto;       // ← textContent: XSS impossível
+
+      meta.appendChild(nomeSpan);
+      meta.appendChild(dataSpan);
+      body.appendChild(meta);
+      body.appendChild(textoSpan);
+      wrapper.appendChild(avatarDiv);
+      wrapper.appendChild(body);
+      lista.appendChild(wrapper);
+    });
   } catch (e) {
     lista.innerHTML =
       '<p class="drawer-empty">Gostou da lembrança? Deixe seu comentário aqui! 🕹️</p>';
@@ -2303,14 +2329,16 @@ function getRandomFromRange(min, max, count) {
 // 8.8 — updateNavWithAvatar — substitui o botão ENTRAR pelo avatar do usuário logado,
 // com dropdown contendo filtros de coleção e botão de logout
 function updateNavWithAvatar(avatarPath, name) {
+  // V-04 — XSS: firstName vem do provider OAuth (Google/Facebook) e não
+  // pode ser interpolado em innerHTML. O template é HTML estático; o nome
+  // é injetado via textContent após a inserção do template.
   const firstName = name.split(" ")[0];
 
   document.getElementById("userArea").innerHTML = `
     <div class="flex items-center gap-1.5 md:gap-3 relative" id="avatarMenuWrapper">
       <div class="flex flex-col items-end hidden sm:flex">
         <span class="text-[10px] md:text-xs text-cyan-400 font-orbitron uppercase tracking-widest leading-none">Player 1</span>
-        <span class="text-[13px] md:text-base font-bold text-white uppercase tracking-tighter leading-tight max-w-[120px] md:max-w-[180px] truncate text-right">
-          ${firstName}
+        <span class="player-name-span text-[13px] md:text-base font-bold text-white uppercase tracking-tighter leading-tight max-w-[120px] md:max-w-[180px] truncate text-right">
         </span>
       </div>
 
@@ -2334,7 +2362,7 @@ function updateNavWithAvatar(avatarPath, name) {
       >
         <div class="md:hidden px-4 py-2.5 border-b border-white/10 bg-black/30">
           <p class="font-orbitron text-[0.55rem] text-cyan-400/70 uppercase tracking-widest">Meu Quarto</p>
-          <p class="font-bold text-white text-sm uppercase tracking-tight truncate">${firstName}</p>
+          <p class="player-name-span font-bold text-white text-sm uppercase tracking-tight truncate"></p>
         </div>
 
         <div class="dropdown-3d-inner py-1">
@@ -2356,6 +2384,10 @@ function updateNavWithAvatar(avatarPath, name) {
         </div>
       </div>
     </div>`;
+
+  // Injeta o firstName via textContent — seguro contra XSS
+  document.querySelectorAll(".player-name-span")
+    .forEach(el => { el.textContent = firstName; });
 
   document.getElementById("userFilters")?.classList.add("hidden");
 }
@@ -3227,6 +3259,19 @@ async function enviarSugestao() {
     }
   }
 
+  // V-14 — Validar formato de URL no campo link. Rejeita javascript:, data:
+  // e qualquer protocolo diferente de http/https para evitar URI injection.
+  if (link) {
+    try {
+      const urlObj = new URL(link);
+      if (!["http:", "https:"].includes(urlObj.protocol)) throw new Error();
+    } catch {
+      _sugestaoMostrarFeedback("⚠ Link inválido. Use http:// ou https://", "erro");
+      document.getElementById("sug_link")?.focus();
+      return;
+    }
+  }
+
   btn.disabled = true;
   label.textContent = "⏳ ENVIANDO...";
 
@@ -3244,7 +3289,8 @@ async function enviarSugestao() {
       tema: tema || null,
       link_referencia: link || null,
       observacao: obs || null,
-      status: "pendente",
+      // status omitido: DEFAULT 'pendente' definido no banco via migration.sql
+      // O frontend não tem autoridade para definir o status de aprovação.
     });
 
     if (dbError) throw dbError;
@@ -3422,7 +3468,7 @@ function animarBandeirasEnduro() {
   const flagsImg = document.getElementById("enduroFlags");
   if (!flagsImg) return;
 
-  console.log(
+  _log(
     "%c 🏎️ [EASTER EGG] Enduro Stage Clear! Piscando bandeirinhas...",
     "color: #22c55e; font-weight: bold;",
   );
