@@ -131,6 +131,16 @@ window.addEventListener("resize", () => {
   if (larguraAtual === ultimaLarguraTela) {
     return;
   }
+
+  // 🛡️ TRAVA DE COLUNA ANTECIPADA: Antes de disparar o timer ou resetar estados, calculamos o layout.
+  // Se a variação de pixel (como o surgimento da scrollbar no scroll) não alterou o número ideal de colunas,
+  // abortamos imediatamente a operação, blindando o catálogo contra pulos e trancos involuntários.
+  const targetCols =
+    typeof getColumnCount === "function" ? getColumnCount() : currentCols;
+  if (currentCols === targetCols) {
+    return;
+  }
+
   ultimaLarguraTela = larguraAtual;
 
   // Desliga o foco dos cards para evitar quebras visuais de flip ativo
@@ -139,10 +149,9 @@ window.addEventListener("resize", () => {
 
   resizeTimer = setTimeout(() => {
     const grid = document.getElementById("toyGrid");
-    const targetCols = getColumnCount();
 
-    // 🛡️ DISJUNTOR CRÍTICO: Se o número ideal de colunas não mudou, não há motivo para mexer no DOM
-    if (!grid || currentCols === targetCols) return;
+    // Dupla checagem de segurança para garantir a integridade do DOM
+    if (!grid) return;
 
     console.log(
       `%c 📱 [RESIZE INTELIGENTE] Movendo colunas de ${currentCols} para ${targetCols} sem reconstruir o DOM!`,
