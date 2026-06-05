@@ -183,12 +183,12 @@ window.addEventListener("resize", () => {
     }
 
     // 3. Distribui os mesmos nós do DOM existentes entre as novas colunas com performance instantânea
-    // O appendChild preserva as instâncias, o cache das imagens e evita o reflow pesado do innerHTML!
-    cardsVivos.forEach((card) => {
-      const shortest = columnElements.reduce((min, col) =>
-        col.offsetHeight < min.offsetHeight ? col : min,
-      );
-      shortest.appendChild(card);
+    // 💡 FIX 3 (PERFORMANCE): Usa distribuição Round-Robin (Carta 1 na Coluna 1, Carta 2 na Coluna 2) durante o resize.
+    // Isso ELIMINA a leitura de "offsetHeight", que forçava o navegador a redesenhar a tela (Forced Reflow)
+    // causador da violação de timeout de 1500ms apontada no console.
+    cardsVivos.forEach((card, index) => {
+      const targetCol = columnElements[index % currentCols];
+      targetCol.appendChild(card);
     });
 
     _log(
@@ -898,15 +898,35 @@ async function registrarVisualizacao(id) {
   } catch (_) {}
 }
 
+// 4.1.5 — obterElementoCard — helper robusto para encontrar o elemento DOM do card, ignorando a derivação da semente global (Loop Infinito)
+function obterElementoCard(idNormalizado) {
+  const sToken =
+    typeof sessionSeed !== "undefined"
+      ? sessionSeed.toString().substring(2, 6)
+      : "";
+  let card =
+    document.getElementById(`card-${idNormalizado}_s${sToken}`) ||
+    document.getElementById(`card-${idNormalizado}`);
+  // Fallback blindado: se a semente mudou, varre o DOM ignorando o sufixo
+  if (!card) {
+    card = Array.from(document.querySelectorAll(".masonry-item")).find((c) =>
+      c.id.startsWith(`card-${idNormalizado}`),
+    );
+  }
+  return card;
+}
+
 // 4.2 — handleFlip — gerencia o flip frente/verso. Desktop (≥768px): aplica CSS is-flipped + scroll suave.
 // Mobile (<768px): delega para abrirCardVersoMobile(). Ignora cliques em botões, SVGs e inputs.
 function handleFlip(id) {
   const evento = window.event;
   if (evento && evento.target) {
     const tag = evento.target.tagName.toLowerCase();
+    // 💡 FIX 1: Permite que o botão de fechar (X) nativo do card funcione no desktop!
     if (
       tag === "input" ||
-      tag === "button" ||
+      (tag === "button" &&
+        !evento.target.classList.contains("trunfo-close-v2")) ||
       tag === "svg" ||
       tag === "path" ||
       evento.target.closest(".comment-area")
@@ -922,16 +942,10 @@ function handleFlip(id) {
 
   const grid = document.getElementById("toyGrid");
 
-  // 💡 CORREÇÃO: Busca primeiro pelo ID único da semente atual, se não achar, tenta o ID clássico
-  const sToken =
-    typeof sessionSeed !== "undefined"
-      ? sessionSeed.toString().substring(2, 6)
-      : "";
-  let card =
-    document.getElementById(`card-${id}_s${sToken}`) ||
-    document.getElementById(`card-${id}`);
+  // 💡 FIX 2 (LOOP INFINITO): Usa a busca blindada para não perder o ponteiro de cards antigos
+  let card = obterElementoCard(id);
 
-  if (!card) return; // Proteção caso o elemento sumer do DOM
+  if (!card) return; // Proteção caso o elemento suma do DOM
 
   const isFlipped = card.classList.contains("is-flipped");
 
@@ -986,13 +1000,8 @@ function abrirCardVersoMobile(id) {
   // Guarda o ID atual no container de forma blindada para o fechamento
   box.setAttribute("data-current-id", idNormalizado);
 
-  const sToken =
-    typeof sessionSeed !== "undefined"
-      ? sessionSeed.toString().substring(2, 6)
-      : "";
-  const cardOrigem =
-    document.getElementById(`card-${idNormalizado}_s${sToken}`) ||
-    document.getElementById(`card-${idNormalizado}`);
+  // 💡 FIX 2.1 (LOOP INFINITO MOBILE): Usa a busca blindada para referenciar a origem
+  const cardOrigem = obterElementoCard(idNormalizado);
   const overlay = document.getElementById("cardVersoMobileModal");
 
   // Captura a foto da frente original do grid do Masonry
@@ -1171,13 +1180,9 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
 
     // 2. Leitura segura do ID do dataset
     const idNormalizado = box.getAttribute("data-current-id") || "";
-    const sToken =
-      typeof sessionSeed !== "undefined"
-        ? sessionSeed.toString().substring(2, 6)
-        : "";
-    const cardOrigem =
-      document.getElementById(`card-${idNormalizado}_s${sToken}`) ||
-      document.getElementById(`card-${idNormalizado}`);
+
+    // 💡 FIX 2.2 (LOOP INFINITO MOBILE): Usa a busca blindada para restabelecer o z-index corretamente
+    const cardOrigem = obterElementoCard(idNormalizado);
 
     let rectInicial = {
       left: window.innerWidth / 2 - 75,
