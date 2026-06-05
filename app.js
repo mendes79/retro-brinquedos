@@ -554,11 +554,7 @@ async function fetchBrinquedos(reset = false) {
 
   // 🛰️ TRACE 2: Captura do DOM
   const grid = document.getElementById("toyGrid");
-  _log(
-    "%c 📦 [TRACE 2] Elemento toyGrid capturado:",
-    "color: #00ffff;",
-    grid,
-  );
+  _log("%c 📦 [TRACE 2] Elemento toyGrid capturado:", "color: #00ffff;", grid);
 
   if (!grid) {
     console.error(
@@ -635,17 +631,13 @@ async function fetchBrinquedos(reset = false) {
     let itens = [];
 
     // 🛰️ TRACE 4: Estados dos Filtros Globais
-    _log(
-      "%c 🔍 [TRACE 4] Avaliando filtros de busca:",
-      "color: #orange;",
-      {
-        filtroAtivo:
-          typeof filtroAtivo !== "undefined" ? filtroAtivo : "não definido",
-        buscaAtiva:
-          typeof buscaAtiva !== "undefined" ? buscaAtiva : "não definido",
-        LIMITE: typeof LIMITE !== "undefined" ? LIMITE : "não definido",
-      },
-    );
+    _log("%c 🔍 [TRACE 4] Avaliando filtros de busca:", "color: #orange;", {
+      filtroAtivo:
+        typeof filtroAtivo !== "undefined" ? filtroAtivo : "não definido",
+      buscaAtiva:
+        typeof buscaAtiva !== "undefined" ? buscaAtiva : "não definido",
+      LIMITE: typeof LIMITE !== "undefined" ? LIMITE : "não definido",
+    });
 
     if (
       typeof filtroAtivo !== "undefined" &&
@@ -814,10 +806,7 @@ async function fetchBrinquedos(reset = false) {
     if (itensNovos.length > 0) {
       allToys = reset ? itensNovos : [...allToys, ...itensNovos];
 
-      _log(
-        "%c 🎨 [TRACE 5.2] Chamando função render()...",
-        "color: #purple;",
-      );
+      _log("%c 🎨 [TRACE 5.2] Chamando função render()...", "color: #purple;");
       await render(itensNovos, !reset);
 
       // 💡 FIX: Aspas corrigidas na string do log abaixo
@@ -1975,22 +1964,22 @@ async function carregarComentariosDrawer(id) {
       const eMeu = meuId && c.usuario_id === meuId;
       const nomeExibicao = c.usuario_nome || "Jogador";
 
-      const wrapper   = document.createElement("div");
+      const wrapper = document.createElement("div");
       wrapper.className = "drawer-comentario";
 
       const avatarDiv = document.createElement("div");
       avatarDiv.className = "drawer-avatar-placeholder";
       avatarDiv.textContent = emoji;
 
-      const body    = document.createElement("div");
+      const body = document.createElement("div");
       body.className = "drawer-comentario-body";
 
-      const meta    = document.createElement("div");
+      const meta = document.createElement("div");
       meta.className = "drawer-meta";
 
       const nomeSpan = document.createElement("span");
       nomeSpan.className = "drawer-user" + (eMeu ? " drawer-user-me" : "");
-      nomeSpan.textContent = nomeExibicao;   // ← textContent: XSS impossível
+      nomeSpan.textContent = nomeExibicao; // ← textContent: XSS impossível
 
       const dataSpan = document.createElement("span");
       dataSpan.className = "drawer-data";
@@ -1998,7 +1987,7 @@ async function carregarComentariosDrawer(id) {
 
       const textoSpan = document.createElement("span");
       textoSpan.className = "drawer-texto";
-      textoSpan.textContent = c.texto;       // ← textContent: XSS impossível
+      textoSpan.textContent = c.texto; // ← textContent: XSS impossível
 
       meta.appendChild(nomeSpan);
       meta.appendChild(dataSpan);
@@ -2030,30 +2019,45 @@ async function enviarComentarioDrawer() {
   const session = await supabaseClient.auth.getSession();
   const user = session?.data?.session?.user;
   const accessToken = session?.data?.session?.access_token;
+
   // Sem accessToken não é possível autenticar o ban-user server-side
   if (!user || !accessToken) return;
 
   if (contemPalavraProibida(texto)) {
-    // Sistema de strikes — mesmo mecanismo do enviarComentario() legado.
-    // 3 infrações acumuladas disparam o ban-user server-side e o logOut.
-    const strikeKey = `retro_strikes_${user.id}`;
-    let strikes = parseInt(localStorage.getItem(strikeKey) || "0");
+    // V-05: Moderação via Supabase — Consulta e incrementa os strikes de forma segura e não burlável via localStorage
+    let strikes = 0;
+    const { data: strikeData } = await supabaseClient
+      .from("moderacao_strikes")
+      .select("strikes")
+      .eq("usuario_id", user.id)
+      .single();
+
+    if (strikeData) strikes = strikeData.strikes;
     strikes++;
-    localStorage.setItem(strikeKey, strikes);
+
+    await supabaseClient.from("moderacao_strikes").upsert({
+      usuario_id: user.id,
+      strikes: strikes,
+      updated_at: new Date().toISOString(),
+    });
 
     if (strikes >= 3) {
       dispararTiltBanimento(
         "ÚLTIMO AVISO IGNORADO — SUA CONTA FOI BANIDA",
         4000,
       );
-      const { error: banErr } = await supabaseClient.functions.invoke("ban-user", {
-        // Passa o access_token explicitamente: o SDK não o inclui automaticamente
-        // quando o cliente foi inicializado apenas com a anon key.
-        headers: { Authorization: `Bearer ${accessToken}` },
-        body: { motivo: "Uso de palavras proibidas (3 infrações)" },
-      });
-      if (banErr) console.error("[ban-user] Falha ao registrar banimento:", banErr);
-      localStorage.removeItem(strikeKey);
+      const { error: banErr } = await supabaseClient.functions.invoke(
+        "ban-user",
+        {
+          // Passa o access_token explicitamente: o SDK não o inclui automaticamente
+          // quando o cliente foi inicializado apenas com a anon key.
+          headers: { Authorization: `Bearer ${accessToken}` },
+          body: { motivo: "Uso de palavras proibidas (3 infrações)" },
+        },
+      );
+      if (banErr)
+        console.error("[ban-user] Falha ao registrar banimento:", banErr);
+
       setTimeout(() => {
         logOut();
       }, 5500);
@@ -2122,10 +2126,22 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
   if (contemPalavraProibida(texto)) {
     input.value = "";
 
-    const strikeKey = `retro_strikes_${userId}`;
-    let strikes = parseInt(localStorage.getItem(strikeKey) || "0");
+    // V-05: Moderação via Supabase (Legado)
+    let strikes = 0;
+    const { data: strikeData } = await supabaseClient
+      .from("moderacao_strikes")
+      .select("strikes")
+      .eq("usuario_id", userId)
+      .single();
+
+    if (strikeData) strikes = strikeData.strikes;
     strikes++;
-    localStorage.setItem(strikeKey, strikes);
+
+    await supabaseClient.from("moderacao_strikes").upsert({
+      usuario_id: userId,
+      strikes: strikes,
+      updated_at: new Date().toISOString(),
+    });
 
     if (strikes >= 3) {
       dispararTiltBanimento(
@@ -2137,12 +2153,16 @@ async function enviarComentario(idNormalizado, nomeBrinquedo) {
       // nunca exposta ao client) para inserir na lista_negra.
       // O frontend só informa o motivo — jamais o usuario_id da vítima.
       // O Supabase extrai o auth.uid() do JWT validado no servidor.
-      const { error: banErr } = await supabaseClient.functions.invoke("ban-user", {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        body: { motivo: "Uso de palavras proibidas (3 infrações)" },
-      });
-      if (banErr) console.error("[ban-user] Falha ao registrar banimento:", banErr);
-      localStorage.removeItem(strikeKey);
+      const { error: banErr } = await supabaseClient.functions.invoke(
+        "ban-user",
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          body: { motivo: "Uso de palavras proibidas (3 infrações)" },
+        },
+      );
+      if (banErr)
+        console.error("[ban-user] Falha ao registrar banimento:", banErr);
+
       setTimeout(() => {
         logOut();
       }, 5500);
@@ -2389,8 +2409,9 @@ function updateNavWithAvatar(avatarPath, name) {
     </div>`;
 
   // Injeta o firstName via textContent — seguro contra XSS
-  document.querySelectorAll(".player-name-span")
-    .forEach(el => { el.textContent = firstName; });
+  document.querySelectorAll(".player-name-span").forEach((el) => {
+    el.textContent = firstName;
+  });
 
   document.getElementById("userFilters")?.classList.add("hidden");
 }
@@ -3269,7 +3290,10 @@ async function enviarSugestao() {
       const urlObj = new URL(link);
       if (!["http:", "https:"].includes(urlObj.protocol)) throw new Error();
     } catch {
-      _sugestaoMostrarFeedback("⚠ Link inválido. Use http:// ou https://", "erro");
+      _sugestaoMostrarFeedback(
+        "⚠ Link inválido. Use http:// ou https://",
+        "erro",
+      );
       document.getElementById("sug_link")?.focus();
       return;
     }
