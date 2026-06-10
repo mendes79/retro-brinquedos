@@ -1520,6 +1520,28 @@ body {
   object-fit: cover;
 }
 
+/* 🃏 CUSTOMIZAÇÃO DE CARDS LENDÁRIOS SUPER TRUNFO ("0500" a "0509") */
+.card-secreto-ativo .trunfo-stats-area {
+  display: none !important;
+}
+.card-secreto-ativo .trunfo-photo {
+  height: 100% !important;
+  min-height: 340px !important;
+  object-fit: cover !important;
+}
+@media (max-width: 767px) {
+  .card-secreto-ativo .trunfo-photo {
+    height: 420px !important;
+    max-height: 60vh !important;
+  }
+}
+.disabled-trunfo {
+  opacity: 0.25 !important;
+  filter: grayscale(100%) !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
 /* 4 — RETROBRINQUEDOS maior e neon verde */
 .card-verso-mobile-box .trunfo-brand-v2 {
   font-size: 0.52rem;
