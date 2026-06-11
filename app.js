@@ -410,16 +410,22 @@ async function render(items, append = false) {
     const urlFrenteOtimizada = otimizarUrlCloudinary(toy.url_frente, 600);
     const urlVersoOtimizada = otimizarUrlCloudinary(toy.url_verso, 500);
 
-    // Valida se o ID pertence à faixa secreta do Super Trunfo
-    const ehCardSecreto = idNormalizado >= "0500" && idNormalizado <= "0509";
+    // Valida se o ID pertence à faixa secreta do Super Trunfo (500 a 509)
+    const ehCardSecreto = toy.id >= 500 && toy.id <= 509;
+
+    // 💡 DETERMINAÇÃO DO LOOK ESPECIAL DO TRUNFO (DESKTOP)
+    const classeBackCustom = ehCardSecreto ? "card-back--especial-trunfo" : "";
+    const classeFooterCustom = ehCardSecreto
+      ? "trunfo-footer--especial-trunfo"
+      : "";
 
     const cardHTML = `
-    <div class="masonry-item card-enter ${ehCardSecreto ? "card-secreto-ativo" : ""}" id="${elementoDomId}">
+    <div class="masonry-item card-enter" id="${elementoDomId}">
       <div class="card-inner" onclick="handleFlip('${idNormalizado}')">
         <div class="card-front">
           <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
         </div>
-        <div class="card-back flex flex-col">
+        <div class="card-back flex flex-col ${classeBackCustom}">
           <div class="trunfo-header">
             <div class="trunfo-top-bar-v2">
               <span class="trunfo-code-v2">${trunfoCode}</span>
@@ -455,7 +461,7 @@ async function render(items, append = false) {
             </div>
           </div>
 
-          <div class="trunfo-footer">
+          <div class="trunfo-footer ${classeFooterCustom}">
             <div class="footer-icons-container">
               <button
                 class="footer-tab-btn comment-tab-btn"
@@ -1002,7 +1008,7 @@ function abrirCardVersoMobile(id) {
   const isQueria = queriaDoUsuario.has(idNormalizado);
   const isLiked = curtidasDoUsuario.has(idNormalizado);
 
-  const ehCardSecreto = idNormalizado >= "0500" && idNormalizado <= "0509";
+  const ehCardSecreto = data.id >= 500 && data.id <= 509;
 
   const box = document.getElementById("cardVersoMobileBox");
   if (!box) return;
@@ -1038,12 +1044,13 @@ function abrirCardVersoMobile(id) {
     overlay.style.zIndex = "400"; // Força o z-index padrão de abertura
   }
 
-  // Reseta ou injeta classe customizada no box mobile
-  if (ehCardSecreto) {
-    box.classList.add("card-secreto-ativo");
-  } else {
-    box.classList.remove("card-secreto-ativo");
-  }
+  // Classes dinâmicas para o modal mobile baseado no ID
+  const classeMobileBackCustom = ehCardSecreto
+    ? "card-back--especial-trunfo"
+    : "";
+  const classeMobileFooterCustom = ehCardSecreto
+    ? "trunfo-footer--especial-trunfo"
+    : "";
 
   // Injeção da estrutura sanduíche legítima de Duas Faces Reais
   box.innerHTML = `
@@ -1053,7 +1060,7 @@ function abrirCardVersoMobile(id) {
         <img src="${urlFrenteOriginal}" alt="${data.nome} frente" loading="eager">
       </div>
 
-      <div class="card-mobile-face face-verso">
+      <div class="card-mobile-face face-verso ${classeMobileBackCustom}">
         <div class="trunfo-header">
           <div class="trunfo-top-bar-v2">
             <span class="trunfo-code-v2">${trunfoCode}</span>
@@ -1089,7 +1096,7 @@ function abrirCardVersoMobile(id) {
             </button>
           </div>
         </div>
-        <div class="trunfo-footer">
+        <div class="trunfo-footer ${classeMobileFooterCustom}">
           <div class="footer-icons-container">
             <button class="footer-tab-btn comment-tab-btn" onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'")}'); fecharCardVersoMobile();" title="${isUserLogged ? "Comentar" : "Ver comentários"}"><svg class="tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg></button>
             <button class="footer-tab-btn whatsapp-tab-btn ${ehCardSecreto ? "disabled-trunfo" : ""}" onclick="${ehCardSecreto ? "event.stopPropagation();" : `compartilharWhatsApp(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;")}'); fecharCardVersoMobile();`}" title="${ehCardSecreto ? "Cada um que procure o seu!" : "Compartilhar no WhatsApp"}"><svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
@@ -1253,6 +1260,21 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
       box.removeAttribute("data-current-id");
       if (modal) modal.style.zIndex = "400";
       if (cardOrigem) cardOrigem.style.zIndex = "";
+
+      // 💡 IMPLEMENTAÇÃO: ANIMAÇÃO PÓSTUMA LENDÁRIA NO MOBILE
+      const idNumerico = parseInt(idNormalizado);
+      if (idNumerico >= 500 && idNumerico <= 509) {
+        _log(
+          "🎰 [ANIMAÇÃO PÓSTUMA] Super Trunfo Especial fechado. Piscando o grid!",
+        );
+        const grid = document.getElementById("toyGrid");
+        if (grid) {
+          grid.classList.add("trunfo-piscada-postuma");
+          setTimeout(() => {
+            grid.classList.remove("trunfo-piscada-postuma");
+          }, 2500); // Remove a classe após a duração total do show de luzes
+        }
+      }
     }, 520); // <-- era 420, mas estava muito rápido.
   } else if (modal) {
     modal.classList.add("hidden");
