@@ -419,12 +419,44 @@ async function render(items, append = false) {
       ? "trunfo-footer--especial-trunfo"
       : "";
 
-    const cardHTML = `
-    <div class="masonry-item card-enter" id="${elementoDomId}">
-      <div class="card-inner" onclick="handleFlip('${idNormalizado}')">
-        <div class="card-front">
-          <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
-        </div>
+    let versoEstruturalHTML = "";
+
+    if (ehCardSecreto) {
+      // 🃏 LAYOUT EXCLUSIVO DESKTOP MINIMALISTA (SEM FOTO / SEM ATRIBUTOS)
+      versoEstruturalHTML = `
+        <div class="card-back flex flex-col ${classeBackCustom}">
+          <div class="trunfo-header">
+            <div class="trunfo-top-bar-v2">
+              <span class="trunfo-code-v2">${trunfoCode}</span>
+              <span class="trunfo-brand-v2">RETROBRINQUEDOS</span>
+              <button class="trunfo-close-v2" onclick="handleFlip('${idNormalizado}'); event.stopPropagation();" title="Fechar">✕</button>
+            </div>
+            <div class="trunfo-title-area">
+              <div class="trunfo-star"></div>
+              <span class="trunfo-title-text">${toy.nome}</span>
+            </div>
+          </div>
+          
+          <div class="flex-1 w-full"></div>
+
+          <div class="trunfo-footer ${classeFooterCustom}">
+            <div class="footer-icons-container">
+              <button class="footer-tab-btn comment-tab-btn" onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${toy.nome.replace(/'/g, "\\'")}'); event.stopPropagation();" title="${isUserLogged ? "Comentar" : "Ver comentários"}">
+                <svg class="tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
+              </button>
+              <button class="footer-tab-btn whatsapp-tab-btn disabled-trunfo" onclick="event.stopPropagation();" title="Cada um que procure o seu!">
+                <svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              </button>
+              <button id="heart-btn-${idNormalizado}" class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}" onclick="${isUserLogged ? `toggleCurtida(event, '${idNormalizado}'); event.stopPropagation();` : `event.stopPropagation(); mostrarMensagemLED('Faça login para curtir!');`}" title="${isUserLogged ? "Curtir" : "Faça login para curtir"}">
+                <svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+                <span class="tab-count" id="count-${idNormalizado}">${toy.curtidas_count || 0}</span>
+              </button>
+            </div>
+          </div>
+        </div>`;
+    } else {
+      // 🚗 LAYOUT VERSO CLÁSSICO PARA AS DEMAIS CARTAS DO SITE
+      versoEstruturalHTML = `
         <div class="card-back flex flex-col ${classeBackCustom}">
           <div class="trunfo-header">
             <div class="trunfo-top-bar-v2">
@@ -463,45 +495,24 @@ async function render(items, append = false) {
 
           <div class="trunfo-footer ${classeFooterCustom}">
             <div class="footer-icons-container">
-              <button
-                class="footer-tab-btn comment-tab-btn"
-                onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${toy.nome.replace(/'/g, "\\'")}'); event.stopPropagation();"
-                title="${isUserLogged ? "Comentar" : "Ver comentários"}"
-              >
-                <svg class="tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/>
-                </svg>
-              </button>
-
-              <button
-                class="footer-tab-btn whatsapp-tab-btn ${ehCardSecreto ? "disabled-trunfo" : ""}"
-                onclick="${ehCardSecreto ? "event.stopPropagation();" : `compartilharWhatsApp(event, '${idNormalizado}', '${toy.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;")}'); event.stopPropagation();`}"
-                title="${ehCardSecreto ? "Cada um que procure o seu!" : "Compartilhar no WhatsApp"}"
-              >
-                <svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                </svg>
-              </button>
-
-              <button
-                id="heart-btn-${idNormalizado}"
-                class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}"
-                onclick="${
-                  isUserLogged
-                    ? `toggleCurtida(event, '${idNormalizado}'); event.stopPropagation();`
-                    : `event.stopPropagation(); mostrarMensagemLED('Faça login para curtir!');`
-                }"
-                title="${isUserLogged ? "Curtir" : "Faça login para curtir"}"
-              >
-                <svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
-                </svg>
+              <button class="footer-tab-btn comment-tab-btn" onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${toy.nome.replace(/'/g, "\\'")}'); event.stopPropagation();" title="${isUserLogged ? "Comentar" : "Ver comentários"}"><svg class="tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg></button>
+              <button class="footer-tab-btn whatsapp-tab-btn" onclick="compartilharWhatsApp(event, '${idNormalizado}', '${toy.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;")}'); event.stopPropagation();" title="Compartilhar no WhatsApp"><svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+              <button id="heart-btn-${idNormalizado}" class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}" onclick="${isUserLogged ? `toggleCurtida(event, '${idNormalizado}'); event.stopPropagation();` : `event.stopPropagation(); mostrarMensagemLED('Faça login para curtir!');`}" title="${isUserLogged ? "Curtir" : "Faça login para curtir"}">
+                <svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
                 <span class="tab-count" id="count-${idNormalizado}">${toy.curtidas_count || 0}</span>
               </button>
-
             </div>
           </div>
+        </div>`;
+    }
+
+    const cardHTML = `
+    <div class="masonry-item card-enter" id="${elementoDomId}">
+      <div class="card-inner" onclick="handleFlip('${idNormalizado}')">
+        <div class="card-front">
+          <img src="${urlFrenteOtimizada}" alt="${toy.nome}" class="w-full h-auto block" loading="lazy">
         </div>
+        ${versoEstruturalHTML}
       </div>
     </div>`;
 
@@ -1044,7 +1055,7 @@ function abrirCardVersoMobile(id) {
     overlay.style.zIndex = "400"; // Força o z-index padrão de abertura
   }
 
-  // Classes dinâmicas para o modal mobile baseado no ID
+  // Classes dinâmicas para o modal mobile baseado no ID (500 a 509)
   const classeMobileBackCustom = ehCardSecreto
     ? "card-back--especial-trunfo"
     : "";
@@ -1052,15 +1063,45 @@ function abrirCardVersoMobile(id) {
     ? "trunfo-footer--especial-trunfo"
     : "";
 
-  // Injeção da estrutura sanduíche legítima de Duas Faces Reais
-  box.innerHTML = `
-    <div class="card-mobile-inner" id="cardMobileInnerEngine">
-      
-      <div class="card-mobile-face face-frente">
-        <img src="${urlFrenteOriginal}" alt="${data.nome} frente" loading="eager">
-      </div>
+  let faceVersoHTML = "";
 
+  if (ehCardSecreto) {
+    // 🃏 TEMPLATE VERSO MINIMALISTA PARA CARD ESPECIAL MOBILE (SEM CORPO TÉCNICO)
+    faceVersoHTML = `
       <div class="card-mobile-face face-verso ${classeMobileBackCustom}">
+        <div class="trunfo-header">
+          <div class="trunfo-top-bar-v2">
+            <span class="trunfo-code-v2">${trunfoCode}</span>
+            <span class="trunfo-brand-v2">RETROBRINQUEDOS</span>
+            <button class="trunfo-close-v2" onclick="fecharCardVersoMobile()" title="Fechar">✕</button>
+          </div>
+          <div class="trunfo-title-area">
+            <div class="trunfo-star"></div>
+            <span class="trunfo-title-text">${data.nome}</span>
+          </div>
+        </div>
+        
+        <div class="flex-1 w-full"></div>
+
+        <div class="trunfo-footer ${classeMobileFooterCustom}">
+          <div class="footer-icons-container">
+            <button class="footer-tab-btn comment-tab-btn" onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'")}'); fecharCardVersoMobile();" title="${isUserLogged ? "Comentar" : "Ver comentários"}">
+              <svg class="tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
+            </button>
+            <button class="footer-tab-btn whatsapp-tab-btn disabled-trunfo" onclick="event.stopPropagation();" title="Cada um que procure o seu!">
+              <svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </button>
+            <button id="m-heart-btn-${idNormalizado}" class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}" onclick="toggleCurtidaModal(event, '${idNormalizado}')" title="${isUserLogged ? "Curtir" : "Faça login para curtir"}">
+              <svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+              <span class="tab-count" id="m-count-${idNormalizado}">${data.curtidas_count || 0}</span>
+            </button>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    // 🚗 TEMPLATE VERSO CLÁSSICO PARA CARTAS COMUNS MOBILE
+    faceVersoHTML = `
+      <div class="card-mobile-face face-verso">
         <div class="trunfo-header">
           <div class="trunfo-top-bar-v2">
             <span class="trunfo-code-v2">${trunfoCode}</span>
@@ -1096,14 +1137,25 @@ function abrirCardVersoMobile(id) {
             </button>
           </div>
         </div>
-        <div class="trunfo-footer ${classeMobileFooterCustom}">
+        <div class="trunfo-footer">
           <div class="footer-icons-container">
             <button class="footer-tab-btn comment-tab-btn" onclick="abrirDrawerComentarios(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'")}'); fecharCardVersoMobile();" title="${isUserLogged ? "Comentar" : "Ver comentários"}"><svg class="tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.486 2 2 6.486 2 12c0 1.863.507 3.605 1.383 5.11L2 22l5.01-1.346A9.956 9.956 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2zm0 18a7.955 7.955 0 0 1-4.065-1.112l-.293-.173-3.006.808.829-2.927-.192-.302A7.947 7.947 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg></button>
-            <button class="footer-tab-btn whatsapp-tab-btn ${ehCardSecreto ? "disabled-trunfo" : ""}" onclick="${ehCardSecreto ? "event.stopPropagation();" : `compartilharWhatsApp(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;")}'); fecharCardVersoMobile();`}" title="${ehCardSecreto ? "Cada um que procure o seu!" : "Compartilhar no WhatsApp"}"><svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+            <button class="footer-tab-btn whatsapp-tab-btn" onclick="compartilharWhatsApp(event, '${idNormalizado}', '${data.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;")}'); fecharCardVersoMobile();" title="Compartilhar no WhatsApp"><svg class="tab-icon-svg whatsapp-tab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
             <button id="m-heart-btn-${idNormalizado}" class="footer-tab-btn heart-tab-btn ${isLiked ? "liked" : ""} ${!isUserLogged ? "tab-locked" : ""}" onclick="toggleCurtidaModal(event, '${idNormalizado}')" title="${isUserLogged ? "Curtir" : "Faça login para curtir"}"><svg class="heart-svg tab-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg><span class="tab-count" id="m-count-${idNormalizado}">${data.curtidas_count || 0}</span></button>
           </div>
         </div>
+      </div>`;
+  }
+
+  // Injeção da estrutura sanduíche legítima de Duas Faces Reais
+  box.innerHTML = `
+    <div class="card-mobile-inner" id="cardMobileInnerEngine">
+      
+      <div class="card-mobile-face face-frente">
+        <img src="${urlFrenteOriginal}" alt="${data.nome} frente" loading="eager">
       </div>
+
+      ${faceVersoHTML}
 
     </div>`;
 
@@ -1245,11 +1297,11 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
     modal.style.transition = "opacity 0.35s linear";
     modal.style.opacity = "0";
 
-    // ⚡ RETORNO ACELERADO: Reduzido de 0.62s para 0.42s para um fechamento ágil e responsivo
-    box.style.transition = "transform 0.52s cubic-bezier(0.2, 0.8, 0.2, 1)"; //estava em .42, mas ficou muito rápido.
+    // ⚡ RETORNO ACELERADO: Sincronizado perfeitamente com a rotação 3D de 0.58s
+    box.style.transition = "transform 0.58s cubic-bezier(0.2, 0.8, 0.2, 1)";
     box.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${escalaX}, ${escalaY})`;
 
-    // TIMEOUT CASADO: Reduzido para 420ms para bater com a nova velocidade de transição física
+    // TIMEOUT CASADO: Aguarda o término absoluto do desgiro 3D e ocultamento físico da cortina
     setTimeout(() => {
       modal.classList.add("hidden");
       document.body.style.overflow = "";
@@ -1261,21 +1313,21 @@ function fecharCardVersoMobile(event, veioDoPopstate = false) {
       if (modal) modal.style.zIndex = "400";
       if (cardOrigem) cardOrigem.style.zIndex = "";
 
-      // 💡 IMPLEMENTAÇÃO: ANIMAÇÃO PÓSTUMA LENDÁRIA NO MOBILE
+      // 🎰 GATILHO RETIFICADO: Disparado estritamente em primeiro plano com a interface estabilizada
       const idNumerico = parseInt(idNormalizado);
       if (idNumerico >= 500 && idNumerico <= 509) {
         _log(
-          "🎰 [ANIMAÇÃO PÓSTUMA] Super Trunfo Especial fechado. Piscando o grid!",
+          "🎰 [ANIMAÇÃO PÓSTUMA] Interface limpa. Iniciando show de luzes no grid!",
         );
         const grid = document.getElementById("toyGrid");
         if (grid) {
           grid.classList.add("trunfo-piscada-postuma");
           setTimeout(() => {
             grid.classList.remove("trunfo-piscada-postuma");
-          }, 2500); // Remove a classe após a duração total do show de luzes
+          }, 2500); // Duração total da pulsação retro dourada
         }
       }
-    }, 520); // <-- era 420, mas estava muito rápido.
+    }, 610); // 610ms garante folga sobre os 0.58s da transição física
   } else if (modal) {
     modal.classList.add("hidden");
     document.body.style.overflow = "";

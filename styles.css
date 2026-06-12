@@ -4169,33 +4169,29 @@ body {
    🎯 CUSTOMIZAÇÃO SUPER TRUNFO ESPECIAL (500 a 509)
    ================================================================ */
 
-/* Aplica o fundo em webp e borda dourada nas faces verso do desktop e mobile */
+/* Fundo limpo em webp e contornos dourados para verso especial (Desktop e Mobile) */
 .card-back--especial-trunfo {
   background: url("img/trunfo.webp") no-repeat center center !important;
   background-size: cover !important;
   outline: 4px solid var(--trunfo-gold) !important;
   outline-offset: -6px !important;
   border: 6px solid #0d0b1e !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
 }
 
 /* Modificadores estéticos para realçar cabeçalhos dentro do trunfo dourado */
 .card-back--especial-trunfo .trunfo-top-bar-v2 {
-  background: #500000 !important; /* Vermelho mais profundo e luxuoso */
+  background: #500000 !important;
 }
 .card-back--especial-trunfo .trunfo-close-v2 {
   border-color: var(--trunfo-gold) !important;
   color: var(--trunfo-gold) !important;
 }
 
-/* 🛠️ SOLUÇÃO PROBLEMA 1: Ajuste de alinhamento vertical rígido do footer mobile */
-.card-mobile-face.face-verso {
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: flex-start !important;
-}
-
-/* Força o rodapé a colar na extremidade inferior interna da carta mobile, matando o vão */
-.card-mobile-face.face-verso .trunfo-footer {
+/* Força o footer do card especial a colar na base interna da folha, matando o vão */
+.card-back--especial-trunfo .trunfo-footer {
   margin-top: auto !important;
   padding-top: 4px !important;
   background: linear-gradient(0deg, #500000, #7a0000) !important;
@@ -4204,20 +4200,27 @@ body {
 
 /* Rodapé pulsante dourado para as cartas especiais */
 .trunfo-footer--especial-trunfo {
-  border-top-color: var(--trunfo-gold) !important;
   animation: trunfoGlowFooter 2s infinite alternate ease-in-out;
 }
 
 @keyframes trunfoGlowFooter {
   0% {
-    box-shadow: 0 -4px 8px rgba(240, 192, 64, 0.1);
+    box-shadow: 0 -4px 8px rgba(240, 192, 64, 0.15);
   }
   100% {
-    box-shadow: 0 -4px 16px rgba(240, 192, 64, 0.45);
+    box-shadow: 0 -4px 18px rgba(240, 192, 64, 0.5);
   }
 }
 
-/* 🎰 SOLUÇÃO ABORDAGEM PÓSTUMA: Show de luzes retrô disparado após fechar o modal */
+/* Estilização cinza do botão desabilitado do WhatsApp */
+.footer-tab-btn.disabled-trunfo {
+  opacity: 0.32 !important;
+  filter: grayscale(100%) !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+/* 🎰 ANIMAÇÃO PÓSTUMA MOBILE: Show de luzes retrô disparado após fechar o modal */
 .trunfo-piscada-postuma {
   animation: efeitoShowLuzesPostumo 2.5s ease-out forwards;
 }
