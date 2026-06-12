@@ -4170,15 +4170,15 @@ body {
    ================================================================ */
 
 /* Remove fundos fantasmas e travas de outline do lote secreto */
-.card-back--especial-trunfo {
+.card-back--especial-trunfo,
+.card-mobile-face.face-verso.card-back--especial-trunfo {
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
+  height: 100% !important; /* Garante que a face ocupe a altura total do card */
 }
 
-/* 🚀 ENGINE DE FOTO 100% NO VÃO INTERMEDIO
-   Garante comportamento Flexbox vertical rígido para que a foto real
-   ocupe todo o espaço físico livre entre o topo e o rodapé */
+/* 🚀 ENGINE DE FOTO 100% NO VÃO INTERMEDIO */
 .trunfo-photo-wrapper--especial {
   flex: 1 !important;
   width: 100% !important;
@@ -4192,12 +4192,13 @@ body {
 .trunfo-photo--especial {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important; /* Preenchimento cinematográfico perfeito */
+  object-fit: cover !important;
   display: block !important;
 }
 
 /* Força o footer do card especial a colar na base interna da folha, matando o vão */
-.card-back--especial-trunfo .trunfo-footer {
+.card-back--especial-trunfo .trunfo-footer,
+.card-mobile-face.face-verso.card-back--especial-trunfo .trunfo-footer {
   margin-top: auto !important;
   padding-top: 4px !important;
   background: linear-gradient(0deg, #500000, #7a0000) !important;

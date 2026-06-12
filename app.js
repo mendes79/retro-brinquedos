@@ -1030,7 +1030,6 @@ function abrirCardVersoMobile(id) {
   // Guarda o ID atual no container de forma blindada para o fechamento
   box.setAttribute("data-current-id", idNormalizado);
 
-  // 💡 FIX 2.1 (LOOP INFINITO MOBILE): Usa a busca blindada para referenciar a origem
   const cardOrigem = obterElementoCard(idNormalizado);
   const overlay = document.getElementById("cardVersoMobileModal");
 
@@ -1055,7 +1054,7 @@ function abrirCardVersoMobile(id) {
     overlay.classList.remove("hidden");
     overlay.classList.add("flex");
     overlay.style.opacity = "0";
-    overlay.style.zIndex = "400"; // Força o z-index padrão de abertura
+    overlay.style.zIndex = "400";
   }
 
   // Classes dinâmicas para o modal mobile baseado no ID (500 a 509)
@@ -1069,7 +1068,7 @@ function abrirCardVersoMobile(id) {
   let faceVersoHTML = "";
 
   if (ehCardSecreto) {
-    // 🃏 TEMPLATE VERSO MINIMALISTA PARA CARD ESPECIAL MOBILE (COM FOTO INDIVIDUAL / SEM CORPO TÉCNICO)
+    // 🃏 TEMPLATE VERSO MINIMALISTA RETIFICADO MOBILE (FOTO 100% DO VÃO / SEM RESPIRO FANTASMA)
     faceVersoHTML = `
       <div class="card-mobile-face face-verso ${classeMobileBackCustom}">
         <div class="trunfo-header">
@@ -1088,8 +1087,6 @@ function abrirCardVersoMobile(id) {
           <img src="${urlVersoOtimizada}" alt="${data.nome} verso" class="trunfo-photo--especial" loading="eager">
           <span class="trunfo-photo-year">${data.ano}</span>
         </div>
-
-        <div class="flex-1 w-full"></div>
 
         <div class="trunfo-footer ${classeMobileFooterCustom}">
           <div class="footer-icons-container">
@@ -1155,16 +1152,12 @@ function abrirCardVersoMobile(id) {
       </div>`;
   }
 
-  // Injeção da estrutura sanduíche legítima de Duas Faces Reais
   box.innerHTML = `
     <div class="card-mobile-inner" id="cardMobileInnerEngine">
-      
       <div class="card-mobile-face face-frente">
         <img src="${urlFrenteOriginal}" alt="${data.nome} frente" loading="eager">
       </div>
-
       ${faceVersoHTML}
-
     </div>`;
 
   const rectFinal = box.getBoundingClientRect();
@@ -1194,13 +1187,11 @@ function abrirCardVersoMobile(id) {
       }
       document.body.style.overflow = "hidden";
 
-      // Abre expandindo e centralizando a órbita na tela — 0.68s para maior suavidade
       box.style.transition = "transform 0.68s cubic-bezier(0.2, 0.8, 0.2, 1)";
       box.style.transform = "translate(0px, 0px) scale(1, 1)";
 
       setTimeout(() => {
         if (engine) engine.classList.add("is-flipped-mobile");
-        // Gatilho Secreto Mobile: Dispara pisca no final da transição orbital
         if (idNormalizado >= "0500" && idNormalizado <= "0509") {
           animarLogoSuperTrunfo();
         }
