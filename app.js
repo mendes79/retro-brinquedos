@@ -413,7 +413,7 @@ async function render(items, append = false) {
     // Valida se o ID pertence à faixa secreta do Super Trunfo (500 a 509)
     const ehCardSecreto = toy.id >= 500 && toy.id <= 509;
 
-    // 💡 DETERMINAÇÃO DO LOOK ESPECIAL DO TRUNFO (DESKTOP)
+    // DETERMINAÇÃO DO LOOK ESPECIAL DO TRUNFO (DESKTOP)
     const classeBackCustom = ehCardSecreto ? "card-back--especial-trunfo" : "";
     const classeFooterCustom = ehCardSecreto
       ? "trunfo-footer--especial-trunfo"
@@ -422,7 +422,7 @@ async function render(items, append = false) {
     let versoEstruturalHTML = "";
 
     if (ehCardSecreto) {
-      // 🃏 LAYOUT EXCLUSIVO DESKTOP MINIMALISTA (SEM FOTO / SEM ATRIBUTOS)
+      // 🃏 TEMPLATE VERSO MINIMALISTA PARA CARD ESPECIAL DESKTOP (COM FOTO INDIVIDUAL / SEM ATRIBUTOS)
       versoEstruturalHTML = `
         <div class="card-back flex flex-col ${classeBackCustom}">
           <div class="trunfo-header">
@@ -437,6 +437,13 @@ async function render(items, append = false) {
             </div>
           </div>
           
+          <div class="trunfo-photo-wrapper">
+            <div class="trunfo-photo-frame">
+              <img src="${urlVersoOtimizada}" alt="${toy.nome} verso" class="trunfo-photo" loading="lazy">
+              <span class="trunfo-photo-year">${toy.ano}</span>
+            </div>
+          </div>
+
           <div class="flex-1 w-full"></div>
 
           <div class="trunfo-footer ${classeFooterCustom}">
@@ -1066,7 +1073,7 @@ function abrirCardVersoMobile(id) {
   let faceVersoHTML = "";
 
   if (ehCardSecreto) {
-    // 🃏 TEMPLATE VERSO MINIMALISTA PARA CARD ESPECIAL MOBILE (SEM CORPO TÉCNICO)
+    // 🃏 TEMPLATE VERSO MINIMALISTA PARA CARD ESPECIAL MOBILE (COM FOTO INDIVIDUAL / SEM CORPO TÉCNICO)
     faceVersoHTML = `
       <div class="card-mobile-face face-verso ${classeMobileBackCustom}">
         <div class="trunfo-header">
@@ -1081,6 +1088,13 @@ function abrirCardVersoMobile(id) {
           </div>
         </div>
         
+        <div class="trunfo-photo-wrapper">
+          <div class="trunfo-photo-frame">
+            <img src="${urlVersoOtimizada}" alt="${data.nome} verso" class="trunfo-photo" loading="eager">
+            <span class="trunfo-photo-year">${data.ano}</span>
+          </div>
+        </div>
+
         <div class="flex-1 w-full"></div>
 
         <div class="trunfo-footer ${classeMobileFooterCustom}">
