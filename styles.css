@@ -4166,28 +4166,34 @@ body {
 }
 
 /* ================================================================
-   🎯 CUSTOMIZAÇÃO SUPER TRUNFO ESPECIAL (500 a 509)
+   🎯 ARQUITETURA SUPER TRUNFO ESPECIAL (500 a 509)
    ================================================================ */
 
-/* Fundo limpo em webp e contornos dourados para verso especial (Desktop e Mobile) */
+/* Remove fundos fantasmas e travas de outline do lote secreto */
 .card-back--especial-trunfo {
-  background: url("img/trunfo.webp") no-repeat center center !important;
-  background-size: cover !important;
-  outline: 4px solid var(--trunfo-gold) !important;
-  outline-offset: -6px !important;
-  border: 6px solid #0d0b1e !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
 }
 
-/* Modificadores estéticos para realçar cabeçalhos dentro do trunfo dourado */
-.card-back--especial-trunfo .trunfo-top-bar-v2 {
-  background: #500000 !important;
+/* 🚀 ENGINE DE FOTO 100% NO VÃO INTERMEDIO
+   Garante comportamento Flexbox vertical rígido para que a foto real
+   ocupe todo o espaço físico livre entre o topo e o rodapé */
+.trunfo-photo-wrapper--especial {
+  flex: 1 !important;
+  width: 100% !important;
+  position: relative !important;
+  background: #000000 !important;
+  overflow: hidden !important;
+  display: block !important;
 }
-.card-back--especial-trunfo .trunfo-close-v2 {
-  border-color: var(--trunfo-gold) !important;
-  color: var(--trunfo-gold) !important;
+
+/* Força a imagem real do brinquedo a preencher de ponta a ponta sem achatar */
+.trunfo-photo--especial {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important; /* Preenchimento cinematográfico perfeito */
+  display: block !important;
 }
 
 /* Força o footer do card especial a colar na base interna da folha, matando o vão */

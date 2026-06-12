@@ -422,7 +422,7 @@ async function render(items, append = false) {
     let versoEstruturalHTML = "";
 
     if (ehCardSecreto) {
-      // 🃏 TEMPLATE VERSO MINIMALISTA PARA CARD ESPECIAL DESKTOP (COM FOTO INDIVIDUAL / SEM ATRIBUTOS)
+      // 🃏 TEMPLATE VERSO MINIMALISTA PARA CARD ESPECIAL DESKTOP (FOTO INDIVIDUAL EM 100% DO VÃO / SEM ATRIBUTOS)
       versoEstruturalHTML = `
         <div class="card-back flex flex-col ${classeBackCustom}">
           <div class="trunfo-header">
@@ -437,14 +437,10 @@ async function render(items, append = false) {
             </div>
           </div>
           
-          <div class="trunfo-photo-wrapper">
-            <div class="trunfo-photo-frame">
-              <img src="${urlVersoOtimizada}" alt="${toy.nome} verso" class="trunfo-photo" loading="lazy">
-              <span class="trunfo-photo-year">${toy.ano}</span>
-            </div>
+          <div class="trunfo-photo-wrapper--especial">
+            <img src="${urlVersoOtimizada}" alt="${toy.nome} verso" class="trunfo-photo--especial" loading="lazy">
+            <span class="trunfo-photo-year">${toy.ano}</span>
           </div>
-
-          <div class="flex-1 w-full"></div>
 
           <div class="trunfo-footer ${classeFooterCustom}">
             <div class="footer-icons-container">
@@ -1088,11 +1084,9 @@ function abrirCardVersoMobile(id) {
           </div>
         </div>
         
-        <div class="trunfo-photo-wrapper">
-          <div class="trunfo-photo-frame">
-            <img src="${urlVersoOtimizada}" alt="${data.nome} verso" class="trunfo-photo" loading="eager">
-            <span class="trunfo-photo-year">${data.ano}</span>
-          </div>
+        <div class="trunfo-photo-wrapper--especial">
+          <img src="${urlVersoOtimizada}" alt="${data.nome} verso" class="trunfo-photo--especial" loading="eager">
+          <span class="trunfo-photo-year">${data.ano}</span>
         </div>
 
         <div class="flex-1 w-full"></div>
